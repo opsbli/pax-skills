@@ -22,3 +22,33 @@ def test_load_family_schema_missing_raises(tmp_path, monkeypatch):
                         tmp_path / "does-not-exist.yaml")
     with pytest.raises(FileNotFoundError):
         load_family_schema()
+
+
+def test_load_snapshot_schema_shape():
+    from pax.forge.loader import load_snapshot_schema
+    schema = load_snapshot_schema()
+    assert schema["$schema"].endswith("2020-12/schema")
+    assert schema["$id"].endswith("snapshot.schema.json")
+    required = set(schema["required"])
+    for key in ["meta", "goal", "consensus", "orchestration"]:
+        assert key in required
+    for key in ["symptom", "diagnosis", "plan", "contract", "execution",
+                "review", "quality"]:
+        assert key in schema["properties"]
+
+
+def test_snapshot_schema_validates_minimal_instance():
+    import jsonschema
+    from pax.forge.loader import load_snapshot_schema
+    schema = load_snapshot_schema()
+    minimal = {
+        "meta": {"version": 1.0, "created_at": "2026-09-29T00:00:00Z",
+                 "updated_at": "2026-09-29T00:00:00Z", "skill_lineage": []},
+        "goal": {"statement": "test", "success_criteria": []},
+        "consensus": {"required_precision": "low", "dimensions": {},
+                       "design_tree": [], "gaps_remaining": []},
+        "orchestration": {"diagnose_required": False, "rationale": "n/a",
+                           "skip_reason": None, "route": [],
+                           "question_strategy": "batch"},
+    }
+    jsonschema.validate(minimal, schema)  # 不抛异常即通过

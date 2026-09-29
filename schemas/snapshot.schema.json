@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pax.family/schemas/snapshot.schema.json",
+  "title": "pax-snapshot",
+  "description": "Single source of truth exchanged between pax-* skills.",
+  "type": "object",
+  "required": ["meta", "goal", "consensus", "orchestration"],
+  "additionalProperties": false,
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["version", "created_at", "updated_at", "skill_lineage"],
+      "additionalProperties": false,
+      "properties": {
+        "version": {"type": "number", "const": 1.0},
+        "created_at": {"type": "string", "format": "date-time"},
+        "updated_at": {"type": "string", "format": "date-time"},
+        "skill_lineage": {
+          "type": "array",
+          "items": {"type": "string", "pattern": "^pax-[a-z][a-z0-9-]*$"}
+        }
+      }
+    },
+    "goal": {
+      "type": "object",
+      "required": ["statement", "success_criteria"],
+      "additionalProperties": false,
+      "properties": {
+        "statement": {"type": "string", "minLength": 1},
+        "success_criteria": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "consensus": {
+      "type": "object",
+      "required": ["required_precision", "dimensions", "design_tree", "gaps_remaining"],
+      "additionalProperties": false,
+      "properties": {
+        "required_precision": {"type": "string", "enum": ["low", "medium", "high"]},
+        "dimensions": {"type": "object"},
+        "design_tree": {"type": "array"},
+        "gaps_remaining": {"type": "array"}
+      }
+    },
+    "orchestration": {
+      "type": "object",
+      "required": ["diagnose_required", "rationale", "skip_reason",
+                   "route", "question_strategy"],
+      "additionalProperties": false,
+      "properties": {
+        "diagnose_required": {"type": "boolean"},
+        "rationale": {"type": "string"},
+        "skip_reason": {"type": ["string", "null"]},
+        "route": {"type": "array", "items": {"type": "string"}},
+        "question_strategy": {"type": "string",
+                                "enum": ["batch", "one-by-one"]}
+      }
+    },
+    "symptom": {
+      "type": "object",
+      "required": ["description", "impact", "reproduction", "first_observed"],
+      "additionalProperties": false,
+      "properties": {
+        "description": {"type": "string"},
+        "impact": {"type": "string"},
+        "reproduction": {"type": "string"},
+        "first_observed": {"type": "string", "format": "date-time"},
+        "recent_changes": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "diagnosis": {"type": "object"},
+    "plan": {
+      "type": "object",
+      "required": ["steps", "status"],
+      "additionalProperties": false,
+      "properties": {
+        "steps": {"type": "array"},
+        "dependencies": {"type": "array"},
+        "evidence": {"type": "array"},
+        "verification_strategy": {"type": "array"},
+        "status": {"type": "string", "enum": ["draft", "frozen"]}
+      }
+    },
+    "contract": {
+      "type": "object",
+      "required": ["authorization", "constraints", "exceptions",
+                   "assumptions", "withdraw"],
+      "additionalProperties": false,
+      "properties": {
+        "authorization": {"type": "object"},
+        "constraints": {"type": "array"},
+        "exceptions": {"type": "array"},
+        "assumptions": {"type": "array"},
+        "withdraw": {"type": "array"}
+      }
+    },
+    "execution": {
+      "type": "object",
+      "required": ["mode", "log", "deviations", "changes"],
+      "additionalProperties": false,
+      "properties": {
+        "mode": {"type": "string", "enum": ["normal", "fix"]},
+        "log": {"type": "array"},
+        "deviations": {"type": "array"},
+        "changes": {"type": "array"}
+      }
+    },
+    "review": {
+      "type": "object",
+      "required": ["verdict", "stamp", "rationale"],
+      "additionalProperties": false,
+      "properties": {
+        "verdict": {"type": "string",
+                    "enum": ["pass", "fail", "partial", "blocked", "escalated"]},
+        "stamp": {"type": "string"},
+        "rationale": {"type": "string"},
+        "findings": {"type": "array"}
+      }
+    },
+    "quality": {
+      "type": "object",
+      "required": ["verification_seals", "evolution_entries"],
+      "additionalProperties": false,
+      "properties": {
+        "verification_seals": {"type": "array"},
+        "evolution_entries": {"type": "array"}
+      }
+    }
+  }
+}
