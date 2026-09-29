@@ -1,367 +1,154 @@
 {
-  "suite_id": "pax_internal_routing",
-  "suite_version": "1.0",
-  "description": "pax-orchestrate 内部路由逻辑单元测试用例",
-  "categories": {
-    "intent_classification": {
-      "description": "MECE 意图分类测试",
-      "cases": [
-        {
-          "id": "IC-001",
-          "name": "明确缺陷信号 → diagnose_fix",
-          "input": "生产环境 CMDB 字段校验报错，时间类型填写后显示'字段不为设定的正则表达式'",
-          "expected_primary": "diagnose_fix",
-          "expected_secondary": ["data_integrity"],
-          "rationale": "有明确错误信息 + 既有行为异常"
-        },
-        {
-          "id": "IC-002",
-          "name": "新功能请求 → feature_dev",
-          "input": "给 ops-pilot 加一个批量导入 CMDB 资产的功能",
-          "expected_primary": "feature_dev",
-          "expected_secondary": [],
-          "rationale": "新建功能，无既有缺陷信号"
-        },
-        {
-          "id": "IC-003",
-          "name": "重构请求 → refactor",
-          "input": "重构这个模块的代码结构，不改变外部行为",
-          "expected_primary": "refactor",
-          "expected_secondary": [],
-          "rationale": "明确的重构意图，不改变外部行为"
-        },
-        {
-          "id": "IC-004",
-          "name": "数据订正 → data_ops",
-          "input": "数据库里有一批资产状态填错了，需要批量订正 500 条",
-          "expected_primary": "data_ops",
-          "expected_secondary": ["data_integrity"],
-          "rationale": "数据操作信号 + 数据完整性问题"
-        },
-        {
-          "id": "IC-005",
-          "name": "文档请求 → doc_consult",
-          "input": "写一份运维手册，覆盖日常巡检流程",
-          "expected_primary": "doc_consult",
-          "expected_secondary": [],
-          "rationale": "纯文档，不涉及代码修改"
-        },
-        {
-          "id": "IC-006",
-          "name": "工具构建 → tool_build",
-          "input": "做一个脚本自动收集各环境配置差异",
-          "expected_primary": "tool_build",
-          "expected_secondary": [],
-          "rationale": "工具/脚本构建意图"
-        },
-        {
-          "id": "IC-007",
-          "name": "性能退化 → diagnose_fix + performance",
-          "input": "这个接口最近响应特别慢，从 200ms 涨到 3 秒",
-          "expected_primary": "diagnose_fix",
-          "expected_secondary": ["performance"],
-          "rationale": "性能退化信号"
-        },
-        {
-          "id": "IC-008",
-          "name": "安全漏洞 → diagnose_fix + security",
-          "input": "发现一个 SQL 注入漏洞，需要修复",
-          "expected_primary": "diagnose_fix",
-          "expected_secondary": ["security"],
-          "rationale": "安全漏洞信号，强制 diagnose_required"
-        },
-        {
-          "id": "IC-009",
-          "name": "前后端联动 → diagnose_fix + ux_error",
-          "input": "前端点击提交按钮报错了，但后端日志没记录",
-          "expected_primary": "diagnose_fix",
-          "expected_secondary": ["ux_error", "integration"],
-          "rationale": "前端异常 + 前后端集成问题"
-        },
-        {
-          "id": "IC-010",
-          "name": "模糊请求 → feature_dev (默认)",
-          "input": "帮我把这个功能做出来",
-          "expected_primary": "feature_dev",
-          "expected_secondary": [],
-          "rationale": "无明确信号，默认 feature_dev"
-        }
-      ]
+  "version": "1.0",
+  "description": "pax-orchestrate 内部路由评估数据集，测试意图分类、风险评分、路由构建的准确性",
+  "cases": [
+    {
+      "id": "pax-intent-df-01",
+      "category": "intent_classification",
+      "prompt": "CMDB 字段校验有问题，时间类型的字段填写后报错说字段不为设定的正则表达式",
+      "expected": {
+        "primary_intent": "diagnose_fix",
+        "secondary_intent": [],
+        "confidence": "high"
+      }
     },
-    "risk_scoring": {
-      "description": "四维风险评分测试",
-      "cases": [
-        {
-          "id": "RS-001",
-          "name": "低风险：文档修改",
-          "input": "更新 README 文档",
-          "expected_irreversibility": 1,
-          "expected_impact": 1,
-          "expected_uncertainty": 1,
-          "expected_coordination": 1,
-          "expected_total": 4,
-          "expected_level": "low",
-          "rationale": "文档修改可轻易回滚，无影响范围，需求明确"
-        },
-        {
-          "id": "RS-002",
-          "name": "中风险：跨模块功能开发",
-          "input": "给系统加一个跨模块的权限管理功能",
-          "expected_irreversibility": 2,
-          "expected_impact": 2,
-          "expected_uncertainty": 2,
-          "expected_coordination": 2,
-          "expected_total": 8,
-          "expected_level": "medium",
-          "rationale": "跨模块影响，需要协调，部分需求未明确"
-        },
-        {
-          "id": "RS-003",
-          "name": "高风险：数据订正 + 跨仓库",
-          "input": "订正生产数据库 5000 条记录，涉及后端和前端两个仓库",
-          "expected_irreversibility": 3,
-          "expected_impact": 3,
-          "expected_uncertainty": 2,
-          "expected_coordination": 3,
-          "expected_total": 11,
-          "expected_level": "high",
-          "rationale": "数据不可逆 + 全用户影响 + 跨仓库协调"
-        },
-        {
-          "id": "RS-004",
-          "name": "强制升级：安全漏洞",
-          "input": "修复一个远程代码执行漏洞",
-          "expected_irreversibility": 2,
-          "expected_impact": 3,
-          "expected_uncertainty": 2,
-          "expected_coordination": 2,
-          "expected_total": 9,
-          "expected_level": "high",
-          "expected_forced_escalation": true,
-          "rationale": "安全相关强制升级，无论总分"
-        },
-        {
-          "id": "RS-005",
-          "name": "低风险：单人工具脚本",
-          "input": "写一个 Python 脚本处理 CSV 数据",
-          "expected_irreversibility": 1,
-          "expected_impact": 1,
-          "expected_uncertainty": 1,
-          "expected_coordination": 1,
-          "expected_total": 4,
-          "expected_level": "low",
-          "rationale": "单人脚本，无外部依赖，需求明确"
-        }
-      ]
+    {
+      "id": "pax-intent-df-02",
+      "category": "intent_classification",
+      "prompt": "系统最近响应变慢了，以前 1 秒能完成的请求现在要 5 秒，用户抱怨很多",
+      "expected": {
+        "primary_intent": "diagnose_fix",
+        "secondary_intent": ["performance"],
+        "confidence": "high"
+      }
     },
-    "diagnose_required": {
-      "description": "诊断必要性决策测试",
-      "cases": [
-        {
-          "id": "DR-001",
-          "name": "缺陷报告 → 必须诊断",
-          "input": "系统报错 NullPointerException，需要修复",
-          "expected_diagnose": true,
-          "expected_rationale": "有明确缺陷信号",
-          "expected_skip_reason": null
-        },
-        {
-          "id": "DR-002",
-          "name": "新功能 → 跳过诊断",
-          "input": "新增一个用户注册功能",
-          "expected_diagnose": false,
-          "expected_rationale": "新建功能，无既有行为",
-          "expected_skip_reason": "new_feature_no_prior_behavior"
-        },
-        {
-          "id": "DR-003",
-          "name": "文档 → 跳过诊断",
-          "input": "写一份部署指南",
-          "expected_diagnose": false,
-          "expected_rationale": "纯文档/咨询类任务",
-          "expected_skip_reason": "doc_consult_only"
-        },
-        {
-          "id": "DR-004",
-          "name": "数据订正 → 必须诊断",
-          "input": "订正一批错误的数据记录",
-          "expected_diagnose": true,
-          "expected_rationale": "数据操作类，必须诊断",
-          "expected_skip_reason": null
-        },
-        {
-          "id": "DR-005",
-          "name": "安全漏洞 → 必须诊断",
-          "input": "修复一个权限绕过漏洞",
-          "expected_diagnose": true,
-          "expected_rationale": "安全相关问题必须诊断根因",
-          "expected_skip_reason": null
-        },
-        {
-          "id": "DR-006",
-          "name": "重构 → 跳过诊断",
-          "input": "重构这个模块，不改变外部行为",
-          "expected_diagnose": false,
-          "expected_rationale": "纯重构，不改变外部行为",
-          "expected_skip_reason": "refactor_no_behavior_change"
-        },
-        {
-          "id": "DR-007",
-          "name": "用户明确跳过 → 允许跳过",
-          "input": "先别查根因了，直接改这个配置就行",
-          "expected_diagnose": false,
-          "expected_rationale": "用户明确要求跳过诊断",
-          "expected_skip_reason": "user_explicit_skip"
-        }
-      ]
+    {
+      "id": "pax-intent-fd-01",
+      "category": "intent_classification",
+      "prompt": "给系统加一个导出功能，能把用户列表导出成 Excel 文件",
+      "expected": {
+        "primary_intent": "feature_dev",
+        "secondary_intent": [],
+        "confidence": "medium"
+      }
     },
-    "route_building": {
-      "description": "路由构建测试",
-      "cases": [
-        {
-          "id": "RB-001",
-          "name": "诊断修复路由",
-          "input": "系统报错，需要修复",
-          "expected_route": ["clarify", "diagnose", "plan", "execute", "review"],
-          "expected_annotations": {}
-        },
-        {
-          "id": "RB-002",
-          "name": "功能开发路由",
-          "input": "新增一个功能",
-          "expected_route": ["clarify", "plan", "execute", "review"],
-          "expected_annotations": {}
-        },
-        {
-          "id": "RB-003",
-          "name": "文档咨询路由",
-          "input": "写一份文档",
-          "expected_route": ["clarify"],
-          "expected_annotations": {}
-        },
-        {
-          "id": "RB-004",
-          "name": "数据操作路由（含存储后端标注）",
-          "input": "订正一批数据",
-          "expected_route": ["clarify", "diagnose", "plan", "execute", "review"],
-          "expected_annotations": {
-            "storage_backend_required": true,
-            "script_language_required": true
-          }
-        },
-        {
-          "id": "RB-005",
-          "name": "安全漏洞路由（含强制升级标注）",
-          "input": "修复安全漏洞",
-          "expected_route": ["clarify", "diagnose", "plan", "execute", "review"],
-          "expected_annotations": {
-            "escalate_to_council": true,
-            "council_trigger": "security_relevant"
-          }
-        },
-        {
-          "id": "RB-006",
-          "name": "跨仓库路由（含执行策略标注）",
-          "input": "修复前后端联动的问题，需要改两个仓库",
-          "expected_route": ["clarify", "diagnose", "plan", "execute", "review"],
-          "expected_annotations": {
-            "cross_repo": true,
-            "execution_strategy_required": true
-          }
-        },
-        {
-          "id": "RB-007",
-          "name": "高风险路由（含升级标注）",
-          "input": "订正生产环境核心数据，影响所有用户",
-          "expected_route": ["clarify", "diagnose", "plan", "execute", "review"],
-          "expected_annotations": {
-            "escalate_to_council": true,
-            "council_trigger": "high_risk_task"
-          }
-        }
-      ]
+    {
+      "id": "pax-intent-rf-01",
+      "category": "intent_classification",
+      "prompt": "把这段 500 行的方法拆分成更小的函数，提高可读性",
+      "expected": {
+        "primary_intent": "refactor",
+        "secondary_intent": [],
+        "confidence": "medium"
+      }
     },
-    "skip_conditions": {
-      "description": "跳过诊断条件测试",
-      "cases": [
-        {
-          "id": "SC-001",
-          "name": "新建功能 → 允许跳过",
-          "input": "新增一个订单导出功能",
-          "should_allow_skip": true,
-          "skip_reason": "new_feature_no_prior_behavior"
-        },
-        {
-          "id": "SC-002",
-          "name": "根因已确定 → 允许跳过",
-          "input": "根因已经确认是配置错误，直接修复就行",
-          "should_allow_skip": true,
-          "skip_reason": "root_cause_pre_determined_by_user"
-        },
-        {
-          "id": "SC-003",
-          "name": "纯咨询 → 允许跳过",
-          "input": "帮我分析一下这个架构方案的优劣",
-          "should_allow_skip": true,
-          "skip_reason": "doc_consult_only"
-        },
-        {
-          "id": "SC-004",
-          "name": "有缺陷信号 → 不允许跳过",
-          "input": "系统报错 NullPointerException，先别诊断直接改",
-          "should_allow_skip": false,
-          "rationale": "有明确缺陷信号，不允许跳过诊断"
-        },
-        {
-          "id": "SC-005",
-          "name": "安全相关 → 不允许跳过",
-          "input": "安全漏洞，直接修复不用查根因",
-          "should_allow_skip": false,
-          "rationale": "安全相关问题必须诊断"
-        }
-      ]
+    {
+      "id": "pax-intent-do-01",
+      "category": "intent_classification",
+      "prompt": "有一批用户数据字段填错了，需要批量订正，大概 500 条记录",
+      "expected": {
+        "primary_intent": "data_ops",
+        "secondary_intent": ["data_integrity"],
+        "confidence": "high"
+      }
     },
-    "cross_repo_detection": {
-      "description": "跨仓库检测测试",
-      "cases": [
-        {
-          "id": "CR-001",
-          "name": "前后端分离 → 检测跨仓库",
-          "input": "修复前端页面和后端 API 的对接问题",
-          "expected_cross_repo": true,
-          "expected_involved_repos": ["frontend", "backend"]
-        },
-        {
-          "id": "CR-002",
-          "name": "单仓库 → 非跨仓库",
-          "input": "修复这个 Python 模块的 bug",
-          "expected_cross_repo": false
-        },
-        {
-          "id": "CR-003",
-          "name": "明确提及多仓库 → 检测跨仓库",
-          "input": "需要同时改 ops-monitor 和 ops-pilot-web 两个仓库",
-          "expected_cross_repo": true,
-          "expected_involved_repos": ["ops-monitor", "ops-pilot-web"]
-        },
-        {
-          "id": "CR-004",
-          "name": "微服务 → 检测跨仓库",
-          "input": "修复用户服务调用订单服务失败的问题",
-          "expected_cross_repo": true
-        }
-      ]
+    {
+      "id": "pax-intent-dc-01",
+      "category": "intent_classification",
+      "prompt": "解释一下什么是微服务架构，有什么优缺点",
+      "expected": {
+        "primary_intent": "doc_consult",
+        "secondary_intent": [],
+        "confidence": "low"
+      }
+    },
+    {
+      "id": "pax-intent-tb-01",
+      "category": "intent_classification",
+      "prompt": "写一个脚本，自动检查所有未提交的变更并生成 commit message",
+      "expected": {
+        "primary_intent": "tool_build",
+        "secondary_intent": [],
+        "confidence": "medium"
+      }
+    },
+    {
+      "id": "pax-risk-high-01",
+      "category": "risk_scoring",
+      "prompt": "把旧表的数据迁移到新表，需要保留所有历史记录",
+      "expected": {
+        "risk_score": 10,
+        "risk_level": "high",
+        "irreversibility": 3,
+        "impact_scope": 3,
+        "uncertainty": 2,
+        "coordination_cost": 2
+      }
+    },
+    {
+      "id": "pax-risk-medium-01",
+      "category": "risk_scoring",
+      "prompt": "给系统加一个导出功能，能把用户列表导出成 Excel 文件",
+      "expected": {
+        "risk_score": 7,
+        "risk_level": "medium",
+        "irreversibility": 1,
+        "impact_scope": 2,
+        "uncertainty": 2,
+        "coordination_cost": 2
+      }
+    },
+    {
+      "id": "pax-risk-low-01",
+      "category": "risk_scoring",
+      "prompt": "解释一下什么是微服务架构，有什么优缺点",
+      "expected": {
+        "risk_score": 4,
+        "risk_level": "low",
+        "irreversibility": 1,
+        "impact_scope": 1,
+        "uncertainty": 1,
+        "coordination_cost": 1
+      }
+    },
+    {
+      "id": "pax-route-df-01",
+      "category": "route_building",
+      "prompt": "CMDB 字段校验有问题，时间类型的字段填写后报错说字段不为设定的正则表达式",
+      "expected": {
+        "route": ["pax-clarify", "pax-diagnose", "pax-plan", "pax-execute", "pax-review"],
+        "diagnose_required": true,
+        "storage_backend_required": true
+      }
+    },
+    {
+      "id": "pax-route-fd-01",
+      "category": "route_building",
+      "prompt": "给系统加一个导出功能，能把用户列表导出成 Excel 文件",
+      "expected": {
+        "route": ["pax-clarify", "pax-plan", "pax-execute", "pax-review"],
+        "diagnose_required": false,
+        "storage_backend_required": false
+      }
+    },
+    {
+      "id": "pax-route-dc-01",
+      "category": "route_building",
+      "prompt": "解释一下什么是微服务架构，有什么优缺点",
+      "expected": {
+        "route": ["pax-clarify"],
+        "diagnose_required": false,
+        "storage_backend_required": false
+      }
+    },
+    {
+      "id": "pax-cross-repo-01",
+      "category": "cross_repo_detection",
+      "prompt": "前后端分离的系统，前端 React 需要调用后端 API 的新增接口",
+      "expected": {
+        "cross_repo": true,
+        "execution_strategy_required": true
+      }
     }
-  },
-  "summary": {
-    "total_cases": 38,
-    "by_category": {
-      "intent_classification": 10,
-      "risk_scoring": 5,
-      "diagnose_required": 7,
-      "route_building": 7,
-      "skip_conditions": 5,
-      "cross_repo_detection": 4
-    }
-  }
+  ]
 }

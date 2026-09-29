@@ -1,7 +1,7 @@
 ---
 name: pax-evolve
 description: >
-  OODA 闭环 + 经验条目库 + A/B 验证门 + 回滚。当需要把执行反馈沉淀为经验、并对变更做 A/B 验证与回滚决策时使用。
+  OODA 闭环 + 经验条目库 + A/B 验证门 + 回滚。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。
 version: 0.2.0
 family: pax
 layer: L4

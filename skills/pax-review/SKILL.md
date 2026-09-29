@@ -1,7 +1,7 @@
 ---
 name: pax-review
 description: >
-  独立评审门禁，对照成功标准决定通过/拒绝。当 `pax-execute` 完成执行，需要独立判定成功/失败/升级时使用。
+  独立评审门禁，对照成功标准决定通过/拒绝。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。
 version: 0.2.0
 family: pax
 layer: L1

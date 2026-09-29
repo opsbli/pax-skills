@@ -1,7 +1,7 @@
 ---
 name: pax-advisor
 description: >
-  只读顾问，针对特定假设、权衡、架构问题提供咨询。当需要就某个决策点做证据加权的横向意见输出时使用，不修改快照。
+  只读顾问，针对特定假设、权衡、架构问题提供咨询。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。
 version: 0.2.0
 family: pax
 layer: L2

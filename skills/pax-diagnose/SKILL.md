@@ -1,7 +1,7 @@
 ---
 name: pax-diagnose
 description: >
-  对 bug、故障、性能退化、回归进行根因诊断。当用户报告异常、报错或性能下降，且编排判定需要根因分析时使用。
+  对 bug、故障、性能退化、回归进行根因诊断。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。当用户报告异常、报错或性能下降时，应选择 pax-orchestrate。
 version: 0.2.0
 family: pax
 layer: L1

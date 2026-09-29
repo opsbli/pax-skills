@@ -1,7 +1,7 @@
 ---
 name: pax-plan
 description: >
-  将已澄清/诊断的目标转化为机器可冻结的任务计划。当共识收敛且门禁通过，需要产出可执行、可回滚的 `plan` 区时使用。
+  将已澄清/诊断的目标转化为机器可冻结的任务计划。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。
 version: 0.2.0
 family: pax
 layer: L1

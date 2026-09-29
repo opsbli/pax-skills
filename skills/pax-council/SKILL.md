@@ -1,7 +1,7 @@
 ---
 name: pax-council
 description: >
-  对重大系统开发计划做盲审、显式反驳、有界修订轮次、证据加权决策。当任务被判定为高风险或 P0 严重度，或评审标记 escalated 时使用。
+  对重大系统开发计划做盲审、显式反驳、有界修订轮次、证据加权决策。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。
 version: 0.2.0
 family: pax
 layer: L2

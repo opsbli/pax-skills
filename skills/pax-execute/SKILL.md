@@ -1,7 +1,7 @@
 ---
 name: pax-execute
 description: >
-  在契约约束下执行，带审计和回滚。当 `plan.status == frozen` 且契约已确认，需要按计划实施时使用。
+  在契约约束下执行，带审计和回滚。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。
 version: 0.2.0
 family: pax
 layer: L1

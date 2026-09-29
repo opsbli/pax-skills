@@ -1,7 +1,7 @@
 ---
 name: pax-orchestrate
 description: >
-  路由、风险分级、生命周期管理、快照初始化。L0 层负责意图分类、风险评分、路由构建与快照初始化。
+  所有 pax-family 任务的统一入口。当用户目标涉及诊断修复、功能开发、重构优化、数据操作、文档咨询或工具构建时，必须先经过 pax-orchestrate 进行意图分类、风险分级、路由构建与快照初始化。不要直接选择 pax-diagnose、pax-plan、pax-execute 等具体 skill，而是让 pax-orchestrate 决定完整的执行路由。
 version: 0.2.0
 family: pax
 layer: L0

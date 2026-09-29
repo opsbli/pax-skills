@@ -1,7 +1,7 @@
 ---
 name: pax-verify
 description: >
-  运行中验证，有界循环 + 五态印章。当执行阶段完成、需要独立复核成功标准与偏差时使用；可被任意 L0/L1/L2 Skill 调用。
+  运行中验证，有界循环 + 五态印章。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。
 version: 0.2.0
 family: pax
 layer: L4

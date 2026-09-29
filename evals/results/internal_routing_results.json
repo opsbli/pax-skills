@@ -1,0 +1,112 @@
+{
+  "summary": {
+    "total": 14,
+    "passed": 0,
+    "failed": 14,
+    "accuracy": 0.0
+  },
+  "by_category": {
+    "intent_classification": {
+      "total": 7,
+      "passed": 0
+    },
+    "risk_scoring": {
+      "total": 3,
+      "passed": 0
+    },
+    "route_building": {
+      "total": 3,
+      "passed": 0
+    },
+    "cross_repo_detection": {
+      "total": 1,
+      "passed": 0
+    }
+  },
+  "results": [
+    {
+      "case_id": "pax-intent-df-01",
+      "category": "intent_classification",
+      "passed": false,
+      "details": "框架脚本，未实际调用 pax-orchestrate"
+    },
+    {
+      "case_id": "pax-intent-df-02",
+      "category": "intent_classification",
+      "passed": false,
+      "details": "框架脚本，未实际调用 pax-orchestrate"
+    },
+    {
+      "case_id": "pax-intent-fd-01",
+      "category": "intent_classification",
+      "passed": false,
+      "details": "框架脚本，未实际调用 pax-orchestrate"
+    },
+    {
+      "case_id": "pax-intent-rf-01",
+      "category": "intent_classification",
+      "passed": false,
+      "details": "框架脚本，未实际调用 pax-orchestrate"
+    },
+    {
+      "case_id": "pax-intent-do-01",
+      "category": "intent_classification",
+      "passed": false,
+      "details": "框架脚本，未实际调用 pax-orchestrate"
+    },
+    {
+      "case_id": "pax-intent-dc-01",
+      "category": "intent_classification",
+      "passed": false,
+      "details": "框架脚本，未实际调用 pax-orchestrate"
+    },
+    {
+      "case_id": "pax-intent-tb-01",
+      "category": "intent_classification",
+      "passed": false,
+      "details": "框架脚本，未实际调用 pax-orchestrate"
+    },
+    {
+      "case_id": "pax-risk-high-01",
+      "category": "risk_scoring",
+      "passed": false,
+      "details": "框架脚本，未实际调用 pax-orchestrate"
+    },
+    {
+      "case_id": "pax-risk-medium-01",
+      "category": "risk_scoring",
+      "passed": false,
+      "details": "框架脚本，未实际调用 pax-orchestrate"
+    },
+    {
+      "case_id": "pax-risk-low-01",
+      "category": "risk_scoring",
+      "passed": false,
+      "details": "框架脚本，未实际调用 pax-orchestrate"
+    },
+    {
+      "case_id": "pax-route-df-01",
+      "category": "route_building",
+      "passed": false,
+      "details": "框架脚本，未实际调用 pax-orchestrate"
+    },
+    {
+      "case_id": "pax-route-fd-01",
+      "category": "route_building",
+      "passed": false,
+      "details": "框架脚本，未实际调用 pax-orchestrate"
+    },
+    {
+      "case_id": "pax-route-dc-01",
+      "category": "route_building",
+      "passed": false,
+      "details": "框架脚本，未实际调用 pax-orchestrate"
+    },
+    {
+      "case_id": "pax-cross-repo-01",
+      "category": "cross_repo_detection",
+      "passed": false,
+      "details": "未知类别：cross_repo_detection"
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 ---
 name: pax-docs
 description: >
-  把已确认硬决策沉淀为 CONTEXT.md 与 ADR。当评审门禁通过后，需要将硬决策、经验条目或故障档案落地为文档时使用。
+  把已确认硬决策沉淀为 CONTEXT.md 与 ADR。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。
 version: 0.2.0
 family: pax
 layer: L4

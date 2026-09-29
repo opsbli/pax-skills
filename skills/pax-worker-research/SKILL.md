@@ -1,7 +1,7 @@
 ---
 name: pax-worker-research
 description: >
-  有界研究任务执行。L3 层工具适配，接口由上层定义；将检索、抓取、只读探测等研究任务委托给固定 worker，在沙箱与无头模式下运行。
+  有界研究任务执行。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。L3 层工具适配，接口由上层定义。
 version: 0.2.0
 family: pax
 layer: L3
