@@ -76,3 +76,14 @@ def test_generate_l4_skill(tmp_path):
     text = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
     assert "五态" in text or "pass" in text
     assert "不认领路由落点" in text
+
+
+def test_generate_meta_skill(tmp_path):
+    skill_dir = generate_skill(
+        name="pax-forge", layer="meta",
+        description="按家族契约生成、校验、注册新 Skill",
+        target_root=tmp_path, optional=False,
+    )
+    text = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    assert "生成、校验、注册" in text
+    assert "breaking change" in text

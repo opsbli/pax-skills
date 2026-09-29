@@ -1,0 +1,45 @@
+---
+name: {{ name }}
+description: >
+  {{ description }}。元层工具，不参与运行时。
+version: {{ version }}
+family: pax
+layer: meta
+optional: {{ 'true' if optional else 'false' }}
+requires_snapshot: false
+---
+
+# {{ name }}
+
+## Execution Contract
+- 前置门禁：能读取 `pax-family.schema.yaml`
+- 未通过门禁：拒绝生成/注册
+- 版本检查：`pax-ops/versions.json`
+
+## 职责边界
+- 做什么：生成、校验、注册、版本管理
+- 不做什么：不参与运行时、不修改已有 Skill 的业务逻辑
+
+## 输入
+- 必需：新 Skill 名称、层、职责描述
+- 可选：`upstream` 映射、`optional` 标记
+
+## 工作流
+1. 读取 `pax-family.schema.yaml`
+2. 命名冲突与层合法性检查
+3. 选择模板（按层）
+4. 生成目录结构与 `SKILL.md`
+5. 生成契约测试
+6. 注册到 `pax-ops/registry.json`
+7. 运行契约测试
+8. 输出待办清单
+
+## 输出契约
+- 骨架目录 + `SKILL.md` + 契约测试 + 注册记录
+
+## 失败模式
+- 命名冲突 → 拒绝生成
+- 契约测试未通过 → 不注册
+
+## 何时升级
+- breaking change 必须人工审核
