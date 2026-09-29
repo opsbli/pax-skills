@@ -1,0 +1,10 @@
+{"id": "ep-001", "task": "CMDB 字段校验报错，时间类型字段填写后报错说字段不为设定的正则表达式", "skill": "pax-clarify", "expected_action": "clarify_storage_backend", "reward": 1.0}
+{"id": "ep-002", "task": "系统响应变慢了，以前 1 秒现在要 5 秒", "skill": "pax-clarify", "expected_action": "clarify_performance_impact", "reward": 1.0}
+{"id": "ep-003", "task": "数据库连接池满了，服务启动失败", "skill": "pax-clarify", "expected_action": "clarify_root_cause", "reward": 1.0}
+{"id": "ep-004", "task": "用户反馈登录页面加载不出来，显示 502", "skill": "pax-clarify", "expected_action": "clarify_error_scope", "reward": 1.0}
+{"id": "ep-005", "task": "加一个导出功能，能把用户列表导出成 Excel", "skill": "pax-clarify", "expected_action": "clarify_export_format", "reward": 1.0}
+{"id": "ep-006", "task": "实现审批流程，支持多级审批和驳回", "skill": "pax-clarify", "expected_action": "clarify_approval_levels", "reward": 1.0}
+{"id": "ep-007", "task": "批量订正 500 条用户数据字段", "skill": "pax-clarify", "expected_action": "clarify_correction_rules", "reward": 1.0}
+{"id": "ep-008", "task": "迁移旧表数据到新表，保留历史记录", "skill": "pax-clarify", "expected_action": "clarify_migration_strategy", "reward": 1.0}
+{"id": "ep-009", "task": "清理过期数据，删除超过 1 年的临时文件", "skill": "pax-clarify", "expected_action": "clarify_cleanup_criteria", "reward": 1.0}
+{"id": "ep-010", "task": "重构这个模块的依赖结构，循环依赖需要解耦", "skill": "pax-clarify", "expected_action": "clarify_refactor_scope", "reward": 1.0}

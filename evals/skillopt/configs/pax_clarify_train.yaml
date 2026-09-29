@@ -1,0 +1,87 @@
+# SkillOpt training config for pax-clarify
+# Optimize skill description to improve routing accuracy
+
+# Base config
+_base_: null
+
+# Model config
+model:
+  # Optimizer model (for generating patches)
+  optimizer: openai/sensenova-6.8-flash-lite
+  optimizer_backend: litellm
+  optimizer_backend_config:
+    api_base: https://token.sensenova.cn/v1
+    api_key_env: DASHSCOPE_API_KEY
+    temperature: 0.1
+    max_tokens: 2048
+  
+  # Target model (for executing skill)
+  target: openai/sensenova-6.8-flash-lite
+  target_backend: litellm
+  target_backend_config:
+    api_base: https://token.sensenova.cn/v1
+    api_key_env: DASHSCOPE_API_KEY
+    temperature: 0
+    max_tokens: 1024
+
+# Training config
+train:
+  # Number of epochs
+  num_epochs: 3
+  
+  # Batch size per epoch
+  batch_size: 5
+  
+  # Random seed
+  seed: 42
+  
+  # Training dataset
+  dataset: evals/skillopt/datasets/pax_train_episodes.jsonl
+  dataset_split: train
+  
+  # Evaluation dataset
+  eval_dataset: evals/skillopt/datasets/pax_eval_episodes.jsonl
+  eval_split: eval
+
+# Gradient config
+gradient:
+  # Number of reflections
+  num_reflections: 3
+  
+  # Aggregation method
+  aggregation: hierarchical
+  
+  # Select top-k edits
+  top_k: 5
+
+# Optimizer config
+optimizer:
+  # Learning rate
+  learning_rate: 0.1
+  
+  # Update mode
+  update_mode: minibatch
+  
+  # Rewrite strategy
+  rewrite_strategy: full_rewrite
+
+# Evaluation config
+evaluation:
+  # Gate score threshold
+  gate_threshold: 0.80
+  
+  # Evaluation metrics
+  metrics:
+    - exact_set_match
+    - top1
+    - no_skill_rejection
+
+# Environment config
+env:
+  # Environment type (custom pax environment)
+  type: pax_routing
+  
+  # Environment parameters
+  params:
+    skill_path: skills/pax-clarify/SKILL.md
+    routing_config: evals/suites/pax_routing.yaml

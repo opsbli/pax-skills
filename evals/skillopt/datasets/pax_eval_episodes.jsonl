@@ -1,0 +1,5 @@
+{"id": "eval-001", "task": "生产环境 NullPointerException，OrderService 的 validate 方法", "skill": "pax-clarify", "expected_action": "clarify_error_scope", "reward": 1.0}
+{"id": "eval-002", "task": "数据不一致，系统也报错了，需要先查数据问题", "skill": "pax-clarify", "expected_action": "clarify_priority_order", "reward": 1.0}
+{"id": "eval-003", "task": "这个功能有问题，代码写得太烂了，需要重构", "skill": "pax-clarify", "expected_action": "clarify_problem_scope", "reward": 1.0}
+{"id": "eval-004", "task": "帮我处理一下这个问题", "skill": "pax-clarify", "expected_action": "clarify_problem_details", "reward": 1.0}
+{"id": "eval-005", "task": "解释一下什么是微服务架构，有什么优缺点", "skill": "pax-clarify", "expected_action": "clarify_context", "reward": 1.0}
