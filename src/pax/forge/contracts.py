@@ -264,3 +264,32 @@ def check_skip_audit(family_root: Path) -> list[str]:
                 f"skip_reason (跳过留痕契约)"
             )
     return violations
+
+
+# ----- 契约⑦：门禁行为 -----
+
+GATE_KEYWORDS = ("前置门禁", "前置条件", "未通过", "不满足", "禁止", "降级")
+
+
+@register_contract("gate-behavior")
+def check_gate_behavior(family_root: Path) -> list[str]:
+    violations: list[str] = []
+    for skill_dir in _iter_skill_dirs(family_root):
+        text = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+        fm, body = _split_frontmatter(text)
+        if fm is None:
+            continue
+        marker = "## Execution Contract"
+        if marker not in body:
+            violations.append(
+                f"{fm['name']}: missing Execution Contract section"
+            )
+            continue
+        section = body.split(marker, 1)[1]
+        if "\n## " in section:
+            section = section.split("\n## ", 1)[0]
+        if not any(k in section for k in GATE_KEYWORDS):
+            violations.append(
+                f"{fm['name']}: Execution Contract lacks precondition/gate keyword"
+            )
+    return violations

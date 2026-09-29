@@ -45,7 +45,7 @@ def test_register_contract_decorator_registers_name():
 
 
 def test_list_contracts_returns_sorted_names():
-    from pax.forge.contracts import _CONTRACTS, list_contracts
+    from pax.forge.contracts import _CONTRACTS, list_contracts, register_contract
 
     saved = dict(_CONTRACTS)
     _CONTRACTS.clear()
@@ -64,7 +64,9 @@ def test_list_contracts_returns_sorted_names():
 
 def test_run_all_contracts_catches_contract_exceptions(tmp_path):
     """A contract that raises must not abort the run; failures accumulate."""
-    from pax.forge.contracts import _CONTRACTS, run_all_contracts
+    from pax.forge.contracts import (
+        _CONTRACTS, register_contract, run_all_contracts,
+    )
 
     saved = dict(_CONTRACTS)
     _CONTRACTS.clear()
@@ -267,3 +269,38 @@ def test_contract_skip_audit_optional_with_skip_reason_passes(tmp_path):
         encoding="utf-8",
     )
     assert check_skip_audit(tmp_path) == []
+
+
+# ----- 契约⑦：门禁行为 -----
+
+def test_contract_gate_behavior_detects_missing_precondition(tmp_path):
+    from pax.forge.contracts import check_gate_behavior
+    d = tmp_path / "skills" / "pax-plan"
+    d.mkdir(parents=True)
+    (d / "SKILL.md").write_text(
+        "---\nname: pax-plan\ndescription: >\n  x\nversion: 0.1.0\n"
+        "family: pax\nlayer: L1\noptional: false\nrequires_snapshot: true\n"
+        "---\n\n# pax-plan\n## Execution Contract\n- xxx\n"
+        "## 职责边界\n- ...\n## 输入\n- ...\n## 工作流\n1. ...\n"
+        "## 输出契约\n- ...\n## 失败模式\n- ...\n## 何时升级\n- ...\n",
+        encoding="utf-8",
+    )
+    violations = check_gate_behavior(tmp_path)
+    assert any("pax-plan" in v for v in violations)
+
+
+def test_contract_gate_behavior_passes_with_precondition(tmp_path):
+    from pax.forge.contracts import check_gate_behavior
+    d = tmp_path / "skills" / "pax-plan"
+    d.mkdir(parents=True)
+    (d / "SKILL.md").write_text(
+        "---\nname: pax-plan\ndescription: >\n  x\nversion: 0.1.0\n"
+        "family: pax\nlayer: L1\noptional: false\nrequires_snapshot: true\n"
+        "---\n\n# pax-plan\n## Execution Contract\n"
+        "- 前置门禁：consensus.gaps_remaining == []\n"
+        "- 未通过：返回 pax-clarify\n"
+        "## 职责边界\n- ...\n## 输入\n- ...\n## 工作流\n1. ...\n"
+        "## 输出契约\n- ...\n## 失败模式\n- ...\n## 何时升级\n- ...\n",
+        encoding="utf-8",
+    )
+    assert check_gate_behavior(tmp_path) == []
