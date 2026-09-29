@@ -46,8 +46,22 @@ def build_parser() -> argparse.ArgumentParser:
     test_p.add_argument("--skill", help="Only test this skill (default: all)")
 
     # version
-    version_p = sub.add_parser("version", help="Bump family version")
-    version_p.add_argument("bump", choices=["patch", "minor", "major"])
+    version_p = sub.add_parser(
+        "version",
+        help="Bump family version, or inspect versions",
+    )
+    version_p.add_argument(
+        "bump", choices=["patch", "minor", "major"], nargs="?",
+        default=None,
+    )
+    version_p.add_argument(
+        "--list", action="store_true",
+        help="Print the current pax.__version__ from __init__.py",
+    )
+    version_p.add_argument(
+        "--check-registry", action="store_true",
+        help="Verify skills/*/SKILL.md versions match versions.json",
+    )
 
     # deprecate
     deprecate_p = sub.add_parser("deprecate", help="Mark a skill as deprecated")
@@ -166,6 +180,50 @@ def main(argv: list[str] | None = None) -> int:
             print(f"  FAIL  {f}")
         print(f"\n{len(report.passes)} passed, {len(report.failures)} failed")
         return 0 if report.ok else 1
+
+    if args.command == "version":
+        from pax.forge.versioning import (
+            VersionError,
+            apply_bump,
+            check_registry_versions,
+            list_version,
+        )
+        if args.list:
+            print(list_version())
+            return 0
+        if args.check_registry:
+            mismatches = check_registry_versions(Path.cwd())
+            if not mismatches:
+                print("all skills versions match versions.json")
+                return 0
+            print("version mismatches:")
+            for m in mismatches:
+                print(f"  - {m}")
+            return 1
+        if args.bump is None:
+            print(
+                "error: specify a bump (patch|minor|major) or use "
+                "--list / --check-registry",
+                file=sys.stderr,
+            )
+            return 2
+        try:
+            new = apply_bump(args.bump, family_only=False)
+        except VersionError as exc:
+            print(f"error: {exc}", file=sys.stderr)
+            return 1
+        print(f"bumped family to {new}")
+        return 0
+
+    if args.command == "deprecate":
+        from pax.forge.versioning import VersionError, deprecate_skill
+        try:
+            deprecate_skill(args.name)
+        except VersionError as exc:
+            print(f"error: {exc}", file=sys.stderr)
+            return 1
+        print(f"deprecated {args.name}")
+        return 0
 
     # 所有子命令在后续 Task 中逐步实现；未实现时统一返回 2
     return _not_implemented()
