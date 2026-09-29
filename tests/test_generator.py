@@ -31,3 +31,15 @@ def test_generate_rejects_bad_name(tmp_path):
     with pytest.raises(GenerationError):
         generate_skill(name="not-pax-foo", layer="L1",
                        description="x", target_root=tmp_path, optional=False)
+
+
+def test_generate_l0_skill(tmp_path):
+    skill_dir = generate_skill(
+        name="pax-orchestrate", layer="L0",
+        description="路由、风险分级、生命周期管理",
+        target_root=tmp_path, optional=False,
+    )
+    text = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    assert "## 风险评分维度" in text
+    assert "## 路由规则" in text
+    assert "## Execution Contract" in text
