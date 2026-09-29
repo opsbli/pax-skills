@@ -28,6 +28,60 @@ def test_run_all_contracts_returns_report(tmp_path):
     assert isinstance(list_contracts(), list)
 
 
+def test_register_contract_decorator_registers_name():
+    """@register_contract(name) must store the function under ``name``."""
+    from pax.forge.contracts import _CONTRACTS, list_contracts, register_contract
+
+    marker = "__framework_test_contract__"
+    try:
+        @register_contract(marker)
+        def _dummy(family_root):
+            return []
+
+        assert marker in _CONTRACTS
+        assert marker in list_contracts()
+    finally:
+        _CONTRACTS.pop(marker, None)
+
+
+def test_list_contracts_returns_sorted_names():
+    from pax.forge.contracts import _CONTRACTS, list_contracts
+
+    saved = dict(_CONTRACTS)
+    _CONTRACTS.clear()
+    try:
+        @register_contract("zeta")
+        def _z(family_root): return []
+
+        @register_contract("alpha")
+        def _a(family_root): return []
+
+        assert list_contracts() == ["alpha", "zeta"]
+    finally:
+        _CONTRACTS.clear()
+        _CONTRACTS.update(saved)
+
+
+def test_run_all_contracts_catches_contract_exceptions(tmp_path):
+    """A contract that raises must not abort the run; failures accumulate."""
+    from pax.forge.contracts import _CONTRACTS, run_all_contracts
+
+    saved = dict(_CONTRACTS)
+    _CONTRACTS.clear()
+    try:
+        @register_contract("__boom__")
+        def _boom(family_root):
+            raise RuntimeError("kaboom")
+
+        (tmp_path / "skills").mkdir(parents=True, exist_ok=True)
+        report = run_all_contracts(tmp_path)
+        assert not report.ok
+        assert any("kaboom" in f for f in report.failures)
+    finally:
+        _CONTRACTS.clear()
+        _CONTRACTS.update(saved)
+
+
 # ----- 契约①：frontmatter 完整性 -----
 
 def test_contract_frontmatter_completeness_detects_missing(tmp_path):
@@ -177,3 +231,39 @@ def test_contract_no_cycles_detects(tmp_path):
     _mk_skill(tmp_path, "pax-b", "## 何时升级\n调用 pax-a")
     violations = check_no_cycles(tmp_path)
     assert any("cycle" in v.lower() for v in violations)
+
+
+# ----- 契约⑥：跳过审计 -----
+
+def test_contract_skip_audit_optional_without_skip_reason_fails(tmp_path):
+    from pax.forge.contracts import check_skip_audit
+    d = tmp_path / "skills" / "pax-diagnose"
+    d.mkdir(parents=True)
+    (d / "SKILL.md").write_text(
+        "---\nname: pax-diagnose\ndescription: >\n  Root cause diagnosis\n"
+        "version: 0.1.0\nfamily: pax\nlayer: L1\noptional: true\n"
+        "requires_snapshot: true\n---\n\n# pax-diagnose\n"
+        "## Execution Contract\n- ...\n## 职责边界\n- ...\n"
+        "## 输入\n- ...\n## 工作流\n1. ...\n## 输出契约\n- ...\n"
+        "## 失败模式\n- ...\n## 何时升级\n- ...\n",
+        encoding="utf-8",
+    )
+    violations = check_skip_audit(tmp_path)
+    assert any("skip_reason" in v or "跳过" in v for v in violations)
+
+
+def test_contract_skip_audit_optional_with_skip_reason_passes(tmp_path):
+    from pax.forge.contracts import check_skip_audit
+    d = tmp_path / "skills" / "pax-diagnose"
+    d.mkdir(parents=True)
+    (d / "SKILL.md").write_text(
+        "---\nname: pax-diagnose\ndescription: >\n  Root cause diagnosis\n"
+        "version: 0.1.0\nfamily: pax\nlayer: L1\noptional: true\n"
+        "requires_snapshot: true\n---\n\n# pax-diagnose\n"
+        "## Execution Contract\n- 跳过必须记录 skip_reason\n"
+        "## 职责边界\n- ...\n## 输入\n- ...\n"
+        "## 工作流\n1. ...\n## 输出契约\n- ...\n"
+        "## 失败模式\n- ...\n## 何时升级\n- ...\n",
+        encoding="utf-8",
+    )
+    assert check_skip_audit(tmp_path) == []

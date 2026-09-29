@@ -241,3 +241,26 @@ def check_no_cycles(family_root: Path) -> list[str]:
     graph = _extract_call_graph(family_root)
     cycles = _find_cycles(graph)
     return [f"cycle detected: {' -> '.join(c)}" for c in cycles]
+
+
+# ----- 契约⑥：跳过审计 -----
+
+SKIP_AUDIT_KEYWORDS = ("skip_reason", "跳过留痕", "跳过理由")
+
+
+@register_contract("skip-audit")
+def check_skip_audit(family_root: Path) -> list[str]:
+    violations: list[str] = []
+    for skill_dir in _iter_skill_dirs(family_root):
+        text = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+        fm, body = _split_frontmatter(text)
+        if fm is None:
+            continue
+        if not fm.get("optional", False):
+            continue
+        if not any(k in body for k in SKIP_AUDIT_KEYWORDS):
+            violations.append(
+                f"{fm['name']}: optional skill must document "
+                f"skip_reason (跳过留痕契约)"
+            )
+    return violations
