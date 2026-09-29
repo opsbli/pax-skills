@@ -50,6 +50,15 @@ def test_cli_new_creates_skill(tmp_path):
     assert r2.returncode in (0, 1, 2)
 
 
+def test_cli_patch_apply_empty_manifest():
+    # 真实 manifest 是空的（patches=[]），apply 应为 no-op 且 return 0。
+    # 输出必须能被下游脚本 parse 出 "applied N" 计数。
+    result = run_cli("patch", "apply")
+    assert result.returncode == 0
+    assert "applied" in result.stdout.lower()
+    assert "0" in result.stdout
+
+
 def test_cli_list_empty_when_no_skills(tmp_path, monkeypatch):
     # 通过 monkeypatch 指向一个空 registry；subprocess 无法继承，
     # 因此直接调用 main() 并捕获 stdout。

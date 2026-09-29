@@ -225,6 +225,16 @@ def main(argv: list[str] | None = None) -> int:
         print(f"deprecated {args.name}")
         return 0
 
+    if args.command == "patch" and args.sub_command == "apply":
+        from pax.forge.patcher import PatchError, apply_manifest
+        try:
+            n = apply_manifest(family_root=Path.cwd())
+        except PatchError as exc:
+            print(f"error: {exc}", file=sys.stderr)
+            return 1
+        print(f"applied {n} new patches")
+        return 0
+
     # 所有子命令在后续 Task 中逐步实现；未实现时统一返回 2
     return _not_implemented()
 
