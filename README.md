@@ -49,10 +49,27 @@ pax-forge list
 
 见 `docs/pax-family-design.md`。
 
+## 路由评估
+
+pax-orchestrate 路由评估结果（2026-09-30）：
+
+| 指标 | 结果 | 目标 |
+|------|------|------|
+| Exact match | 81.1% | ≥80% |
+| Top-1 accuracy | 97.2% | ≥85% |
+| No-Skill rejection | 100% | ≥90% |
+| False activation | 0% | ≤10% |
+
+评估数据集：`evals/datasets/pax_routing_v1.0.jsonl`（30 案例）
+评估套件：`tools/skillEval/evals/suites/pax_routing.yaml`
+
+内部路由测试：`tests/test_orchestrate_routing.py`（5 个测试）
+真实场景试跑：`evals/records/real_scenario_trial.md`
+
 ## 贡献
 
 见 `CONTRIBUTING.md`。
 
 ## 版本
 
-家族版本见 `pax-ops/versions.json`。
+家族版本见 `pax-ops/versions.json`（当前 v0.2.0）。
