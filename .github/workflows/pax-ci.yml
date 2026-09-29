@@ -1,0 +1,241 @@
+name: pax-ci
+
+on:
+  push:
+    branches: [main, feat/**]
+    paths:
+      - 'skills/**'
+      - 'src/**'
+      - 'tests/**'
+      - 'pax-ops/**'
+      - 'schemas/**'
+      - 'references/**'
+      - 'evals/**'
+      - 'pyproject.toml'
+      - '.github/workflows/pax-ci.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'skills/**'
+      - 'src/**'
+      - 'tests/**'
+      - 'pax-ops/**'
+      - 'schemas/**'
+      - 'references/**'
+      - 'evals/**'
+      - 'pyproject.toml'
+  workflow_dispatch:
+
+jobs:
+  # ============================================================
+  # 1. 契约测试 + 单元测试
+  # ============================================================
+  contracts-and-tests:
+    name: Contracts & Unit Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Run pax-forge contracts
+        run: |
+          echo "=== Running pax-forge contract checks ==="
+          python -m pax test
+          echo "=== All contracts passed ==="
+
+      - name: Run pytest
+        run: |
+          echo "=== Running pytest ==="
+          pytest -q --tb=short
+          echo "=== All tests passed ==="
+
+      - name: Verify version consistency
+        run: |
+          echo "=== Checking version consistency ==="
+          python -c "
+          import json, sys
+          from pathlib import Path
+          
+          versions = json.loads(Path('pax-ops/versions.json').read_text())
+          skills_dir = Path('skills')
+          errors = []
+          
+          for skill_dir in sorted(skills_dir.iterdir()):
+              if not skill_dir.is_dir() or skill_dir.name.startswith('.'):
+                  continue
+              skill_md = skill_dir / 'SKILL.md'
+              if not skill_md.exists():
+                  continue
+              
+              # Extract version from frontmatter
+              text = skill_md.read_text(encoding='utf-8')
+              import re
+              match = re.search(r'^version:\s*(.+)$', text, re.MULTILINE)
+              if not match:
+                  errors.append(f'{skill_dir.name}: missing version in frontmatter')
+                  continue
+              
+              skill_version = match.group(1).strip()
+              skill_name = skill_dir.name
+              
+              if skill_name not in versions.get('skills', {}):
+                  errors.append(f'{skill_name}: not in versions.json')
+                  continue
+              
+              expected_version = versions['skills'][skill_name]['version']
+              if skill_version != expected_version:
+                  errors.append(f'{skill_name}: SKILL.md version {skill_version} != versions.json {expected_version}')
+          
+          if errors:
+              print('VERSION INCONSISTENCIES:')
+              for e in errors:
+                  print(f'  - {e}')
+              sys.exit(1)
+          else:
+              print('All versions consistent')
+          "
+
+  # ============================================================
+  # 2. 路由评估（可选，需要 API Key）
+  # ============================================================
+  routing-eval:
+    name: Routing Evaluation
+    runs-on: ubuntu-latest
+    needs: contracts-and-tests
+    if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: 'pip'
+
+      - name: Install skillEval
+        run: |
+          cd tools/skillEval
+          pip install -r requirements.txt
+
+      - name: Run routing evaluation (mock mode)
+        run: |
+          cd tools/skillEval
+          echo "=== Running routing evaluation in mock mode ==="
+          python -m pipeline plan \
+            --suite ../../evals/suites/pax_routing.yaml \
+            --mock
+          echo "=== Routing evaluation completed ==="
+
+      - name: Run routing evaluation (real mode)
+        if: secrets.DASHSCOPE_API_KEY != ''
+        run: |
+          cd tools/skillEval
+          echo "=== Running routing evaluation with real model ==="
+          python -m pipeline plan \
+            --suite ../../evals/suites/pax_routing.yaml
+          python -m pipeline run \
+            --suite ../../evals/suites/pax_routing.yaml
+          python -m pipeline score \
+            --suite ../../evals/suites/pax_routing.yaml
+          echo "=== Routing evaluation completed ==="
+        env:
+          DASHSCOPE_API_KEY: ${{ secrets.DASHSCOPE_API_KEY }}
+          DASHSCOPE_BASE_URL: ${{ vars.DASHSCOPE_BASE_URL }}
+
+  # ============================================================
+  # 3. 内部路由验证（可选）
+  # ============================================================
+  internal-routing-check:
+    name: Internal Routing Logic Check
+    runs-on: ubuntu-latest
+    needs: contracts-and-tests
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Validate internal routing test cases
+        run: |
+          echo "=== Validating internal routing test cases ==="
+          python -c "
+          import json
+          from pathlib import Path
+          
+          data = json.loads(Path('evals/datasets/pax_internal_routing_v1.0.json').read_text())
+          categories = data['categories']
+          
+          total = 0
+          for cat_name, cat_data in categories.items():
+              cases = cat_data['cases']
+              total += len(cases)
+              print(f'  {cat_name}: {len(cases)} cases')
+              
+              for case in cases:
+                  # Validate required fields
+                  if 'id' not in case:
+                      print(f'    ERROR: {cat_name} missing id in case')
+                      exit(1)
+                  if 'input' not in case:
+                      print(f'    ERROR: {case[\"id\"]} missing input')
+                      exit(1)
+                  if 'expected_primary' not in case and cat_name == 'intent_classification':
+                      print(f'    ERROR: {case[\"id\"]} missing expected_primary')
+                      exit(1)
+              
+          print(f'  Total: {total} cases')
+          print('=== All test cases valid ===')
+          "
+
+  # ============================================================
+  # 4. 质量门禁摘要
+  # ============================================================
+  quality-summary:
+    name: Quality Summary
+    runs-on: ubuntu-latest
+    needs: [contracts-and-tests, internal-routing-check]
+    if: always()
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Summary
+        run: |
+          echo "## pax-* CI Quality Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Contracts & Tests | ${{ needs.contracts-and-tests.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Internal Routing | ${{ needs.internal-routing-check.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Routing Eval | ${{ needs.routing-eval.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ needs.contracts-and-tests.result }}" = "success" ]; then
+            echo "✅ **All quality gates passed**" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Quality gate failed**" >> $GITHUB_STEP_SUMMARY
+            echo "Please review the failed checks above." >> $GITHUB_STEP_SUMMARY
+          fi
