@@ -38,6 +38,12 @@ D1→D6 强制顺序，任何跳过必须记录 `skip_reason`。
    - `status ∈ {reproduced, not_reproduced, partial}`
 2. **D2 证据收集（Evidence Collection）**
    - 输出：`evidence[]`（`type ∈ {log, stack_trace, change, metric, config, dependency}`）
+   - **存储后端确认**（当根因可能涉及数据订正时强制）：
+     - 确认目标模块的实际存储引擎（MongoDB / MySQL / PostgreSQL / 其他）
+     - 确认 ORM / DAO 层（JPA / MyBatis / MongoPlus / 原生）
+     - 确认迁移工具链（Flyway / Liquibase / mongosh / sqlupgrade / 其他）
+     - 输出：`infrastructure.{storage_backend, orm, migration_tool, script_language}`
+     - 禁止在未确认存储后端的情况下推测数据订正方式
 3. **D2.5 历史诊断检索**（自动执行）
    - 检索源：`pax-docs` 维护的故障档案、历史 snapshot、issue/PR
    - `similarity: high` 时，D3 假设生成必须优先验证历史根因
