@@ -63,3 +63,24 @@ def test_load_versions_shape():
     assert "pax-clarify" in versions["skills"]
     assert versions["skills"]["pax-clarify"]["layer"] == "L1"
     assert "compatibility_matrix" in versions
+
+
+def test_load_registry_shape():
+    from pax.forge.loader import load_registry
+    registry = load_registry()
+    assert registry["family"] == "pax"
+    assert isinstance(registry["skills"], list)
+    assert registry["skills"] == []
+    assert registry["updated_at"] is not None
+
+
+def test_save_registry_roundtrip(tmp_path):
+    from pax.forge.loader import load_registry, save_registry, REGISTRY_PATH
+    registry = load_registry()
+    registry["skills"] = [{"name": "pax-foo", "layer": "L1",
+                            "optional": False, "version": "0.1.0",
+                            "path": "skills/pax-foo/SKILL.md",
+                            "registered_at": "2026-09-29T00:00:00Z"}]
+    save_registry(registry, tmp_path / "r.json")
+    loaded = load_registry(tmp_path / "r.json")
+    assert loaded["skills"][0]["name"] == "pax-foo"
