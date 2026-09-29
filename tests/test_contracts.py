@@ -90,3 +90,39 @@ def test_contract_snapshot_schema_reference_consistent():
     family = loader.load_family_schema()
     ref = family["contracts"]["snapshot_schema"]
     assert "snapshot.schema.json" in ref
+
+
+# ----- 契约③：层间调用合法性 -----
+
+def test_allowed_calls_matrix():
+    from pax.forge.contracts import _allowed_calls
+    allowed = _allowed_calls()
+    assert ("L0", "L1") in allowed
+    assert ("L1", "L2") in allowed
+    assert ("L1", "L3") in allowed
+    assert ("L1", "L4") in allowed
+    # L4 不能调用 L1（横切是被调用方）
+    assert ("L4", "L1") not in allowed
+    # meta 不参与运行时
+    assert ("meta", "L1") not in allowed
+
+
+def test_contract_layer_calls_flag_violation(tmp_path):
+    from pax.forge.contracts import check_layer_call_legality
+    def write(name: str, layer: str, body: str):
+        d = tmp_path / "skills" / name
+        d.mkdir(parents=True, exist_ok=True)
+        (d / "SKILL.md").write_text(
+            f"---\nname: {name}\ndescription: >\n  x\nversion: 0.1.0\n"
+            f"family: pax\nlayer: {layer}\noptional: false\n"
+            f"requires_snapshot: true\n---\n\n# {name}\n"
+            f"## Execution Contract\n- x\n## 职责边界\n- x\n## 输入\n- x\n"
+            f"## 工作流\n1. x\n## 输出契约\n- x\n## 失败模式\n- x\n"
+            f"## 何时升级\n{body}\n",
+            encoding="utf-8",
+        )
+    # L4 调 L1 应该被标记
+    write("pax-v", "L4", "调用 pax-plan")
+    write("pax-plan", "L1", "")
+    violations = check_layer_call_legality(tmp_path)
+    assert any("pax-v" in v for v in violations)

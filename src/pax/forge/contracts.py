@@ -114,3 +114,48 @@ def check_snapshot_schema_validity(family_root: Path) -> list[str]:
     except jsonschema.SchemaError as exc:
         violations.append(f"snapshot schema invalid: {exc.message}")
     return violations
+
+
+# ----- 契约③：层间调用合法性 -----
+
+def _allowed_calls() -> set[tuple[str, str]]:
+    return {
+        ("L0", "L1"),
+        ("L1", "L1"),   # 相邻阶段
+        ("L1", "L2"),
+        ("L1", "L3"),
+        ("L2", "L3"),
+        ("L0", "L4"),
+        ("L1", "L4"),
+        ("L2", "L4"),
+    }
+
+
+@register_contract("layer-call-legality")
+def check_layer_call_legality(family_root: Path) -> list[str]:
+    allowed = _allowed_calls()
+    violations: list[str] = []
+    skill_layers: dict[str, str] = {}
+    for skill_dir in _iter_skill_dirs(family_root):
+        text = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+        fm, _ = _split_frontmatter(text)
+        if fm and "name" in fm and "layer" in fm:
+            skill_layers[fm["name"]] = fm["layer"]
+    for skill_dir in _iter_skill_dirs(family_root):
+        text = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+        fm, body = _split_frontmatter(text)
+        if fm is None:
+            continue
+        self_layer = fm["layer"]
+        mentioned = set(_re.findall(r"pax-[a-z][a-z0-9-]*", body))
+        mentioned -= {fm["name"]}
+        for target_name in mentioned:
+            target_layer = skill_layers.get(target_name)
+            if target_layer is None:
+                continue
+            if (self_layer, target_layer) not in allowed:
+                violations.append(
+                    f"{fm['name']} ({self_layer}) references "
+                    f"{target_name} ({target_layer}): forbidden direction"
+                )
+    return violations
