@@ -84,3 +84,22 @@ def test_save_registry_roundtrip(tmp_path):
     save_registry(registry, tmp_path / "r.json")
     loaded = load_registry(tmp_path / "r.json")
     assert loaded["skills"][0]["name"] == "pax-foo"
+
+
+def test_load_patches_manifest_shape():
+    from pax.forge.loader import load_patches_manifest
+    manifest = load_patches_manifest()
+    assert manifest["version"] == "1.0"
+    assert manifest["patches"] == []
+    assert manifest["applied"] == []
+
+
+def test_save_patches_manifest_roundtrip(tmp_path):
+    from pax.forge.loader import (load_patches_manifest,
+                                   save_patches_manifest)
+    manifest = load_patches_manifest()
+    manifest["patches"] = [{"id": "p1", "target": "skills/pax-clarify/SKILL.md",
+                             "operation": "replace", "needle": "a", "repl": "b"}]
+    target = tmp_path / "m.json"
+    save_patches_manifest(manifest, target)
+    assert load_patches_manifest(target)["patches"][0]["id"] == "p1"
