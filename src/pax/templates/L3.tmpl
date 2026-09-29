@@ -1,0 +1,42 @@
+---
+name: {{ name }}
+description: >
+  {{ description }}。L3 层工具适配，接口由上层定义。
+version: {{ version }}
+family: pax
+layer: {{ layer }}
+optional: {{ 'true' if optional else 'false' }}
+requires_snapshot: true
+---
+
+# {{ name }}
+
+## Execution Contract
+- 前置门禁：调用方已定义任务边界与输入
+- 未通过门禁：拒绝执行
+- 版本检查：`pax-ops/versions.json`
+
+## 职责边界
+- 做什么：将有界实现任务委托给固定 worker
+- 不做什么：不做路由决策、不修改上层快照字段
+
+## 输入
+- 必需：任务描述、约束、输入上下文
+- 可选：优先级、超时
+
+## 工作流
+1. 沙箱准备（isolated FS / network）
+2. 无头执行任务
+3. 收集输出、日志、diff
+4. 打包返回给调用方
+
+## 输出契约
+- 变更 diff、执行日志、退出码
+
+## 失败模式
+- 任务超时 → kill 并返回 partial
+- 沙箱失败 → 拒绝执行
+- 跳过留痕：任何跳过记录 `skip_reason`
+
+## 何时升级
+- 任务超出 worker 能力 → 返回 `pax-plan` 请求重规划

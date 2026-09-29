@@ -54,3 +54,14 @@ def test_generate_l2_skill(tmp_path):
     text = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
     assert "只读" in text
     assert "不修改快照" in text
+
+
+def test_generate_l3_skill(tmp_path):
+    skill_dir = generate_skill(
+        name="pax-worker-grok", layer="L3",
+        description="Grok 有界任务执行",
+        target_root=tmp_path, optional=True,
+    )
+    text = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    assert "沙箱" in text
+    assert "无头执行" in text
