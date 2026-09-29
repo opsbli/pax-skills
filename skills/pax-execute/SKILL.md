@@ -31,6 +31,7 @@ requires_snapshot: true
 ## 工作流
 1. 校验契约已确认，`plan.status == frozen`
 2. 按计划步骤执行，每步执行前核对 `depends_on`
+   - **数据订正步骤**：执行前检查目标仓库的 `script/` 目录结构，确认存储引擎与 plan 中标注的 `script_language` 一致。不一致则暂停并返回 plan 阶段重新确认。
 3. 每步内环验证：做 → 验 → 修
 4. 记录执行日志 `log[]` 与变更 `changes[]`
 5. 检测偏差：若偏离契约，暂停并重新协商（写入 `deviations[]`）

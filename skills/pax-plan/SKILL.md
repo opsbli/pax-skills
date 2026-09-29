@@ -29,6 +29,8 @@ requires_snapshot: true
 ## 工作流
 1. 读取快照，校验前置门禁
 2. 分解目标为步骤，每步绑定证据（`evidence[]`）
+   - **数据订正步骤**：必须包含前置检查 `prerequisite: storage_backend_confirmed`，`script_language` 必须与诊断阶段 D2 确认的 `infrastructure.script_language` 一致。不一致则拒绝冻结。
+   - **跨仓库步骤**：标注 `repo: <仓库名>` 和 `execution_strategy: <subagent|separate_session|manual_handoff>`。不标注则拒绝冻结。
 3. 标注依赖（`depends_on`）、风险、回退点（`rollback`）
 4. 定义验证策略 `verification_strategy[]`（步骤 → 方法 → 通过标准）
 5. 写入快照 `plan` 区，状态置 `frozen`
@@ -45,6 +47,12 @@ plan:
       outputs: [...]
       depends_on: [S<M>]
       rollback: "..."
+      # 数据订正步骤专用字段：
+      prerequisite: storage_backend_confirmed
+      script_language: "mongosh|sql|python|..."
+      # 跨仓库步骤专用字段：
+      repo: "ops-pilot-web"
+      execution_strategy: "subagent|separate_session|manual_handoff"
   dependencies: [...]
   evidence: [...]
   verification_strategy:
