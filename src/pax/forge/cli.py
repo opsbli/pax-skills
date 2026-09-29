@@ -69,6 +69,20 @@ def _not_implemented() -> int:
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
+
+    if args.command == "init":
+        from pax.forge.init import init_family, InitError
+        target = Path(args.path).resolve()
+        try:
+            copied = init_family(target)
+        except InitError as exc:
+            print(f"error: {exc}", file=sys.stderr)
+            return 1
+        for p in copied:
+            print(f"  wrote {p.relative_to(target)}")
+        print(f"init complete -> {target}")
+        return 0
+
     # 所有子命令在后续 Task 中逐步实现；未实现时统一返回 2
     return _not_implemented()
 
