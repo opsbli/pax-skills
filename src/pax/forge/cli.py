@@ -142,6 +142,19 @@ def main(argv: list[str] | None = None) -> int:
         print(f"init complete -> {target}")
         return 0
 
+    if args.command == "list":
+        from pax.forge import loader
+        registry = loader.load_registry()
+        skills = registry.get("skills", [])
+        if not skills:
+            print("(empty registry)")
+            return 0
+        print(f"{len(skills)} skills:")
+        for s in skills:
+            opt = " (optional)" if s.get("optional") else ""
+            print(f"  {s['name']}@{s['version']}  [{s['layer']}]{opt}")
+        return 0
+
     if args.command == "test":
         from pax.forge.contracts import run_all_contracts, list_contracts
         root = Path.cwd()

@@ -48,3 +48,29 @@ def test_cli_new_creates_skill(tmp_path):
                  "--description", "desc", cwd=None)
     # 说明：CLI 默认写到项目根，测试这里不校验产物，仅验证能启动
     assert r2.returncode in (0, 1, 2)
+
+
+def test_cli_list_empty_when_no_skills(tmp_path, monkeypatch):
+    # 通过 monkeypatch 指向一个空 registry；subprocess 无法继承，
+    # 因此直接调用 main() 并捕获 stdout。
+    import json
+    import io
+    from contextlib import redirect_stdout
+
+    from pax.forge import loader
+    reg_path = tmp_path / "registry.json"
+    reg_path.write_text(
+        json.dumps({"family": "pax", "updated_at": None, "skills": []}),
+        encoding="utf-8",
+    )
+    original = loader.REGISTRY_PATH
+    monkeypatch.setattr(loader, "REGISTRY_PATH", reg_path)
+    try:
+        from pax.forge.cli import main
+        buf = io.StringIO()
+        with redirect_stdout(buf):
+            rc = main(["list"])
+    finally:
+        loader.REGISTRY_PATH = original
+    assert rc == 0
+    assert "empty" in buf.getvalue().lower()
