@@ -108,6 +108,18 @@ def main(argv: list[str] | None = None) -> int:
         print(f"init complete -> {target}")
         return 0
 
+    if args.command == "test":
+        from pax.forge.contracts import run_all_contracts, list_contracts
+        root = Path.cwd()
+        report = run_all_contracts(root)
+        print(f"contracts discovered: {', '.join(list_contracts()) or '(none)'}")
+        for p in report.passes:
+            print(f"  PASS  {p}")
+        for f in report.failures:
+            print(f"  FAIL  {f}")
+        print(f"\n{len(report.passes)} passed, {len(report.failures)} failed")
+        return 0 if report.ok else 1
+
     # 所有子命令在后续 Task 中逐步实现；未实现时统一返回 2
     return _not_implemented()
 
