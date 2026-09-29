@@ -189,3 +189,55 @@ def check_version_consistency(family_root: Path) -> list[str]:
                 f"versions.json {known[name].get('version')!r}"
             )
     return violations
+
+
+# ----- 契约⑤：无循环依赖 -----
+
+def _extract_call_graph(family_root: Path) -> dict[str, set[str]]:
+    graph: dict[str, set[str]] = {}
+    for skill_dir in _iter_skill_dirs(family_root):
+        text = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+        fm, body = _split_frontmatter(text)
+        if fm is None:
+            continue
+        name = fm["name"]
+        mentioned = set(_re.findall(r"pax-[a-z][a-z0-9-]*", body))
+        mentioned -= {name}
+        graph[name] = mentioned
+    return graph
+
+
+def _find_cycles(graph: dict[str, set[str]]) -> list[list[str]]:
+    cycles: list[list[str]] = []
+    seen_global: set[tuple[str, ...]] = set()
+    visited: set[str] = set()
+    path: list[str] = []
+
+    def dfs(node: str):
+        if node in path:
+            cyc = tuple(path[path.index(node):])
+            if cyc not in seen_global:
+                seen_global.add(cyc)
+                cycles.append(list(cyc) + [node])
+            return
+        if node in visited:
+            return
+        visited.add(node)
+        path.append(node)
+        for nxt in sorted(graph.get(node, ())):
+            if nxt in graph:
+                dfs(nxt)
+        path.pop()
+
+    for node in sorted(graph):
+        visited.clear()
+        path.clear()
+        dfs(node)
+    return cycles
+
+
+@register_contract("no-cycles")
+def check_no_cycles(family_root: Path) -> list[str]:
+    graph = _extract_call_graph(family_root)
+    cycles = _find_cycles(graph)
+    return [f"cycle detected: {' -> '.join(c)}" for c in cycles]

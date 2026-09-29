@@ -149,3 +149,31 @@ def test_contract_version_consistency_detects_orphan(tmp_path):
     )
     violations = check_version_consistency(tmp_path)
     assert any("pax-orphan" in v for v in violations)
+
+
+# ----- 契约⑤：无循环依赖 -----
+
+def _mk_skill(root, name, body=""):
+    d = root / "skills" / name
+    d.mkdir(parents=True, exist_ok=True)
+    (d / "SKILL.md").write_text(
+        f"---\nname: {name}\ndescription: >\n  x\nversion: 0.1.0\n"
+        f"family: pax\nlayer: L1\noptional: false\nrequires_snapshot: true\n"
+        f"---\n\n# {name}\n{body}\n", encoding="utf-8"
+    )
+
+
+def test_contract_no_cycles_clean(tmp_path):
+    from pax.forge.contracts import check_no_cycles
+    _mk_skill(tmp_path, "pax-a", "## 何时升级\n调用 pax-b")
+    _mk_skill(tmp_path, "pax-b", "## 何时升级\n调用 pax-c")
+    _mk_skill(tmp_path, "pax-c")
+    assert check_no_cycles(tmp_path) == []
+
+
+def test_contract_no_cycles_detects(tmp_path):
+    from pax.forge.contracts import check_no_cycles
+    _mk_skill(tmp_path, "pax-a", "## 何时升级\n调用 pax-b")
+    _mk_skill(tmp_path, "pax-b", "## 何时升级\n调用 pax-a")
+    violations = check_no_cycles(tmp_path)
+    assert any("cycle" in v.lower() for v in violations)
