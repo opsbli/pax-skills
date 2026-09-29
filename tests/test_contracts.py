@@ -304,3 +304,22 @@ def test_contract_gate_behavior_passes_with_precondition(tmp_path):
         encoding="utf-8",
     )
     assert check_gate_behavior(tmp_path) == []
+
+
+# ----- 汇总：7 个契约全部注册 -----
+
+def test_all_seven_contracts_registered():
+    from pax.forge.contracts import list_contracts
+    # 强制 import contracts 以注册
+    import pax.forge.contracts  # noqa
+    names = set(list_contracts())
+    expected = {
+        "frontmatter-completeness",
+        "snapshot-schema-validity",
+        "layer-call-legality",
+        "version-consistency",
+        "no-cycles",
+        "skip-audit",
+        "gate-behavior",
+    }
+    assert expected.issubset(names)
