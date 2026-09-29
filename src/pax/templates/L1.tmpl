@@ -1,0 +1,39 @@
+---
+name: {{ name }}
+description: >
+  {{ description }}。当需要 {{ use_case | default('处理该类任务') }} 时使用。
+version: {{ version }}
+family: pax
+layer: {{ layer }}
+optional: {{ 'true' if optional else 'false' }}
+requires_snapshot: true
+---
+
+# {{ name }}
+
+## Execution Contract
+- 前置门禁：<在此声明前置条件，例如 `snapshot.<section> == <value>`>
+- 未通过门禁：<在此声明降级或返回行为>
+- 版本检查：读取 `pax-ops/versions.json` 校验家族版本
+
+## 职责边界
+- 做什么：<一行说明核心动作>
+- 不做什么：<列出越权动作>
+
+## 输入
+- 必需：`snapshot.<...>`
+- 可选：<...>
+
+## 工作流
+1. <步骤 1>
+2. <步骤 2>
+3. <步骤 3>
+
+## 输出契约
+- `<snapshot.<section>>`，格式由 `schemas/snapshot.schema.json` 约束
+
+## 失败模式
+- 如果 `<条件>`，则 `<行为>`
+
+## 何时升级
+- 如果 `<风险触发条件>`，调用 `<目标 Skill>`

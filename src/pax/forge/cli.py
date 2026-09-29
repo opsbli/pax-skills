@@ -70,6 +70,20 @@ def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
 
+    if args.command == "new":
+        from pax.forge.generator import GenerationError, generate_skill
+        try:
+            skill_dir = generate_skill(
+                name=args.name, layer=args.layer,
+                description=args.description,
+                target_root=Path.cwd(), optional=args.optional,
+            )
+        except GenerationError as exc:
+            print(f"error: {exc}", file=sys.stderr)
+            return 1
+        print(f"wrote {skill_dir}")
+        return 0
+
     if args.command == "init":
         from pax.forge.init import init_family, InitError
         target = Path(args.path).resolve()
