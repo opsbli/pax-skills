@@ -126,3 +126,26 @@ def test_contract_layer_calls_flag_violation(tmp_path):
     write("pax-plan", "L1", "")
     violations = check_layer_call_legality(tmp_path)
     assert any("pax-v" in v for v in violations)
+
+
+# ----- 契约④：版本一致性 -----
+
+def test_contract_version_consistency_detects_orphan(tmp_path):
+    import json
+    from pax.forge.contracts import check_version_consistency
+    (tmp_path / "pax-ops").mkdir(parents=True)
+    (tmp_path / "skills" / "pax-orphan").mkdir(parents=True)
+    (tmp_path / "pax-ops" / "versions.json").write_text(
+        json.dumps({"family": "pax", "version": "0.1.0", "skills": {}}),
+        encoding="utf-8",
+    )
+    (tmp_path / "skills" / "pax-orphan" / "SKILL.md").write_text(
+        "---\nname: pax-orphan\ndescription: >\n  x\nversion: 0.1.0\n"
+        "family: pax\nlayer: L1\noptional: false\nrequires_snapshot: true\n"
+        "---\n\n# pax-orphan\n## Execution Contract\n- x\n## 职责边界\n- x\n"
+        "## 输入\n- x\n## 工作流\n1. x\n## 输出契约\n- x\n"
+        "## 失败模式\n- x\n## 何时升级\n- x\n",
+        encoding="utf-8",
+    )
+    violations = check_version_consistency(tmp_path)
+    assert any("pax-orphan" in v for v in violations)

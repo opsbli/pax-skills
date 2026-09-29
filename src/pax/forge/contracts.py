@@ -159,3 +159,33 @@ def check_layer_call_legality(family_root: Path) -> list[str]:
                     f"{target_name} ({target_layer}): forbidden direction"
                 )
     return violations
+
+
+# ----- 契约④：版本一致性 -----
+
+@register_contract("version-consistency")
+def check_version_consistency(family_root: Path) -> list[str]:
+    versions_path = family_root / "pax-ops" / "versions.json"
+    if not versions_path.exists():
+        return ["missing pax-ops/versions.json"]
+    with versions_path.open("r", encoding="utf-8") as f:
+        versions = _json.load(f)
+    known = versions.get("skills", {})
+    violations: list[str] = []
+    for skill_dir in _iter_skill_dirs(family_root):
+        text = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+        fm, _ = _split_frontmatter(text)
+        if fm is None:
+            continue
+        name = fm.get("name")
+        if name not in known:
+            violations.append(
+                f"{name}: not listed in pax-ops/versions.json"
+            )
+            continue
+        if known[name].get("version") != fm.get("version"):
+            violations.append(
+                f"{name}: SKILL.md version {fm.get('version')!r} != "
+                f"versions.json {known[name].get('version')!r}"
+            )
+    return violations
