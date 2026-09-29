@@ -84,6 +84,17 @@ def main(argv: list[str] | None = None) -> int:
         print(f"wrote {skill_dir}")
         return 0
 
+    if args.command == "validate":
+        from pax.forge.validator import validate_skill
+        report = validate_skill(Path(args.path))
+        if report.ok:
+            print(f"OK  {report.path}")
+            return 0
+        print(f"FAIL {report.path}")
+        for v in report.violations:
+            print(f"  - {v}")
+        return 1
+
     if args.command == "init":
         from pax.forge.init import init_family, InitError
         target = Path(args.path).resolve()
