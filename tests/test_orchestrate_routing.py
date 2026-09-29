@@ -208,15 +208,21 @@ class TestOrchestrateRouting:
         """简单的意图分类（模拟 pax-orchestrate 的逻辑）"""
         prompt_lower = prompt.lower()
         
+        # 数据操作（优先检查，因为可能包含脚本/工具关键词）
+        if "不一致" in prompt_lower or ("数据" in prompt_lower and "订正" in prompt_lower):
+            return "data_ops"
+        if "迁移" in prompt_lower or ("数据" in prompt_lower and "批量" in prompt_lower):
+            return "data_ops"
+        if "cmdb" in prompt_lower and ("订正" in prompt_lower or "批量" in prompt_lower):
+            return "data_ops"
+        
         # 诊断修复
         if any(kw in prompt_lower for kw in ["报错", "异常", "失败", "错误", "崩溃", "bug", "error", "exception"]):
             return "diagnose_fix"
-        if "502" in prompt_lower or "500" in prompt_lower and ("网关" in prompt_lower or "gateway" in prompt_lower or "错误" in prompt_lower):
+        if "502" in prompt_lower or ("500" in prompt_lower and ("网关" in prompt_lower or "gateway" in prompt_lower or "错误" in prompt_lower)):
             return "diagnose_fix"
         if "变慢" in prompt_lower or "性能" in prompt_lower or "超时" in prompt_lower:
             return "diagnose_fix"
-        if "不一致" in prompt_lower or ("数据" in prompt_lower and "订正" in prompt_lower):
-            return "data_ops"
         
         # 功能开发
         if any(kw in prompt_lower for kw in ["加一个", "新增", "实现", "创建", "开发", "导出", "审批"]):
