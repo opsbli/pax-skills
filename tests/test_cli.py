@@ -18,3 +18,9 @@ def test_cli_shows_help():
 def test_cli_empty_command_exits_nonzero():
     result = run_cli()
     assert result.returncode != 0
+
+
+def test_cli_version_flag():
+    result = run_cli("--version")
+    assert result.returncode == 0
+    assert "pax-forge 0.1.0" in result.stdout
