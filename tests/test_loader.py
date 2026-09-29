@@ -52,3 +52,14 @@ def test_snapshot_schema_validates_minimal_instance():
                            "question_strategy": "batch"},
     }
     jsonschema.validate(minimal, schema)  # 不抛异常即通过
+
+
+def test_load_versions_shape():
+    from pax.forge.loader import load_versions
+    versions = load_versions()
+    assert versions["family"] == "pax"
+    assert versions["version"] == "0.1.0"
+    assert "skills" in versions
+    assert "pax-clarify" in versions["skills"]
+    assert versions["skills"]["pax-clarify"]["layer"] == "L1"
+    assert "compatibility_matrix" in versions
