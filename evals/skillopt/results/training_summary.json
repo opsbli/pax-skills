@@ -1,0 +1,9 @@
+{
+  "initial_reward": 0.888888888888889,
+  "final_reward": 0.888888888888889,
+  "improvement": 0.0,
+  "num_epochs": 3,
+  "num_train_episodes": 10,
+  "num_eval_episodes": 5,
+  "skill_path": "skills\\pax-clarify\\SKILL.md"
+}
