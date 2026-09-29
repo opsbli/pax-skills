@@ -2,25 +2,25 @@
   "family": "pax",
   "version": "0.1.0",
   "skills": {
-    "pax-orchestrate":  {"layer": "L0", "optional": false, "version": "0.2.0", "status": "active"},
-    "pax-clarify":      {"layer": "L1", "optional": false, "version": "0.2.0", "status": "active"},
-    "pax-diagnose":     {"layer": "L1", "optional": true,  "version": "0.1.0", "status": "active"},
-    "pax-plan":         {"layer": "L1", "optional": false, "version": "0.1.0", "status": "active"},
-    "pax-execute":      {"layer": "L1", "optional": false, "version": "0.1.0", "status": "active"},
-    "pax-review":       {"layer": "L1", "optional": false, "version": "0.1.0", "status": "active"},
-    "pax-advisor":      {"layer": "L2", "optional": true,  "version": "0.1.0", "status": "active"},
-    "pax-council":      {"layer": "L2", "optional": true,  "version": "0.1.0", "status": "active"},
-    "pax-worker-research":  {"layer": "L3", "optional": true,  "version": "0.1.0", "status": "active"},
-    "pax-worker-implement": {"layer": "L3", "optional": true,  "version": "0.1.0", "status": "active"},
-    "pax-verify":       {"layer": "L4", "optional": true,  "version": "0.1.0", "status": "active"},
-    "pax-evolve":       {"layer": "L4", "optional": true,  "version": "0.1.0", "status": "active"},
-    "pax-docs":         {"layer": "L4", "optional": true,  "version": "0.1.0", "status": "active"}
+    "pax-orchestrate":      {"layer": "L0", "optional": false, "version": "0.2.0", "status": "active"},
+    "pax-clarify":          {"layer": "L1", "optional": false, "version": "0.2.0", "status": "active"},
+    "pax-diagnose":         {"layer": "L1", "optional": true,  "version": "0.2.0", "status": "active"},
+    "pax-plan":             {"layer": "L1", "optional": false, "version": "0.2.0", "status": "active"},
+    "pax-execute":          {"layer": "L1", "optional": false, "version": "0.2.0", "status": "active"},
+    "pax-review":           {"layer": "L1", "optional": false, "version": "0.2.0", "status": "active"},
+    "pax-advisor":          {"layer": "L2", "optional": true,  "version": "0.2.0", "status": "active"},
+    "pax-council":          {"layer": "L2", "optional": true,  "version": "0.2.0", "status": "active"},
+    "pax-worker-research":  {"layer": "L3", "optional": true,  "version": "0.2.0", "status": "active"},
+    "pax-worker-implement": {"layer": "L3", "optional": true,  "version": "0.2.0", "status": "active"},
+    "pax-verify":           {"layer": "L4", "optional": true,  "version": "0.2.0", "status": "active"},
+    "pax-evolve":           {"layer": "L4", "optional": true,  "version": "0.2.0", "status": "active"},
+    "pax-docs":             {"layer": "L4", "optional": true,  "version": "0.2.0", "status": "active"}
   },
   "compatibility_matrix": {
     "pax-orchestrate@0.2": ["pax-clarify@0.2"],
-    "pax-clarify@0.2":     ["pax-diagnose@0.1", "pax-plan@0.1"],
-    "pax-diagnose@0.1":    ["pax-plan@0.1"],
-    "pax-plan@0.1":        ["pax-execute@0.1"],
-    "pax-execute@0.1":     ["pax-review@0.1"]
+    "pax-clarify@0.2":     ["pax-diagnose@0.2", "pax-plan@0.2"],
+    "pax-diagnose@0.2":    ["pax-plan@0.2"],
+    "pax-plan@0.2":        ["pax-execute@0.2"],
+    "pax-execute@0.2":     ["pax-review@0.2"]
   }
 }
