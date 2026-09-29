@@ -45,9 +45,10 @@ def test_cli_new_creates_skill(tmp_path):
     r1 = run_cli("init", str(dest))
     assert r1.returncode == 0
     r2 = run_cli("new", "pax-bar", "--layer", "L1",
-                 "--description", "desc", cwd=None)
-    # 说明：CLI 默认写到项目根，测试这里不校验产物，仅验证能启动
-    assert r2.returncode in (0, 1, 2)
+                 "--description", "desc", cwd=str(dest))
+    # 说明：CLI 写到 tmp_path/fam，不污染项目根
+    assert r2.returncode == 0
+    assert (dest / "skills" / "pax-bar" / "SKILL.md").exists()
 
 
 def test_cli_patch_apply_empty_manifest():
