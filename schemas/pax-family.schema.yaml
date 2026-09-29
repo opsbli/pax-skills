@@ -1,0 +1,29 @@
+family: pax
+family_expansion: "Pact-based Agreement eXecution"
+version: 1.0
+layers:
+  meta: [forge]
+  L0: [orchestrate]
+  L1: [clarify, diagnose, plan, execute, review]
+  L2: [advisor, council]
+  L3: ["worker-*"]
+  L4: [verify, evolve, docs]
+contracts:
+  naming: "^pax-[a-z][a-z0-9-]*$"
+  required_frontmatter:
+    - name
+    - description
+    - version
+    - family
+    - layer
+    - requires_snapshot
+  required_sections:
+    - Execution Contract
+    - 职责边界
+    - 输入
+    - 工作流
+    - 输出契约
+    - 失败模式
+    - 何时升级
+  snapshot_schema: "./schemas/snapshot.schema.json"
+  version_source: "./pax-ops/versions.json"
