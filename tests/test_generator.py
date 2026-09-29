@@ -43,3 +43,14 @@ def test_generate_l0_skill(tmp_path):
     assert "## 风险评分维度" in text
     assert "## 路由规则" in text
     assert "## Execution Contract" in text
+
+
+def test_generate_l2_skill(tmp_path):
+    skill_dir = generate_skill(
+        name="pax-advisor", layer="L2",
+        description="只读顾问",
+        target_root=tmp_path, optional=True,
+    )
+    text = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    assert "只读" in text
+    assert "不修改快照" in text

@@ -1,0 +1,41 @@
+---
+name: {{ name }}
+description: >
+  {{ description }}。L2 层只读，不修改快照，输出咨询意见。
+version: {{ version }}
+family: pax
+layer: {{ layer }}
+optional: {{ 'true' if optional else 'false' }}
+requires_snapshot: true
+---
+
+# {{ name }}
+
+## Execution Contract
+- 前置门禁：需要完整快照或明确的问题陈述
+- 未通过门禁：拒绝启动
+- 版本检查：`pax-ops/versions.json`
+
+## 职责边界
+- 做什么：针对特定假设、权衡、架构问题提供咨询
+- 不做什么：不修改快照、不改变主流程、不认领路由落点
+
+## 输入
+- 必需：完整快照或咨询问题
+- 可选：上下文材料、历史决策
+
+## 工作流
+1. 读取输入，理解问题
+2. 提出多个候选方案
+3. 证据加权评估
+4. 记录异议与权衡
+
+## 输出契约
+- 咨询意见文本（不写入快照）
+
+## 失败模式
+- 如果信息不足，声明 blocked 并列出缺失
+- 跳过留痕：任何跳过记录 `skip_reason`
+
+## 何时升级
+- 高风险决策 → 请求人工审批
