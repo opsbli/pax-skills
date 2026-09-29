@@ -16,12 +16,15 @@ def test_contract_report_start_empty():
     assert r.failures == []
 
 
-def test_run_all_contracts_on_empty_family(tmp_path):
-    from pax.forge.contracts import run_all_contracts, list_contracts
+def test_run_all_contracts_returns_report(tmp_path):
+    # 框架级检查：run_all_contracts 应返回 ContractReport 实例
+    # （早期版本以空 registry 作为无契约场景，注册首个契约后不再适用）
+    from pax.forge.contracts import (
+        ContractReport, list_contracts, run_all_contracts,
+    )
     (tmp_path / "skills").mkdir(parents=True, exist_ok=True)
     report = run_all_contracts(tmp_path)
-    assert report.ok
-    assert report.failures == []
+    assert isinstance(report, ContractReport)
     assert isinstance(list_contracts(), list)
 
 
@@ -71,3 +74,19 @@ def test_contract_frontmatter_completeness_passes_clean(tmp_path, monkeypatch):
         encoding="utf-8",
     )
     assert check_frontmatter_completeness(tmp_path) == []
+
+
+# ----- 契约②：snapshot schema 合法性 -----
+
+def test_contract_snapshot_schema_validates_real_schema():
+    import jsonschema
+    from pax.forge import loader
+    schema = loader.load_snapshot_schema()
+    jsonschema.Draft202012Validator.check_schema(schema)
+
+
+def test_contract_snapshot_schema_reference_consistent():
+    from pax.forge import loader
+    family = loader.load_family_schema()
+    ref = family["contracts"]["snapshot_schema"]
+    assert "snapshot.schema.json" in ref

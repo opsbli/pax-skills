@@ -5,12 +5,13 @@ violation messages. Empty list = pass.
 """
 from __future__ import annotations
 
+import json as _json
 import re as _re
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable, Iterable
 
-import yaml
+import jsonschema
 
 from pax.forge import loader
 from pax.forge.validator import _split_frontmatter
@@ -95,4 +96,21 @@ def check_frontmatter_completeness(family_root: Path) -> list[str]:
             violations.append(
                 f"{skill_dir.name}: name violates naming contract"
             )
+    return violations
+
+
+# ----- 契约②：snapshot schema 合法性 -----
+
+@register_contract("snapshot-schema-validity")
+def check_snapshot_schema_validity(family_root: Path) -> list[str]:
+    violations: list[str] = []
+    schema_path = family_root / "schemas" / "snapshot.schema.json"
+    if not schema_path.exists():
+        return [f"missing {schema_path}"]
+    with schema_path.open("r", encoding="utf-8") as f:
+        schema = _json.load(f)
+    try:
+        jsonschema.Draft202012Validator.check_schema(schema)
+    except jsonschema.SchemaError as exc:
+        violations.append(f"snapshot schema invalid: {exc.message}")
     return violations
