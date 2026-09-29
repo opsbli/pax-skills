@@ -95,6 +95,40 @@ def main(argv: list[str] | None = None) -> int:
             print(f"  - {v}")
         return 1
 
+    if args.command == "register":
+        from pax.forge.validator import validate_skill
+        from pax.forge.register import (
+            AlreadyRegisteredError,
+            _utc_now_iso,
+            register_skill,
+        )
+        import yaml
+
+        skill_dir = Path(args.path)
+        report = validate_skill(skill_dir)
+        if not report.ok:
+            print("FAIL: skill did not validate", file=sys.stderr)
+            for v in report.violations:
+                print(f"  - {v}", file=sys.stderr)
+            return 1
+        text = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+        fm = yaml.safe_load(text.split("---", 2)[1])
+        entry = {
+            "name": fm["name"],
+            "layer": fm["layer"],
+            "optional": bool(fm.get("optional", False)),
+            "version": fm.get("version", "0.1.0"),
+            "path": f"skills/{fm['name']}/SKILL.md",
+            "registered_at": _utc_now_iso(),
+        }
+        try:
+            register_skill(entry)
+        except AlreadyRegisteredError as exc:
+            print(f"error: {exc}", file=sys.stderr)
+            return 1
+        print(f"registered {entry['name']} @ {entry['version']}")
+        return 0
+
     if args.command == "init":
         from pax.forge.init import init_family, InitError
         target = Path(args.path).resolve()
