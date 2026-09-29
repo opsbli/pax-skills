@@ -1,0 +1,40 @@
+---
+name: {{ name }}
+description: >
+  {{ description }}。L4 层横切能力，不认领路由落点。
+version: {{ version }}
+family: pax
+layer: {{ layer }}
+optional: {{ 'true' if optional else 'false' }}
+requires_snapshot: true
+---
+
+# {{ name }}
+
+## Execution Contract
+- 前置门禁：可被任意 L0/L1/L2 调用
+- 未通过门禁：返回 blocked
+- 版本检查：`pax-ops/versions.json`
+
+## 职责边界
+- 做什么：<描述该 Skill 的横切能力>
+- 不做什么：不认领路由落点、不改变主流程
+
+## 输入
+- 必需：<具体输入>
+- 可选：<...>
+
+## 工作流
+1. 接收请求
+2. 执行验证/进化/文档操作
+3. 输出五态印章（pass / fail / partial / blocked / escalated）
+
+## 输出契约
+- 印章 / 经验条目 / 文档，格式由 `schemas/snapshot.schema.json` 约束
+
+## 失败模式
+- 验证失败 → 返回 blocked
+- 跳过留痕：任何跳过记录 `skip_reason`
+
+## 何时升级
+- 若问题超出范围 → 请求人工介入

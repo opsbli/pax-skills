@@ -65,3 +65,14 @@ def test_generate_l3_skill(tmp_path):
     text = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
     assert "沙箱" in text
     assert "无头执行" in text
+
+
+def test_generate_l4_skill(tmp_path):
+    skill_dir = generate_skill(
+        name="pax-verify", layer="L4",
+        description="运行中验证",
+        target_root=tmp_path, optional=True,
+    )
+    text = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    assert "五态" in text or "pass" in text
+    assert "不认领路由落点" in text
