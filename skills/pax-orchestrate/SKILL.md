@@ -1,8 +1,8 @@
 ---
 name: pax-orchestrate
 description: >
-  路由、风险分级、生命周期管理、快照初始化。L0 层负责路由、风险分级与生命周期管理。
-version: 0.1.0
+  路由、风险分级、生命周期管理、快照初始化。L0 层负责意图分类、风险评分、路由构建与快照初始化。
+version: 0.2.0
 family: pax
 layer: L0
 optional: false
@@ -17,50 +17,378 @@ requires_snapshot: true
 - 版本检查：`pax-ops/versions.json`
 - 记录义务：`diagnose_required` 决策必须附 `rationale`（若跳过诊断则附 `skip_reason`）
 - 记录义务：风险评分必须写入四维原始分数与总分
+- 记录义务：意图分类必须写入 `intent.primary` 与 `intent.secondary`
+- 禁止修改快照下游字段（`consensus` / `diagnosis` / `plan` / `execution` / `review`）
 
 ## 职责边界
 - 做什么：意图分类（MECE）、风险评分、`diagnose_required` 决策、路由构建、快照初始化
 - 不做什么：不执行具体工作、不修改快照下游字段、不产出执行或评审结论
 
 ## 输入
-- 必需：`user_goal`, `context`
-- 可选：历史快照、领域依赖映射表
+- 必需：`user_goal`（用户目标陈述）、`context`（当前上下文）
+- 可选：历史快照、领域依赖映射表（`references/domain-dependencies.md`）
 
 ## 工作流
-1. `intent = classify_intent(user_goal)`  # MECE 分类
-2. `risk = assess_risk(user_goal, context)`  # 四维评分
-3. `diagnose_required = is_diagnostic_intent(intent, context)`
-4. `strategy = "batch" if risk <= 9 else "one-by-one"`
-5. `route = build_route(intent, diagnose_required, risk)`
-6. `return init_snapshot(intent, risk, diagnose_required, strategy, route)`
+
+### W1 意图分类（MECE Intent Classification）
+
+将 `user_goal` 分类为**一级意图**和**二级意图**。一级意图决定路由主干，二级意图影响诊断深度和验证策略。
+
+#### 一级意图（Primary Intent）
+
+| 意图 | 标识 | 判定条件 | 路由主干 |
+|---|---|---|---|
+| **诊断修复** | `diagnose_fix` | 用户报告异常/报错/退化，需要找根因再修 | `[clarify, diagnose, plan, execute, review]` |
+| **功能开发** | `feature_dev` | 新建功能、修改功能行为，无既有缺陷 | `[clarify, plan, execute, review]` |
+| **重构优化** | `refactor` | 不改变外部行为，改善内部结构/性能 | `[clarify, plan, execute, review]` |
+| **数据操作** | `data_ops` | 数据订正、迁移、批量修改 | `[clarify, diagnose, plan, execute, review]` |
+| **文档咨询** | `doc_consult` | 纯文档、纯咨询、纯规划、纯解释 | `[clarify]` |
+| **工具构建** | `tool_build` | 构建工具、脚本、自动化 | `[clarify, plan, execute, review]` |
+
+#### 二级意图（Secondary Intent）
+
+二级意图不改变路由主干，但影响诊断深度和验证策略：
+
+| 二级意图 | 触发条件 | 影响 |
+|---|---|---|
+| `performance` | 性能退化、延迟增加、吞吐量下降 | 诊断必须包含性能指标采集 |
+| `security` | 安全漏洞、权限异常、数据泄露 | 强制升级决策层，P0 候选 |
+| `data_integrity` | 数据不一致、数据丢失、字段错误 | 诊断必须包含存储后端确认 |
+| `ux_error` | 前端报错、交互异常、UI 缺陷 | 需标注跨仓库（前后端分离时） |
+| `integration` | 集成故障、API 对接异常 | 需确认依赖版本和接口契约 |
+| `deployment` | 部署失败、配置错误、环境差异 | 需确认目标环境差异 |
+
+#### 分类规则
+
+```python
+def classify_intent(user_goal, context):
+    """MECE 意图分类，返回 (primary, secondary)"""
+    
+    # Step 1: 检测是否为诊断类（最高优先级）
+    if has_defect_signal(user_goal):
+        primary = "diagnose_fix"
+    elif is_data_operation(user_goal):
+        primary = "data_ops"
+    elif is_pure_documentation(user_goal):
+        primary = "doc_consult"
+    elif is_refactoring(user_goal):
+        primary = "refactor"
+    elif is_tool_building(user_goal):
+        primary = "tool_build"
+    else:
+        primary = "feature_dev"  # 默认
+    
+    # Step 2: 检测二级意图（可叠加）
+    secondaries = detect_secondary_intents(user_goal, context)
+    
+    return primary, secondaries
+```
+
+**诊断类信号检测**（`has_defect_signal`）：
+
+以下关键词组合中出现 ≥2 项时判定为诊断类：
+
+- 异常/报错/错误/异常/失败/不可用/挂了/崩溃
+- 修复/修/解决/处理/排查/定位
+- 最近/之前/突然/一直/间歇/偶发
+- 报错信息/堆栈/日志/trace/error/exception
+
+**数据操作信号检测**（`is_data_operation`）：
+
+- 订正/修正/修复数据/清理数据
+- 迁移/转换/批量更新/批量修改
+- 数据不一致/数据丢失/字段错误/脏数据
+
+**文档咨询信号检测**（`is_pure_documentation`）：
+
+- 纯文档/写文档/更新文档/README
+- 咨询/解释/分析/调研/了解
+- 规划/设计/方案/估算
+- 不涉及代码修改或数据变更
+
+### W2 风险评分（Risk Assessment）
+
+四维评分，每项 1–3 分，总分 4–12。
+
+#### 不可逆性（Irreversibility）
+
+| 分数 | 判定标准 | 示例 |
+|---|---|---|
+| 1 | 可轻易回滚，无需外部协调 | 代码修改、配置修改（有备份）、文档修改 |
+| 2 | 可回滚但需要步骤或工具 | 数据库迁移（有 down 脚本）、API 变更（有兼容层）、前端部署（可回退） |
+| 3 | 不可逆或回滚成本极高 | 数据删除/覆盖、生产部署无回滚计划、安全凭证更换、大规模数据迁移 |
+
+#### 影响范围（Impact Scope）
+
+| 分数 | 判定标准 | 示例 |
+|---|---|---|
+| 1 | 单模块、单用户、无外部依赖 | 内部工具、个人脚本、单模块文档 |
+| 2 | 多模块、多用户、有内部依赖 | 跨模块功能、API 接口变更、多用户影响 |
+| 3 | 系统级、跨团队、跨系统、全用户 | 核心链路、跨团队依赖、外部系统集成、所有用户 |
+
+#### 不确定性（Uncertainty）
+
+| 分数 | 判定标准 | 示例 |
+|---|---|---|
+| 1 | 需求明确、方案清晰、风险可控 | 有明确规格的需求、已知模式的修改、有先例可循 |
+| 2 | 部分不确定、需要探索 | 部分需求未明确、需要验证假设、新库/新框架 |
+| 3 | 高度不确定、探索性、无先例 | 全新领域、技术选型未定、需求模糊、根因未知 |
+
+#### 协调成本（Coordination Cost）
+
+| 分数 | 判定标准 | 示例 |
+|---|---|---|
+| 1 | 单人可完成、无需协调 | 单模块修改、单人工具、独立文档 |
+| 2 | 需要模块内协调、跨文件修改 | 跨文件重构、前后端联动（同仓库）、需要 code review |
+| 3 | 需要跨团队协调、跨仓库操作 | 跨仓库操作、跨团队依赖、需要架构评审、需要发布协调 |
+
+#### 总分映射
+
+| 总分 | 等级 | `required_precision` | `question_strategy` |
+|---|---|---|---|
+| 4–6 | 低 | `low` | `batch` |
+| 7–9 | 中 | `medium` | `batch` |
+| 10–12 | 高 | `high` | `one-by-one` |
+
+#### 强制升级规则
+
+以下情况无论总分多少，均强制升级：
+
+- 二级意图包含 `security` → 强制 `risk: high`，标记 `escalate_to_council: true`
+- 二级意图包含 `data_integrity` 且影响范围为 3 → 强制 `risk: high`
+- 不可逆性为 3 且影响范围为 3 → 强制 `risk: high`
+
+### W3 诊断必要性决策（Diagnose Required Decision）
+
+```python
+def is_diagnostic_intent(intent, context):
+    """判断是否需要进入诊断阶段"""
+    
+    # 强制诊断
+    if intent.primary in ("diagnose_fix", "data_ops"):
+        return True
+    
+    # 强制跳过
+    if intent.primary == "doc_consult":
+        return False, "纯文档/咨询/规划类任务"
+    
+    # 条件判断
+    if intent.secondary and "security" in intent.secondary:
+        return True, "安全相关问题必须诊断根因"
+    
+    if intent.secondary and "data_integrity" in intent.secondary:
+        return True, "数据完整性问题必须诊断根因"
+    
+    # 新功能/重构/工具 → 默认跳过诊断
+    if intent.primary in ("feature_dev", "refactor", "tool_build"):
+        return False, "新建功能/重构/工具构建，无既有行为缺陷"
+    
+    # 默认：需要诊断
+    return True, "存在既有行为异常信号"
+```
+
+#### 跳过诊断的允许条件
+
+必须显式记录 `skip_reason`，允许条件：
+
+| 条件 | `skip_reason` 值 |
+|---|---|
+| 新建功能，无既有行为 | `new_feature_no_prior_behavior` |
+| 根因已在 clarify 阶段完全确定且用户确认 | `root_cause_pre_determined_by_user` |
+| 纯文档、纯咨询、纯规划 | `doc_consult_only` |
+| 用户明确要求"先别查根因，直接改" | `user_explicit_skip` |
+| 纯重构，不改变外部行为 | `refactor_no_behavior_change` |
+| 纯工具/脚本构建 | `tool_build_no_prior_behavior` |
+
+#### 强制诊断条件
+
+以下情况**不允许**跳过诊断：
+
+- `intent.primary == "diagnose_fix"`（有明确缺陷信号）
+- `intent.primary == "data_ops"`（数据操作）
+- `intent.secondary` 包含 `security` 或 `data_integrity`
+- 用户报告了具体的错误信息或异常行为
+
+### W4 路由构建（Route Building）
+
+```python
+def build_route(intent, diagnose_required, risk, context):
+    """构建完整路由，包括升级标注"""
+    
+    # 主干路由
+    if intent.primary == "doc_consult":
+        route = ["clarify"]
+    elif diagnose_required:
+        route = ["clarify", "diagnose", "plan", "execute", "review"]
+    else:
+        route = ["clarify", "plan", "execute", "review"]
+    
+    # 标注：高风险升级
+    if risk.level == "high":
+        annotations = {
+            "escalate_to_council": True,
+            "council_trigger": "high_risk_task"
+        }
+    
+    # 标注：安全相关强制升级
+    if "security" in intent.secondary:
+        annotations["escalate_to_council"] = True
+        annotations["council_trigger"] = "security_relevant"
+    
+    # 标注：数据操作需存储后端确认
+    if intent.primary == "data_ops" or "data_integrity" in intent.secondary:
+        annotations["storage_backend_required"] = True
+        annotations["script_language_required"] = True
+    
+    # 标注：跨仓库操作
+    if is_cross_repo(context):
+        annotations["cross_repo"] = True
+        annotations["execution_strategy_required"] = True
+        # 标注涉及的仓库
+        annotations["involved_repos"] = detect_involved_repos(context)
+    
+    # 标注：需要前端参与
+    if "ux_error" in intent.secondary:
+        annotations["frontend_involved"] = True
+    
+    return route, annotations
+```
+
+#### 完整路由表
+
+| 一级意图 | 二级意图 | diagnose_required | 路由 | 标注 |
+|---|---|---|---|---|
+| `diagnose_fix` | — | true | `[clarify, diagnose, plan, execute, review]` | — |
+| `diagnose_fix` | `security` | true | `[clarify, diagnose, plan, execute, review]` | `escalate_to_council` |
+| `diagnose_fix` | `data_integrity` | true | `[clarify, diagnose, plan, execute, review]` | `storage_backend_required` |
+| `diagnose_fix` | `ux_error` | true | `[clarify, diagnose, plan, execute, review]` | `frontend_involved` |
+| `data_ops` | — | true | `[clarify, diagnose, plan, execute, review]` | `storage_backend_required` |
+| `data_ops` | `data_integrity` | true | `[clarify, diagnose, plan, execute, review]` | `storage_backend_required` |
+| `feature_dev` | — | false | `[clarify, plan, execute, review]` | — |
+| `feature_dev` | `security` | true | `[clarify, diagnose, plan, execute, review]` | `escalate_to_council` |
+| `refactor` | — | false | `[clarify, plan, execute, review]` | — |
+| `doc_consult` | — | false | `[clarify]` | — |
+| `tool_build` | — | false | `[clarify, plan, execute, review]` | — |
+| 任意 | 跨仓库 | 继承 | 继承 | `cross_repo, execution_strategy_required` |
+
+#### 跨仓库检测
+
+```python
+def is_cross_repo(context):
+    """检测是否涉及跨仓库操作"""
+    # 信号：前后端分离、多仓库、微服务
+    signals = [
+        "前端", "后端", "web", "api", "server", "client",
+        "ops-monitor", "ops-pilot-web",  # 已知仓库名
+        "另一个仓库", "另一个服务", "另一个项目"
+    ]
+    return any(s in context for s in signals)
+
+def detect_involved_repos(context):
+    """检测涉及的仓库列表"""
+    repos = []
+    if "前端" in context or "web" in context:
+        repos.append("frontend")
+    if "后端" in context or "api" in context or "server" in context:
+        repos.append("backend")
+    return repos
+```
+
+### W5 快照初始化（Snapshot Initialization）
+
+```python
+def init_snapshot(intent, risk, diagnose_required, strategy, route, annotations):
+    """初始化 pax-snapshot.yaml"""
+    
+    snapshot = {
+        "meta": {
+            "version": 1.0,
+            "created_at": "<ISO8601>",
+            "updated_at": "<ISO8601>",
+            "skill_lineage": ["pax-orchestrate"]
+        },
+        "goal": {
+            "statement": "<user_goal>",
+            "success_criteria": []  # 由 pax-clarify 填充
+        },
+        "consensus": {
+            "required_precision": risk.precision,  # low | medium | high
+            "dimensions": {
+                "goal": "unknown",
+                "success_criteria": "unknown",
+                "constraints": "unknown",
+                "authorization": "unknown",
+                "exceptions": "unknown",
+                "terminology": "unknown"
+            },
+            "design_tree": [],
+            "gaps_remaining": []
+        },
+        "orchestration": {
+            "intent": {
+                "primary": intent.primary,
+                "secondary": intent.secondary,
+                "classification_rationale": "<分类理由>"
+            },
+            "risk": {
+                "irreversibility": risk.irreversibility,
+                "impact_scope": risk.impact_scope,
+                "uncertainty": risk.uncertainty,
+                "coordination_cost": risk.coordination_cost,
+                "total": risk.total,
+                "level": risk.level,  # low | medium | high
+                "forced_escalation": risk.forced_escalation  # true | false
+            },
+            "diagnose_required": diagnose_required,
+            "rationale": "<诊断必要性理由>",
+            "skip_reason": "<跳过诊断原因>" if not diagnose_required else None,
+            "route": route,
+            "question_strategy": strategy,
+            "annotations": annotations
+        }
+    }
+    
+    # 条件性字段
+    if diagnose_required:
+        snapshot["symptom"] = {
+            "description": "<待 pax-clarify 填充>",
+            "impact": "<待 pax-clarify 填充>",
+            "reproduction": "<待 pax-clarify 填充>",
+            "first_observed": None,
+            "recent_changes": []
+        }
+    
+    return snapshot
+```
 
 ## 风险评分维度
-- 不可逆性（1-3）
-- 影响范围（1-3）
-- 不确定性（1-3）
-- 协调成本（1-3）
 
-总分映射：4-6 低 / 7-9 中 / 10-12 高。
+详见 W2 风险评分。
+
+| 维度 | 范围 | 说明 |
+|---|---|---|
+| 不可逆性 | 1–3 | 变更能否回滚，回滚成本多高 |
+| 影响范围 | 1–3 | 影响多少模块、用户、团队 |
+| 不确定性 | 1–3 | 需求/方案/根因的明确程度 |
+| 协调成本 | 1–3 | 需要多少人/团队/仓库协调 |
 
 ## 路由规则
-- 诊断类意图（修复/报错/异常/回归/性能退化）
-  → `[clarify, diagnose, plan, execute, review]`
-- 普通任务 → `[clarify, plan, execute, review]`
 
-跳过诊断必须显式记录 `skip_reason`，允许条件：
-- 新建功能，无既有行为
-- 根因已在 clarify 阶段完全确定且用户确认
-- 纯文档、纯咨询、纯规划类任务
-- 用户明确要求"先别查根因，直接改"
+详见 W3 诊断必要性决策 和 W4 路由构建。
 
 ## 输出契约
-- `snapshot.orchestration` 与快照初始状态，格式由 `schemas/snapshot.schema.json` 约束
+- `snapshot.orchestration`（含 `intent` / `risk` / `diagnose_required` / `route` / `annotations`）
+- 快照初始状态（`meta` / `goal` / `consensus`），格式由 `schemas/snapshot.schema.json` 约束
 
 ## 失败模式
-- 分类置信度低 → 降级为保守评分，并在路由中保留高风险标记
+- 分类置信度低 → 降级为保守评分（假设高风险），并在路由中保留高风险标记
 - 风险维度数据缺失 → 降级为保守评分（假设高不确定性）
-- 用户目标过于模糊 → 进入澄清阶段后再路由
+- 用户目标过于模糊 → 进入澄清阶段后再路由（先走 `clarify`，`diagnose_required` 设为 `null` 待后续决定）
+- 意图分类不确定（多意图重叠）→ 取最高风险意图，并在 `classification_rationale` 中记录歧义
+- 检测到安全相关信号但未确认 → 保守标记 `security` 二级意图，强制 `diagnose_required: true`
 
 ## 何时升级
-- 高风险任务（总分 10-12） → 在路由中标记 `question_strategy: one-by-one` 并由下游阶段处理
-- 高风险决策需盲审 → 在路由中标记升级建议，交由下游阶段协调
+- `risk.level == high` → 在路由中标注 `escalate_to_council: true`，由下游阶段协调升级决策
+- `intent.secondary` 包含 `security` → 强制标注 `escalate_to_council: true`
+- `intent.secondary` 包含 `data_integrity` 且 `risk.impact_scope == 3` → 强制标注 `escalate_to_council: true`
+- 意图分类置信度极低 → 返回用户确认意图，再重新路由
