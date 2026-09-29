@@ -1,5 +1,110 @@
 {
   "family": "pax",
-  "updated_at": "2026-09-29T12:00:00Z",
-  "skills": []
+  "updated_at": "2026-09-29T05:35:06Z",
+  "skills": [
+    {
+      "name": "pax-orchestrate",
+      "layer": "L0",
+      "optional": false,
+      "version": "0.1.0",
+      "path": "skills/pax-orchestrate/SKILL.md",
+      "registered_at": "2026-09-29T05:31:14Z"
+    },
+    {
+      "name": "pax-clarify",
+      "layer": "L1",
+      "optional": false,
+      "version": "0.1.0",
+      "path": "skills/pax-clarify/SKILL.md",
+      "registered_at": "2026-09-29T05:31:14Z"
+    },
+    {
+      "name": "pax-diagnose",
+      "layer": "L1",
+      "optional": true,
+      "version": "0.1.0",
+      "path": "skills/pax-diagnose/SKILL.md",
+      "registered_at": "2026-09-29T05:31:14Z"
+    },
+    {
+      "name": "pax-plan",
+      "layer": "L1",
+      "optional": false,
+      "version": "0.1.0",
+      "path": "skills/pax-plan/SKILL.md",
+      "registered_at": "2026-09-29T05:31:14Z"
+    },
+    {
+      "name": "pax-execute",
+      "layer": "L1",
+      "optional": false,
+      "version": "0.1.0",
+      "path": "skills/pax-execute/SKILL.md",
+      "registered_at": "2026-09-29T05:31:14Z"
+    },
+    {
+      "name": "pax-review",
+      "layer": "L1",
+      "optional": false,
+      "version": "0.1.0",
+      "path": "skills/pax-review/SKILL.md",
+      "registered_at": "2026-09-29T05:31:14Z"
+    },
+    {
+      "name": "pax-advisor",
+      "layer": "L2",
+      "optional": true,
+      "version": "0.1.0",
+      "path": "skills/pax-advisor/SKILL.md",
+      "registered_at": "2026-09-29T05:35:04Z"
+    },
+    {
+      "name": "pax-council",
+      "layer": "L2",
+      "optional": true,
+      "version": "0.1.0",
+      "path": "skills/pax-council/SKILL.md",
+      "registered_at": "2026-09-29T05:35:04Z"
+    },
+    {
+      "name": "pax-worker-research",
+      "layer": "L3",
+      "optional": true,
+      "version": "0.1.0",
+      "path": "skills/pax-worker-research/SKILL.md",
+      "registered_at": "2026-09-29T05:35:04Z"
+    },
+    {
+      "name": "pax-worker-implement",
+      "layer": "L3",
+      "optional": true,
+      "version": "0.1.0",
+      "path": "skills/pax-worker-implement/SKILL.md",
+      "registered_at": "2026-09-29T05:35:05Z"
+    },
+    {
+      "name": "pax-verify",
+      "layer": "L4",
+      "optional": true,
+      "version": "0.1.0",
+      "path": "skills/pax-verify/SKILL.md",
+      "registered_at": "2026-09-29T05:35:05Z"
+    },
+    {
+      "name": "pax-evolve",
+      "layer": "L4",
+      "optional": true,
+      "version": "0.1.0",
+      "path": "skills/pax-evolve/SKILL.md",
+      "registered_at": "2026-09-29T05:35:05Z"
+    },
+    {
+      "name": "pax-docs",
+      "layer": "L4",
+      "optional": true,
+      "version": "0.1.0",
+      "path": "skills/pax-docs/SKILL.md",
+      "registered_at": "2026-09-29T05:35:06Z"
+    }
+  ]
 }

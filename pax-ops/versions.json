@@ -10,8 +10,8 @@
     "pax-review":       {"layer": "L1", "optional": false, "version": "0.1.0", "status": "active"},
     "pax-advisor":      {"layer": "L2", "optional": true,  "version": "0.1.0", "status": "active"},
     "pax-council":      {"layer": "L2", "optional": true,  "version": "0.1.0", "status": "active"},
-    "pax-worker-grok":  {"layer": "L3", "optional": true,  "version": "0.1.0", "status": "active"},
-    "pax-worker-codex": {"layer": "L3", "optional": true,  "version": "0.1.0", "status": "active"},
+    "pax-worker-research":  {"layer": "L3", "optional": true,  "version": "0.1.0", "status": "active"},
+    "pax-worker-implement": {"layer": "L3", "optional": true,  "version": "0.1.0", "status": "active"},
     "pax-verify":       {"layer": "L4", "optional": true,  "version": "0.1.0", "status": "active"},
     "pax-evolve":       {"layer": "L4", "optional": true,  "version": "0.1.0", "status": "active"},
     "pax-docs":         {"layer": "L4", "optional": true,  "version": "0.1.0", "status": "active"}
