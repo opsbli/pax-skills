@@ -20,6 +20,14 @@ def test_full_pipeline(tmp_path: Path, monkeypatch):
     fam = tmp_path / "fam"
     init_family(fam)
 
+    # init_family copies the current registry.json which includes all 13
+    # registered skills from Phase 5. Clear it so the e2e test starts
+    # from a clean state and only registers pax-foo.
+    reg_path = fam / "pax-ops" / "registry.json"
+    reg = json.loads(reg_path.read_text(encoding="utf-8"))
+    reg["skills"] = []
+    reg_path.write_text(json.dumps(reg, indent=2), encoding="utf-8")
+
     # 2. Redirect loader paths to the tmp family (monkeypatched so they
     # restore automatically after the test finishes).
     monkeypatch.setattr(

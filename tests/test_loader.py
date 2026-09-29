@@ -70,7 +70,13 @@ def test_load_registry_shape():
     registry = load_registry()
     assert registry["family"] == "pax"
     assert isinstance(registry["skills"], list)
-    assert registry["skills"] == []
+    # registry may contain registered skills (Phase 5 onward); only check shape
+    for entry in registry["skills"]:
+        assert "name" in entry
+        assert "layer" in entry
+        assert "version" in entry
+        assert "path" in entry
+        assert "registered_at" in entry
     assert registry["updated_at"] is not None
 
 
