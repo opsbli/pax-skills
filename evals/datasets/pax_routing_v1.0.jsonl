@@ -1,0 +1,28 @@
+# pax_routing_v1.0 — pax-* 家族路由评估题集
+# 覆盖：10 pos + 4 amb + 3 rej + 2 multi
+# 评测目标：pax-orchestrate 的 MECE 意图分类和路由构建
+# 题型说明：
+#   pos  = 明确意图，应激活 pax-orchestrate
+#   amb  = 模糊意图，可能映射到多个 skill
+#   rej  = 非技术请求，不应激活任何 pax-* skill
+#   multi= 需要多个 skill 协作的请求
+# 注意：prompt 中不出现 skill 名，不直接暗示路由结果
+{"id": "pax-pos-01", "prompt": "生产环境 CMDB 模块的字段校验有问题，时间类型的字段填写后报错'字段不为设定的正则表达式'，帮我查一下原因", "expected_skills": ["pax-orchestrate"], "tags": ["diagnose_fix", "data_integrity"], "severity": "high"}
+{"id": "pax-pos-02", "prompt": "帮我修一下 ops-monitor 的告警通知，有时候会漏发", "expected_skills": ["pax-orchestrate"], "tags": ["diagnose_fix"], "severity": "high"}
+{"id": "pax-pos-03", "prompt": "最近部署的 2.1 版本回归测试发现，之前正常的登录流程现在会间歇性超时", "expected_skills": ["pax-orchestrate"], "tags": ["diagnose_fix", "performance"], "severity": "high"}
+{"id": "pax-pos-04", "prompt": "帮我给 ops-pilot 加一个批量导入 CMDB 资产的功能，支持 CSV 格式", "expected_skills": ["pax-orchestrate"], "tags": ["feature_dev"], "severity": "medium"}
+{"id": "pax-pos-05", "prompt": "重构一下这个模块的代码结构，性能太低了，需要优化查询逻辑", "expected_skills": ["pax-orchestrate"], "tags": ["refactor", "performance"], "severity": "medium"}
+{"id": "pax-pos-06", "prompt": "数据库里有一批 CMDB 资产的状态字段填错了，需要批量订正，大概 500 条记录", "expected_skills": ["pax-orchestrate"], "tags": ["data_ops", "data_integrity"], "severity": "high"}
+{"id": "pax-pos-07", "prompt": "帮我写一份 ops-pilot 的运维手册，覆盖日常巡检和故障排查流程", "expected_skills": ["pax-orchestrate"], "tags": ["doc_consult"], "severity": "low"}
+{"id": "pax-pos-08", "prompt": "做一个脚本自动收集各环境的配置差异并生成对比报告", "expected_skills": ["pax-orchestrate"], "tags": ["tool_build"], "severity": "medium"}
+{"id": "pax-pos-09", "prompt": "帮我 review 这个 PR，看看有没有安全漏洞或者潜在的 bug", "expected_skills": ["pax-orchestrate"], "tags": ["review", "security"], "severity": "high"}
+{"id": "pax-pos-10", "prompt": "这个接口最近响应特别慢，从 200ms 涨到了 3 秒，帮我看看是什么问题", "expected_skills": ["pax-orchestrate"], "tags": ["diagnose_fix", "performance"], "severity": "high"}
+{"id": "pax-amb-01", "prompt": "这段代码能优化一下吗？看着有点复杂", "expected_skills": ["pax-orchestrate"], "tags": ["ambiguous", "refactor"], "severity": "medium"}
+{"id": "pax-amb-02", "prompt": "数据好像不太对劲，帮我看看", "expected_skills": ["pax-orchestrate"], "tags": ["ambiguous", "data_integrity"], "severity": "medium"}
+{"id": "pax-amb-03", "prompt": "更新一下这个模块的文档", "expected_skills": ["pax-orchestrate"], "tags": ["ambiguous", "doc_consult"], "severity": "low"}
+{"id": "pax-amb-04", "prompt": "帮我把这个功能做出来", "expected_skills": ["pax-orchestrate"], "tags": ["ambiguous", "feature_dev"], "severity": "medium"}
+{"id": "pax-rej-01", "prompt": "帮我把这段中文翻译成英文", "expected_skills": [], "tags": ["reject"], "severity": "low"}
+{"id": "pax-rej-02", "prompt": "今天天气怎么样", "expected_skills": [], "tags": ["reject"], "severity": "low"}
+{"id": "pax-rej-03", "prompt": "解释一下什么是微服务架构", "expected_skills": [], "tags": ["reject"], "severity": "low"}
+{"id": "pax-multi-01", "prompt": "帮我诊断一下这个告警漏发的原因，修好之后写一份故障复盘报告", "expected_skills": ["pax-orchestrate"], "tags": ["multi", "diagnose_fix"], "severity": "high"}
+{"id": "pax-multi-02", "prompt": "建一个数据清理脚本，跑完之后出一份执行报告说明清理了多少条", "expected_skills": ["pax-orchestrate"], "tags": ["multi", "data_ops"], "severity": "medium"}

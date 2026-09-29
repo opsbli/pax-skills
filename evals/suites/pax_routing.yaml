@@ -1,0 +1,51 @@
+# pax_routing — pax-* 家族路由评估套件
+# 评测目标：pax-orchestrate 的 MECE 意图分类和路由构建准确性
+# 使用 skillEval routing_only 模式，不执行 skill、不给 tool
+suite_id: pax_routing
+suite_version: "1.0"
+description: >
+  pax-* 家族路由基线评估。测试 pax-orchestrate 能否正确识别
+  用户意图、判定是否需要诊断、以及选择正确的路由路径。
+  覆盖 10 pos + 4 amb + 3 rej + 2 multi 共 19 个用例。
+
+# --- 问题集 ---
+dataset: evals/datasets/pax_routing_v1.0.jsonl
+dataset_kind: capability
+
+# --- 执行环境 ---
+runtime: litellm
+routing_input:
+  strategy: direct
+  options: {}
+
+# --- 被测对象 ---
+skills:
+  dir: evals/subjects
+  target: [pax-orchestrate]
+  include: [pax-orchestrate]
+  mode: routing_only
+  cfg: v1
+
+models:
+  - id: primary
+    model: openai/qwen3-max-2025-05-02
+    api_base_env: DASHSCOPE_BASE_URL
+    api_key_env: DASHSCOPE_API_KEY
+    params:
+      temperature: 0
+
+tools: []
+
+repeats: 3
+parallelism: 1
+
+# --- 维度评分 ---
+scoring:
+  metrics: [exact_set_match, top1, multi_exact, no_skill_rejection, false_activation,
+            by_type, per_skill_prf, confusion_matrix]
+  gate:
+    exact_set_match: ">= 0.80"
+    top1: ">= 0.85"
+    no_skill_rejection: ">= 0.90"
+    false_activation: "<= 0.10"
+    type_amb: ">= 0.70"
