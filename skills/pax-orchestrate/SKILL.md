@@ -387,6 +387,55 @@ def init_snapshot(intent, risk, diagnose_required, strategy, route, annotations)
 - 意图分类不确定（多意图重叠）→ 取最高风险意图，并在 `classification_rationale` 中记录歧义
 - 检测到安全相关信号但未确认 → 保守标记 `security` 二级意图，强制 `diagnose_required: true`
 
+## 可选扩展 Skill
+
+除主路由外，以下可选 Skill 可在特定条件下被调用：
+
+| Skill | 层级 | 触发条件 | 说明 |
+|---|---|---|---|
+| `pax-monitor` | L1 | 任务执行中 | 监控任务执行过程中的异常情况 |
+| `pax-rollback` | L1 | 任务失败或严重问题 | 自动化回滚到安全状态 |
+| `pax-test` | L1 | 任务执行完成后 | 自动生成测试用例并执行 |
+| `pax-deploy` | L1 | 任务完成后 | 自动化部署流程 |
+| `pax-learn` | L1 | 任务评审完成后 | 经验沉淀和知识图谱构建 |
+
+### 扩展路由调用规则
+
+#### pax-monitor（监控）
+- **触发条件**：任务执行中，需要监控异常情况
+- **调用时机**：`pax-execute` 执行过程中
+- **输出**：`snapshot.monitoring`
+
+#### pax-rollback（回滚）
+- **触发条件**：任务失败、监控告警、用户请求
+- **调用时机**：任务执行失败或严重问题时
+- **输出**：`snapshot.rollback`
+
+#### pax-test（测试）
+- **触发条件**：任务执行完成后，需要验证
+- **调用时机**：`pax-execute` 完成后
+- **输出**：`snapshot.tests`
+
+#### pax-deploy（部署）
+- **触发条件**：任务完成后，需要部署
+- **调用时机**：`pax-review` 完成后
+- **输出**：`snapshot.deployment`
+
+#### pax-learn（学习）
+- **触发条件**：任务评审完成后
+- **调用时机**：`pax-review` 完成后
+- **输出**：`snapshot.learning`
+
+### 完整工作流示例
+
+```
+[clarify] → [diagnose] → [plan] → [execute] → [review] → [learn]
+                ↓              ↓         ↓
+          [monitor]      [rollback]  [test]
+                                ↓
+                            [deploy]
+```
+
 ## 何时升级
 - `risk.level == high` → 在路由中标注 `escalate_to_council: true`，由下游阶段协调升级决策
 - `intent.secondary` 包含 `security` → 强制标注 `escalate_to_council: true`
