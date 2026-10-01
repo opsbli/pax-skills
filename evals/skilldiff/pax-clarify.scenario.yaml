@@ -1,0 +1,33 @@
+# Regression scenario for pax-clarify (pax-* family).
+#
+# skilldiff runs this scenario against BOTH the base (main) and candidate
+# (branch) versions of skills/pax-clarify/SKILL.md, then diffs observable
+# behavior: files changed, tool calls, commands run, output text.
+#
+# The prompt is deliberately minimal: ask the agent to clarify the
+# request.  The expected behavior is:
+#   * at least one note file is produced under notes/
+#   * the agent uses a Write tool call
+#
+# Assertions are intentionally conservative so the harness rarely flakes
+# on a valid clarification.  Tighten them as the skill evolves.
+
+name: pax-clarify-regression
+skillPaths:
+  - skills/pax-clarify/SKILL.md
+fixture: ./evals/skilldiff/fixtures/fixture
+prompt: |
+  Use the pax-clarify skill to clarify the following ambiguous request
+  and record the clarification questions you would ask in
+  notes/2026-10-01.md:
+
+    "帮我处理一下这个问题"
+
+  Keep the note under 20 lines.  Do NOT create files outside `notes/`.
+expect:
+  files_changed:
+    - notes/2026-10-01.md
+  tool_calls:
+    - Write
+  output_contains:
+    - 澄清

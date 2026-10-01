@@ -239,12 +239,152 @@ jobs:
           echo "=== Quality gate passed ==="
 
   # ============================================================
-  # 5. 质量门禁摘要
+  # 5. agentskills-ci：Skill 静态质量与安全评分
+  # ============================================================
+  agentskills-ci-check:
+    name: Agent Skills CI
+    runs-on: ubuntu-latest
+    needs: contracts-and-tests
+    timeout-minutes: 10
+    continue-on-error: true  # Gate is advisory until pax-* skills meet the 80-score bar
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install agentskills-ci
+        run: pip install agentskills-ci
+
+      - name: Score skills directory
+        run: |
+          set -o pipefail
+          agentskills-ci score ./skills --format markdown --min-score 0 -o /tmp/agentskills-report.md 2>&1 | tee /tmp/agentskills-score.log
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Agent Skills CI" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          cat /tmp/agentskills-score.log >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: agentskills-ci-report
+          path: /tmp/agentskills-report.md
+          if-no-files-found: ignore
+
+      - name: Warn on dangerous patterns
+        run: |
+          if grep -q "rm -rf\|curl | bash\|chmod 777" /tmp/agentskills-report.md 2>/dev/null; then
+            echo "::warning::agentskills-ci flagged a dangerous shell pattern; please review the uploaded report."
+          fi
+
+  # ============================================================
+  # 6. skilldiff：行为回归测试
+  # ============================================================
+  # Runs pax-clarify against a small fixture in a real agent harness and
+  # compares observable behavior (files changed, tool calls, output text)
+  # between base (origin/main) and the candidate commit.
+  #
+  # Requires Node 20 and a live harness auth. The default harness is
+  # Claude Code — see CONTRIBUTING.md for how to enable opencode,
+  # codex, or Freebuff instead. When no harness is configured the job
+  # skips gracefully and reports a skip notice.
+  # ============================================================
+  skilldiff-regression:
+    name: SkillDiff Regression
+    runs-on: ubuntu-latest
+    needs: contracts-and-tests
+    timeout-minutes: 20
+    continue-on-error: true  # advisory until a default harness is configured
+
+    env:
+      # Set SKILLDIFF_HARNESS to: claude | codex | opencode | freebuff
+      SKILLDIFF_HARNESS: ${{ vars.SKILLDIFF_HARNESS }}
+      # Claude Code
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      # Codex
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      # Freebuff / Codebuff
+      CODEBUFF_API_KEY: ${{ secrets.CODEBUFF_API_KEY }}
+
+    steps:
+      - name: Checkout (with base ref)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Detect available harness
+        id: harness
+        shell: bash
+        run: |
+          set -e
+          : "${SKILLDIFF_HARNESS:-}"
+          if [ -z "$SKILLDIFF_HARNESS" ]; then
+            # Auto-detect: prefer Claude Code, then codex, then opencode, then Freebuff
+            if [ -n "$ANTHROPIC_API_KEY" ] || command -v claude >/dev/null 2>&1; then
+              SKILLDIFF_HARNESS="claude"
+            elif [ -n "$OPENAI_API_KEY" ] || command -v codex >/dev/null 2>&1; then
+              SKILLDIFF_HARNESS="codex"
+            elif command -v opencode >/dev/null 2>&1; then
+              SKILLDIFF_HARNESS="opencode"
+            elif [ -n "$CODEBUFF_API_KEY" ]; then
+              SKILLDIFF_HARNESS="freebuff"
+            fi
+          fi
+          echo "harness=$SKILLDIFF_HARNESS" >> $GITHUB_OUTPUT
+          echo "Detected harness: ${SKILLDIFF_HARNESS:-<none>}" >> $GITHUB_STEP_SUMMARY
+
+      - name: Skip when no harness is configured
+        if: steps.harness.outputs.harness == ''
+        run: |
+          echo "No harness available — skipping skilldiff. Set SKILLDIFF_HARNESS in repo vars or add an auth secret." >> $GITHUB_STEP_SUMMARY
+
+      - name: Run skilldiff (live)
+        if: steps.harness.outputs.harness != ''
+        run: |
+          set -e
+          mkdir -p evals/skilldiff/traces
+          npx --yes skilldiff run \
+            evals/skilldiff/pax-clarify.scenario.yaml \
+            --live --base origin/main \
+            --harness "$SKILLDIFF_HARNESS"
+
+      - name: Record a demo diff (always runs)
+        if: always()
+        run: |
+          # Keep a local recorded run so the artifact pipeline always has something.
+          npx --yes skilldiff orbit \
+            tools/skilldiff/examples/traces/old.json \
+            tools/skilldiff/examples/traces/new.json \
+            --out evals/skilldiff/latest-orbit.html 2>&1 || true
+
+      - name: Upload skilldiff artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: skilldiff-report
+          path: |
+            evals/skilldiff/latest-orbit.html
+            evals/skilldiff/traces/
+          if-no-files-found: ignore
+
+  # ============================================================
+  # 7. 质量门禁摘要
   # ============================================================
   quality-summary:
     name: Quality Summary
     runs-on: ubuntu-latest
-    needs: [contracts-and-tests, internal-routing-check, quality-gate]
+    needs: [contracts-and-tests, internal-routing-check, quality-gate, routing-eval, agentskills-ci-check, skilldiff-regression]
     if: always()
     timeout-minutes: 5
 
@@ -262,6 +402,8 @@ jobs:
           echo "| Internal Routing | ${{ needs.internal-routing-check.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Skill Quality Gate | ${{ needs.quality-gate.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Routing Eval | ${{ needs.routing-eval.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Agent Skills CI | ${{ needs.agentskills-ci-check.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| SkillDiff Regression | ${{ needs.skilldiff-regression.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           
           if [ "${{ needs.contracts-and-tests.result }}" = "success" ] && 

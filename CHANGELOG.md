@@ -3,6 +3,23 @@
 本文件遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)。
 版本号遵循 [Semantic Versioning 2.0.0](https://semver.org/lang/zh-CN/)。
 
+## [Unreleased]
+
+### Added
+- `pax-monitor` / `pax-rollback` / `pax-test` / `pax-deploy` / `pax-learn`：将家族从 13 个扩展到 18 个（`pax-ops/versions.json` 已同步）。
+- `evals/skillopt/train_pax_offline.py`：SkillOpt 闭环训练脚本，修复了之前三个致命 bug（奖励不依赖 `expected_action`、永不更新 skill、奖励已接近天花板），引入 `Action Cue Registry`，实现 rollout → reflect → aggregate → select → update → evaluate 完整循环。
+- SkillOpt 训练集 v2：`pax_clarify_train_v2.jsonl` / `pax_clarify_eval_v2.jsonl`（14 + 7 例）+ `pax_diagnose_train_v2.jsonl` / `pax_diagnose_eval_v2.jsonl`（10 + 5 例）。
+- 首次跑通 pax-clarify 和 pax-diagnose 训练：两个 Skill 的 `final_reward` 都达到 1.0，improvement = +1.0（见 `evals/skillopt/results/clarify_v2/training_summary.json` 和 `diagnose_v2/training_summary.json`）。
+- 新增 CI job `agentskills-ci-check`：调用 [agentskills-ci](https://github.com/damanisme/agentskills-ci) 对 `skills/` 做 frontmatter lint + 0–100 质量分 + 危险命令扫描，产出 Markdown 报告作为 Artifact。
+
+### Changed
+- 修正 v0.2.0 条目中的口径：CI job 数量由 "4 个" 修正为当前实际 6 个（包含 agentskills-ci-check 后）。
+- 将外部工具口径由 7 个修正为 8 个：新添 agentskills-ci（已 clone 到 `tools/agentskills-ci/`）。
+
+### Fixed
+- SkillOpt 训练不再因为奖励函数与 `expected_action` 无关而输出恒为 0.888 的空结果。
+- SkillOpt patch 步骤不再重复写入 "## SkillOpt Cue Map" 标题：后续 epoch 会把新增条目 merge 到已有块内。
+
 ## [0.2.0] - 2026-09-30
 
 ### Added

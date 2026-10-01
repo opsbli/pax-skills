@@ -21,9 +21,15 @@
 | L1 | `pax-plan` | 否 | 结构化规划 |
 | L1 | `pax-execute` | 否 | 契约约束下执行 |
 | L1 | `pax-review` | 否 | 独立评审门禁 |
+| L1 | `pax-monitor` | 是 | 运行中监控与告警 |
+| L1 | `pax-rollback` | 是 | 自动化回滚 |
+| L1 | `pax-test` | 是 | 自动化测试生成 |
+| L1 | `pax-deploy` | 是 | 部署流程编排 |
+| L1 | `pax-learn` | 是 | 经验沉淀与知识图谱 |
 | L2 | `pax-advisor` | 是 | 单点咨询 |
 | L2 | `pax-council` | 是 | 多专家盲审 |
-| L3 | `pax-worker-*` | 是 | 有界任务执行 |
+| L3 | `pax-worker-research` | 是 | 研究型子任务 |
+| L3 | `pax-worker-implement` | 是 | 实现型子任务 |
 | L4 | `pax-verify` | 是 | 运行中验证 |
 | L4 | `pax-evolve` | 是 | 自进化 |
 | L4 | `pax-docs` | 是 | 文档沉淀 |
