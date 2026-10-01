@@ -259,13 +259,25 @@ jobs:
       - name: Install agentskills-ci
         run: pip install agentskills-ci
 
+      - name: Install pax (for the `pax-forge agentskills-ci` wrapper)
+        run: pip install -e .
+
       - name: Score skills directory
         run: |
           set -o pipefail
-          # Hard gate: every skill must score >= 80/100 with no error-level issues.
-          # See CONTRIBUTING.md for how to satisfy the recommended-section and
-          # trigger-prefix requirements.
-          agentskills-ci score ./skills --format markdown --min-score 80 -o /tmp/agentskills-report.md 2>&1 | tee /tmp/agentskills-score.log
+          # Hard gate: every skill must score >= 80/100 with no error-level
+          # issues.  The wrapper below is a thin `pax-forge` subcommand that
+          # shells out to the `agentskills-ci` binary, so this job stays in
+          # lock-step with the same entrypoint developers use locally.
+          #
+          # See CONTRIBUTING.md for how to satisfy the recommended-section
+          # and trigger-prefix requirements.
+          python -m pax.forge.cli agentskills-ci \
+            --skills-dir ./skills \
+            --min-score 80 \
+            --format markdown \
+            -o /tmp/agentskills-report.md \
+            2>&1 | tee /tmp/agentskills-score.log
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Agent Skills CI" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -355,7 +367,7 @@ jobs:
         if: steps.harness.outputs.harness != ''
         run: |
           set -e
-          mkdir -p evals/skilldiff/traces
+          mkdir -p evals/skilldiff
           npx --yes skilldiff run \
             evals/skilldiff/pax-clarify.scenario.yaml \
             --live --base origin/main \
@@ -364,11 +376,30 @@ jobs:
       - name: Record a demo diff (always runs)
         if: always()
         run: |
-          # Keep a local recorded run so the artifact pipeline always has something.
-          npx --yes skilldiff orbit \
-            tools/skilldiff/examples/traces/old.json \
-            tools/skilldiff/examples/traces/new.json \
-            --out evals/skilldiff/latest-orbit.html 2>&1 || true
+          # Always emit a recorded-mode demo so the artifact pipeline has
+          # something to look at even when no live harness is configured.
+          # We pin to the packaged examples/traces pair that ships with the
+          # skilldiff repo.
+          #
+          # NOTE: the `skilldiff orbit` visualizer is not yet published on
+          # npm (source is in tools/skilldiff/src/orbit.ts but dist is
+          # missing). We capture the text report instead; the artifact is
+          # still useful for triaging regressions.
+          mkdir -p evals/skilldiff
+          set +e
+          npx --yes skilldiff run \
+            evals/skilldiff/pax-clarify.scenario.yaml \
+            --old tools/skilldiff/examples/traces/notes-helper-old.json \
+            --new tools/skilldiff/examples/traces/notes-helper-new.json \
+            > evals/skilldiff/latest-recorded-report.md 2>&1
+          echo "$?" > evals/skilldiff/latest-recorded-report.exitcode
+          set -e
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### SkillDiff recorded demo" >> $GITHUB_STEP_SUMMARY
+          echo "Uploaded: evals/skilldiff/latest-recorded-report.md (recorded mode against examples/traces)." >> $GITHUB_STEP_SUMMARY
+          echo "Set ANTHROPIC_API_KEY / OPENAI_API_KEY / CODEBUFF_API_KEY in" >> $GITHUB_STEP_SUMMARY
+          echo "repo secrets to enable a live run — see CONTRIBUTING.md." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
 
       - name: Upload skilldiff artifacts
         if: always()
@@ -376,7 +407,8 @@ jobs:
         with:
           name: skilldiff-report
           path: |
-            evals/skilldiff/latest-orbit.html
+            evals/skilldiff/latest-recorded-report.md
+            evals/skilldiff/latest-recorded-report.exitcode
             evals/skilldiff/traces/
           if-no-files-found: ignore
 

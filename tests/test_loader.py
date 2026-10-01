@@ -55,14 +55,37 @@ def test_snapshot_schema_validates_minimal_instance():
 
 
 def test_load_versions_shape():
+    import re
     from pax.forge.loader import load_versions
     versions = load_versions()
     assert versions["family"] == "pax"
-    assert versions["version"] == "0.1.0"
+    # Semantic version; must match pax-ops/versions.json on every release.
+    assert re.fullmatch(r"\d+\.\d+\.\d+", versions["version"])
     assert "skills" in versions
     assert "pax-clarify" in versions["skills"]
     assert versions["skills"]["pax-clarify"]["layer"] == "L1"
     assert "compatibility_matrix" in versions
+
+
+def test_load_versions_consistent_with_registry():
+    """Every registered skill must exist in versions.json and have the same
+    layer + version. This catches the stale-snapshot drift that used to
+    hide behind test_load_versions_shape."""
+    from pax.forge.loader import load_versions, load_registry
+    versions = load_versions()
+    registry = load_registry()
+    for entry in registry["skills"]:
+        name = entry["name"]
+        assert name in versions["skills"], (
+            f"{name} in registry.json but not in versions.json"
+        )
+        v = versions["skills"][name]
+        assert v["layer"] == entry["layer"], (
+            f"{name} layer mismatch: versions={v['layer']} registry={entry['layer']}"
+        )
+        assert v["version"] == entry["version"], (
+            f"{name} version mismatch: versions={v['version']} registry={entry['version']}"
+        )
 
 
 def test_load_registry_shape():

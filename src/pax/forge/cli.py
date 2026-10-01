@@ -45,6 +45,38 @@ def build_parser() -> argparse.ArgumentParser:
     test_p = sub.add_parser("test", help="Run cross-skill contract tests")
     test_p.add_argument("--skill", help="Only test this skill (default: all)")
 
+    # agentskills-ci wrapper
+    ci_p = sub.add_parser(
+        "agentskills-ci",
+        help=(
+            "Run the agentskills-ci scorer against the skills/ directory. "
+            "Fails (exit 1) if any skill is below --min-score or has an "
+            "error-severity issue."
+        ),
+    )
+    ci_p.add_argument(
+        "--skills-dir", default="./skills",
+        help="Directory containing skill subdirectories (default: ./skills)",
+    )
+    ci_p.add_argument(
+        "--min-score", type=int, default=80,
+        help="Minimum required score per skill (default: 80)",
+    )
+    ci_p.add_argument(
+        "--format",
+        choices=["text", "markdown", "json"],
+        default="markdown",
+        help="Output format (default: markdown)",
+    )
+    ci_p.add_argument(
+        "-o", "--output",
+        help="Write report to this file (in addition to stdout)",
+    )
+    ci_p.add_argument(
+        "--json-only", action="store_true",
+        help="Print JSON output only (silences the human-readable summary)",
+    )
+
     # version
     version_p = sub.add_parser(
         "version",
@@ -78,6 +110,81 @@ def build_parser() -> argparse.ArgumentParser:
 def _not_implemented() -> int:
     print("(subcommand not yet implemented)", file=sys.stderr)
     return 2
+
+
+def _run_agentskills_ci(args: argparse.Namespace) -> int:
+    """Delegate to the external agentskills-ci scorer.
+
+    The tool is installed as a pip dependency (`pip install agentskills-ci`)
+    and is vendored under `tools/agentskills-ci/` for local development only.
+    We shell out rather than importing so this CLI works in CI after the
+    standard `pip install agentskills-ci` step without any import path shim.
+
+    Lookup order:
+      1. `agentskills-ci` on PATH (typical after `pip install` in Linux/macOS)
+      2. `agentskills-ci.exe` on PATH (Windows)
+      3. `python -c "from agentskills_ci.cli import main; main([...])"`
+         (covers the case where the console-script shim isn't on PATH yet)
+    """
+    import json
+    import shutil
+    import subprocess
+    import sys as _sys
+
+    skills_dir = Path(args.skills_dir)
+    if not skills_dir.is_dir():
+        print(f"error: skills directory not found: {skills_dir}",
+              file=_sys.stderr)
+        return 2
+
+    inner_args = [
+        "score", str(skills_dir),
+        "--min-score", str(args.min_score),
+        "--format", args.format,
+    ]
+    if args.output:
+        inner_args.extend(["-o", str(args.output)])
+
+    binary = shutil.which("agentskills-ci") or shutil.which("agentskills-ci.exe")
+
+    if args.json_only:
+        # Emit machine-readable output; hide all human-readable chatter.
+        if binary:
+            result = subprocess.run(
+                [binary, *inner_args],
+                capture_output=True, text=True,
+                encoding="utf-8", errors="replace",
+            )
+        else:
+            script = (
+                "import sys; from agentskills_ci.cli import main; "
+                "sys.exit(main(sys.argv[1:]))"
+            )
+            result = subprocess.run(
+                [_sys.executable, "-c", script, *inner_args],
+                capture_output=True, text=True,
+                encoding="utf-8", errors="replace",
+            )
+        if result.stdout:
+            _sys.stdout.write(result.stdout)
+        if result.stderr:
+            _sys.stderr.write(result.stderr)
+        return result.returncode
+
+    if binary:
+        print(f"$ {' '.join([binary, *inner_args])}")
+        return subprocess.run([binary, *inner_args]).returncode
+
+    # Fallback: invoke the CLI module directly with the same interpreter.
+    print("# agentskills-ci not found on PATH; invoking via python -m")
+    script = (
+        "import sys; from agentskills_ci.cli import main; "
+        "sys.exit(main(sys.argv[1:]))"
+    )
+    return subprocess.run(
+        [_sys.executable, "-c", script, *inner_args],
+        text=True, encoding="utf-8", errors="replace",
+    ).returncode
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -180,6 +287,10 @@ def main(argv: list[str] | None = None) -> int:
             print(f"  FAIL  {f}")
         print(f"\n{len(report.passes)} passed, {len(report.failures)} failed")
         return 0 if report.ok else 1
+
+    if args.command == "agentskills-ci":
+        return _run_agentskills_ci(args)
+
 
     if args.command == "version":
         from pax.forge.versioning import (

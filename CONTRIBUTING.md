@@ -262,12 +262,19 @@ Closes #123
 4. Verification Checklist 必须包含 checkbox 项（`- [ ]`）
 5. 任何引用型路径（如 `references/foo.md`）必须在 Skill 目录内存在
 
-本地验证：
+本地验证（两种方式任选，输出一致）：
 
 ```bash
+# 方式一：直接用外部工具
 pip install agentskills-ci
 agentskills-ci score ./skills --min-score 80 --format markdown
+
+# 方式二：通过 pax-forge wrapper（推荐，CI 也走这条路径）
+pip install -e .
+python -m pax.forge.cli agentskills-ci --min-score 80
 ```
+
+wrapper 优先使用 PATH 上的 `agentskills-ci` 二进制；如果没找到就回退到 `python -m agentskills_ci` 同解释器入口，因此本地开发环境即使 shell PATH 没刷新也能跑。
 
 一键补齐（适用于现有 Skill）：
 
@@ -290,14 +297,35 @@ python scripts/backfill_agentskills_sections.py
   - `CODEBUFF_API_KEY` → Freebuff harness
 - 可选：在 Settings → Variables → Actions 里设 `SKILLDIFF_HARNESS=claude`（或其他）强制指定；不设就自动探测。
 
-**方法二：本地开发时手动跑一次**
+**方法二：用 GitHub CLI 一键创建（需先 `gh auth login`）**
+
+```bash
+# 任选一个，把环境变量设为你的真实 API key：
+gh secret set ANTHROPIC_API_KEY --repo opsbli/pax-skills --body "$ANTHROPIC_API_KEY"
+gh secret set OPENAI_API_KEY    --repo opsbli/pax-skills --body "$OPENAI_API_KEY"
+gh secret set CODEBUFF_API_KEY  --repo opsbli/pax-skills --body "$CODEBUFF_API_KEY"
+
+# 可选：强制指定 harness
+glh var set SKILLDIFF_HARNESS --repo opsbli/pax-skills --body "claude"
+```
+
+**方法三：本地开发时手动跑一次**
 
 ```bash
 npx skilldiff run evals/skilldiff/pax-clarify.scenario.yaml \
   --live --base origin/main --harness claude
 ```
 
-**未配置时的行为**：job 不会阻塞 PR，但会输出一个 recorded-mode 的 demo 产物（`evals/skilldiff/latest-orbit.html`），保证 artifact pipeline 始终有东西可看。
+**未配置时的行为**：job 不会阻塞 PR。CI 会自动跑一次 recorded-mode demo（使用 `tools/skilldiff/examples/traces/notes-helper-{old,new}.json`），把行为报告保存到 `evals/skilldiff/latest-recorded-report.md` 作为 artifact 上传，保证 pipeline 始终有东西可看。
+
+> 附：`skilldiff orbit`（可视化 HTML）目前还不上 npm（源码在 `tools/skilldiff/src/orbit.ts`，但 dist 未包含）。本地开发时可以：
+>
+> ```bash
+> cd tools/skilldiff && npm run build && npm link
+> npx skilldiff orbit tools/skilldiff/examples/traces/notes-helper-old.json \
+>                        tools/skilldiff/examples/traces/notes-helper-new.json \
+>                        --out orbit.html
+> ```
 
 ---
 
