@@ -1,0 +1,5 @@
+{"id": "diag-ev-001", "task": "生产告警：Kafka consumer 消费积压严重，帮我查原因", "skill": "pax-diagnose", "expected_action": "collect_evidence", "reward": 1.0}
+{"id": "diag-ev-002", "task": "这个模块的循环依赖怎么解，帮我分析一下", "skill": "pax-diagnose", "expected_action": "generate_hypotheses", "reward": 1.0}
+{"id": "diag-ev-003", "task": "已经验证了三个假设，帮我做最后收敛", "skill": "pax-diagnose", "expected_action": "converge_root_cause", "reward": 1.0}
+{"id": "diag-ev-004", "task": "帮我出个诊断报告，说明根因和修复方案", "skill": "pax-diagnose", "expected_action": "emit_report", "reward": 1.0}
+{"id": "diag-ev-005", "task": "用户反馈偶发登录失败，帮我稳定复现一下", "skill": "pax-diagnose", "expected_action": "reproduce_issue", "reward": 1.0}

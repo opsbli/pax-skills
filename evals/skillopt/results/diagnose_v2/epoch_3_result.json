@@ -1,0 +1,8 @@
+{
+  "epoch": 3,
+  "train_avg_reward": 1.0,
+  "num_reflects": 0,
+  "num_merged_actions": 0,
+  "selected_actions": [],
+  "delta_chars": 0
+}

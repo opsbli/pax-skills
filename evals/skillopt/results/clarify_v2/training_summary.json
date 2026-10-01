@@ -1,0 +1,60 @@
+{
+  "skill_path": "skills\\pax-clarify\\SKILL.md",
+  "skill_family": "pax-clarify",
+  "seed_from": "evals/skillopt/seeds/pax-clarify-seed.md",
+  "dry_run": true,
+  "initial_reward": 0.0,
+  "final_reward": 1.0,
+  "improvement": 1.0,
+  "num_epochs": 3,
+  "num_train_episodes": 14,
+  "num_eval_episodes": 7,
+  "epoch_history": [
+    {
+      "epoch": 1,
+      "train_avg_reward": 0.0,
+      "num_reflects": 14,
+      "num_merged_actions": 5,
+      "selected_actions": [
+        "clarify_storage_backend",
+        "clarify_performance_impact",
+        "clarify_root_cause",
+        "clarify_error_scope",
+        "clarify_export_format"
+      ],
+      "delta_chars": 449
+    },
+    {
+      "epoch": 2,
+      "train_avg_reward": 0.35714285714285715,
+      "num_reflects": 9,
+      "num_merged_actions": 5,
+      "selected_actions": [
+        "clarify_approval_levels",
+        "clarify_correction_rules",
+        "clarify_migration_strategy",
+        "clarify_cleanup_criteria",
+        "clarify_refactor_scope"
+      ],
+      "delta_chars": 244
+    },
+    {
+      "epoch": 3,
+      "train_avg_reward": 0.7142857142857143,
+      "num_reflects": 4,
+      "num_merged_actions": 4,
+      "selected_actions": [
+        "clarify_problem_details",
+        "clarify_problem_scope",
+        "clarify_priority_order",
+        "clarify_context"
+      ],
+      "delta_chars": 194
+    }
+  ],
+  "gates": {
+    "improvement_positive": true,
+    "final_reward_ge_0.9": true,
+    "all_actions_covered": true
+  }
+}

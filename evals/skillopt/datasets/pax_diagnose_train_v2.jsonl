@@ -1,0 +1,10 @@
+{"id": "diag-tr-001", "task": "生产环境 NullPointerException，OrderService.validate 报空指针", "skill": "pax-diagnose", "expected_action": "reproduce_issue", "reward": 1.0}
+{"id": "diag-tr-002", "task": "数据库连接池满了，服务启动失败", "skill": "pax-diagnose", "expected_action": "collect_evidence", "reward": 1.0}
+{"id": "diag-tr-003", "task": "上个月同类故障也发生过，帮我找找有没有历史诊断", "skill": "pax-diagnose", "expected_action": "search_history", "reward": 1.0}
+{"id": "diag-tr-004", "task": "不确定哪里出了问题，帮我想几种可能的原因", "skill": "pax-diagnose", "expected_action": "generate_hypotheses", "reward": 1.0}
+{"id": "diag-tr-005", "task": "怀疑是内存泄漏，帮我验证一下", "skill": "pax-diagnose", "expected_action": "validate_hypotheses", "reward": 1.0}
+{"id": "diag-tr-006", "task": "已经缩小到两个候选原因，帮我锁定到底是哪个", "skill": "pax-diagnose", "expected_action": "converge_root_cause", "reward": 1.0}
+{"id": "diag-tr-007", "task": "根因找到了，帮我出一份诊断报告", "skill": "pax-diagnose", "expected_action": "emit_report", "reward": 1.0}
+{"id": "diag-tr-008", "task": "API 响应变慢，500 错误率升高，日志里有大量超时", "skill": "pax-diagnose", "expected_action": "collect_evidence", "reward": 1.0}
+{"id": "diag-tr-009", "task": "间歇性 502，只在高峰时段出现", "skill": "pax-diagnose", "expected_action": "reproduce_issue", "reward": 1.0}
+{"id": "diag-tr-010", "task": "怀疑是某个下游服务超时引起的级联失败", "skill": "pax-diagnose", "expected_action": "generate_hypotheses", "reward": 1.0}

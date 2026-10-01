@@ -1,0 +1,52 @@
+{
+  "skill_path": "skills\\pax-diagnose\\SKILL.md",
+  "skill_family": "pax-diagnose",
+  "seed_from": "evals/skillopt/seeds/pax-diagnose-seed.md",
+  "dry_run": true,
+  "initial_reward": 0.0,
+  "final_reward": 1.0,
+  "improvement": 1.0,
+  "num_epochs": 3,
+  "num_train_episodes": 10,
+  "num_eval_episodes": 5,
+  "epoch_history": [
+    {
+      "epoch": 1,
+      "train_avg_reward": 0.0,
+      "num_reflects": 10,
+      "num_merged_actions": 5,
+      "selected_actions": [
+        "reproduce_issue",
+        "collect_evidence",
+        "search_history",
+        "generate_hypotheses",
+        "validate_hypotheses"
+      ],
+      "delta_chars": 423
+    },
+    {
+      "epoch": 2,
+      "train_avg_reward": 0.8,
+      "num_reflects": 2,
+      "num_merged_actions": 2,
+      "selected_actions": [
+        "converge_root_cause",
+        "emit_report"
+      ],
+      "delta_chars": 86
+    },
+    {
+      "epoch": 3,
+      "train_avg_reward": 1.0,
+      "num_reflects": 0,
+      "num_merged_actions": 0,
+      "selected_actions": [],
+      "delta_chars": 0
+    }
+  ],
+  "gates": {
+    "improvement_positive": true,
+    "final_reward_ge_0.9": true,
+    "all_actions_covered": true
+  }
+}

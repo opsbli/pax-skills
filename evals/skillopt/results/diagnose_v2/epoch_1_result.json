@@ -1,0 +1,14 @@
+{
+  "epoch": 1,
+  "train_avg_reward": 0.0,
+  "num_reflects": 10,
+  "num_merged_actions": 5,
+  "selected_actions": [
+    "reproduce_issue",
+    "collect_evidence",
+    "search_history",
+    "generate_hypotheses",
+    "validate_hypotheses"
+  ],
+  "delta_chars": 423
+}

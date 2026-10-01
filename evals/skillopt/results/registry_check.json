@@ -1,0 +1,31 @@
+{
+  "skills/pax-clarify/SKILL.md": {
+    "already_present": {
+      "clarify_error_scope": [],
+      "clarify_priority_order": [],
+      "clarify_problem_scope": [],
+      "clarify_problem_details": [],
+      "clarify_context": [],
+      "clarify_storage_backend": [],
+      "clarify_performance_impact": [],
+      "clarify_root_cause": [],
+      "clarify_export_format": [],
+      "clarify_approval_levels": [],
+      "clarify_correction_rules": [],
+      "clarify_migration_strategy": [],
+      "clarify_cleanup_criteria": [],
+      "clarify_refactor_scope": []
+    }
+  },
+  "skills/pax-diagnose/SKILL.md": {
+    "already_present": {
+      "reproduce_issue": [],
+      "collect_evidence": [],
+      "search_history": [],
+      "generate_hypotheses": [],
+      "validate_hypotheses": [],
+      "converge_root_cause": [],
+      "emit_report": []
+    }
+  }
+}
