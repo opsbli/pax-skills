@@ -15,6 +15,7 @@ requires_snapshot: true
 - 前置门禁：`snapshot.plan.status == frozen` 且 `snapshot.execution.status == completed`
 - 未通过门禁：拒绝启动，返回执行阶段
 - 版本检查：`pax-ops/versions.json`
+- skip_reason：当风险等级为 low 且任务类型为 doc_consult 时可跳过
 - 禁止在部署过程中修改代码
 - 禁止在未确认部署方案时执行部署
 
@@ -285,4 +286,4 @@ def generate_deployment_report(deployment, pre_checks, health_checks):
 ## 何时升级
 - 部署失败 → `pax-rollback`
 - 健康检查失败 → `pax-council`
-- 需要用户确认 → `pax-orchestrate`
+- 需要用户确认 → 返回上游阶段

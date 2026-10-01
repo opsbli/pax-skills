@@ -15,6 +15,7 @@ requires_snapshot: true
 - 前置门禁：`snapshot.plan.status == frozen`
 - 未通过门禁：拒绝启动，返回规划阶段
 - 版本检查：`pax-ops/versions.json`
+- skip_reason：当风险等级为 low 且任务类型为 doc_consult 时可跳过
 - 禁止在任务执行完成后继续监控
 - 禁止在高风险任务中跳过监控
 

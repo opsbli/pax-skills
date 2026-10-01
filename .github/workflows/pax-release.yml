@@ -1,0 +1,303 @@
+name: pax-release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., v0.3.0)'
+        required: true
+        type: string
+      dry_run:
+        description: 'Dry run mode (no actual publish)'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  # ============================================================
+  # 1. 发布前检查
+  # ============================================================
+  pre-release-checks:
+    name: Pre-release Checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Run contract checks
+        run: |
+          echo "=== Running pax-forge contract checks ==="
+          python -m pax test
+          echo "=== All contracts passed ==="
+
+      - name: Run tests
+        run: |
+          echo "=== Running pytest ==="
+          pytest -q --tb=short
+          echo "=== All tests passed ==="
+
+      - name: Verify version consistency
+        run: |
+          echo "=== Checking version consistency ==="
+          python -c "
+          import json, sys, re
+          from pathlib import Path
+          
+          versions = json.loads(Path('pax-ops/versions.json').read_text())
+          skills_dir = Path('skills')
+          errors = []
+          
+          for skill_dir in sorted(skills_dir.iterdir()):
+              if not skill_dir.is_dir() or skill_dir.name.startswith('.'):
+                  continue
+              skill_md = skill_dir / 'SKILL.md'
+              if not skill_md.exists():
+                  continue
+              
+              text = skill_md.read_text(encoding='utf-8')
+              match = re.search(r'^version:\s*(.+)$', text, re.MULTILINE)
+              if not match:
+                  errors.append(f'{skill_dir.name}: missing version in frontmatter')
+                  continue
+              
+              skill_version = match.group(1).strip()
+              skill_name = skill_dir.name
+              
+              if skill_name not in versions.get('skills', {}):
+                  errors.append(f'{skill_name}: not in versions.json')
+                  continue
+              
+              expected_version = versions['skills'][skill_name]['version']
+              if skill_version != expected_version:
+                  errors.append(f'{skill_name}: SKILL.md version {skill_version} != versions.json {expected_version}')
+          
+          if errors:
+              print('VERSION INCONSISTENCIES:')
+              for e in errors:
+                  print(f'  - {e}')
+              sys.exit(1)
+          else:
+              print('All versions consistent')
+          "
+
+      - name: Check changelog
+        run: |
+          echo "=== Checking CHANGELOG ==="
+          if [ -f "CHANGELOG.md" ]; then
+            echo "CHANGELOG.md found"
+            if [ "${{ github.event_name }}" = "push" ] && [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+              VERSION="${{ github.ref_name }}"
+              if ! grep -q "$VERSION" CHANGELOG.md; then
+                echo "WARNING: CHANGELOG.md does not contain version $VERSION"
+              fi
+            fi
+          else
+            echo "WARNING: CHANGELOG.md not found"
+          fi
+
+      - name: Summary
+        run: |
+          echo "## Pre-release Checks Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Contract Checks | ✅ Passed |" >> $GITHUB_STEP_SUMMARY
+          echo "| Unit Tests | ✅ Passed |" >> $GITHUB_STEP_SUMMARY
+          echo "| Version Consistency | ✅ Passed |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **All pre-release checks passed**" >> $GITHUB_STEP_SUMMARY
+
+  # ============================================================
+  # 2. 构建发布包
+  # ============================================================
+  build-package:
+    name: Build Release Package
+    runs-on: ubuntu-latest
+    needs: pre-release-checks
+    if: github.event_name == 'push' || inputs.dry_run == false
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: 'pip'
+
+      - name: Install build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install build twine
+
+      - name: Build package
+        run: |
+          echo "=== Building package ==="
+          python -m build
+          echo "=== Package built ==="
+
+      - name: Upload package artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pax-package
+          path: dist/*
+          retention-days: 30
+
+  # ============================================================
+  # 3. 发布到 GitHub Release
+  # ============================================================
+  github-release:
+    name: GitHub Release
+    runs-on: ubuntu-latest
+    needs: [pre-release-checks, build-package]
+    if: github.event_name == 'push' || inputs.dry_run == false
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download package artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: pax-package
+          path: dist/
+
+      - name: Generate release notes
+        id: release_notes
+        run: |
+          echo "=== Generating release notes ==="
+          
+          VERSION="${{ github.ref_name }}"
+          
+          # Extract changelog for this version
+          if [ -f "CHANGELOG.md" ]; then
+            sed -n "/## \[$VERSION\]/,/## \[/p" CHANGELOG.md | head -n -1 > release-notes.md
+          else
+            echo "## Release $VERSION" > release-notes.md
+          fi
+          
+          echo "Release notes generated:"
+          cat release-notes.md
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: pax-skills ${{ github.ref_name }}
+          body_path: release-notes.md
+          files: dist/*
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Summary
+        run: |
+          echo "## GitHub Release Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Item | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Version | ${{ github.ref_name }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Release | Created |" >> $GITHUB_STEP_SUMMARY
+          echo "| Package | Uploaded |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **GitHub Release created successfully**" >> $GITHUB_STEP_SUMMARY
+
+  # ============================================================
+  # 4. 发布到 PyPI（可选）
+  # ============================================================
+  pypi-release:
+    name: PyPI Release
+    runs-on: ubuntu-latest
+    needs: [pre-release-checks, build-package]
+    if: github.event_name == 'push' || inputs.dry_run == false
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download package artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: pax-package
+          path: dist/
+
+      - name: Install twine
+        run: |
+          python -m pip install --upgrade pip
+          pip install twine
+
+      - name: Publish to PyPI
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          echo "=== Publishing to PyPI ==="
+          twine upload dist/*
+          echo "=== Published to PyPI ==="
+
+      - name: Summary
+        run: |
+          echo "## PyPI Release Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Item | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Version | ${{ github.ref_name }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| PyPI | Published |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **PyPI release completed**" >> $GITHUB_STEP_SUMMARY
+
+  # ============================================================
+  # 5. 发布摘要
+  # ============================================================
+  release-summary:
+    name: Release Summary
+    runs-on: ubuntu-latest
+    needs: [pre-release-checks, build-package, github-release, pypi-release]
+    if: always()
+    timeout-minutes: 5
+
+    steps:
+      - name: Summary
+        run: |
+          echo "## pax-* Release Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Version**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Step | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Pre-release Checks | ${{ needs.pre-release-checks.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Build Package | ${{ needs.build-package.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| GitHub Release | ${{ needs.github-release.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| PyPI Release | ${{ needs.pypi-release.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ needs.pre-release-checks.result }}" = "success" ] && \
+             [ "${{ needs.build-package.result }}" = "success" ] && \
+             [ "${{ needs.github-release.result }}" = "success" ] && \
+             [ "${{ needs.pypi-release.result }}" = "success" ]; then
+            echo "✅ **Release completed successfully**" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Release failed**" >> $GITHUB_STEP_SUMMARY
+            echo "Please review the failed steps above." >> $GITHUB_STEP_SUMMARY
+          fi

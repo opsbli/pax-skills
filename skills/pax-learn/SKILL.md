@@ -15,6 +15,7 @@ requires_snapshot: true
 - 前置门禁：`snapshot.review.status == completed`
 - 未通过门禁：拒绝启动，返回评审阶段
 - 版本检查：`pax-ops/versions.json`
+- skip_reason：当风险等级为 low 且任务类型为 doc_consult 时可跳过
 - 禁止在任务未完成时沉淀经验
 - 禁止在经验沉淀过程中修改快照
 
@@ -328,5 +329,5 @@ def generate_recommendations(snapshot, experiences):
 
 ## 何时升级
 - 经验提取失败 → `pax-council`
-- 需要用户确认 → `pax-orchestrate`
+- 需要用户确认 → 返回上游阶段
 - 知识图谱异常 → `pax-diagnose`

@@ -15,6 +15,7 @@ requires_snapshot: true
 - 前置门禁：`snapshot.plan.status == frozen` 且 `snapshot.plan.rollback_strategy` 存在
 - 未通过门禁：拒绝启动，返回规划阶段
 - 版本检查：`pax-ops/versions.json`
+- skip_reason：当风险等级为 low 且任务类型为 doc_consult 时可跳过
 - 禁止在回滚过程中修改快照
 - 禁止在未确认回滚方案时执行回滚
 
@@ -240,5 +241,5 @@ def generate_rollback_report(rollback, verification):
 
 ## 何时升级
 - 回滚失败 → `pax-council`
-- 需要用户确认 → `pax-orchestrate`
+- 需要用户确认 → 返回上游阶段
 - 需要手动回滚 → `pax-execute`

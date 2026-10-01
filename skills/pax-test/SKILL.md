@@ -15,6 +15,7 @@ requires_snapshot: true
 - 前置门禁：`snapshot.plan.status == frozen` 且 `snapshot.plan.steps` 存在
 - 未通过门禁：拒绝启动，返回规划阶段
 - 版本检查：`pax-ops/versions.json`
+- skip_reason：当风险等级为 low 且任务类型为 doc_consult 时可跳过
 - 禁止在测试未通过时标记任务完成
 - 禁止跳过测试步骤
 
@@ -249,4 +250,4 @@ def generate_recommendations(test_results, coverage):
 ## 何时升级
 - 测试失败 → `pax-execute`
 - 覆盖率不达标 → `pax-plan`
-- 需要用户确认 → `pax-orchestrate`
+- 需要用户确认 → 返回上游阶段
