@@ -1,7 +1,7 @@
 ---
 name: pax-learn
 description: >
-  经验沉淀和知识图谱。此 skill 由 pax-orchestrate 在编排路由中调用，用于从任务执行中沉淀经验并构建知识图谱。
+    Use when: 经验沉淀和知识图谱。此 skill 由 pax-orchestrate 在编排路由中调用，用于从任务执行中沉淀经验并构建知识图谱。
 version: 0.2.0
 family: pax
 layer: L1
@@ -11,6 +11,26 @@ requires_snapshot: true
 
 # pax-learn
 
+
+## Overview
+
+经验沉淀与知识图谱 Skill。从执行留痕中提取经验，构建可复用的知识图谱。
+
+## When to Use
+
+大量执行留痕积累后、或自进化触发经验提取时。
+
+## Common Pitfalls
+
+- 经验提取过于主观，缺乏证据。
+- 图谱条目重复。
+- 未与文档沉淀对齐。
+
+## Verification Checklist
+
+- [ ] 经验提取有证据支撑
+- [ ] 知识图谱条目去重
+- [ ] 沉淀结果与文档沉淀索引一致
 ## Execution Contract
 - 前置门禁：`snapshot.review.status == completed`
 - 未通过门禁：拒绝启动，返回评审阶段

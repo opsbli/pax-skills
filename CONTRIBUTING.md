@@ -234,6 +234,73 @@ Closes #123
 
 ---
 
+## CI 门禁与外部工具
+
+`pax-ci` 工作流包含 7 个 job，其中 5 个是**硬门禁**（失败会阻断合并），2 个是**建议性**（失败不阻断，但会在 PR 里告警）：
+
+| Job | 类型 | 说明 |
+|-----|------|------|
+| contracts-and-tests | 硬门禁 | `pax-forge test` + `pytest` + 版本一致性校验 |
+| quality-gate | 硬门禁 | `tools/quality_gate.py` 五项检查 |
+| routing-eval | 硬门禁 | skillEval 路由评估（需 `DASHSCOPE_API_KEY`，无 key 时跳过） |
+| agentskills-ci-check | 硬门禁 | [agentskills-ci](https://github.com/damanisme/agentskills-ci) 对 `skills/` 打分，**每个 Skill 必须 ≥ 80/100** |
+| quality-summary | 硬门禁 | 汇总前面所有 job 的结果 |
+| internal-routing-check | 建议 | 内部路由单元测试数据集校验 |
+| skilldiff-regression | 建议 | 行为回归测试；未配置 live harness 时仍会产出 recorded demo 作为 artifact |
+
+### 1. agentskills-ci 评分要求
+
+当前 18 个 Skill 得分全部 100/100。要维持这个分数，每个新 Skill 必须包含：
+
+1. Frontmatter 必须含 `name` 和 `description` 字段
+2. `description` 必须以 `Use when ...` / `When to use ...` / `Trigger ...` 开头（中文描述前缀即可）
+3. Body 必须包含四个推荐段落（英文墓锚，中文内容）：
+   - `## Overview`
+   - `## When to Use`
+   - `## Common Pitfalls`
+   - `## Verification Checklist`
+4. Verification Checklist 必须包含 checkbox 项（`- [ ]`）
+5. 任何引用型路径（如 `references/foo.md`）必须在 Skill 目录内存在
+
+本地验证：
+
+```bash
+pip install agentskills-ci
+agentskills-ci score ./skills --min-score 80 --format markdown
+```
+
+一键补齐（适用于现有 Skill）：
+
+```bash
+python scripts/backfill_agentskills_sections.py
+```
+
+该脚本会在 `# <skill-name>` 标题后插入四段推荐内容，并在 `description` 前缀上追加 `Use when: ` 触发词。
+
+### 2. 开启 live skilldiff run（可选）
+
+`skilldiff` 行为回归需要在真实 Agent harness 上运行，默认不开。要开启：
+
+**方法一（推荐）：在 GitHub 仓库设置里添加一个 Secret**
+
+- 仓库设置 → Settings → Secrets and variables → Actions
+- 任选一个 harness，添加对应 Secret：
+  - `ANTHROPIC_API_KEY` → Claude Code harness
+  - `OPENAI_API_KEY` → Codex harness
+  - `CODEBUFF_API_KEY` → Freebuff harness
+- 可选：在 Settings → Variables → Actions 里设 `SKILLDIFF_HARNESS=claude`（或其他）强制指定；不设就自动探测。
+
+**方法二：本地开发时手动跑一次**
+
+```bash
+npx skilldiff run evals/skilldiff/pax-clarify.scenario.yaml \
+  --live --base origin/main --harness claude
+```
+
+**未配置时的行为**：job 不会阻塞 PR，但会输出一个 recorded-mode 的 demo 产物（`evals/skilldiff/latest-orbit.html`），保证 artifact pipeline 始终有东西可看。
+
+---
+
 ## 代码规范
 
 ### Python 代码

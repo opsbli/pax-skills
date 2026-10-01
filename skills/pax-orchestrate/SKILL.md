@@ -1,7 +1,7 @@
 ---
 name: pax-orchestrate
 description: >
-  所有 pax-family 任务的统一入口。当用户目标涉及诊断修复、功能开发、重构优化、数据操作、文档咨询或工具构建时，必须先经过 pax-orchestrate 进行意图分类、风险分级、路由构建与快照初始化。不要直接选择 pax-diagnose、pax-plan、pax-execute 等具体 skill，而是让 pax-orchestrate 决定完整的执行路由。
+    Use when: 所有 pax-family 任务的统一入口。当用户目标涉及诊断修复、功能开发、重构优化、数据操作、文档咨询或工具构建时，必须先经过 pax-orchestrate 进行意图分类、风险分级、路由构建与快照初始化。不要直接选择 pax-diagnose、pax-plan、pax-execute 等具体 skill，而是让 pax-orchestrate 决定完整的执行路由。
 version: 0.2.0
 family: pax
 layer: L0
@@ -11,6 +11,26 @@ requires_snapshot: true
 
 # pax-orchestrate
 
+
+## Overview
+
+pax-family 统一入口。对每个任务先做意图分类（6 类 MECE 意图）与四维风险评分（不可逆性 / 影响范围 / 不确定性 / 协调成本），再据此构建执行路由并初始化跨 Skill 快照。
+
+## When to Use
+
+所有 pax-family 任务默认从这里开始：诊断修复、功能开发、重构优化、数据操作、文档咨询、工具构建。用户或上层 Agent 明确点名要编排时直接进入。
+
+## Common Pitfalls
+
+- 直接调用 L1 具体 Skill 绕过路由，导致风险分级缺失。
+- 高风险动作（部署 / 数据订正 / 破坏性命令）未获得用户明确 approval / confirm 就下发。
+- 未初始化快照，下游 Skill 拿不到跨阶段状态。
+
+## Verification Checklist
+
+- [ ] 已完成意图分类且分类结果与 6 类 MECE 表一一对应
+- [ ] 已计算四维风险分并标注等级，高风险任务已向用户显式请求 approval / confirm
+- [ ] 已初始化快照并把路由表写入快照，可以交给 L1 Skill
 ## Execution Contract
 - 前置门禁：能读取 `pax-family.schema.yaml` 与 `pax-ops/versions.json`
 - 未通过门禁：拒绝启动，返回用户错误

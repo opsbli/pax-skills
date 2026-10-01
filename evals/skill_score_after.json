@@ -1,0 +1,136 @@
+{
+  "results": [
+    {
+      "issues": [],
+      "name": "pax-advisor",
+      "passed": true,
+      "path": "skills\\pax-advisor\\SKILL.md",
+      "score": 100
+    },
+    {
+      "issues": [],
+      "name": "pax-clarify",
+      "passed": true,
+      "path": "skills\\pax-clarify\\SKILL.md",
+      "score": 100
+    },
+    {
+      "issues": [],
+      "name": "pax-council",
+      "passed": true,
+      "path": "skills\\pax-council\\SKILL.md",
+      "score": 100
+    },
+    {
+      "issues": [],
+      "name": "pax-deploy",
+      "passed": true,
+      "path": "skills\\pax-deploy\\SKILL.md",
+      "score": 100
+    },
+    {
+      "issues": [],
+      "name": "pax-diagnose",
+      "passed": true,
+      "path": "skills\\pax-diagnose\\SKILL.md",
+      "score": 100
+    },
+    {
+      "issues": [],
+      "name": "pax-docs",
+      "passed": true,
+      "path": "skills\\pax-docs\\SKILL.md",
+      "score": 100
+    },
+    {
+      "issues": [],
+      "name": "pax-evolve",
+      "passed": true,
+      "path": "skills\\pax-evolve\\SKILL.md",
+      "score": 100
+    },
+    {
+      "issues": [],
+      "name": "pax-execute",
+      "passed": true,
+      "path": "skills\\pax-execute\\SKILL.md",
+      "score": 100
+    },
+    {
+      "issues": [],
+      "name": "pax-learn",
+      "passed": true,
+      "path": "skills\\pax-learn\\SKILL.md",
+      "score": 100
+    },
+    {
+      "issues": [],
+      "name": "pax-monitor",
+      "passed": true,
+      "path": "skills\\pax-monitor\\SKILL.md",
+      "score": 100
+    },
+    {
+      "issues": [],
+      "name": "pax-orchestrate",
+      "passed": true,
+      "path": "skills\\pax-orchestrate\\SKILL.md",
+      "score": 100
+    },
+    {
+      "issues": [],
+      "name": "pax-plan",
+      "passed": true,
+      "path": "skills\\pax-plan\\SKILL.md",
+      "score": 100
+    },
+    {
+      "issues": [],
+      "name": "pax-review",
+      "passed": true,
+      "path": "skills\\pax-review\\SKILL.md",
+      "score": 100
+    },
+    {
+      "issues": [],
+      "name": "pax-rollback",
+      "passed": true,
+      "path": "skills\\pax-rollback\\SKILL.md",
+      "score": 100
+    },
+    {
+      "issues": [],
+      "name": "pax-test",
+      "passed": true,
+      "path": "skills\\pax-test\\SKILL.md",
+      "score": 100
+    },
+    {
+      "issues": [],
+      "name": "pax-verify",
+      "passed": true,
+      "path": "skills\\pax-verify\\SKILL.md",
+      "score": 100
+    },
+    {
+      "issues": [],
+      "name": "pax-worker-implement",
+      "passed": true,
+      "path": "skills\\pax-worker-implement\\SKILL.md",
+      "score": 100
+    },
+    {
+      "issues": [],
+      "name": "pax-worker-research",
+      "passed": true,
+      "path": "skills\\pax-worker-research\\SKILL.md",
+      "score": 100
+    }
+  ],
+  "summary": {
+    "failed": 0,
+    "overall_score": 100,
+    "passed": 18,
+    "total": 18
+  }
+}

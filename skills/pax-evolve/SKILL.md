@@ -1,7 +1,7 @@
 ---
 name: pax-evolve
 description: >
-  OODA 闭环 + 经验条目库 + A/B 验证门 + 回滚。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。
+    Use when: OODA 闭环 + 经验条目库 + A/B 验证门 + 回滚。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。
 version: 0.2.0
 family: pax
 layer: L4
@@ -11,6 +11,26 @@ requires_snapshot: true
 
 # pax-evolve
 
+
+## Overview
+
+自进化 Skill。汇总过往执行留痕，提出 Skill 文档 / 契约的改进建议。
+
+## When to Use
+
+定期或积累足够执行留痕后，主动或按需运行。
+
+## Common Pitfalls
+
+- 建议过于主观，缺乏证据支撑。
+- 建议破坏现有契约兼容性。
+- 未走 PR / review 流程直接落盘。
+
+## Verification Checklist
+
+- [ ] 每条改进建议都有支撑证据
+- [ ] 建议与兼容矩阵一致
+- [ ] 改动以 PR / patch 形式提交，不直接改生产文件
 ## Execution Contract
 - 前置门禁：可被任意 L0/L1/L2 调用；反馈或失败案例可读取
 - 未通过门禁：返回 `blocked`

@@ -1,7 +1,7 @@
 ---
 name: pax-advisor
 description: >
-  只读顾问，针对特定假设、权衡、架构问题提供咨询。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。
+    Use when: 只读顾问，针对特定假设、权衡、架构问题提供咨询。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。
 version: 0.2.0
 family: pax
 layer: L2
@@ -11,6 +11,26 @@ requires_snapshot: true
 
 # pax-advisor
 
+
+## Overview
+
+单点咨询 Skill。针对一个具体问题给出建议，不改动任何状态。
+
+## When to Use
+
+用户或上层 Agent 想要一个专家观点，但不希望触发完整执行流程。
+
+## Common Pitfalls
+
+- 建议过宽泛，缺乏可执行性。
+- 越界触发本应交给多专家盲审的决策。
+- 未留下建议留痕。
+
+## Verification Checklist
+
+- [ ] 建议针对单一问题，边界清晰
+- [ ] 建议附有依据与不确定性说明
+- [ ] 建议留痕写入快照，可以追溯
 ## Execution Contract
 - 前置门禁：需要完整快照或明确的问题陈述
 - 未通过门禁：拒绝启动，返回用户补齐上下文

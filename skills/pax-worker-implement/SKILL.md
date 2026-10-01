@@ -1,7 +1,7 @@
 ---
 name: pax-worker-implement
 description: >
-  有界实现任务执行。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。L3 层工具适配，接口由上层定义。
+    Use when: 有界实现任务执行。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。L3 层工具适配，接口由上层定义。
 version: 0.2.0
 family: pax
 layer: L3
@@ -11,6 +11,26 @@ requires_snapshot: true
 
 # pax-worker-implement
 
+
+## Overview
+
+实现型子任务 Skill。有界、单点，只做一个可交付的实现步骤。
+
+## When to Use
+
+上层计划中有一个独立的实现子任务需要落地。
+
+## Common Pitfalls
+
+- 一次做太多子任务，输出失控。
+- 破坏原有文件结构。
+- 未回滚失败改动。
+
+## Verification Checklist
+
+- [ ] 子任务边界明确且交付可验证
+- [ ] 改动文件清单已回收到上层快照
+- [ ] 失败路径可回滚
 ## Execution Contract
 - 前置门禁：调用方已定义任务边界与输入
 - 未通过门禁：拒绝执行

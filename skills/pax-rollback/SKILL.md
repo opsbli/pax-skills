@@ -1,7 +1,7 @@
 ---
 name: pax-rollback
 description: >
-  自动化回滚。此 skill 由 pax-orchestrate 在编排路由中调用，用于在任务执行失败或出现严重问题时自动回滚到安全状态。
+    Use when: 自动化回滚。此 skill 由 pax-orchestrate 在编排路由中调用，用于在任务执行失败或出现严重问题时自动回滚到安全状态。
 version: 0.2.0
 family: pax
 layer: L1
@@ -11,6 +11,26 @@ requires_snapshot: true
 
 # pax-rollback
 
+
+## Overview
+
+自动化回滚 Skill。执行失败或出现严重异常时按预定策略回滚到安全状态。
+
+## When to Use
+
+执行失败、运行监控触发严重告警、或用户显式请求回滚。
+
+## Common Pitfalls
+
+- 回滚策略未覆盖所有变更面。
+- 回滚未走审批。
+- 回滚失败后未告警。
+
+## Verification Checklist
+
+- [ ] 回滚前已确认用户 approval / confirm
+- [ ] 回滚策略覆盖所有变更面
+- [ ] 回滚结果已留痕，失败路径已告警
 ## Execution Contract
 - 前置门禁：`snapshot.plan.status == frozen` 且 `snapshot.plan.rollback_strategy` 存在
 - 未通过门禁：拒绝启动，返回规划阶段

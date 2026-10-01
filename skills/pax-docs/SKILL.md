@@ -1,7 +1,7 @@
 ---
 name: pax-docs
 description: >
-  把已确认硬决策沉淀为 CONTEXT.md 与 ADR。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。
+    Use when: 把已确认硬决策沉淀为 CONTEXT.md 与 ADR。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。
 version: 0.2.0
 family: pax
 layer: L4
@@ -11,6 +11,26 @@ requires_snapshot: true
 
 # pax-docs
 
+
+## Overview
+
+文档沉淀 Skill。把执行留痕沉淀为可查的文档 / 决策记录 / 案例库。
+
+## When to Use
+
+任务完成、评审通过、或需要归档一次执行时。
+
+## Common Pitfalls
+
+- 文档过于冗长，无法追溯关键决策。
+- 与既有文档重复。
+- 未建立索引。
+
+## Verification Checklist
+
+- [ ] 文档结构统一，含关键决策与证据
+- [ ] 已建立 / 更新索引
+- [ ] 文档链接到相关快照与版本
 ## Execution Contract
 - 前置门禁：可被任意 L0/L1/L2 调用；输入为已确认的硬决策或已产出的经验条目
 - 未通过门禁：返回 `blocked`

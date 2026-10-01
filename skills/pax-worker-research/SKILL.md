@@ -1,7 +1,7 @@
 ---
 name: pax-worker-research
 description: >
-  有界研究任务执行。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。L3 层工具适配，接口由上层定义。
+    Use when: 有界研究任务执行。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。L3 层工具适配，接口由上层定义。
 version: 0.2.0
 family: pax
 layer: L3
@@ -11,6 +11,26 @@ requires_snapshot: true
 
 # pax-worker-research
 
+
+## Overview
+
+研究型子任务 Skill。有界、单点，只做调研产出结论。
+
+## When to Use
+
+上层需要一项调研结果（例如查一个库、验证一个说法）时。
+
+## Common Pitfalls
+
+- 任务边界外扩，越权做决策。
+- 未记录证据来源。
+- 未回收到上层快照。
+
+## Verification Checklist
+
+- [ ] 调研范围明确且未越界
+- [ ] 结论附有证据链
+- [ ] 结果已回收到上层快照
 ## Execution Contract
 - 前置门禁：调用方已定义任务边界与输入
 - 未通过门禁：拒绝执行

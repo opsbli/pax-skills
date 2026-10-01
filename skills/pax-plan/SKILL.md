@@ -1,7 +1,7 @@
 ---
 name: pax-plan
 description: >
-  将已澄清/诊断的目标转化为机器可冻结的任务计划。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。
+    Use when: 将已澄清/诊断的目标转化为机器可冻结的任务计划。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。
 version: 0.2.0
 family: pax
 layer: L1
@@ -11,6 +11,26 @@ requires_snapshot: true
 
 # pax-plan
 
+
+## Overview
+
+结构化规划 Skill。基于澄清结果生成执行计划：任务分解、依赖排序、验收标准、回滚预案。
+
+## When to Use
+
+澄清已收敛，编排层判定需要执行且任务规模超出单步操作时。
+
+## Common Pitfalls
+
+- 计划粒度太粗，执行阶段无法追踪。
+- 数据订正 / 跨仓库变更未标注 prerequisite 与 script_language 守卫。
+- 未定义验收标准，评审无锚点。
+
+## Verification Checklist
+
+- [ ] 计划中每个任务都有 owner、依赖、验收标准
+- [ ] 已检查数据订正守卫与跨仓库守卫字段
+- [ ] 计划已写入快照，可以交给执行层
 ## Execution Contract
 - 前置门禁：`consensus.gaps_remaining == []`；诊断类任务额外要求 `diagnosis.status == settled` 且 `diagnosis.root_cause.confidence >= medium`
 - 未通过门禁：拒绝冻结，返回澄清或诊断阶段

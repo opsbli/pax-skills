@@ -1,7 +1,7 @@
 ---
 name: pax-test
 description: >
-  自动化测试生成。此 skill 由 pax-orchestrate 在编排路由中调用，用于自动生成测试用例并执行测试。
+    Use when: 自动化测试生成。此 skill 由 pax-orchestrate 在编排路由中调用，用于自动生成测试用例并执行测试。
 version: 0.2.0
 family: pax
 layer: L1
@@ -11,6 +11,26 @@ requires_snapshot: true
 
 # pax-test
 
+
+## Overview
+
+自动化测试生成 Skill。根据代码 / 契约生成测试用例，覆盖率不达标时补测。
+
+## When to Use
+
+新功能开发完成、契约变更后、或评审要求补测时。
+
+## Common Pitfalls
+
+- 生成的测试用例覆盖不到边界条件。
+- 只测正向路径。
+- 未与 CI 集成。
+
+## Verification Checklist
+
+- [ ] 测试覆盖正向 / 反向 / 边界三类路径
+- [ ] 测试可在 CI 中稳定执行
+- [ ] 覆盖率与验收标准对齐
 ## Execution Contract
 - 前置门禁：`snapshot.plan.status == frozen` 且 `snapshot.plan.steps` 存在
 - 未通过门禁：拒绝启动，返回规划阶段

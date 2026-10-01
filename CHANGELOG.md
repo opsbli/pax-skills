@@ -11,14 +11,22 @@
 - SkillOpt 训练集 v2：`pax_clarify_train_v2.jsonl` / `pax_clarify_eval_v2.jsonl`（14 + 7 例）+ `pax_diagnose_train_v2.jsonl` / `pax_diagnose_eval_v2.jsonl`（10 + 5 例）。
 - 首次跑通 pax-clarify 和 pax-diagnose 训练：两个 Skill 的 `final_reward` 都达到 1.0，improvement = +1.0（见 `evals/skillopt/results/clarify_v2/training_summary.json` 和 `diagnose_v2/training_summary.json`）。
 - 新增 CI job `agentskills-ci-check`：调用 [agentskills-ci](https://github.com/damanisme/agentskills-ci) 对 `skills/` 做 frontmatter lint + 0–100 质量分 + 危险命令扫描，产出 Markdown 报告作为 Artifact。
+- 新增 CI job `skilldiff-regression`：跑 pax-clarify 行为回归；未配置 live harness 时降级为 recorded demo。
+- `scripts/backfill_agentskills_sections.py`：一键为所有 pax-* SKILL.md 补齐 agentskills-ci 要求的 4 个推荐段落与 `Use when ...` 触发词。
 
 ### Changed
-- 修正 v0.2.0 条目中的口径：CI job 数量由 "4 个" 修正为当前实际 6 个（包含 agentskills-ci-check 后）。
+- **pax-clarify / pax-diagnose** 已把 SkillOpt 训练产出的 SkillOpt Cue Map 落回 live SKILL.md（之前仅存在 `--dry-run` 产物中）。
+- 所有 18 个 Skill 已补齐 `## Overview` / `## When to Use` / `## Common Pitfalls` / `## Verification Checklist` 四个推荐段落，`description` 均加上 `Use when: ...` 触发词前缀。
+- `agentskills-ci-check` CI 从建议性门禁提升为硬门禁：`--min-score 80`，失败直接阻断合并；本地实测平均分 100/100。
+- `skilldiff-regression` 在未配置 live harness 时改为始终输出 recorded demo 产物（`evals/skilldiff/latest-orbit.html`），不再静默 skip。
+- CONTRIBUTING.md 新增「CI 门禁与外部工具」章节，列出 7 个 job 的类型/门槛、agentskills-ci 评分要求、以及开启 live skilldiff run 的具体 Secret/Variable 名称。
+- 修正 v0.2.0 条目中的口径：CI job 数量由 "4 个" 修正为当前实际 7 个。
 - 将外部工具口径由 7 个修正为 8 个：新添 agentskills-ci（已 clone 到 `tools/agentskills-ci/`）。
 
 ### Fixed
 - SkillOpt 训练不再因为奖励函数与 `expected_action` 无关而输出恒为 0.888 的空结果。
 - SkillOpt patch 步骤不再重复写入 "## SkillOpt Cue Map" 标题：后续 epoch 会把新增条目 merge 到已有块内。
+- pax-clarify / pax-orchestrate 不再引用不存在的 `references/domain-dependencies.md`（已在两个 Skill 目录下各存一份），消除 agentskills-ci 的 Referenced path does not exist 错误。
 
 ## [0.2.0] - 2026-09-30
 

@@ -1,0 +1,820 @@
+{
+  "results": [
+    {
+      "issues": [
+        {
+          "message": "Missing recommended section: ## Overview",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## When to Use",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## Common Pitfalls",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## Verification Checklist",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Description should start with a clear trigger such as 'Use when ...'",
+          "path": null,
+          "penalty": 4,
+          "severity": "info"
+        },
+        {
+          "message": "Verification checklist should include checkbox items",
+          "path": null,
+          "penalty": 3,
+          "severity": "info"
+        }
+      ],
+      "name": "pax-advisor",
+      "passed": true,
+      "path": "skills\\pax-advisor\\SKILL.md",
+      "score": 73
+    },
+    {
+      "issues": [
+        {
+          "message": "Missing recommended section: ## Overview",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## When to Use",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## Common Pitfalls",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## Verification Checklist",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Referenced path does not exist: references/domain-dependencies.md",
+          "path": "references/domain-dependencies.md",
+          "penalty": 15,
+          "severity": "error"
+        },
+        {
+          "message": "Description should start with a clear trigger such as 'Use when ...'",
+          "path": null,
+          "penalty": 4,
+          "severity": "info"
+        },
+        {
+          "message": "Verification checklist should include checkbox items",
+          "path": null,
+          "penalty": 3,
+          "severity": "info"
+        }
+      ],
+      "name": "pax-clarify",
+      "passed": false,
+      "path": "skills\\pax-clarify\\SKILL.md",
+      "score": 58
+    },
+    {
+      "issues": [
+        {
+          "message": "Missing recommended section: ## Overview",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## When to Use",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## Common Pitfalls",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## Verification Checklist",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Description should start with a clear trigger such as 'Use when ...'",
+          "path": null,
+          "penalty": 4,
+          "severity": "info"
+        },
+        {
+          "message": "Verification checklist should include checkbox items",
+          "path": null,
+          "penalty": 3,
+          "severity": "info"
+        }
+      ],
+      "name": "pax-council",
+      "passed": true,
+      "path": "skills\\pax-council\\SKILL.md",
+      "score": 73
+    },
+    {
+      "issues": [
+        {
+          "message": "Missing recommended section: ## Overview",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## When to Use",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## Common Pitfalls",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## Verification Checklist",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Side-effect instruction lacks an approval gate",
+          "path": null,
+          "penalty": 12,
+          "severity": "warning"
+        },
+        {
+          "message": "Description should start with a clear trigger such as 'Use when ...'",
+          "path": null,
+          "penalty": 4,
+          "severity": "info"
+        },
+        {
+          "message": "Verification checklist should include checkbox items",
+          "path": null,
+          "penalty": 3,
+          "severity": "info"
+        }
+      ],
+      "name": "pax-deploy",
+      "passed": true,
+      "path": "skills\\pax-deploy\\SKILL.md",
+      "score": 61
+    },
+    {
+      "issues": [
+        {
+          "message": "Missing recommended section: ## Overview",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## When to Use",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## Common Pitfalls",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## Verification Checklist",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Description should start with a clear trigger such as 'Use when ...'",
+          "path": null,
+          "penalty": 4,
+          "severity": "info"
+        },
+        {
+          "message": "Verification checklist should include checkbox items",
+          "path": null,
+          "penalty": 3,
+          "severity": "info"
+        }
+      ],
+      "name": "pax-diagnose",
+      "passed": true,
+      "path": "skills\\pax-diagnose\\SKILL.md",
+      "score": 73
+    },
+    {
+      "issues": [
+        {
+          "message": "Missing recommended section: ## Overview",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## When to Use",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## Common Pitfalls",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## Verification Checklist",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Description should start with a clear trigger such as 'Use when ...'",
+          "path": null,
+          "penalty": 4,
+          "severity": "info"
+        }
+      ],
+      "name": "pax-docs",
+      "passed": true,
+      "path": "skills\\pax-docs\\SKILL.md",
+      "score": 76
+    },
+    {
+      "issues": [
+        {
+          "message": "Missing recommended section: ## Overview",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## When to Use",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## Common Pitfalls",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## Verification Checklist",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Description should start with a clear trigger such as 'Use when ...'",
+          "path": null,
+          "penalty": 4,
+          "severity": "info"
+        },
+        {
+          "message": "Verification checklist should include checkbox items",
+          "path": null,
+          "penalty": 3,
+          "severity": "info"
+        }
+      ],
+      "name": "pax-evolve",
+      "passed": true,
+      "path": "skills\\pax-evolve\\SKILL.md",
+      "score": 73
+    },
+    {
+      "issues": [
+        {
+          "message": "Missing recommended section: ## Overview",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## When to Use",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## Common Pitfalls",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## Verification Checklist",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Description should start with a clear trigger such as 'Use when ...'",
+          "path": null,
+          "penalty": 4,
+          "severity": "info"
+        },
+        {
+          "message": "Verification checklist should include checkbox items",
+          "path": null,
+          "penalty": 3,
+          "severity": "info"
+        }
+      ],
+      "name": "pax-execute",
+      "passed": true,
+      "path": "skills\\pax-execute\\SKILL.md",
+      "score": 73
+    },
+    {
+      "issues": [
+        {
+          "message": "Missing recommended section: ## Overview",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## When to Use",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## Common Pitfalls",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## Verification Checklist",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Description should start with a clear trigger such as 'Use when ...'",
+          "path": null,
+          "penalty": 4,
+          "severity": "info"
+        },
+        {
+          "message": "Verification checklist should include checkbox items",
+          "path": null,
+          "penalty": 3,
+          "severity": "info"
+        }
+      ],
+      "name": "pax-learn",
+      "passed": true,
+      "path": "skills\\pax-learn\\SKILL.md",
+      "score": 73
+    },
+    {
+      "issues": [
+        {
+          "message": "Missing recommended section: ## Overview",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## When to Use",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## Common Pitfalls",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## Verification Checklist",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Description should start with a clear trigger such as 'Use when ...'",
+          "path": null,
+          "penalty": 4,
+          "severity": "info"
+        },
+        {
+          "message": "Verification checklist should include checkbox items",
+          "path": null,
+          "penalty": 3,
+          "severity": "info"
+        }
+      ],
+      "name": "pax-monitor",
+      "passed": true,
+      "path": "skills\\pax-monitor\\SKILL.md",
+      "score": 73
+    },
+    {
+      "issues": [
+        {
+          "message": "Missing recommended section: ## Overview",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## When to Use",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## Common Pitfalls",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## Verification Checklist",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Referenced path does not exist: references/domain-dependencies.md",
+          "path": "references/domain-dependencies.md",
+          "penalty": 15,
+          "severity": "error"
+        },
+        {
+          "message": "Side-effect instruction lacks an approval gate",
+          "path": null,
+          "penalty": 12,
+          "severity": "warning"
+        },
+        {
+          "message": "Description should start with a clear trigger such as 'Use when ...'",
+          "path": null,
+          "penalty": 4,
+          "severity": "info"
+        },
+        {
+          "message": "Verification checklist should include checkbox items",
+          "path": null,
+          "penalty": 3,
+          "severity": "info"
+        }
+      ],
+      "name": "pax-orchestrate",
+      "passed": false,
+      "path": "skills\\pax-orchestrate\\SKILL.md",
+      "score": 46
+    },
+    {
+      "issues": [
+        {
+          "message": "Missing recommended section: ## Overview",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## When to Use",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## Common Pitfalls",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## Verification Checklist",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Description should start with a clear trigger such as 'Use when ...'",
+          "path": null,
+          "penalty": 4,
+          "severity": "info"
+        },
+        {
+          "message": "Verification checklist should include checkbox items",
+          "path": null,
+          "penalty": 3,
+          "severity": "info"
+        }
+      ],
+      "name": "pax-plan",
+      "passed": true,
+      "path": "skills\\pax-plan\\SKILL.md",
+      "score": 73
+    },
+    {
+      "issues": [
+        {
+          "message": "Missing recommended section: ## Overview",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## When to Use",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## Common Pitfalls",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## Verification Checklist",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Description should start with a clear trigger such as 'Use when ...'",
+          "path": null,
+          "penalty": 4,
+          "severity": "info"
+        },
+        {
+          "message": "Verification checklist should include checkbox items",
+          "path": null,
+          "penalty": 3,
+          "severity": "info"
+        }
+      ],
+      "name": "pax-review",
+      "passed": true,
+      "path": "skills\\pax-review\\SKILL.md",
+      "score": 73
+    },
+    {
+      "issues": [
+        {
+          "message": "Missing recommended section: ## Overview",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## When to Use",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## Common Pitfalls",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## Verification Checklist",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Description should start with a clear trigger such as 'Use when ...'",
+          "path": null,
+          "penalty": 4,
+          "severity": "info"
+        },
+        {
+          "message": "Verification checklist should include checkbox items",
+          "path": null,
+          "penalty": 3,
+          "severity": "info"
+        }
+      ],
+      "name": "pax-rollback",
+      "passed": true,
+      "path": "skills\\pax-rollback\\SKILL.md",
+      "score": 73
+    },
+    {
+      "issues": [
+        {
+          "message": "Missing recommended section: ## Overview",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## When to Use",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## Common Pitfalls",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## Verification Checklist",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Description should start with a clear trigger such as 'Use when ...'",
+          "path": null,
+          "penalty": 4,
+          "severity": "info"
+        },
+        {
+          "message": "Verification checklist should include checkbox items",
+          "path": null,
+          "penalty": 3,
+          "severity": "info"
+        }
+      ],
+      "name": "pax-test",
+      "passed": true,
+      "path": "skills\\pax-test\\SKILL.md",
+      "score": 73
+    },
+    {
+      "issues": [
+        {
+          "message": "Missing recommended section: ## Overview",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## When to Use",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## Common Pitfalls",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## Verification Checklist",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Description should start with a clear trigger such as 'Use when ...'",
+          "path": null,
+          "penalty": 4,
+          "severity": "info"
+        },
+        {
+          "message": "Verification checklist should include checkbox items",
+          "path": null,
+          "penalty": 3,
+          "severity": "info"
+        }
+      ],
+      "name": "pax-verify",
+      "passed": true,
+      "path": "skills\\pax-verify\\SKILL.md",
+      "score": 73
+    },
+    {
+      "issues": [
+        {
+          "message": "Missing recommended section: ## Overview",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## When to Use",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## Common Pitfalls",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## Verification Checklist",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Description should start with a clear trigger such as 'Use when ...'",
+          "path": null,
+          "penalty": 4,
+          "severity": "info"
+        },
+        {
+          "message": "Verification checklist should include checkbox items",
+          "path": null,
+          "penalty": 3,
+          "severity": "info"
+        }
+      ],
+      "name": "pax-worker-implement",
+      "passed": true,
+      "path": "skills\\pax-worker-implement\\SKILL.md",
+      "score": 73
+    },
+    {
+      "issues": [
+        {
+          "message": "Missing recommended section: ## Overview",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## When to Use",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## Common Pitfalls",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Missing recommended section: ## Verification Checklist",
+          "path": null,
+          "penalty": 5,
+          "severity": "warning"
+        },
+        {
+          "message": "Description should start with a clear trigger such as 'Use when ...'",
+          "path": null,
+          "penalty": 4,
+          "severity": "info"
+        },
+        {
+          "message": "Verification checklist should include checkbox items",
+          "path": null,
+          "penalty": 3,
+          "severity": "info"
+        }
+      ],
+      "name": "pax-worker-research",
+      "passed": true,
+      "path": "skills\\pax-worker-research\\SKILL.md",
+      "score": 73
+    }
+  ],
+  "summary": {
+    "failed": 2,
+    "overall_score": 70,
+    "passed": 16,
+    "total": 18
+  }
+}

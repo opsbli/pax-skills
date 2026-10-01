@@ -1,7 +1,7 @@
 ---
 name: pax-review
 description: >
-  独立评审门禁，对照成功标准决定通过/拒绝。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。
+    Use when: 独立评审门禁，对照成功标准决定通过/拒绝。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。
 version: 0.2.0
 family: pax
 layer: L1
@@ -11,6 +11,26 @@ requires_snapshot: true
 
 # pax-review
 
+
+## Overview
+
+独立评审门禁。以契约为准独立评估执行结果，判定通过 / 有条件通过 / 拒绝。
+
+## When to Use
+
+执行完成后，进入评审阶段；高风险任务强制经过此 Skill。
+
+## Common Pitfalls
+
+- 与执行阶段同一 Agent 评审，缺乏独立性。
+- 只评审结果，未评审过程与审计留痕。
+- 拒绝时未给出可执行的修复清单。
+
+## Verification Checklist
+
+- [ ] 评审结论有明确的通过 / 有条件通过 / 拒绝
+- [ ] 评审意见包含可执行修复清单并写入快照
+- [ ] 评审留痕完整（输入、检查点、结论、时间戳）
 ## Execution Contract
 - 前置门禁：`snapshot.execution` 已产出，`plan.verification_strategy[]` 存在
 - 未通过门禁：拒绝启动，返回执行阶段补齐日志

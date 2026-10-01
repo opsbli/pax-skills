@@ -1,7 +1,7 @@
 ---
 name: pax-monitor
 description: >
-  运行中监控和告警。此 skill 由 pax-orchestrate 在编排路由中调用，用于监控任务执行过程中的异常情况并触发告警。
+    Use when: 运行中监控和告警。此 skill 由 pax-orchestrate 在编排路由中调用，用于监控任务执行过程中的异常情况并触发告警。
 version: 0.2.0
 family: pax
 layer: L1
@@ -11,6 +11,26 @@ requires_snapshot: true
 
 # pax-monitor
 
+
+## Overview
+
+运行中监控与告警 Skill。持续观察执行状态、指标、错误，触发告警与升级。
+
+## When to Use
+
+长耗时执行、部署、数据订正等需要持续观察的任务。
+
+## Common Pitfalls
+
+- 告警阈值过宽，问题被淹没。
+- 只监控不升级，异常无人响应。
+- 与运行中验证职责混淆。
+
+## Verification Checklist
+
+- [ ] 监控指标与告警阈值明确
+- [ ] 告警触发有升级路径
+- [ ] 监控事件已留痕到快照
 ## Execution Contract
 - 前置门禁：`snapshot.plan.status == frozen`
 - 未通过门禁：拒绝启动，返回规划阶段

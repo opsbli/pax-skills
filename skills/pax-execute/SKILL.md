@@ -1,7 +1,7 @@
 ---
 name: pax-execute
 description: >
-  在契约约束下执行，带审计和回滚。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。
+    Use when: 在契约约束下执行，带审计和回滚。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。
 version: 0.2.0
 family: pax
 layer: L1
@@ -11,6 +11,26 @@ requires_snapshot: true
 
 # pax-execute
 
+
+## Overview
+
+在契约约束下执行规划。每步执行前校验前置条件，执行后校验输出，跨仓库操作强制走 execution_strategy。
+
+## When to Use
+
+已有明确计划且前置条件满足，编排层路由到执行阶段。
+
+## Common Pitfalls
+
+- 未校验跨仓库 / 跨服务守卫就直接下发破坏性命令。
+- 执行中未更新快照，下游 Skill 拿不到进度。
+- 失败时未回滚或告警。
+
+## Verification Checklist
+
+- [ ] 每一步执行前都完成了前置条件校验
+- [ ] 执行结果与契约输出一致，快照已更新
+- [ ] 失败路径已触发告警或回滚，用户已确认下一步
 ## Execution Contract
 - 前置门禁：`contract` 已确认，`plan.status == frozen`
 - 未通过门禁：拒绝启动，返回上游阶段

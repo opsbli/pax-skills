@@ -1,7 +1,7 @@
 ---
 name: pax-verify
 description: >
-  运行中验证，有界循环 + 五态印章。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。
+    Use when: 运行中验证，有界循环 + 五态印章。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。
 version: 0.2.0
 family: pax
 layer: L4
@@ -11,6 +11,26 @@ requires_snapshot: true
 
 # pax-verify
 
+
+## Overview
+
+运行中验证 Skill。在长任务执行过程中周期性检查契约与前置条件。
+
+## When to Use
+
+长耗时任务执行中，编排层或运行监控触发验证。
+
+## Common Pitfalls
+
+- 验证频率过高影响执行效率。
+- 只检查静态契约，忽略运行时状态。
+- 发现问题后未告警。
+
+## Verification Checklist
+
+- [ ] 验证频率与任务时长匹配
+- [ ] 验证覆盖静态契约和运行时状态
+- [ ] 异常已触发告警并写入快照
 ## Execution Contract
 - 前置门禁：可被任意 L0/L1/L2 调用；被验证对象与成功标准可读取
 - 未通过门禁：返回 `blocked`

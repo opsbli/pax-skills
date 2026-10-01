@@ -1,7 +1,7 @@
 ---
 name: pax-council
 description: >
-  对重大系统开发计划做盲审、显式反驳、有界修订轮次、证据加权决策。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。
+    Use when: 对重大系统开发计划做盲审、显式反驳、有界修订轮次、证据加权决策。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。
 version: 0.2.0
 family: pax
 layer: L2
@@ -11,6 +11,26 @@ requires_snapshot: true
 
 # pax-council
 
+
+## Overview
+
+多专家盲审 Skill。并行召集多个专家 Agent 独立评审，再汇总分歧。
+
+## When to Use
+
+高风险、跨团队、或多视角必要；编排层判定为需要盲审的决策。
+
+## Common Pitfalls
+
+- 专家视角过窄，未覆盖风险、合规、性能等维度。
+- 未隔离专家视角，导致回声室。
+- 汇总时未处理分歧，直接采纳多数意见。
+
+## Verification Checklist
+
+- [ ] 已召集至少 3 个专家且视角互补
+- [ ] 分歧已被显式记录并给出裁决理由
+- [ ] 汇总结论有可执行结论与反对意见留痕
 ## Execution Contract
 - 前置门禁：需要完整快照或明确的升级问题陈述
 - 未通过门禁：拒绝启动

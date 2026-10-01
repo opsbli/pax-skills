@@ -1,7 +1,7 @@
 ---
 name: pax-deploy
 description: >
-  部署流程编排。此 skill 由 pax-orchestrate 在编排路由中调用，用于自动化部署流程。
+    Use when: 部署流程编排。此 skill 由 pax-orchestrate 在编排路由中调用，用于自动化部署流程。
 version: 0.2.0
 family: pax
 layer: L1
@@ -11,6 +11,26 @@ requires_snapshot: true
 
 # pax-deploy
 
+
+## Overview
+
+部署流程编排 Skill。按预定流水线编排部署，处理审批、健康检查、回滚。
+
+## When to Use
+
+任务完成评审、需要发布到目标环境时。高风险，需要用户显式 approval / confirm。
+
+## Common Pitfalls
+
+- 跳过 approval / confirm 门禁直接部署。
+- 健康检查失败未阻断发布。
+- 未定义回滚路径。
+
+## Verification Checklist
+
+- [ ] 已获得用户显式 approval / confirm
+- [ ] 部署流水线包含健康检查与失败回滚
+- [ ] 部署留痕完整，可以审计
 ## Execution Contract
 - 前置门禁：`snapshot.plan.status == frozen` 且 `snapshot.execution.status == completed`
 - 未通过门禁：拒绝启动，返回执行阶段
