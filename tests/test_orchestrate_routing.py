@@ -1,7 +1,13 @@
-"""pax-orchestrate 内部路由逻辑测试
+"""pax-orchestrate 内部路由——自洽性测试（stub 对金标，**不测真实 skill**）
 
-测试意图分类、风险评分、路由构建的正确性。
-通过解析 pax-orchestrate SKILL.md 中的路由表，验证测试案例的路由决策。
+⚠️ 重要：本文件**不是**对 pax-orchestrate 的能力评估。
+本文件里手写的 _classify_intent() / _build_route() 是关键词匹配的桩代码，
+它们从未读过 skills/pax-orchestrate/SKILL.md。因此这些断言只证明
+「本文件自己的桩输出」与「数据集 gold」一致，对 skill 本身零验证。
+
+真实的内部路由评估请看 evals/run_internal_routing_eval.py——它直接拿
+SKILL.md W1–W4 原文当系统提示、真实调用模型、并输出 gold/契约冲突报告。
+本文件保留为关键词意图→路由映射的回归基线（改 SKILL.md 的路由表时提醒）。
 """
 
 import pytest

@@ -1,4 +1,9 @@
-# pax_routing — pax-* 家族路由基线评估套件（routing_only）
+# pax_routing_control — description 对照组（剥离「不要直接选择」禁令）
+#
+# 用途：v2.0 基线的 100% 命中率是在「13 条 description 明写不要直接选择」的条件下
+# 得到的。本套件把禁令剥掉、保留能力描述，与 v2.0 同模型同参数同数据集，
+# 用来量出禁令贡献了多少命中率，即模型在无指示下的真实区分能力。
+# 生成方式：python evals/build_control_subjects.py（skills.dir 指向派生的对照组目录）
 #
 # 评测目标：pax-orchestrate 作为 L0 入口，能否在 18 个 pax skill 的 catalog 里
 # 被正确选中（正面/歧义/多任务请求），并能在非 pax 请求上正确拒答。
@@ -12,8 +17,8 @@
 #   模型没有其他选项，正面案例的命中率按构造必然接近 100%，测不出任何东西。
 #   现在 include 是全部 18 个 skill，正面案例才真正考验「在 17 个干扰项里
 #   选中 L0 入口」，歧义案例才有暴露 MECE 边界的能力。
-suite_id: pax_routing
-suite_version: "2.0"
+suite_id: pax_routing_control
+suite_version: "2.0-control"
 description: >
   pax-* 家族路由基线。19 个用例：10 pos + 4 amb + 3 rej + 2 multi。
   catalog 为全部 18 个 pax skill，expected 为 pax-orchestrate（rej 类为空集）。
@@ -30,8 +35,9 @@ routing_input:
 
 # --- 被测对象 ---
 skills:
-  # 由 evals/sync_subjects.py 从 skills/ 生成；skills/ 是唯一事实源。
-  dir: C:/Users/sinvi/Documents/codes/pax-skills/evals/subjects
+  # 由 evals/build_control_subjects.py 从 subjects/ 派生；勿手工编辑。
+  # 与 subjects/ 的唯一差异：frontmatter description 剥离了「不要直接选择」类禁令。
+  dir: C:/Users/sinvi/Documents/codes/pax-skills/evals/subjects_control_no_prohibition
   # target 是实验归属，与 include（模型看见谁）严格分开。
   target: [pax-orchestrate]
   include:
