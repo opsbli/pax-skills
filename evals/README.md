@@ -209,11 +209,12 @@ evals/
 ├── sync_subjects.py            # skills/ → evals/subjects/ 的唯一生成入口（--check 校验漂移）
 ├── build_control_subjects.py   # subjects/ → 对照组（剥离禁令）+ 对照组套件（--check 校验漂移）
 ├── compare_runs.py             # 两次 routing 运行的逐 case A/B 对比 + 失败模式拆解（只读）
-├── fix_internal_dataset.py     # 内部数据集修订脚本（幂等，带 CHANGELOG，1.0 → 1.4）
-├── run_internal_routing_eval.py# 内部路由评估（真实调用模型，含 gate 与稳健性检查）
+├── fix_internal_dataset.py     # 内部数据集定向修订（幂等，带 CHANGELOG，v1.1–v1.4）
+├── add_holdout_cases.py        # 追加锁定泛化题（v1.5，--check 校验不得修题）
+├── run_internal_routing_eval.py# 内部路由评估（真实调用模型，含 gate 与健壮性检查）
 ├── datasets/
 │   ├── pax_routing_v1.0.jsonl           # 外部路由，30 cases（含 # 注释头，读取时跳过）
-│   └── pax_internal_routing_v1.0.json   # 内部路由，14 cases（version 1.4）
+│   └── pax_internal_routing_v1.0.json   # 内部路由，18 cases（version 1.5，含 4 条 holdout）
 ├── suites/
 │   ├── pax_routing.yaml           # 基线套件（suite_version 2.0）
 │   └── pax_routing_control.yaml   # 对照组套件（2.0-control，唯一差异是 skills.dir）
@@ -301,62 +302,131 @@ DeepSeek 官方 OpenAI 兼容端点，2026-10-02 实测；该账号可用模型�
 测 pax-orchestrate 的**内部**决策：意图分类（W1）、风险评分（W2）、诊断必要性（W3）、路由构建（W4）。
 与第 1 节是两层：第 1 节测「模型要不要选 pax-orchestrate」，本节测「pax-orchestrate 内部判得对不对」。
 
-### 基线结果（2026-10-02，deepseek-flash，temperature=0，repeats=3）
+### 基线结果（2026-10-02 22:51，deepseek-flash，temperature=0，repeats=3）
 
-14 案例 × 3 次 = 42 次判定，数据集 `pax_internal_routing_v1.0.json` **version 1.4**：
+18 案例 × 3 次 = 54 次判定，数据集 `pax_internal_routing_v1.0.json` **version 1.5**：
 
 | 口径 | 通过 | 说明 |
 |------|------|------|
-| 原始 | 41/42 (97.6%) | 含 1 行自相矛盾输出 |
-| 剔除 gold/契约冲突字段 | 41/42 (97.6%) | v1.1 起冲突字段已全部解决，两口径一致 |
-| **可解析且自洽（能力分）** | **41/41 (100.0%)** | **gate 以此为准** |
+| 原始 | 47/54 (87.0%) | |
+| 剔除 gold/契约冲突字段 | 47/54 (87.0%) | v1.1 起冲突字段已全部解决，两口径一致 |
+| **可解析且自洽（能力分）** | **46/52 (88.5%)** | **gate 以此为准** |
 
-输出健壮性：**valid_rate = 41/42 (97.6%)**，其中语法不可解析 0 次、自相矛盾 1 次
-（`pax-risk-high-01` r2：四维都是 1 却报 `risk_score=0`，四维最小和是 4）。
+输出健壮性：**valid_rate = 52/54 (96.3%)**，两次都是 JSON 语法不可解析
+（`pax-intent-do-01` r1、`pax-risk-high-01` r0，报 `Extra data: line 3`）。
 
 | 类别 | 能力口径 | 门槛 | 判定 |
 |------|------|------|------|
-| intent_classification | 21/21 (100.0%) | ≥0.95 | PASS |
-| risk_scoring | 8/8 (100.0%) | ≥0.85 | PASS |
+| intent_classification | 19/20 (95.0%) | ≥0.95 | PASS |
+| risk_scoring | 15/20 (75.0%) | ≥0.85 | **FAIL** |
 | route_building | 9/9 (100.0%) | ≥0.90 | PASS |
 | cross_repo_detection | 3/3 (100.0%) | ≥0.90 | PASS |
-| → **GATE** | 41/41 (100.0%) | ≥0.90 | **PASS** |
+| → **GATE** | 46/52 (88.5%) | ≥0.90 | **FAIL** |
 
-逐检查项（13 项全部 PASS，门槛按契约确定性分档）：
+逐检查项（门槛按契约确定性分档）：
 
-| 检查项 | n | 通过率 | 门槛 |
-|--------|---|--------|------|
-| primary_intent | 21 | 100.0% | ≥0.95 |
-| diagnose_required | 9 | 100.0% | ≥0.95 |
-| cross_repo | 3 | 100.0% | ≥0.95 |
-| execution_strategy_required | 3 | 100.0% | ≥0.95 |
-| route | 9 | 100.0% | ≥0.90 |
-| storage_backend_required | 9 | 100.0% | ≥0.90 |
-| secondary_intent | 21 | 100.0% | ≥0.85 |
-| risk_score | 8 | 100.0% | ≥0.85 |
-| risk_level | 8 | 100.0% | ≥0.85 |
-| irreversibility / impact_scope / uncertainty / coordination_cost | 8 | 各 100.0% | ≥0.80 |
+| 检查项 | n | 通过率 | 门槛 | 判定 |
+|--------|---|--------|------|------|
+| primary_intent | 20 | 95.0% | ≥0.95 | PASS |
+| diagnose_required | 9 | 100.0% | ≥0.95 | PASS |
+| cross_repo | 3 | 100.0% | ≥0.95 | PASS |
+| execution_strategy_required | 3 | 100.0% | ≥0.95 | PASS |
+| route | 9 | 100.0% | ≥0.90 | PASS |
+| storage_backend_required | 9 | 100.0% | ≥0.90 | PASS |
+| secondary_intent | 20 | 95.0% | ≥0.85 | PASS |
+| **risk_score** | 20 | **75.0%** | ≥0.85 | **FAIL** |
+| **risk_level** | 20 | **80.0%** | ≥0.85 | **FAIL** |
+| irreversibility | 20 | 85.0% | ≥0.80 | PASS |
+| impact_scope | 20 | 85.0% | ≥0.80 | PASS |
+| uncertainty | 20 | 90.0% | ≥0.80 | PASS |
+| coordination_cost | 20 | 100.0% | ≥0.80 | PASS |
 
-稳定性：1/14 案例跨 3 次不一致（`pax-risk-high-01`）。
-tokens：input 149,199 / output 40,910。
+稳定性：4/18 案例跨 3 次不一致。
+tokens：input 192,342 / output 69,416。
 
-### 这个 100% 的可信度边界（必须一起读）
+### 锁定分组：反拟合问题的实测答案（v1.5 新增）
 
-100% **不是无偏估计**。数据集从 v1.0 修订到 v1.4，共改过 **6 处 gold**，
-其中至少 4 处是**观察模型答错之后才去核对契约、发现 gold 有问题**的。
-也就是说，数据集已经在某种程度上被「反拟合」过模型行为了。
+这是本节最重要的一个数字。
 
-诚实的结论是：
+| 分组 | 能力口径 | case 数 |
+|------|------|------|
+| 修订过的题（v1.1–v1.4 改过 gold/prompt） | **38/40 (95.0%)** | 14 |
+| 锁定题 holdout（从未修订过） | **8/12 (66.7%)** | 4 |
+| **差距** | **28.3pp** | |
 
-- **契约明确且自洽的地方，模型确实全对**（primary_intent、diagnose_required、cross_repo、
-  execution_strategy_required 各 21/21、9/9、3/3、3/3）。这部分是 v1.0 就成立的结论，
-  不依赖任何后续修订。
-- **1–3 主观量纲（四个 risk 维度）是契约实现最弱的部分**，但契约澄清 + gold 修正后
-  已收敛到 8/8。要证明这不是拟合，需要**新写一条从未见过的 risk 题**来验证泛化。
-- **n 很小**：risk 类每题 3 次判定，一次偏差就能移动 11–33pp。gate 是回归警报，
-  不是质量证明。
+holdout 逐题：
 
-### 数据集修订记录（v1.0 → v1.4）
+| case | gold | 判定 | 模型作答 |
+|------|------|------|------|
+| `pax-risk-low-02` (1,2,1,2=6/low) | low 上限边界 | **3/3** | 一致 |
+| `pax-risk-high-02` (3,3,1,1=8/high) | 强制升级规则 | **3/3** | 一致 |
+| `pax-risk-medium-02` (2,3,2,2=9/medium) | medium 上限边界 | 2/3 | r0 把 uncertainty 判 1 |
+| `pax-risk-medium-03` (2,2,2,1=7/medium) | 协调成本 1 的中风险 | **0/3** | 稳定答 (1,1,2,1)=5/low |
+
+两个必须一起读的子结论：
+
+1. **`pax-risk-high-02` 3/3 全对，是有价值的正面结果。** 四维加起来是 8，
+   按总分映射表本应是 medium；契约 W2 写「不可逆性 3 且影响范围 3 → 强制 high」。
+   模型三次都正确升到 high，说明**强制升级规则被真的应用了**，不是总分恰好落在高档的巧合。
+   现有 3 条旧题测不出这一点（`pax-risk-high-01` 总分 10 本来就是 high，强制升级不改变结果）。
+2. **`pax-risk-medium-03` 3/3 全错，是稳定的失败，不是随机波动。**
+   模型 reasoning 原文：「改动可回滚 → 不可逆性 1」「不涉及……列表页 1 个模块、不跨团队 → 影响范围 1」。
+   这两个判读**都能从契约原文推出**：契约影响范围 1 的示例里明确列了「内部工具」，
+   而我写「内部运营后台的订单列表页」；契约不可逆性 1 是「可轻易回滚」，我写「一键切回旧版组件」。
+   所以这是**我出题的信号不足**，不是模型判断错，也不是 gold 与契约矛盾——
+   gold (2,2,2,1=7) 本身自洽，只是无法从题面唯一推导。
+
+### 按锁定规则处理（不修题）
+
+`pax-risk-medium-03` 全错后，我**没有**去改 prompt 或 gold。原因：
+
+- 改 prompt 让答案变明确 = 看着模型答错后修数据集 = 反拟合老路，和 v1.1–v1.4 一模一样的操作。
+- 改 gold 到模型的答案 (1,1,2,1) = 把 gold 反过来拟合模型。
+
+锁定规则允许的例外是「gold 与契约原文直接矛盾」，本条不属于：gold 自洽，只是题面信号弱。
+所以保留 FAIL，把责任归到**契约未定义「内部工具做 UI 组件替换」这类场景的影响范围基准**，
+列为待业务方补契约项。
+
+这正是锁定规则的价值：它强迫暴露出题缺陷，而不是用修数据集掩盖。如果允许我事后改，
+holdout 组也会变成 100%，这个数字就一文不值了。
+
+### 同批旧题的波动（反拟合之外的第二个发现）
+
+同 14 条修订过的题，两次运行的对比：
+
+| | v1.4（42 判定） | v1.5（同 14 题，40 有效判定） |
+|---|---|---|
+| 能力分 | **41/41 (100.0%)** | **38/40 (95.0%)** |
+| risk_scoring | 8/8 (100%) | 6/9 (66.7%) |
+| GATE | PASS | — |
+
+同一批题、同一契约、同一模型、temperature=0，差 5pp。具体：
+
+- `pax-risk-high-01` r0 解析失败（上次 3/3 全对）
+- `pax-risk-medium-01` r1 从对变错（uncertainty 2 → 1，连带 risk_score/risk_level）
+- `pax-intent-do-01` r0 从对变错，r1 解析失败
+
+所以 v1.4 那个 100% **有一部分就是运气**。n 太小，两次运行就能差 5pp，
+加上 2 次解析失败。这独立于 holdout 的 28.3pp 差距——两个问题都存在。
+
+### 修订过的题 vs 锁定题：这个差距说明什么
+
+28.3pp 的差距**不能直接解释成「模型泛化能力差」**。更准确的说法是：
+
+- 修订过的题被我反复核对过契约、补齐过信号，**题面质量本身更高**。
+- holdout 题是第一次写、没有回头修，其中已经暴露了 1 条信号不足（medium-03）。
+- 所以差距里有一部分是**出题质量差异**，不全是模型能力差异。
+
+但结论方向是明确的：**「100%」这个数字经不起检验**。
+它既不是无偏估计（数据集反拟合过），也不稳定（同批题两次差 5pp）。
+
+真正站得住的仍是这一条：**契约明确且自洽的地方模型稳定全对**
+（primary_intent、diagnose_required、cross_repo、execution_strategy_required、route、
+storage_backend_required、coordination_cost 在两次运行里都 ≥95%）。
+而 1–3 主观量纲（risk_score / risk_level）在两次运行里分别是 100% 和 75–80%，
+**确认是契约实现最弱的部分**——这是本次实验最有价值的负面结论。
+
+### 数据集修订记录（v1.0 → v1.5）
 
 修订原则：gold 取值必须能**仅凭 prompt + 契约文字**推导出来。
 prompt 缺信号 → 改 prompt；契约含糊 → 改契约；gold 与契约矛盾 → 改 gold。
@@ -372,6 +442,20 @@ prompt 缺信号 → 改 prompt；契约含糊 → 改契约；gold 与契约矛
 | **v1.3** | `pax-risk-medium-01`：「所有登录用户」→「多个业务用户」（原措辞命中契约 impact_scope=3 的原文判据「全用户」）；补「改动都在同一个仓库内」（原措辞被读成跨仓库） | 改 prompt |
 | | `pax-risk-high-01`：补「涉及多个文件和表结构定义的修改」 | 改 prompt |
 | **v1.4** | 三条 route_building 的 gold 改用**契约短名**（`clarify` 而非 `pax-clarify`）；打分器加前缀归一化 | 改 gold |
+| **v1.5** | 追加 4 条 risk_scoring 锁定题（holdout，`evals/add_holdout_cases.py`）；评估脚本加 holdout 分组口径 | 加题（锁定） |
+
+**v1.5 的锁定规则**：这 4 条题的 prompt 与 gold 写入后**不再修订**。
+模型答错如实记 FAIL。唯一例外是复核发现 gold 与契约原文直接矛盾（而非「模型没读懂措辞」），
+且必须在 changelog 里写明「这是契约矛盾，不是拟合」。
+4 条题覆盖 low 上限（6）、medium 上限（9）、强制升级规则（总分 8 升 high）、
+协调成本 1 的 medium（7），四维组合与现有 3 条不重复。
+
+`evals/add_holdout_cases.py` 带 `--check` 锁定漂移检测：如果数据集里的 holdout 题
+与脚本写死的值不一致就 exit 1——这是对「不得修题」这条规则的机械约束，
+不靠人自觉。
+
+与 `fix_internal_dataset.py` 的分工：后者是针对历史题的**定向修订**，处理已确认的 gold/契约冲突；
+前者只做**追加**，不碰已有 case。两个脚本改动范围不重叠。
 
 **v1.4 的关键发现**：契约 W4 第 254 行原文就是 `route = ["clarify", "diagnose", "plan", "execute", "review"]`，
 gold 写全名是 **gold 偏离契约**，不是模型错。模型三次里两次跟契约、一次跟 gold，
@@ -435,7 +519,7 @@ GATE_VALID_RATE = 0.95    # 输出健壮性（可解析 + 自洽）
 ```bash
 PY=../agent-skills-tooling/skillEval/.venv/Scripts/python.exe   # 任一装好 openai 的解释器
 
-# 真实运行（repeats=3 → 42 次请求）
+# 真实运行（repeats=3 → 54 次请求，18 题 × 3）
 $PY evals/run_internal_routing_eval.py --repeats 3
 
 # 只调契约、没改 prompt 时：不重新调用模型，按当前 gold 重判
@@ -444,8 +528,11 @@ $PY evals/run_internal_routing_eval.py --rescore
 # 不调 API，看将发送的系统提示（自检提示词有没有越界）
 $PY evals/run_internal_routing_eval.py --dry-run
 
-# 修订数据集（幂等，1.0 → 1.4，带自检）
+# 修订数据集（幂等，v1.1–v1.4 定向修订，带自检）
 python evals/fix_internal_dataset.py
+
+# 锁定漂移检测：holdout 题被改过就 exit 1（不靠人自觉）
+python evals/add_holdout_cases.py --check
 
 # 自洽性测试（stub 对金标，不测真实 skill）
 $PY -m pytest tests/test_orchestrate_routing.py -v
@@ -485,8 +572,15 @@ $PY -m pytest tests/test_orchestrate_routing.py -v
    - L1 skill 面对「看起来就是它的任务」时该不该被直选？（决定 `pax-pos-09` / `pax-pos-10` 的 gold）
    - 多目标/歧义请求是否允许一次选多个 skill？（决定 8 次 missing_entry 的归因）
 2. **业务方确认 `data_integrity` 是否覆盖字段值校验失败**（内部路由 4 项裁决之一，我的判断）。
-3. **新增从未见过的 risk 题**验证 1–3 主观量纲的泛化能力（当前 8/8 是在修订过的题上取得的）。
-4. **门槛分辨率不足**：基线 100% 时 PASS/FAIL 无分辨率，需要更难的题集让基线落在 80–95%。
+3. **业务方补契约：内部工具的 UI 组件替换算不算影响范围 2**。
+   `pax-risk-medium-03` 3/3 全错已证明契约在此类场景上不够具体：
+   契约影响范围 1 的示例里列了「内部工具」，但没定义「内部工具做组件替换」应该算 1 还是 2。
+   模型按契约读成 1，我写题时按 2 推的——两边都能自洽。这是契约缺口，不是模型错。
+4. **n 太小，结论不稳**：同 14 题两次运行差 5pp（100% → 95%），加上 2 次解析失败。
+   要把 holdout 的 28.3pp 差距当成可靠结论，需要把 repeats 提到 5–10 或把题量翻到 40+，
+   两者都是付费成本。
+5. **门槛分辨率不足**：现在基线 88.5% 刚好卡在 90% 门槛下方，看起来有分辨率，
+   但波动 5pp 意味着它可能只是「刚好掉下」而不是「真的不达标」。
 
 ---
 

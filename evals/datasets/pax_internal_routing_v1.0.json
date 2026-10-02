@@ -1,5 +1,5 @@
 {
-  "version": "1.4",
+  "version": "1.5",
   "description": "pax-orchestrate 内部路由评估数据集，测试意图分类、风险评分、路由构建的准确性",
   "cases": [
     {
@@ -162,6 +162,66 @@
         "cross_repo": true,
         "execution_strategy_required": true
       }
+    },
+    {
+      "id": "pax-risk-low-02",
+      "category": "risk_scoring",
+      "holdout": true,
+      "prompt": "调整内部数据导出脚本的一个配置项，把导出的时间窗口从 7 天改成 30 天。改动前脚本有备份，改错了可以直接还原。这个脚本财务和运营两个组每周各用一次。需求明确，就是把窗口参数改掉，没有其他改动。改动都在同一个团队内部，涉及 2 个文件，需要走一次 code review。",
+      "expected": {
+        "irreversibility": 1,
+        "impact_scope": 2,
+        "uncertainty": 1,
+        "coordination_cost": 2,
+        "risk_score": 6,
+        "risk_level": "low"
+      },
+      "notes": "考 low 的上限边界（6 vs 7）。四维里只有 uncertainty 是 1，其余都是 2，任何一维被高估一分就翻到 medium。写「同一个团队内部」是为了排掉跨团队 → 协调成本 3 的歧义。"
+    },
+    {
+      "id": "pax-risk-medium-02",
+      "category": "risk_scoring",
+      "holdout": true,
+      "prompt": "把商品详情查询接口从同步调用改成异步。这个接口是所有客户下单前必经的查询入口，涉及团队内 3 个服务的调用改造，改动都在同一个仓库内。上线后有回滚脚本可以切回同步模式。调用顺序需要在测试环境验证一轮再上线，改动完成后需要走一次 code review。",
+      "expected": {
+        "irreversibility": 2,
+        "impact_scope": 3,
+        "uncertainty": 2,
+        "coordination_cost": 2,
+        "risk_score": 9,
+        "risk_level": "medium"
+      },
+      "notes": "考 medium 的上限边界（9 vs 10）和 impact_scope=3 的「全用户」判定。特意不写「账务/支付/数据完整性」这类词——契约里 data_integrity+impact3 会强制升到 high，会污染这条题要考的点。写「团队内」「同一个仓库」是为了排掉协调成本 3 的歧义。"
+    },
+    {
+      "id": "pax-risk-high-02",
+      "category": "risk_scoring",
+      "holdout": true,
+      "prompt": "清理生产数据库中 3 年前的过期订单记录，物理删除无法恢复，涉及公司所有用户的订单历史。这是标准的数据清理流程，公司有明确的清理脚本和操作手册，由我单人执行即可，不需要其他人配合。",
+      "expected": {
+        "irreversibility": 3,
+        "impact_scope": 3,
+        "uncertainty": 1,
+        "coordination_cost": 1,
+        "risk_score": 8,
+        "risk_level": "high"
+      },
+      "notes": "★ 这批题里唯一能测出「强制升级规则有没有被真的应用」的一条。四维加起来是 8，按总分映射表（4–6 低 / 7–9 中 / 10–12 高）应该是 medium，但契约 W2 明确写了「不可逆性为 3 且影响范围为 3 → 强制 risk: high」。现有 3 条题测不出这一点：pax-risk-high-01 总分 10 本来就是 high，强制升级不改变结果。模型如果只按总分映射作答就会答 medium → FAIL。这条 FAIL 是契约应用缺陷，不是数据集问题。"
+    },
+    {
+      "id": "pax-risk-medium-03",
+      "category": "risk_scoring",
+      "holdout": true,
+      "prompt": "把内部运营后台的订单列表页筛选组件从旧版换成新版组件库的组件，改动涉及运营模块的 3 个文件，上线后可以一键切回旧版组件。组件交互细节需要先确认一次需求，确认后改动由我一个人完成，不需要其他人配合。",
+      "expected": {
+        "irreversibility": 2,
+        "impact_scope": 2,
+        "uncertainty": 2,
+        "coordination_cost": 1,
+        "risk_score": 7,
+        "risk_level": "medium"
+      },
+      "notes": "考「单人可完成」但仍有中风险的情形——现有题的协调成本最低是 1（low-01，四维全 1），最高是 2，没有「协调成本 1 但总分 7」的组合。写「内部运营后台」是为了排掉全用户 → impact 3 的歧义；写「确认后由我一个人完成」是为了让协调成本明确落在 1。"
     }
   ],
   "changelog": [
@@ -207,6 +267,21 @@
         "同时给打分器加了前缀归一化（去 pax- 前缀、小写、去空格），避免以后同类记法差异再次被当成路由错误。"
       ],
       "note": "外部路由数据集（pax_routing_v1.0.jsonl）不受影响：那里比的是 skill 目录名，本来就该用 pax-* 全名。两套 gold 的记法基准不同，不矛盾。"
+    },
+    {
+      "version": "1.5",
+      "date": "2026-10-02",
+      "basis": "v1.0 → v1.4 改过 6 处 gold，其中至少 4 处是看着模型答错之后才核对契约、发现 gold 有问题。3 条 risk 题里有 2 条（high-01、medium-01）的 prompt 被改过，所以「1–3 主观量纲是契约实现最弱的部分」这个判断没有任何一条从未修订过的题支撑。",
+      "changes": [
+        "追加 4 条 risk_scoring 锁定题（holdout），四维组合与现有 3 条不重复：",
+        "  - pax-risk-low-02    (1,2,1,2) = 6  low    考 low 上限边界（6 vs 7）",
+        "  - pax-risk-medium-02 (2,3,2,2) = 9  medium 考 medium 上限边界（9 vs 10）+ 全用户判定",
+        "  - pax-risk-high-02   (3,3,1,1) = 8  high   考强制升级规则：总分 8 本应 medium，",
+        "    但不可逆性3+影响范围3 强制升到 high——唯一能测出该规则是否被应用的题",
+        "  - pax-risk-medium-03 (2,2,2,1) = 7  medium 考协调成本 1 的中风险组合",
+        "case 增加 holdout 标记，评估脚本按此分组统计。"
+      ],
+      "note": "★ 锁定规则：这 4 条题的 prompt 与 gold 写入后不再修订。模型答错如实记 FAIL。唯一例外是复核发现 gold 与契约原文直接矛盾（而非「模型没读懂措辞」），且必须在 changelog 里写明「这是契约矛盾，不是拟合」。与 fix_internal_dataset.py 的区别：那个脚本是针对历史题的定向修订，本脚本只追加，不碰已有 case。"
     }
   ]
 }

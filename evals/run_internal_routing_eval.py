@@ -337,6 +337,24 @@ def summarize(rows: list[dict]) -> dict:
         for c in r["checks"]:
             check_hits.setdefault(c["check"], []).append(c["passed"])
     by_check = {k: {"passed": sum(v), "total": len(v)} for k, v in sorted(check_hits.items())}
+
+    # holdout 分组：从未被修订过的题 vs 经过 v1.1–v1.4 修订过的题。
+    # 这是回答「内部 100% 是不是反拟合出来的」唯一可反复测量的口径。
+    # gate 仍按全量口径判定；holdout 只是单独报告项，不参与门槛计算。
+    by_holdout = {}
+    for flag in (False, True):
+        rs = [r for r in rows if bool(r.get("holdout")) == flag]
+        vs = [r for r in rs if r.get("actual")
+              and (r["case_id"], r["repeat"]) not in struct_ids]
+        by_holdout["holdout" if flag else "revised"] = {
+            "total": len(rs),
+            "cases": len({r["case_id"] for r in rs}),
+            "parsable": len(vs),
+            "passed_parsable": len(adj_ok(vs)),
+            "accuracy_parsable": pct(len(adj_ok(vs)), len(vs)),
+            "valid_rate": round(len(vs) / len(rs), 4) if rs else None,
+        }
+
     flaky = []
     for case_id in sorted({r["case_id"] for r in rows}):
         per = [r["passed"] for r in rows if r["case_id"] == case_id]
@@ -374,6 +392,7 @@ def summarize(rows: list[dict]) -> dict:
         },
         "by_category": by_cat,
         "by_check": by_check,
+        "by_holdout": by_holdout,
         "stability": {
             "repeats": len({r["repeat"] for r in rows}) or None,
             "flaky_cases": flaky,
@@ -392,11 +411,14 @@ def dataset_version() -> str:
         return "unknown"
 
 
-def stamp_meta(meta: dict, *, rescoring: bool, repeats: int | None) -> dict:
+def stamp_meta(meta: dict, *, rescoring: bool, repeats: int | None,
+               unchanged: bool = False) -> dict:
     """统一写 meta，避免主流程与 --rescore 两条路径写出两套不一致的元信息。
 
-    run_at 只记录**真实调模型**的时刻；--rescore 不动它，只写 graded_at。
-    否则重判一次时间戳就变，结果文件不可复现。
+    run_at 只记录**真实调模型**的时刻；--rescore 不动它。
+    graded_at 记录最后一次**实际改变了判定结果**的重判时刻：
+    如果重判结果与存档一致，沿用旧值。否则每次 --rescore 时间戳就变，
+    同样的评分逻辑重跑得不到字节一致的结果文件，--rescore 就失去了意义。
     """
     meta = dict(meta or {})
     now = datetime.now(ZoneInfo("Asia/Shanghai")).isoformat(timespec="seconds")
@@ -406,12 +428,14 @@ def stamp_meta(meta: dict, *, rescoring: bool, repeats: int | None) -> dict:
         "version": "2.1",
         "dataset_version": dataset_version(),
         **({"repeats": repeats} if repeats else {}),
-        **({"graded_at": now} if rescoring else {}),
+        # unchanged=True 表示这次重判没改变任何判定，沿用旧 graded_at
+        **({"graded_at": now} if rescoring and not unchanged else {}),
         "note": "系统提示 = SKILL.md W1–W4 原文，未注入契约外澄清。"
                 "能力分用「可解析且自洽」口径；gold/契约冲突项已逐条解决并记录在 "
                 "gold_contract_resolutions 与数据集 changelog。"
                 "meta 时间戳由 stamp_meta 维护：run_at 只在真实调用模型时写入，"
-                "--rescore 只更新 graded_at，保证同样的评分逻辑重跑得到字节一致的结果文件。",
+                "graded_at 只在重判实际改变判定时刷新，保证同样的评分逻辑重跑得到"
+                "字节一致的结果文件。",
     })
     return meta
 
@@ -529,17 +553,30 @@ def main() -> int:
             return 2
 
         # 用当前 gold 重新判定（仅校验通过后才走到这）
+        # 先快照旧判定，用于判断这次重判是否真的改变了什么——
+        # 没改变就不刷新 graded_at，否则结果文件永远不字节稳定。
+        old_verdicts = [(r.get("passed"), tuple(r.get("failed_checks") or [])) for r in rows]
         for r in rows:
             c = ds[r["case_id"]]
+            # holdout 是数据集属性，旧结果文件可能没有，按当前数据集补齐
+            r["holdout"] = bool(c.get("holdout"))
             verdict = score_case(c, r.get("actual") or {})
             r["expected"], r["checks"] = c["expected"], verdict["checks"]
             r["passed"] = verdict["passed"]
             r["failed_checks"] = verdict["failed_checks"]
 
+        changed = [(r.get("passed"), tuple(r.get("failed_checks") or [])) for r in rows] != old_verdicts
+
         summary = summarize(rows)
+        meta = stamp_meta(saved.get("meta", {}), rescoring=True, repeats=None,
+                          unchanged=not changed)
+        if changed:
+            print("→ 重判改变了判定结果，graded_at 已刷新")
+        else:
+            print("→ 重判结果与存档一致，graded_at 未变（文件字节可复现）")
         result = {**summary, "gate": check_gate(summary),
                   "usage": saved.get("usage", {}),
-                  "meta": stamp_meta(saved.get("meta", {}), rescoring=True, repeats=None),
+                  "meta": meta,
                   "results": rows}
         out.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
         print_summary(result)
@@ -560,6 +597,7 @@ def main() -> int:
             verdict = score_case(case, actual or {}) if actual else None
             row = {
                 "case_id": case["id"], "category": case["category"], "repeat": rep,
+                "holdout": bool(case.get("holdout")),
                 "prompt": case["prompt"], "expected": case["expected"],
                 "actual": actual, "error": err,
                 "passed": bool(verdict and verdict["passed"]),
@@ -614,6 +652,16 @@ def print_summary(result: dict) -> None:
         print(f"  {cat:24} {s['accuracy_parsable']:5}%"
               f"   ({s['passed_parsable']}/{s['parsable']})"
               f"   ← 含解析失败时 {s['accuracy_adjusted']:5}%")
+    bh = result.get("by_holdout", {})
+    if bh:
+        ho, rv = bh.get("holdout", {}), bh.get("revised", {})
+        print("\n锁定分组（回答「100% 是不是反拟合出来的」，不参与 gate）：")
+        print(f"  修订过的题   {rv.get('accuracy_parsable', 0):5}%"
+              f"   ({rv.get('passed_parsable', 0)}/{rv.get('parsable', 0)})"
+              f"   {rv.get('cases', 0)} 个 case")
+        print(f"  锁定题(holdout) {ho.get('accuracy_parsable', 0):5}%"
+              f"   ({ho.get('passed_parsable', 0)}/{ho.get('parsable', 0)})"
+              f"   {ho.get('cases', 0)} 个 case")
     st = result.get("stability", {})
     if st:
         names = ", ".join(f["case_id"] for f in st["flaky_cases"]) if st["flaky_cases"] else ""
