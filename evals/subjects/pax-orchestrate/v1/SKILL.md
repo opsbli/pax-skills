@@ -1,7 +1,7 @@
 ---
 name: pax-orchestrate
 description: >
-  路由、风险分级、生命周期管理、快照初始化。L0 层负责意图分类、风险评分、路由构建与快照初始化。
+    Use when: 所有 pax-family 任务的统一入口。当用户目标涉及诊断修复、功能开发、重构优化、数据操作、文档咨询或工具构建时，必须先经过 pax-orchestrate 进行意图分类、风险分级、路由构建与快照初始化。不要直接选择 pax-diagnose、pax-plan、pax-execute 等具体 skill，而是让 pax-orchestrate 决定完整的执行路由。
 version: 0.2.0
 family: pax
 layer: L0
@@ -11,6 +11,26 @@ requires_snapshot: true
 
 # pax-orchestrate
 
+
+## Overview
+
+pax-family 统一入口。对每个任务先做意图分类（6 类 MECE 意图）与四维风险评分（不可逆性 / 影响范围 / 不确定性 / 协调成本），再据此构建执行路由并初始化跨 Skill 快照。
+
+## When to Use
+
+所有 pax-family 任务默认从这里开始：诊断修复、功能开发、重构优化、数据操作、文档咨询、工具构建。用户或上层 Agent 明确点名要编排时直接进入。
+
+## Common Pitfalls
+
+- 直接调用 L1 具体 Skill 绕过路由，导致风险分级缺失。
+- 高风险动作（部署 / 数据订正 / 破坏性命令）未获得用户明确 approval / confirm 就下发。
+- 未初始化快照，下游 Skill 拿不到跨阶段状态。
+
+## Verification Checklist
+
+- [ ] 已完成意图分类且分类结果与 6 类 MECE 表一一对应
+- [ ] 已计算四维风险分并标注等级，高风险任务已向用户显式请求 approval / confirm
+- [ ] 已初始化快照并把路由表写入快照，可以交给 L1 Skill
 ## Execution Contract
 - 前置门禁：能读取 `pax-family.schema.yaml` 与 `pax-ops/versions.json`
 - 未通过门禁：拒绝启动，返回用户错误
@@ -386,6 +406,55 @@ def init_snapshot(intent, risk, diagnose_required, strategy, route, annotations)
 - 用户目标过于模糊 → 进入澄清阶段后再路由（先走 `clarify`，`diagnose_required` 设为 `null` 待后续决定）
 - 意图分类不确定（多意图重叠）→ 取最高风险意图，并在 `classification_rationale` 中记录歧义
 - 检测到安全相关信号但未确认 → 保守标记 `security` 二级意图，强制 `diagnose_required: true`
+
+## 可选扩展 Skill
+
+除主路由外，以下可选 Skill 可在特定条件下被调用：
+
+| Skill | 层级 | 触发条件 | 说明 |
+|---|---|---|---|
+| `pax-monitor` | L1 | 任务执行中 | 监控任务执行过程中的异常情况 |
+| `pax-rollback` | L1 | 任务失败或严重问题 | 自动化回滚到安全状态 |
+| `pax-test` | L1 | 任务执行完成后 | 自动生成测试用例并执行 |
+| `pax-deploy` | L1 | 任务完成后 | 自动化部署流程 |
+| `pax-learn` | L1 | 任务评审完成后 | 经验沉淀和知识图谱构建 |
+
+### 扩展路由调用规则
+
+#### pax-monitor（监控）
+- **触发条件**：任务执行中，需要监控异常情况
+- **调用时机**：`pax-execute` 执行过程中
+- **输出**：`snapshot.monitoring`
+
+#### pax-rollback（回滚）
+- **触发条件**：任务失败、监控告警、用户请求
+- **调用时机**：任务执行失败或严重问题时
+- **输出**：`snapshot.rollback`
+
+#### pax-test（测试）
+- **触发条件**：任务执行完成后，需要验证
+- **调用时机**：`pax-execute` 完成后
+- **输出**：`snapshot.tests`
+
+#### pax-deploy（部署）
+- **触发条件**：任务完成后，需要部署
+- **调用时机**：`pax-review` 完成后
+- **输出**：`snapshot.deployment`
+
+#### pax-learn（学习）
+- **触发条件**：任务评审完成后
+- **调用时机**：`pax-review` 完成后
+- **输出**：`snapshot.learning`
+
+### 完整工作流示例
+
+```
+[clarify] → [diagnose] → [plan] → [execute] → [review] → [learn]
+                ↓              ↓         ↓
+          [monitor]      [rollback]  [test]
+                                ↓
+                            [deploy]
+```
 
 ## 何时升级
 - `risk.level == high` → 在路由中标注 `escalate_to_council: true`，由下游阶段协调升级决策
