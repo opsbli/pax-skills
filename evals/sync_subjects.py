@@ -64,21 +64,24 @@ def sync(check_only: bool) -> int:
     current = {p.parent.parent.name for p in SUBJECTS.glob(f"*/{VERSION}/SKILL.md")}
 
     missing = sorted(set(sources) - current)
+    updated: list[str] = []
     if not check_only:
-        for skill_id in missing:
-            target = SUBJECTS / skill_id / VERSION
-            target.mkdir(parents=True, exist_ok=True)
-            (target / "SKILL.md").write_text(
-                sources[skill_id].read_text(encoding="utf-8"), encoding="utf-8"
-            )
-
-    # 漂移：事实源改过了但派生副本没跟上。sync 模式下刚写完成本就是零，只在校验时报。
-    stale: list[str] = []
-    if check_only:
         for skill_id, src in sources.items():
-            dst = SUBJECTS / skill_id / VERSION / "SKILL.md"
-            if not dst.exists() or dst.read_text(encoding="utf-8") != src.read_text(encoding="utf-8"):
-                stale.append(skill_id)
+            target = SUBJECTS / skill_id / VERSION / "SKILL.md"
+            target.parent.mkdir(parents=True, exist_ok=True)
+            old = target.read_text(encoding="utf-8") if target.exists() else None
+            if old != src.read_text(encoding="utf-8"):
+                target.write_text(src.read_text(encoding="utf-8"), encoding="utf-8")
+                updated.append(skill_id)
+
+    # 漂移：事实源改过了但派生副本没跟上。
+    # 注意：sync 模式必须真的重写不一致的文件，不能只报不修；
+    # 否则“唯一生成入口”是假名——跑完 sync 仍然漂移，--check 会一直红。
+    stale: list[str] = []
+    for skill_id, src in sources.items():
+        dst = SUBJECTS / skill_id / VERSION / "SKILL.md"
+        if not dst.exists() or dst.read_text(encoding="utf-8") != src.read_text(encoding="utf-8"):
+            stale.append(skill_id)
 
     if stale:
         problems.append(
@@ -92,7 +95,7 @@ def sync(check_only: bool) -> int:
             f"({len(current)} present in evals/subjects/), {len(stale)} drifted"
         )
     else:
-        print(f"skills/ 共 {len(sources)} 个；新增到 evals/subjects/：{missing or '无'}")
+        print(f"skills/ 共 {len(sources)} 个；新增：{missing or '无'}；更新：{updated or '无'}")
 
     if problems:
         for p in problems:

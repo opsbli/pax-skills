@@ -144,6 +144,52 @@ def extras(run_dir: str, label: str) -> None:
         print("  GATE PASS")
 
 
+def failure_modes(runs: dict, gold: dict, label: str) -> None:
+    """把误判拆成四种互斥的失败模式。
+
+    exact_set_match 一个数字看不出错在哪，而这四种的修复方向完全不同：
+      over_selection   选对了入口但多叠了子 skill  →  改提示/补禁令，不是选错
+      dropped_entry    应该选入口却返回空        →  入口描述不够有吸引力
+      missing_entry    选了别的 skill           →  语义判别能力问题
+      false_activation gold 为空却选了          →  拒答能力问题（与安全性相关）
+    """
+    bucket: dict[str, list[str]] = {
+        "over_selection": [], "dropped_entry": [],
+        "missing_entry": [], "false_activation": [],
+    }
+    denom: dict[str, int] = {"pos": 0, "rej": 0}
+    for cid, gold_skills in gold.items():
+        for sel, _ in runs.get(cid, []):
+            if ctype(cid) == "pos":
+                denom["pos"] += 1
+            elif ctype(cid) == "rej":
+                denom["rej"] += 1
+            if set(sel) == set(gold_skills):
+                continue
+            gs, ss = set(gold_skills), set(sel)
+            if not gs:                                   # 拒答题
+                bucket["false_activation"].append(cid if sel else cid)
+            elif not ss:
+                bucket["dropped_entry"].append(cid)
+            elif gs <= ss:
+                bucket["over_selection"].append(cid)
+            else:
+                bucket["missing_entry"].append(cid)
+
+    print(f"\n{label} 失败模式拆解：")
+    for k in ("over_selection", "dropped_entry", "missing_entry", "false_activation"):
+        ids = bucket[k]
+        detail = f"  ({', '.join(sorted(set(ids)))})" if len(set(ids)) <= 4 else \
+                 f"  ({len(set(ids))} 个 case)"
+        print(f"  {k:<18} {len(ids):>3} 次{detail}")
+    if denom["pos"]:
+        os_n = sum(1 for cid in bucket["over_selection"])
+        print(f"  过度选择率（分母 = 正面题判定数 {denom['pos']}）：{100*os_n/denom['pos']:.1f}%")
+    if denom["rej"]:
+        fa = len(bucket["false_activation"])
+        print(f"  误激活率（分母 = 拒答题判定数 {denom['rej']}）：{100*fa/denom['rej']:.1f}%")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -178,6 +224,10 @@ def main() -> int:
             print(f"\n{args.label_b} 误选分布（非 gold 的预测）：")
             for k, v in cnt.most_common():
                 print(f"  {v:>3} 次  →  {k}")
+
+        failure_modes(a, gold, args.label_a)
+        print()
+        failure_modes(b, gold, args.label_b)
     else:
         per_case_table({}, b, args.label_a, args.label_b)
 
