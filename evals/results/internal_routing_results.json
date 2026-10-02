@@ -336,9 +336,10 @@
     "version": "2.1",
     "repeats": 3,
     "run_at": "2026-10-02T21:18:30+08:00",
-    "note": "系统提示 = SKILL.md W1–W4 原文，未注入契约外澄清。能力分用「可解析且自洽」口径；gold/契约冲突项已逐条解决并记录在 gold_contract_resolutions 与数据集 changelog。",
+    "note": "系统提示 = SKILL.md W1–W4 原文，未注入契约外澄清。能力分用「可解析且自洽」口径；gold/契约冲突项已逐条解决并记录在 gold_contract_resolutions 与数据集 changelog。meta 时间戳由 stamp_meta 维护：run_at 只在真实调用模型时写入，--rescore 只更新 graded_at，保证同样的评分逻辑重跑得到字节一致的结果文件。",
     "dataset_version": "1.4",
-    "graded_at_rescore": true
+    "graded_at_rescore": true,
+    "graded_at": "2026-10-02T21:50:07+08:00"
   },
   "results": [
     {

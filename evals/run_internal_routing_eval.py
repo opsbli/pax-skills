@@ -393,17 +393,25 @@ def dataset_version() -> str:
 
 
 def stamp_meta(meta: dict, *, rescoring: bool, repeats: int | None) -> dict:
-    """统一写 meta，避免主流程与 --rescore 两条路径写出两套不一致的元信息。"""
+    """统一写 meta，避免主流程与 --rescore 两条路径写出两套不一致的元信息。
+
+    run_at 只记录**真实调模型**的时刻；--rescore 不动它，只写 graded_at。
+    否则重判一次时间戳就变，结果文件不可复现。
+    """
     meta = dict(meta or {})
+    now = datetime.now(ZoneInfo("Asia/Shanghai")).isoformat(timespec="seconds")
+    if not rescoring:
+        meta["run_at"] = now
     meta.update({
         "version": "2.1",
         "dataset_version": dataset_version(),
-        "run_at": datetime.now(ZoneInfo("Asia/Shanghai")).isoformat(timespec="seconds"),
         **({"repeats": repeats} if repeats else {}),
-        **({"graded_at_rescore": True} if rescoring else {}),
+        **({"graded_at": now} if rescoring else {}),
         "note": "系统提示 = SKILL.md W1–W4 原文，未注入契约外澄清。"
                 "能力分用「可解析且自洽」口径；gold/契约冲突项已逐条解决并记录在 "
-                "gold_contract_resolutions 与数据集 changelog。",
+                "gold_contract_resolutions 与数据集 changelog。"
+                "meta 时间戳由 stamp_meta 维护：run_at 只在真实调用模型时写入，"
+                "--rescore 只更新 graded_at，保证同样的评分逻辑重跑得到字节一致的结果文件。",
     })
     return meta
 
