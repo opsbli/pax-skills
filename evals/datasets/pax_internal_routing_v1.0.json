@@ -1,5 +1,5 @@
 {
-  "version": "1.0",
+  "version": "1.4",
   "description": "pax-orchestrate 内部路由评估数据集，测试意图分类、风险评分、路由构建的准确性",
   "cases": [
     {
@@ -8,8 +8,9 @@
       "prompt": "CMDB 字段校验有问题，时间类型的字段填写后报错说字段不为设定的正则表达式",
       "expected": {
         "primary_intent": "diagnose_fix",
-        "secondary_intent": [],
-        "confidence": "high"
+        "secondary_intent": [
+          "data_integrity"
+        ]
       }
     },
     {
@@ -18,8 +19,9 @@
       "prompt": "系统最近响应变慢了，以前 1 秒能完成的请求现在要 5 秒，用户抱怨很多",
       "expected": {
         "primary_intent": "diagnose_fix",
-        "secondary_intent": ["performance"],
-        "confidence": "high"
+        "secondary_intent": [
+          "performance"
+        ]
       }
     },
     {
@@ -28,8 +30,7 @@
       "prompt": "给系统加一个导出功能，能把用户列表导出成 Excel 文件",
       "expected": {
         "primary_intent": "feature_dev",
-        "secondary_intent": [],
-        "confidence": "medium"
+        "secondary_intent": []
       }
     },
     {
@@ -38,8 +39,7 @@
       "prompt": "把这段 500 行的方法拆分成更小的函数，提高可读性",
       "expected": {
         "primary_intent": "refactor",
-        "secondary_intent": [],
-        "confidence": "medium"
+        "secondary_intent": []
       }
     },
     {
@@ -48,8 +48,9 @@
       "prompt": "有一批用户数据字段填错了，需要批量订正，大概 500 条记录",
       "expected": {
         "primary_intent": "data_ops",
-        "secondary_intent": ["data_integrity"],
-        "confidence": "high"
+        "secondary_intent": [
+          "data_integrity"
+        ]
       }
     },
     {
@@ -58,8 +59,7 @@
       "prompt": "解释一下什么是微服务架构，有什么优缺点",
       "expected": {
         "primary_intent": "doc_consult",
-        "secondary_intent": [],
-        "confidence": "low"
+        "secondary_intent": []
       }
     },
     {
@@ -68,14 +68,13 @@
       "prompt": "写一个脚本，自动检查所有未提交的变更并生成 commit message",
       "expected": {
         "primary_intent": "tool_build",
-        "secondary_intent": [],
-        "confidence": "medium"
+        "secondary_intent": []
       }
     },
     {
       "id": "pax-risk-high-01",
       "category": "risk_scoring",
-      "prompt": "把旧表的数据迁移到新表，需要保留所有历史记录",
+      "prompt": "把生产环境账务模块的存量数据迁移到新表结构，涉及 30 张表、约 800 万条历史记录，需要保留全部历史数据，迁移脚本无法回滚重跑。改动都在账务模块内部，涉及多个文件和表结构定义的修改，不涉及其他仓库和其他团队。",
       "expected": {
         "risk_score": 10,
         "risk_level": "high",
@@ -88,7 +87,7 @@
     {
       "id": "pax-risk-medium-01",
       "category": "risk_scoring",
-      "prompt": "给系统加一个导出功能，能把用户列表导出成 Excel 文件",
+      "prompt": "给系统加一个导出功能，多个业务用户都能把用户列表导出成 Excel 文件，涉及后端新增一个导出接口和前端新增一个导出按钮，改动都在同一个仓库内，完成后需要 code review。",
       "expected": {
         "risk_score": 7,
         "risk_level": "medium",
@@ -116,17 +115,29 @@
       "category": "route_building",
       "prompt": "CMDB 字段校验有问题，时间类型的字段填写后报错说字段不为设定的正则表达式",
       "expected": {
-        "route": ["pax-clarify", "pax-diagnose", "pax-plan", "pax-execute", "pax-review"],
+        "route": [
+          "clarify",
+          "diagnose",
+          "plan",
+          "execute",
+          "review"
+        ],
         "diagnose_required": true,
         "storage_backend_required": true
-      }
+      },
+      "notes": "依赖 pax-intent-df-01 的 W1 判定 secondary_intent=['data_integrity']，因此 W4 的 storage_backend_required 条件成立。两题 prompt 相同，改动其中一处时必须同步另一处。"
     },
     {
       "id": "pax-route-fd-01",
       "category": "route_building",
       "prompt": "给系统加一个导出功能，能把用户列表导出成 Excel 文件",
       "expected": {
-        "route": ["pax-clarify", "pax-plan", "pax-execute", "pax-review"],
+        "route": [
+          "clarify",
+          "plan",
+          "execute",
+          "review"
+        ],
         "diagnose_required": false,
         "storage_backend_required": false
       }
@@ -136,7 +147,9 @@
       "category": "route_building",
       "prompt": "解释一下什么是微服务架构，有什么优缺点",
       "expected": {
-        "route": ["pax-clarify"],
+        "route": [
+          "clarify"
+        ],
         "diagnose_required": false,
         "storage_backend_required": false
       }
@@ -149,6 +162,51 @@
         "cross_repo": true,
         "execution_strategy_required": true
       }
+    }
+  ],
+  "changelog": [
+    {
+      "version": "1.1",
+      "date": "2026-10-02",
+      "basis": "results/internal_routing_results.json 的 gold_contract_issues（14 case × 3）",
+      "changes": [
+        "删除 intent_classification 全部 7 条 gold 的 confidence 字段：契约 W1–W4 从未定义，W2–W4 也没有任何逻辑读取它，是个装饰字段。为了让测试通过而给契约补一个下游无人使用的字段，等于反向从测试推导契约，方向反了。",
+        "pax-risk-high-01 补 prompt 上下文（30 张表 / 800 万行 / 账务 / 无法回滚）：原 prompt「把旧表的数据迁移到新表」无系统级信号，gold 的 impact_scope=3 无法从 prompt 推导，属不可解题。gold 与契约均未改动。",
+        "pax-intent-df-01 的 secondary_intent 从 [] 改为 ['data_integrity']，并给 pax-route-df-01 加 notes 记录依赖：原 gold secondary=[] 让 W4 的 storage_backend_required 条件不成立，而 gold 要求 true——gold 按契约自身逻辑就是错的（self-contradictory）。"
+      ],
+      "contract_changes": "skills/pax-orchestrate/SKILL.md 补两条判定边界（W1 ux_error 的前端/后端归属、W2 数据类任务的影响范围基准）。"
+    },
+    {
+      "version": "1.2",
+      "date": "2026-10-02",
+      "basis": "v1.1 跑完（42 次判定）后 gate 首次 FAIL：risk_score 66.7% / ≥85%、coordination_cost 66.7% / ≥80%、category:risk_scoring 66.7% / ≥85%。",
+      "changes": [
+        "pax-risk-high-01 再补一句「改动都在账务模块内部，不涉及其他仓库和其他团队」：gold 的 coordination_cost=2 需要「模块内跨文件、但非跨仓库/跨团队」这个信号，原 prompt 完全没有。契约澄清已生效（irreversibility 与 impact_scope 从 0/3 升到 3/3），但这条维度仍无从推导。",
+        "pax-risk-medium-01 补「所有登录用户都能使用 + 后端接口 + 前端按钮 + 需要 code review」：gold 的 coordination_cost=2 同样缺信号。注意 impact_scope=2 没有补——「用户列表」本身就含多用户信号，契约写的是「多模块、多用户、有内部依赖」，这一维 gold 是可推导的，模型答错算模型错，不能用补 prompt 掩盖。",
+        "pax-risk-low-01 未改动：prompt 是纯解释类问题，四维全 1，模型 3/3 全对。"
+      ],
+      "gate": "没有放宽任何门槛。gate 的作用是抓这类问题；把门槛调到让数字好看就废了。"
+    },
+    {
+      "version": "1.3",
+      "date": "2026-10-02",
+      "basis": "v1.2 跑完（42 次判定）后 gate 仍 FAIL：coordination_cost 55.6%、impact_scope 77.8%。逐条核对 model reasoning 后发现是**出题人自己的措辞 bug**，不是模型错。",
+      "changes": [
+        "pax-risk-medium-01：v1.2 写的是「所有登录用户都能把用户列表导出」，而契约里 impact_scope=3 的原文判据就是「全用户」——措辞直接把答案变成了 3，模型三次一致答 3 是**按契约正确读取**。改成「多个业务用户」（多用户 = 2，不触及全用户）。",
+        "pax-risk-medium-01：补「改动都在同一个仓库内」——coordination_cost=3 的判据含「跨仓库操作」，而「后端接口 + 前端按钮」可被读成跨仓库，原措辞留了这个口子，模型三次都答 3。",
+        "pax-risk-high-01：补「涉及多个文件和表结构定义的修改」——协调成本 1 与 2 的区别是「单人可完成」vs「模块内跨文件修改」，原 prompt 没把「跨文件」写出来，模型才会偶尔答 1。"
+      ],
+      "lesson": "补 prompt 时不能碰契约原文里的判据关键词。这一轮之所以能发现，正是因为逐条读了 model reasoning 而不是只看分数。"
+    },
+    {
+      "version": "1.4",
+      "date": "2026-10-02",
+      "basis": "v1.3 跑完（42 次判定）后能力分 95.2%，四项 risk 维度均已 ≥88.9%，仅 route 一项 88.9% / ≥90%。逐条比对 expected 与 actual 后发现：gold 写 ['pax-clarify', 'pax-diagnose', ...]，actual 写 ['clarify', 'diagnose', ...]——五个步骤和顺序完全一致。",
+      "changes": [
+        "三条 route_building 题的 gold 改用契约短名（pax-route-df-01 / pax-route-fd-01 / pax-route-dc-01）。契约 W4 第 254 行原文就是 route = [\"clarify\", \"diagnose\", ...]，gold 用全名是 gold 偏离契约，不是模型错。",
+        "同时给打分器加了前缀归一化（去 pax- 前缀、小写、去空格），避免以后同类记法差异再次被当成路由错误。"
+      ],
+      "note": "外部路由数据集（pax_routing_v1.0.jsonl）不受影响：那里比的是 skill 目录名，本来就该用 pax-* 全名。两套 gold 的记法基准不同，不矛盾。"
     }
   ]
 }

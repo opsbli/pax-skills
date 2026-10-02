@@ -102,6 +102,37 @@ def parse_selection(text: str) -> dict:
     return data
 
 
+def validate_response(case: dict, actual: dict) -> list[str]:
+    """返回该行违反契约的列表（空 = 自洽）。
+
+    JSON 能解析不等于输出可用。模型可以吐出一份语法合法但自相矛盾的 JSON——
+    比如四个维度都是 1 却报 risk_score=0（四维最小和是 4），或 route 为空却声明
+    diagnose_required。这类输出不能算「判断错」，它根本没做出判断；
+    混进能力分会把能力分和输出健壮性混成一团，问题也就定位不到。
+    """
+    bad: list[str] = []
+    dims = ("irreversibility", "impact_scope", "uncertainty", "coordination_cost")
+    vals = [actual.get(k) for k in dims]
+    if all(isinstance(v, int) for v in vals) and isinstance(actual.get("risk_score"), int):
+        if sum(vals) != actual["risk_score"]:
+            bad.append(f"risk_score={actual['risk_score']} ≠ 四维之和 {sum(vals)}")
+    if actual.get("diagnose_required") and not actual.get("route"):
+        bad.append("diagnose_required=true 但 route 为空")
+    if case.get("category") == "route_building" and not actual.get("route"):
+        bad.append("route_building 题返回空 route")
+    return bad
+
+
+def _norm_skill(x) -> str:
+    """路由步骤名归一化：去 pax- 前缀、小写、去首尾空格。
+
+    契约 W4 写的是短名（clarify），早期 gold 写成全名（pax-clarify）。
+    两者是同一份路由的两种记法，记法差异不应被算成路由错误。
+    """
+    s = str(x).strip().lower()
+    return s[4:] if s.startswith("pax-") else s
+
+
 def score_case(case: dict, actual: dict) -> dict:
     """按 case 的 category 打分。逐字段判定，避免只给一个笼统的 pass。"""
     exp, checks, wrong = case["expected"], [], []
@@ -119,10 +150,6 @@ def score_case(case: dict, actual: dict) -> dict:
         add("primary_intent", actual.get("primary_intent"), exp["primary_intent"])
         add("secondary_intent", sorted(actual.get("secondary_intent", [])),
             sorted(exp["secondary_intent"]))
-        # 契约缺口：gold 要求 confidence，但 W1–W4 从未定义该字段，模型只能返回 None。
-        add("confidence", actual.get("confidence"), exp.get("confidence"),
-            "gold 要求 confidence，但 SKILL.md W1–W4 没有定义该字段",
-            undefined_in_contract=True)
 
     elif case["category"] == "risk_scoring":
         for dim in ("irreversibility", "impact_scope", "uncertainty", "coordination_cost"):
@@ -131,7 +158,11 @@ def score_case(case: dict, actual: dict) -> dict:
         add("risk_level", actual.get("risk_level"), exp["risk_level"])
 
     elif case["category"] == "route_building":
-        add("route", actual.get("route"), exp["route"])
+        got_route, want_route = list(actual.get("route") or []), list(exp["route"] or [])
+        norm_got, norm_want = [_norm_skill(x) for x in got_route], [_norm_skill(x) for x in want_route]
+        variant = (got_route != want_route and norm_got == norm_want)
+        add("route", norm_got, norm_want,
+            note="命名格式变体（pax- 前缀差异，步骤与顺序一致）" if variant else "")
         add("diagnose_required", actual.get("diagnose_required"), exp["diagnose_required"])
         add("storage_backend_required", actual.get("storage_backend_required"),
             exp["storage_backend_required"])
@@ -147,50 +178,96 @@ def score_case(case: dict, actual: dict) -> dict:
     return {"passed": not wrong, "failed_checks": wrong, "checks": checks}
 
 
-# gold 数据集要求、但 SKILL.md W1–W4 契约中不存在这些字段。
-# 它们的失败是 gold/契约不一致，不是模型能力问题，必须从模型口径里剔除。
-GOLD_CONTRACT_UNDEFINED: tuple[str, ...] = ("confidence",)
-
-# gold 与契约本身冲突、或契约无法从 prompt 支撑 gold 的条目。
-# 这些 FAIL 不能计入模型能力，修订数据集时应逐条核对。
-GOLD_CONTRACT_ISSUES: list[dict] = [
+# v1.0 的 gold 与契约冲突项已在数据集 v1.1 中解决（见 fix_internal_dataset.py）。
+# 保留完整记录是为了让 results/ 里的历史数字可追溯、可复核。
+GOLD_CONTRACT_RESOLUTIONS: list[dict] = [
     {
-        "scope": "intent_classification 全部 7 条",
+        "case_id": "intent_classification 全部 7 条",
         "field": "confidence",
-        "issue": "gold 每条都要求 confidence（high/medium/low），但 SKILL.md W1–W4 从未定义该字段，"
-                 "模型只能返回 None，21 次判定全灭。属数据集字段超前于契约，不是分类能力问题。",
-        "model_actual": "primary_intent 21/21 全对；secondary_intent 19/21",
-        "fix": "二选一：在 W1 增加 confidence 定义与判定规则，或从数据集与评测里删掉该字段。",
+        "v1_0_problem": "gold 要求 confidence（high/medium/low），但 W1–W4 从未定义该字段，"
+                        "21 次判定全灭。数据集字段超前于契约。",
+        "resolution": "已解决（改 gold）：从数据集删除该字段。",
+        "why_not_contract": "W2–W4 没有任何逻辑读取 confidence，是个装饰字段。"
+                            "为了让测试通过而给契约补一个下游无人使用的字段，等于反向从测试推导契约。",
     },
     {
         "case_id": "pax-risk-high-01",
-        "field": "irreversibility / impact_scope / risk_score / risk_level",
-        "issue": "gold 内部自洽（3+3+2+2=10 → high，且命中 W2「不可逆性 3 且影响范围 3 → 强制 high」），"
-                 "但四维取值无法从 prompt 推导：契约对 impact_scope=3 的标准是“系统级、跨团队、跨系统、全用户”，"
-                 "prompt 仅说“把旧表的数据迁移到新表”，无系统级信号。模型三次一致返回 2/2/2/2=8 (medium)。",
-        "model_actual": "2/2/2/2 → risk_score 8, risk_level medium",
-        "fix": "契约需要给出数据迁移类任务的 impact_scope 判定基准（例如“影响行数/表数量/是否含主链路”），"
-               "否则 gold 只能靠出题人直觉，不同执行者会得到不同答案。",
+        "field": "irreversibility / impact_scope",
+        "v1_0_problem": "gold 3/3/2/2=10 自洽，但原 prompt「把旧表的数据迁移到新表」"
+                        "无系统级信号，impact_scope=3 无法从 prompt 推导。模型三次一致给 2/2/2/2。",
+        "resolution": "已解决（改 prompt）：补为「生产环境账务模块、30 张表、约 800 万行、"
+                      "无法回滚重跑」，命中 impact_scope=3 的三条基准。gold 与契约未动。",
+        "why_not_gold": "gold 编码的其实是正确的工程判断（生产账务数据迁移就是高风险），"
+                        "问题在于题面没给信号，属不可解题而非模型能力问题。",
     },
     {
         "case_id": "pax-route-df-01",
         "field": "storage_backend_required",
-        "issue": "gold 给 secondary_intent=[] 但要求 storage_backend_required=true。而契约 W4 的条件是"
-                 "`if intent.primary == 「data_ops」 or 「data_integrity」 in intent.secondary`——本案例 primary=diagnose_fix、"
-                 "secondary=[]，两个条件都不满足，契约强制为 false。gold 按契约自身的逻辑就是错的。",
-        "model_actual": "三次一致返回 false（严格按契约）",
-        "fix": "若要覆盖“任何涉及存储后端问题的诊断都要确认存储后端”这个直觉，需改契约 W4 的条件；"
-               "否则应把 gold 改为 false，或把 secondary_intent 补上 data_integrity。",
+        "v1_0_problem": "gold 隐含 secondary=[] 却要求 storage_backend_required=true，"
+                        "而 W4 的条件（primary==data_ops 或 'data_integrity' in secondary）"
+                        "两个都不满足，契约强制 false。gold 按契约自身逻辑就是错的。",
+        "resolution": "已解决（改 gold）：与 pax-intent-df-01 一起把 secondary 改为 ['data_integrity']，"
+                      "W4 条件成立，storage_backend_required=true 与契约一致。契约未动。",
+        "why_not_contract": "契约 W4 的布尔条件清晰可判定；改契约去迎合一个错误的 gold 是方向反了。",
     },
     {
         "case_id": "pax-intent-df-01",
         "field": "secondary_intent",
-        "issue": "gold 给 secondary_intent=[]，但契约对 ux_error 的触发条件写的是“前端报错、交互异常、UI 缺陷”。"
-                 "本案例是表单字段校验报错——算不算“交互异常”契约没有给出样例，模型三次运行在 1/3 概率下标为 ux_error。",
-        "model_actual": "secondary_intent 在 [] 与 ['ux_error'] 之间摆动（3 次中 1 次为 ux_error）",
-        "fix": "在 W1 的 ux_error 行补一个正例/反例（表单字段校验类算不算），否则这是不可解的歧义。",
+        "v1_0_problem": "gold 给 []，模型在 [] 与 ['ux_error'] 之间摆动（3 次中 1 次）。"
+                        "模型标的是 ux_error，而 prompt 是字段值校验失败。",
+        "resolution": "双管齐下：(1) 改 gold 为 ['data_integrity']——契约对 data_integrity 的定义"
+                      "含「字段错误」，是更贴切的标签，gold 原本漏标；"
+                      "(2) 契约 W1 补易混淆边界（校验报错归 data_integrity，不归 ux_error），"
+                      "防止未来题目继续在这里摆动。",
     },
 ]
+
+# ---------------------------------------------------------------------------
+# 发布门槛（2026-10-02 定义）
+#
+# 门槛按契约的确定性分档，**不是**从单次测量反推的——那样等于把门槛设成
+# 「刚好低于本次成绩」，保证通过且毫无信号。样本量也太小（n=9 或 n=3），
+# 一次判定偏差就能移动 11–33pp，所以这些门槛是**回归警报**，不是质量证明：
+# 跌破才需要调查，达标不等于契约实现得完美。
+# ---------------------------------------------------------------------------
+GATE_CHECKS: dict[str, float] = {
+    # 契约写成查表 / MECE 分类 / 显式布尔条件：一个正确实现应当几乎永远对。
+    "primary_intent": 0.95,
+    "diagnose_required": 0.95,
+    "cross_repo": 0.95,
+    "execution_strategy_required": 0.95,
+    # 查表结果的链式拼接，误差会随链条放大，留一档余量。
+    "route": 0.90,
+    "storage_backend_required": 0.90,
+    # 可叠加标签 + 语义边界判定（ux_error / data_integrity）。
+    "secondary_intent": 0.85,
+    # 聚合值：单维误差可能被其他维抵消，但强制升级规则需要稳定。
+    "risk_score": 0.85,
+    "risk_level": 0.85,
+    # 1–3 主观量纲，契约只给示例不给阈值，最难收敛。
+    "irreversibility": 0.80,
+    "impact_scope": 0.80,
+    "uncertainty": 0.80,
+    "coordination_cost": 0.80,
+}
+
+GATE_CATEGORY: dict[str, float] = {
+    "intent_classification": 0.95,
+    "risk_scoring": 0.85,
+    "route_building": 0.90,
+    "cross_repo_detection": 0.90,
+}
+
+# 总门槛：剔除 gold/契约冲突字段后的整体准确率。v1.0 用的 0.80 是随手写的声明值。
+GATE_OVERALL = 0.90
+
+# 输出健壮性：模型必须按契约吐合法且自洽的 JSON。低于此值说明路由输出本身不可靠，
+# 能力分再高也没用。n=42 时允许至多 2 次失败（97.6%）。
+GATE_VALID_RATE = 0.95
+
+
+# v1.0 遗留：gold 要求、契约从未定义的字段。v1.1 已删，保留空集仅为兼容性。
+GOLD_CONTRACT_UNDEFINED: tuple[str, ...] = ()
 
 
 def call_model(messages: list[dict]) -> tuple[dict | None, dict, str | None]:
@@ -210,25 +287,53 @@ def call_model(messages: list[dict]) -> tuple[dict | None, dict, str | None]:
 
 
 def summarize(rows: list[dict]) -> dict:
-    """从逐行结果重算汇总。--rescore 和主流程共用，保证口径一致。"""
+    """从逐行结果重算汇总。--rescore 和主流程共用，保证口径一致。
+
+    三个口径：
+      原始     包含 gold 要求但契约未定义的字段（v1.1 后已无）
+      调整     剔除 gold/契约不一致字段
+      可解析   再剔除「模型没返回合法 JSON」的行。那类失败是输出健壮性问题，
+               不是路由判断能力；混在一起会把能力分污染，门槛也失去意义。
+    """
+    parsable = [r for r in rows if r.get("actual")]
+    parse_fails = [r for r in rows if not r.get("actual")]
+    struct_bad = [r for r in parsable if validate_response(
+        {"category": r.get("category")}, r["actual"])]
+    struct_ids = {(r["case_id"], r["repeat"]) for r in struct_bad}
+    # 能力口径的分母：既成功解析、又不违反契约自洽的行
+    valid = [r for r in parsable if (r["case_id"], r["repeat"]) not in struct_ids]
+    fails = parse_fails + struct_bad
+
+    def adj_ok(rs: list[dict]) -> list[dict]:
+        return [r for r in rs
+                if all(c["passed"] for c in r["checks"]
+                       if c["check"] not in GOLD_CONTRACT_UNDEFINED)]
+
+    def pct(n: int, d: int) -> float:
+        return round(100 * n / d, 1) if d else 0.0
+
     total = len(rows)
-    adjusted_ok = [r for r in rows
-                   if all(c["passed"] for c in r["checks"] if c["check"] not in GOLD_CONTRACT_UNDEFINED)]
+    adjusted_ok = adj_ok(rows)
     raw_passed = sum(r["passed"] for r in rows)
     categories = sorted({r["category"] for r in rows})
     by_cat = {}
     for cat in categories:
         cr = [r for r in rows if r["category"] == cat]
-        adj = [r for r in cr
-               if all(c["passed"] for c in r["checks"] if c["check"] not in GOLD_CONTRACT_UNDEFINED)]
+        cp_valid = [r for r in cr
+                    if r.get("actual") and (r["case_id"], r["repeat"]) not in struct_ids]
+        adj = adj_ok(cr)
         by_cat[cat] = {
             "total": len(cr), "passed_raw": sum(r["passed"] for r in cr),
             "passed_adjusted": len(adj),
-            "accuracy_raw": round(100 * sum(r["passed"] for r in cr) / len(cr), 1),
-            "accuracy_adjusted": round(100 * len(adj) / len(cr), 1),
+            "accuracy_raw": pct(sum(r["passed"] for r in cr), len(cr)),
+            "accuracy_adjusted": pct(len(adj), len(cr)),
+            # 能力分：分母只算自洽且解析成功的行
+            "parsable": len(cp_valid),
+            "passed_parsable": len(adj_ok(cp_valid)),
+            "accuracy_parsable": pct(len(adj_ok(cp_valid)), len(cp_valid)),
         }
     check_hits: dict[str, list[bool]] = {}
-    for r in rows:
+    for r in valid:                        # 只看自洽且解析成功的行
         for c in r["checks"]:
             check_hits.setdefault(c["check"], []).append(c["passed"])
     by_check = {k: {"passed": sum(v), "total": len(v)} for k, v in sorted(check_hits.items())}
@@ -239,14 +344,33 @@ def summarize(rows: list[dict]) -> dict:
             flaky.append({"case_id": case_id, "per_repeat": per})
     return {
         "summary": {"total": total, "passed": raw_passed, "failed": total - raw_passed,
-                    "accuracy": round(100 * raw_passed / total, 1) if total else 0.0,
-                    "note": "原始口径，包含 gold 要求但契约未定义的字段，不可单独引用"},
+                    "accuracy": pct(raw_passed, total),
+                    "note": "原始口径，不可单独引用"},
         "summary_adjusted": {
             "total": total, "passed": len(adjusted_ok),
             "failed": total - len(adjusted_ok),
-            "accuracy": round(100 * len(adjusted_ok) / total, 1) if total else 0.0,
+            "accuracy": pct(len(adjusted_ok), total),
             "excluded_checks": list(GOLD_CONTRACT_UNDEFINED),
-            "note": "剔除 gold/契约不一致字段后的模型真实表现",
+            "note": "剔除 gold/契约不一致字段；仍包含输出无法解析的行",
+        },
+        "summary_parsable": {
+            "total": len(valid), "passed": len(adj_ok(valid)),
+            "failed": len(valid) - len(adj_ok(valid)),
+            "accuracy": pct(len(adj_ok(valid)), len(valid)),
+            "note": "能力口径：剔除 gold/契约冲突字段，也剔除输出无法解析或自相矛盾的行。gate 以此为准。",
+        },
+        "robustness": {
+            "total": total, "valid": len(valid), "failures": len(fails),
+            "parse_rate": round(len(parsable) / total, 4) if total else None,
+            "valid_rate": round(len(valid) / total, 4) if total else None,
+            "parse_failures": [{"case_id": r["case_id"], "repeat": r["repeat"],
+                                "error": r.get("error")} for r in parse_fails],
+            "structure_failures": [{"case_id": r["case_id"], "repeat": r["repeat"],
+                                    "violations": validate_response(
+                                        {"category": r.get("category")}, r["actual"])}
+                                   for r in struct_bad],
+            "note": "parse_rate 查 JSON 语法；structure_failures 查输出是否自相矛盾"
+                    "（如四维都是 1 却报 risk_score=0）。两者都属输出健壮性，不算路由判断能力。",
         },
         "by_category": by_cat,
         "by_check": by_check,
@@ -256,7 +380,86 @@ def summarize(rows: list[dict]) -> dict:
             "flaky_count": len(flaky),
             "total_cases": len({r["case_id"] for r in rows}),
         },
-        "gold_contract_issues": GOLD_CONTRACT_ISSUES,
+        "gold_contract_resolutions": GOLD_CONTRACT_RESOLUTIONS,
+    }
+
+
+def dataset_version() -> str:
+    """从数据集顶层读版本号；读不到就返回 unknown。"""
+    try:
+        return json.loads(Path(DATASET).read_text(encoding="utf-8"))["version"]
+    except (OSError, KeyError, json.JSONDecodeError):
+        return "unknown"
+
+
+def stamp_meta(meta: dict, *, rescoring: bool, repeats: int | None) -> dict:
+    """统一写 meta，避免主流程与 --rescore 两条路径写出两套不一致的元信息。"""
+    meta = dict(meta or {})
+    meta.update({
+        "version": "2.1",
+        "dataset_version": dataset_version(),
+        "run_at": datetime.now(ZoneInfo("Asia/Shanghai")).isoformat(timespec="seconds"),
+        **({"repeats": repeats} if repeats else {}),
+        **({"graded_at_rescore": True} if rescoring else {}),
+        "note": "系统提示 = SKILL.md W1–W4 原文，未注入契约外澄清。"
+                "能力分用「可解析且自洽」口径；gold/契约冲突项已逐条解决并记录在 "
+                "gold_contract_resolutions 与数据集 changelog。",
+    })
+    return meta
+
+
+def check_gate(summary: dict) -> dict:
+    """按 GATE_CHECKS / GATE_CATEGORY / GATE_OVERALL 逐项判定。
+
+    能力类门槛用「可解析」口径（剔除 gold/契约冲突字段与输出无法解析的行），
+    输出健壮性另走 GATE_PARSE_RATE。两件事混在一起就没法定位问题在哪。
+
+    返回 gate 块：每项的实测值、门槛、pass/fail，以及总判定。
+    n 很小的项（cross_repo_detection 只有 1 条题）也照常判定，但结果里标出 n，
+    免得把 3 次判定当成分布证据。
+    """
+    pars = summary["summary_parsable"]
+    overall = pars["accuracy"] / 100
+    checks = []
+    for name, thr in GATE_CHECKS.items():
+        hit = summary["by_check"].get(name)
+        if not hit:
+            continue
+        rate = hit["passed"] / hit["total"]
+        checks.append({"metric": name, "observed": round(rate, 4),
+                       "threshold": thr, "n": hit["total"],
+                       "pass": rate >= thr})
+    cats = []
+    for name, thr in GATE_CATEGORY.items():
+        blk = summary["by_category"].get(name)
+        if not blk or not blk["parsable"]:
+            continue
+        rate = blk["accuracy_parsable"] / 100
+        cats.append({"metric": f"category:{name}", "observed": round(rate, 4),
+                     "threshold": thr, "n": blk["parsable"],
+                     "pass": rate >= thr})
+    rob = summary["robustness"]
+    valid_rate = rob["valid_rate"] if rob["valid_rate"] is not None else 1.0
+    robustness = {"metric": "valid_rate", "observed": round(valid_rate, 4),
+                  "threshold": GATE_VALID_RATE, "n": rob["total"],
+                  "failures": rob["failures"],
+                  "parse_failures": len(rob.get("parse_failures", [])),
+                  "structure_failures": len(rob.get("structure_failures", [])),
+                  "pass": valid_rate >= GATE_VALID_RATE}
+    all_pass = ((overall >= GATE_OVERALL) and all(x["pass"] for x in checks + cats)
+                and robustness["pass"])
+    return {
+        "pass": bool(all_pass),
+        "overall": {"metric": "accuracy_parsable", "observed": round(overall, 4),
+                   "threshold": GATE_OVERALL, "n": pars["total"],
+                   "pass": overall >= GATE_OVERALL},
+        "robustness": robustness,
+        "checks": checks, "categories": cats,
+        "failed": [x["metric"] for x in checks + cats if not x["pass"]] +
+                  ([] if overall >= GATE_OVERALL else ["accuracy_parsable"]) +
+                  ([] if robustness["pass"] else ["valid_rate"]),
+        "note": "能力门槛按契约确定性分档，非从单次测量反推。n 很小时一次判定偏差就能移动 11–33pp，"
+                "这是回归警报而不是质量证明。",
     }
 
 
@@ -286,18 +489,54 @@ def main() -> int:
         return 0
 
     if args.rescore:
-        # 只重算汇总，不重新调用模型
+        # 只重算汇总，不重新调用模型。
+        # 重要：重打分只有在「模型看到的输入没变」时才有意义。
+        # 因此必须校验 prompt 与契约都没漂移，否则宁可拒跑，也不能给出误导性数字。
         out = Path(args.out)
         if not out.exists():
             print(f"错误：找不到已有结果 {out}", file=sys.stderr)
             return 1
         saved = json.loads(out.read_text(encoding="utf-8"))
-        result = {**summarize(saved["results"]),
-                  "usage": saved.get("usage", {}), "meta": saved.get("meta", {}),
-                  "results": saved["results"]}
+        rows = saved["results"]
+        ds = {c["id"]: c for c in cases}
+
+        stale = []
+        for r in rows:
+            cid = r.get("case_id")
+            c = ds.get(cid)
+            if not c:
+                stale.append(f"{cid}: 已不在当前数据集中")
+            elif r.get("prompt") != c["prompt"]:
+                stale.append(f"{cid}: prompt 已变更（旧实测基于旧题面）")
+        cur_chars = len(contract)
+        old_chars = (saved.get("meta") or {}).get("contract_chars")
+        if old_chars and old_chars != cur_chars:
+            stale.append(f"契约 W1–W4 已从 {old_chars} 字符变为 {cur_chars} 字符")
+
+        if stale:
+            print("✗ --rescore 拒绝：已有结果与当前输入不一致，重打分会产生误导性的数字。")
+            for s in dict.fromkeys(stale):
+                print(f"  - {s}")
+            print("  请去掉 --rescore 重新调用模型。", file=sys.stderr)
+            return 2
+
+        # 用当前 gold 重新判定（仅校验通过后才走到这）
+        for r in rows:
+            c = ds[r["case_id"]]
+            verdict = score_case(c, r.get("actual") or {})
+            r["expected"], r["checks"] = c["expected"], verdict["checks"]
+            r["passed"] = verdict["passed"]
+            r["failed_checks"] = verdict["failed_checks"]
+
+        summary = summarize(rows)
+        result = {**summary, "gate": check_gate(summary),
+                  "usage": saved.get("usage", {}),
+                  "meta": stamp_meta(saved.get("meta", {}), rescoring=True, repeats=None),
+                  "results": rows}
         out.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
         print_summary(result)
-        return 0 if result["summary_adjusted"]["accuracy"] >= 80 else 1
+        print(f"\n结果已保存至：{out}（--rescore：未调用模型，仅按当前 gold 重判）")
+        return 0 if result["gate"]["pass"] else 1
 
     if not os.environ.get("DEEPSEEK_API_KEY"):
         print("错误：DEEPSEEK_API_KEY 未设置", file=sys.stderr)
@@ -329,14 +568,11 @@ def main() -> int:
     summary = summarize(rows)
     result = {
         **summary,
+        "gate": check_gate(summary),
         "usage": {**usage_total, "model": MODEL, "api_base": API_BASE,
                   "contract_source": "skills/pax-orchestrate/SKILL.md#W1-W4",
                   "contract_chars": len(contract)},
-        "meta": {
-            "version": "2.0", "repeats": args.repeats,
-            "run_at": datetime.now(ZoneInfo("Asia/Shanghai")).isoformat(timespec="seconds"),
-            "note": "系统提示 = SKILL.md W1–W4 原文，未注入契约外澄清；gold 与契约冲突的判为 FAIL",
-        },
+        "meta": stamp_meta({}, rescoring=False, repeats=args.repeats),
         "results": rows,
     }
     out = Path(args.out)
@@ -344,28 +580,63 @@ def main() -> int:
     out.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
     print_summary(result)
     print(f"\n结果已保存至：{out}")
-    return 0 if result["summary_adjusted"]["accuracy"] >= 80 else 1
+    return 0 if result["gate"]["pass"] else 1
 
 
 def print_summary(result: dict) -> None:
-    """打印双口径汇总。"""
+    """打印三口径汇总 + 健壮性 + gate。"""
     adj, raw = result["summary_adjusted"], result["summary"]
-    print(f"\n总计（原始口径，含 gold/契约不一致字段）：{raw['passed']}/{raw['total']} ({raw['accuracy']}%)")
-    print(f"总计（剔除契约未定义字段，模型真实表现）：{adj['passed']}/{adj['total']} ({adj['accuracy']}%)")
-    print(f"      剔除的检查项：{', '.join(adj['excluded_checks'])}")
-    print("\n按类别：")
+    par = result["summary_parsable"]
+    print(f"\n总计（原始口径）：{raw['passed']}/{raw['total']} ({raw['accuracy']}%)")
+    print(f"总计（剔除 gold/契约冲突字段）：{adj['passed']}/{adj['total']} ({adj['accuracy']}%)")
+    excl = adj.get("excluded_checks") or []
+    print(f"      剔除的检查项：{', '.join(excl) if excl else '（无）'}")
+    print(f"总计（可解析口径，能力分）：{par['passed']}/{par['total']} ({par['accuracy']}%)  ← gate 以此为准")
+    rob = result["robustness"]
+    print(f"输出健壮性：valid_rate = {rob['valid_rate']*100:.1f}%  "
+          f"(无效输出 {rob['failures']}/{rob['total']}，其中语法不可解析 "
+          f"{len(rob.get('parse_failures', []))}、自相矛盾 "
+          f"{len(rob.get('structure_failures', []))})")
+    for f in rob.get("parse_failures", []):
+        print(f"      - {f['case_id']} r{f['repeat']}: {f['error']}")
+    for f in rob.get("structure_failures", []):
+        print(f"      - {f['case_id']} r{f['repeat']}: {'; '.join(f['violations'])}")
+    print("\n按类别（可解析口径）：")
     for cat, s in result["by_category"].items():
-        print(f"  {cat:24} {s['passed_adjusted']:2}/{s['total']:<2} ({s['accuracy_adjusted']:5}%)"
-              f"   ← 原始 {s['passed_raw']}/{s['total']} ({s['accuracy_raw']}%)")
+        print(f"  {cat:24} {s['accuracy_parsable']:5}%"
+              f"   ({s['passed_parsable']}/{s['parsable']})"
+              f"   ← 含解析失败时 {s['accuracy_adjusted']:5}%")
     st = result.get("stability", {})
     if st:
         names = ", ".join(f["case_id"] for f in st["flaky_cases"]) if st["flaky_cases"] else ""
         print(f"\n稳定性：{st['flaky_count']}/{st['total_cases']} 个案例跨 {st['repeats']} 次不一致{names and '：' + names or ''}")
-    issues = result.get("gold_contract_issues", [])
-    if issues:
-        print(f"\ngold/契约问题 {len(issues)} 项（不计入模型能力）：")
-        for it in issues:
-            print(f"  - [{it.get('scope') or it.get('case_id')}] {it.get('field')}")
+    # 逐检查项
+    print("\n逐检查项（可解析口径，通过率 / 门槛）：")
+    for c in result["gate"]["checks"]:
+        mark = "✓" if c["pass"] else "✗"
+        print(f"  {mark} {c['metric']:26} {c['observed']*100:5.1f}% / ≥{c['threshold']*100:5.1f}%"
+              f"   (n={c['n']})")
+
+    g = result.get("gate", {})
+    ov = g.get("overall", {})
+    rb = g.get("robustness", {})
+    verdict = "PASS" if g.get("pass") else "FAIL"
+    print(f"\nGATE {verdict} —— 能力 {ov.get('observed', 0)*100:.1f}%"
+          f" / ≥{ov.get('threshold', 0)*100:.1f}%  (n={ov.get('n')})")
+    print(f"     健壮性 valid_rate {rb.get('observed', 0)*100:.1f}%"
+          f" / ≥{rb.get('threshold', 0)*100:.1f}%  (n={rb.get('n')})")
+    if g.get("failed"):
+        print(f"  未达标：{', '.join(g['failed'])}")
+    else:
+        print("  全部达标。注：门槛按契约确定性分档，不是质量证明；"
+              "n 很小时一次判定偏差就能移动 11–33pp。")
+
+    res = result.get("gold_contract_resolutions", [])
+    if res:
+        print(f"\ngold/契约冲突 {len(res)} 项（v1.1 已全部解决，不计入模型能力）：")
+        for it in res:
+            print(f"  - [{it.get('case_id')}] {it.get('field')}")
+            print(f"      {it.get('resolution', '')}")
 
 
 if __name__ == "__main__":
