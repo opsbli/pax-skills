@@ -1,5 +1,5 @@
 {
-  "version": "1.5",
+  "version": "1.6",
   "description": "pax-orchestrate 内部路由评估数据集，测试意图分类、风险评分、路由构建的准确性",
   "cases": [
     {
@@ -89,9 +89,9 @@
       "category": "risk_scoring",
       "prompt": "给系统加一个导出功能，多个业务用户都能把用户列表导出成 Excel 文件，涉及后端新增一个导出接口和前端新增一个导出按钮，改动都在同一个仓库内，完成后需要 code review。",
       "expected": {
-        "risk_score": 7,
+        "risk_score": 8,
         "risk_level": "medium",
-        "irreversibility": 1,
+        "irreversibility": 2,
         "impact_scope": 2,
         "uncertainty": 2,
         "coordination_cost": 2
@@ -282,6 +282,18 @@
         "case 增加 holdout 标记，评估脚本按此分组统计。"
       ],
       "note": "★ 锁定规则：这 4 条题的 prompt 与 gold 写入后不再修订。模型答错如实记 FAIL。唯一例外是复核发现 gold 与契约原文直接矛盾（而非「模型没读懂措辞」），且必须在 changelog 里写明「这是契约矛盾，不是拟合」。与 fix_internal_dataset.py 的区别：那个脚本是针对历史题的定向修订，本脚本只追加，不碰已有 case。"
+    },
+    {
+      "version": "1.6",
+      "date": "2026-10-03",
+      "basis": "D1–D4 四项决策落地后补契约 G1/G2（见 evals/CONTRACT_GAPS.md）。G2 的缺口是：契约 1 的示例「代码修改」与 2 的示例「前端部署（可回退）」在「新增功能」场景上重叠，两边都能引用契约原文。pax-risk-medium-03（holdout）3/3 全错暴露了这个问题；静态核对后发现 pax-risk-medium-01 的 gold 也落在同一个缺口里。",
+      "changes": [
+        "pax-risk-medium-01 的 irreversibility 从 1 改为 2，risk_score 从 7 改为 8（risk_level 仍是 medium，7–9 区间不变）。依据：补完 G2 后契约明确「改动需要部署上线才能生效的，即使可回滚也至少算 2」，而题面「后端新增导出接口 + 前端新增导出按钮」是需要部署的改动。",
+        "★ 这不是「看着模型答错改 gold」：模型三次都稳定判 1，改完后这条题会变成 0/3，是诚实的结果。改的理由是契约缺口，不是模型表现；方向是「更严格」不是「凑分」。",
+        "影响评估：改完后 risk_scoring 从 6/20 降到 5/20（-1），总分 46/52 → 45/52。这个下降是预期的——gold 跟上了契约，不再用「代码修改」这个过宽示例兜底。"
+      ],
+      "contract_changes": "skills/pax-orchestrate/SKILL.md 的 W2 不可逆性与影响范围判据：G1 给「内部工具」加「仅本人使用」限定；G2 给「代码修改」加「未上线的本地改动」限定、给「配置修改」加「不触发部署」限定，并把 2 的示例改为「前端/后端部署（可回退）」；两条都补了显式边界说明。",
+      "holdout_integrity": "G1/G2 补完后 pax-risk-medium-03（holdout 锁定题）的 prompt 与 gold 不变。impact_scope=2 现在有明确契约依据（内部工具按使用人数判定）；FAIL 归因从「契约缺口」转为「模型是否跟上新契约」，重跑后见分晓。"
     }
   ]
 }
