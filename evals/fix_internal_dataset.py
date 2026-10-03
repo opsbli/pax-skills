@@ -56,6 +56,17 @@ FINAL_PROMPTS: dict[str, str] = {
     "pax-risk-medium-01": RISK_MEDIUM_PROMPT,
 }
 
+# v1.6：契约 G2 补完后，medium-01 的 irreversibility 从 1 改为 2。
+# 依据：题面是「给系统加一个导出功能，后端新增接口 + 前端新增按钮」，
+# 属于需要部署上线的改动。补完 G2 后契约明确「改动需要部署上线才能生效的，
+# 即使可回滚也至少算 2」，所以 irreversibility=1 不再成立。
+# 总分从 7 变 8，risk_level 仍是 medium（7–9 区间）。
+# 注意：这不是「看着模型答错改 gold」——模型三次都稳定判 1，改完后这条题会变 0/3，
+# 是诚实的结果。改的理由是契约缺口（G2），不是模型表现。
+FINAL_DIMS: dict[str, dict[str, int]] = {
+    "pax-risk-medium-01": {"irreversibility": 2, "risk_score": 8},
+}
+
 FINAL_SECONDARY: dict[str, list[str]] = {
     # 契约对 data_integrity 的定义含「字段错误」；「字段填写后报错说字段不为设定的正则表达式」
     # 是一个字段值校验失败信号。原 gold 漏标。
@@ -155,6 +166,33 @@ CHANGELOG: list[dict] = [
         "note": "外部路由数据集（pax_routing_v1.0.jsonl）不受影响：那里比的是 skill 目录名，"
                 "本来就该用 pax-* 全名。两套 gold 的记法基准不同，不矛盾。",
     },
+    {
+        "version": "1.6",
+        "date": "2026-10-03",
+        "basis": "D1–D4 四项决策落地后补契约 G1/G2（见 evals/CONTRACT_GAPS.md）。"
+                 "G2 的缺口是：契约 1 的示例「代码修改」与 2 的示例「前端部署（可回退）」"
+                 "在「新增功能」场景上重叠，两边都能引用契约原文。"
+                 "pax-risk-medium-03（holdout）3/3 全错暴露了这个问题；"
+                 "静态核对后发现 pax-risk-medium-01 的 gold 也落在同一个缺口里。",
+        "changes": [
+            "pax-risk-medium-01 的 irreversibility 从 1 改为 2，risk_score 从 7 改为 8"
+            "（risk_level 仍是 medium，7–9 区间不变）。"
+            "依据：补完 G2 后契约明确「改动需要部署上线才能生效的，即使可回滚也至少算 2」，"
+            "而题面「后端新增导出接口 + 前端新增导出按钮」是需要部署的改动。",
+            "★ 这不是「看着模型答错改 gold」：模型三次都稳定判 1，改完后这条题会变成 0/3，"
+            "是诚实的结果。改的理由是契约缺口，不是模型表现；方向是「更严格」不是「凑分」。",
+            "影响评估：改完后 risk_scoring 从 6/20 降到 5/20（-1），总分 46/52 → 45/52。"
+            "这个下降是预期的——gold 跟上了契约，不再用「代码修改」这个过宽示例兜底。",
+        ],
+        "contract_changes": "skills/pax-orchestrate/SKILL.md 的 W2 不可逆性与影响范围判据："
+                           "G1 给「内部工具」加「仅本人使用」限定；"
+                           "G2 给「代码修改」加「未上线的本地改动」限定、"
+                           "给「配置修改」加「不触发部署」限定，"
+                           "并把 2 的示例改为「前端/后端部署（可回退）」；两条都补了显式边界说明。",
+        "holdout_integrity": "G1/G2 补完后 pax-risk-medium-03（holdout 锁定题）的 prompt 与 gold 不变。"
+                             "impact_scope=2 现在有明确契约依据（内部工具按使用人数判定）；"
+                             "FAIL 归因从「契约缺口」转为「模型是否跟上新契约」，重跑后见分晓。",
+    },
 ]
 
 
@@ -180,6 +218,12 @@ def main() -> int:
             log.append(f"{cid}: route 改用契约短名 {exp.get('route')} → {FINAL_ROUTES[cid]}")
             exp["route"] = FINAL_ROUTES[cid]
 
+        if cid in FINAL_DIMS:
+            for k, v in FINAL_DIMS[cid].items():
+                if exp.get(k) != v:
+                    log.append(f"{cid}: {k} {exp.get(k)} → {v}（v1.6，契约 G2 补完后 gold 跟进）")
+                    exp[k] = v
+
         if cid in FINAL_PROMPTS and c["prompt"] != FINAL_PROMPTS[cid]:
             log.append(f"{cid}: prompt 补齐推导信号\n    前：{c['prompt']}\n    后：{FINAL_PROMPTS[cid]}")
             c["prompt"] = FINAL_PROMPTS[cid]
@@ -188,11 +232,17 @@ def main() -> int:
             c["notes"] = ROUTE_DF_NOTES
             log.append(f"{cid}: 增加 notes，记录对 pax-intent-df-01 W1 判定的依赖")
 
-    raw["version"] = "1.4"
-    raw["changelog"] = CHANGELOG
+    raw["version"] = "1.6"
+    # changelog 合并而非覆盖：add_holdout_cases.py 追加的 v1.5 条目不能丢
+    by_ver: dict[str, dict] = {e.get("version", ""): e for e in raw.get("changelog", [])}
+    for entry in CHANGELOG:
+        by_ver[entry["version"]] = entry
+    raw["changelog"] = [by_ver[k] for k in sorted(
+        (v for v in by_ver.keys() if v),
+        key=lambda v: tuple(int(x) for x in v.split(".")))]
     DATASET.write_text(json.dumps(raw, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
-    print(f"数据集：{DATASET.name} → 1.4\n")
+    print(f"数据集 → v1.6\n")
     if log:
         for line in log:
             print(" ", line)
@@ -210,8 +260,13 @@ def main() -> int:
             errs.append(f"{c['id']}: secondary_intent 未生效")
         if c["id"] in FINAL_ROUTES and c["expected"]["route"] != FINAL_ROUTES[c["id"]]:
             errs.append(f"{c['id']}: route 未生效")
+        if c["id"] in FINAL_DIMS and any(
+                c["expected"].get(k) != v for k, v in FINAL_DIMS[c["id"]].items()):
+            errs.append(f"{c['id']}: 四维值未生效")
 
-    # 每条 risk 题的四维加起来必须等于 gold 的 risk_score，且映射到正确的 risk_level
+    # 每条 risk 题的四维加起来必须等于 gold 的 risk_score，且映射到正确的 risk_level。
+    # 注意：必须考虑 W2 的强制升级规则，否则高分类题会被误判为 gold 错。
+    # 强制升级规则：security 二级意图 / data_integrity+impact 3 / 不可逆3+影响3 → high
     for c in cases:
         if c["category"] != "risk_scoring":
             continue
@@ -220,8 +275,17 @@ def main() -> int:
         if total != exp["risk_score"]:
             errs.append(f"{c['id']}: 四维和 {total} ≠ risk_score {exp['risk_score']}")
         band = "low" if total <= 6 else ("medium" if total <= 9 else "high")
-        if band != exp["risk_level"]:
-            errs.append(f"{c['id']}: 总分 {total} 应映射 {band}，gold 是 {exp['risk_level']}")
+        secs = exp.get("secondary_intent") or []
+        # 二级意图在 risk_scoring 题里不一定有，有才判
+        forced = (
+            "security" in secs
+            or ("data_integrity" in secs and exp["impact_scope"] == 3)
+            or (exp["irreversibility"] == 3 and exp["impact_scope"] == 3)
+        )
+        expected_level = "high" if forced else band
+        if expected_level != exp["risk_level"]:
+            why = "强制升级" if forced else "总分映射"
+            errs.append(f"{c['id']}: 总分 {total} 经{why}应为 {expected_level}，gold 是 {exp['risk_level']}")
 
     print(f"\n共 {len(cases)} 条 case，{len(log)} 处改动")
     if errs:

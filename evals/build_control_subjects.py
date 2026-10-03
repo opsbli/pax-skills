@@ -156,7 +156,13 @@ def main() -> int:
         "# 生成方式：python evals/build_control_subjects.py（skills.dir 指向派生的对照组目录）",
     )
     suite = suite.replace("suite_id: pax_routing\n", "suite_id: pax_routing_control\n", 1)
-    suite = suite.replace('suite_version: "2.0"\n', 'suite_version: "2.0-control"\n', 1)
+    # 版本号从基线套件读取实际值再追加 -control 后缀，避免硬编码后升级版本就静默失效
+    m = re.search(r'suite_version:\s*"([^"]+)"', suite)
+    if m:
+        base = m.group(1).replace("-control", "")
+        suite = suite.replace(f'suite_version: "{m.group(1)}"\n',
+                              f'suite_version: "{base}-control"\n', 1)
+        print(f"对照组套件版本：{base} → {base}-control")
     suite = suite.replace(
         "  # 由 evals/sync_subjects.py 从 skills/ 生成；skills/ 是唯一事实源。\n"
         f"  dir: {SRC.as_posix()}",
