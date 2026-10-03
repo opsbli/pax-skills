@@ -1,5 +1,5 @@
 {
-  "version": "1.6",
+  "version": "1.7",
   "description": "pax-orchestrate 内部路由评估数据集，测试意图分类、风险评分、路由构建的准确性",
   "cases": [
     {
@@ -222,6 +222,353 @@
         "risk_level": "medium"
       },
       "notes": "考「单人可完成」但仍有中风险的情形——现有题的协调成本最低是 1（low-01，四维全 1），最高是 2，没有「协调成本 1 但总分 7」的组合。写「内部运营后台」是为了排掉全用户 → impact 3 的歧义；写「确认后由我一个人完成」是为了让协调成本明确落在 1。"
+    },
+    {
+      "id": "pax-intent-ds-01",
+      "category": "intent_classification",
+      "holdout": true,
+      "prompt": "生产环境发现一个 SQL 注入漏洞，用户输入直接拼接到查询语句里，攻击者可以通过特殊字符绕过认证。需要立即修复，防止数据泄露。",
+      "expected": {
+        "primary_intent": "diagnose_fix",
+        "secondary_intent": [
+          "security"
+        ]
+      }
+    },
+    {
+      "id": "pax-intent-ux-01",
+      "category": "intent_classification",
+      "holdout": true,
+      "prompt": "用户在网页上点击提交按钮没有任何反应，控制台显示一个 JS 错误，但后端接口其实返回了正常数据。",
+      "expected": {
+        "primary_intent": "diagnose_fix",
+        "secondary_intent": [
+          "ux_error"
+        ]
+      }
+    },
+    {
+      "id": "pax-intent-ig-01",
+      "category": "intent_classification",
+      "holdout": true,
+      "prompt": "调用第三方支付接口返回 500 错误，对方说他们的服务正常，我们这边请求格式可能有问题。",
+      "expected": {
+        "primary_intent": "diagnose_fix",
+        "secondary_intent": [
+          "integration"
+        ]
+      }
+    },
+    {
+      "id": "pax-intent-de-01",
+      "category": "intent_classification",
+      "holdout": true,
+      "prompt": "昨天部署到生产环境后，新版本的配置没有生效，所有用户都看到了旧版本的页面。部署脚本执行成功了，但配置项没被读取。",
+      "expected": {
+        "primary_intent": "diagnose_fix",
+        "secondary_intent": [
+          "deployment"
+        ]
+      }
+    },
+    {
+      "id": "pax-intent-dpi-01",
+      "category": "intent_classification",
+      "holdout": true,
+      "prompt": "最近一周系统响应时间从 200ms 增加到 2s，同时发现数据库里有一些订单状态不一致，部分订单在业务系统显示已完成但数据库里还是 pending。",
+      "expected": {
+        "primary_intent": "diagnose_fix",
+        "secondary_intent": [
+          "performance",
+          "data_integrity"
+        ]
+      }
+    },
+    {
+      "id": "pax-intent-do-02",
+      "category": "intent_classification",
+      "holdout": true,
+      "prompt": "需要把用户表里所有 status 为 0 的记录批量更新为 1，这些是测试数据，共约 200 条。",
+      "expected": {
+        "primary_intent": "data_ops",
+        "secondary_intent": []
+      }
+    },
+    {
+      "id": "pax-intent-fs-01",
+      "category": "intent_classification",
+      "holdout": true,
+      "prompt": "给系统加一个管理员后台，管理员可以查看和修改所有用户的个人信息，包括身份证号和手机号。",
+      "expected": {
+        "primary_intent": "feature_dev",
+        "secondary_intent": [
+          "security"
+        ]
+      }
+    },
+    {
+      "id": "pax-intent-rp-01",
+      "category": "intent_classification",
+      "holdout": true,
+      "prompt": "用户列表查询接口在数据量超过 10 万条时很慢，需要优化查询逻辑，加索引或改分页策略，但不改变接口的入参和出参。",
+      "expected": {
+        "primary_intent": "refactor",
+        "secondary_intent": [
+          "performance"
+        ]
+      }
+    },
+    {
+      "id": "pax-intent-ti-01",
+      "category": "intent_classification",
+      "holdout": true,
+      "prompt": "写一个脚本，定时从公司内部的 GitLab API 拉取代码提交记录，汇总成日报发送到飞书群。",
+      "expected": {
+        "primary_intent": "tool_build",
+        "secondary_intent": [
+          "integration"
+        ]
+      }
+    },
+    {
+      "id": "pax-risk-low-03",
+      "category": "risk_scoring",
+      "holdout": true,
+      "prompt": "把团队内部的一个共享脚本里的日志格式从纯文本改成 JSON，方便机器解析。团队内 3 个人会用这个脚本，改动后本地覆盖旧版本即可，不需要部署。改动很明确，就是把 print 改成 json.dumps。",
+      "expected": {
+        "irreversibility": 1,
+        "impact_scope": 2,
+        "uncertainty": 1,
+        "coordination_cost": 1,
+        "risk_score": 5,
+        "risk_level": "low"
+      }
+    },
+    {
+      "id": "pax-risk-low-04",
+      "category": "risk_scoring",
+      "holdout": true,
+      "prompt": "在本地开发环境试一下用 Redis 替代内存缓存，写个原型验证性能差异。改动只在我的开发分支上，不影响任何生产数据。没用过 Redis 客户端库，需要先看一下文档。",
+      "expected": {
+        "irreversibility": 1,
+        "impact_scope": 1,
+        "uncertainty": 2,
+        "coordination_cost": 1,
+        "risk_score": 5,
+        "risk_level": "low"
+      }
+    },
+    {
+      "id": "pax-risk-low-05",
+      "category": "risk_scoring",
+      "holdout": true,
+      "prompt": "把本地开发环境的 Node.js 版本从 18 升到 20，改一下 package.json 的 engines 字段。改完需要重新部署到开发服务器，但可以一键回退到旧版本。需求很明确，不涉及生产环境，只有我一个人用这个开发环境。",
+      "expected": {
+        "irreversibility": 2,
+        "impact_scope": 1,
+        "uncertainty": 1,
+        "coordination_cost": 1,
+        "risk_score": 5,
+        "risk_level": "low"
+      }
+    },
+    {
+      "id": "pax-risk-low-06",
+      "category": "risk_scoring",
+      "holdout": true,
+      "prompt": "给团队共享的内部工具加一个数据导出功能，团队内 5 个人会用。导出格式用 CSV 还是 Excel 还没确定，需要先跟产品经理确认。改动在工具内部，本地覆盖旧版本即可。",
+      "expected": {
+        "irreversibility": 1,
+        "impact_scope": 2,
+        "uncertainty": 2,
+        "coordination_cost": 1,
+        "risk_score": 6,
+        "risk_level": "low"
+      }
+    },
+    {
+      "id": "pax-risk-medium-04",
+      "category": "risk_scoring",
+      "holdout": true,
+      "prompt": "把用户注册接口从 HTTP 升级到 HTTPS，需要配置 SSL 证书。接口有 3 个调用方（都在同一个仓库内）。证书配置流程不熟，需要先查文档验证一轮。改动由我一个人完成，不需要 code review。",
+      "expected": {
+        "irreversibility": 2,
+        "impact_scope": 2,
+        "uncertainty": 2,
+        "coordination_cost": 1,
+        "risk_score": 7,
+        "risk_level": "medium"
+      }
+    },
+    {
+      "id": "pax-risk-medium-05",
+      "category": "risk_scoring",
+      "holdout": true,
+      "prompt": "删除生产数据库中已过期 1 年的测试环境数据备份（非生产数据），物理删除无法恢复。这些备份只有测试团队内部使用。删除操作有标准手册，我一个人执行即可。",
+      "expected": {
+        "irreversibility": 3,
+        "impact_scope": 2,
+        "uncertainty": 1,
+        "coordination_cost": 1,
+        "risk_score": 7,
+        "risk_level": "medium"
+      }
+    },
+    {
+      "id": "pax-risk-high-03",
+      "category": "risk_scoring",
+      "holdout": true,
+      "prompt": "把生产数据库的用户表从 MySQL 迁移到 PostgreSQL，涉及用户表、订单表、支付记录表共 8 张表的关联迁移，数据量约 2000 万行。迁移后需要验证数据一致性，有回滚脚本但回滚需要重新导入全量数据。涉及后端和前端两个团队的协调。",
+      "expected": {
+        "irreversibility": 3,
+        "impact_scope": 3,
+        "uncertainty": 2,
+        "coordination_cost": 3,
+        "risk_score": 11,
+        "risk_level": "high"
+      }
+    },
+    {
+      "id": "pax-risk-high-04",
+      "category": "risk_scoring",
+      "holdout": true,
+      "prompt": "生产环境中发现订单状态与支付状态不一致，部分用户已支付但订单仍显示待支付。需要排查不一致的原因并批量订正，涉及订单表、支付表、用户表共 3 张表的数据修复，影响所有用户。修复方案需要先验证一轮再上线，改动涉及后端和前端两个模块，需要 code review。",
+      "expected": {
+        "irreversibility": 2,
+        "impact_scope": 3,
+        "uncertainty": 2,
+        "coordination_cost": 2,
+        "risk_score": 9,
+        "risk_level": "high"
+      }
+    },
+    {
+      "id": "pax-risk-high-05",
+      "category": "risk_scoring",
+      "holdout": true,
+      "prompt": "生产环境的用户登录日志表里，有部分记录的 login_time 字段是空值，导致报表统计时出现 NULL 错误。需要排查原因并批量填充这些空值。涉及所有用户的历史登录记录，数据量约 5000 万行。操作前有完整备份，按标准流程执行，我一个人完成即可。",
+      "expected": {
+        "irreversibility": 1,
+        "impact_scope": 3,
+        "uncertainty": 1,
+        "coordination_cost": 1,
+        "risk_score": 6,
+        "risk_level": "high"
+      }
+    },
+    {
+      "id": "pax-route-ds-01",
+      "category": "route_building",
+      "holdout": true,
+      "prompt": "生产环境发现一个 SQL 注入漏洞，用户输入直接拼接到查询语句里，攻击者可以通过特殊字符绕过认证。需要立即修复。",
+      "expected": {
+        "route": [
+          "clarify",
+          "diagnose",
+          "plan",
+          "execute",
+          "review"
+        ],
+        "diagnose_required": true,
+        "storage_backend_required": false
+      }
+    },
+    {
+      "id": "pax-route-ux-01",
+      "category": "route_building",
+      "holdout": true,
+      "prompt": "用户在网页上点击提交按钮没有任何反应，控制台显示一个 JS 错误，但后端接口其实返回了正常数据。",
+      "expected": {
+        "route": [
+          "clarify",
+          "diagnose",
+          "plan",
+          "execute",
+          "review"
+        ],
+        "diagnose_required": true,
+        "storage_backend_required": false
+      }
+    },
+    {
+      "id": "pax-route-do-02",
+      "category": "route_building",
+      "holdout": true,
+      "prompt": "需要把用户表里所有 status 为 0 的记录批量更新为 1，这些是测试数据，共约 200 条。",
+      "expected": {
+        "route": [
+          "clarify",
+          "diagnose",
+          "plan",
+          "execute",
+          "review"
+        ],
+        "diagnose_required": true,
+        "storage_backend_required": true
+      }
+    },
+    {
+      "id": "pax-route-rf-01",
+      "category": "route_building",
+      "holdout": true,
+      "prompt": "把 500 行的单体方法拆分成多个职责单一的函数，保持接口行为不变。",
+      "expected": {
+        "route": [
+          "clarify",
+          "plan",
+          "execute",
+          "review"
+        ],
+        "diagnose_required": false,
+        "storage_backend_required": false
+      }
+    },
+    {
+      "id": "pax-route-fs-01",
+      "category": "route_building",
+      "holdout": true,
+      "prompt": "给系统加一个管理员后台，管理员可以查看和修改所有用户的个人信息，包括身份证号和手机号。",
+      "expected": {
+        "route": [
+          "clarify",
+          "diagnose",
+          "plan",
+          "execute",
+          "review"
+        ],
+        "diagnose_required": true,
+        "storage_backend_required": false
+      }
+    },
+    {
+      "id": "pax-cross-repo-02",
+      "category": "cross_repo_detection",
+      "holdout": true,
+      "prompt": "订单服务需要调用用户服务的新接口来获取用户偏好信息，两个服务部署在不同的服务器上。",
+      "expected": {
+        "cross_repo": true,
+        "execution_strategy_required": true
+      }
+    },
+    {
+      "id": "pax-cross-repo-03",
+      "category": "cross_repo_detection",
+      "holdout": true,
+      "prompt": "在同一个仓库内，服务 A 需要调用服务 B 的新函数，两个服务在同一个代码仓库里。",
+      "expected": {
+        "cross_repo": false,
+        "execution_strategy_required": false
+      }
+    },
+    {
+      "id": "pax-cross-repo-04",
+      "category": "cross_repo_detection",
+      "holdout": true,
+      "prompt": "前端 React 项目需要调用后端 Express 项目的新接口，两个项目分别在 ops-pilot-web 和 ops-monitor 两个仓库中。",
+      "expected": {
+        "cross_repo": true,
+        "execution_strategy_required": true
+      }
     }
   ],
   "changelog": [
@@ -294,6 +641,23 @@
       ],
       "contract_changes": "skills/pax-orchestrate/SKILL.md 的 W2 不可逆性与影响范围判据：G1 给「内部工具」加「仅本人使用」限定；G2 给「代码修改」加「未上线的本地改动」限定、给「配置修改」加「不触发部署」限定，并把 2 的示例改为「前端/后端部署（可回退）」；两条都补了显式边界说明。",
       "holdout_integrity": "G1/G2 补完后 pax-risk-medium-03（holdout 锁定题）的 prompt 与 gold 不变。impact_scope=2 现在有明确契约依据（内部工具按使用人数判定）；FAIL 归因从「契约缺口」转为「模型是否跟上新契约」，重跑后见分晓。"
+    },
+    {
+      "version": "1.7",
+      "date": "2026-10-03",
+      "summary": "追加 25 题 v2 扩题（全部 holdout），覆盖现有 18 题的空白区：",
+      "basis": "覆盖分析见 evals/DESIGN_V2_CASES.md。5 项边界裁决已由用户确认。",
+      "changes": [
+        "intent_classification +9：security/ux_error/integration/deployment 首次覆盖，",
+        "  多 secondary 叠加（performance+data_integrity），feature_dev+security 强制诊断。",
+        "risk_scoring +8：维度分 5/6/7 补全；强制升级 data_integrity+imp=3→high 首次实测",
+        "  （high-04 维度9→high, high-05 维度6→high）；irr=3+imp=3→high 补一题（high-03）。",
+        "route_building +5：security/ux_error/data_ops/refactor/feature_dev+security 强制诊断。",
+        "cross_repo_detection +3：微服务跨服务、同仓库（false）、已知仓库名。",
+        "25 题全部标记 holdout，与 v1.5 的 4 条锁定题同规则（写入后不修订）。",
+        "数据集从 18 题扩到 43 题。"
+      ],
+      "note": "本批 gold 一次性按契约推导，未参考模型输出。模型答错如实记 FAIL。"
     }
   ]
 }
