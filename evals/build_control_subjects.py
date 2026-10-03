@@ -163,13 +163,23 @@ def main() -> int:
         suite = suite.replace(f'suite_version: "{m.group(1)}"\n',
                               f'suite_version: "{base}-control"\n', 1)
         print(f"对照组套件版本：{base} → {base}-control")
-    suite = suite.replace(
-        "  # 由 evals/sync_subjects.py 从 skills/ 生成；skills/ 是唯一事实源。\n"
-        f"  dir: {SRC.as_posix()}",
-        "  # 由 evals/build_control_subjects.py 从 subjects/ 派生；勿手工编辑。\n"
-        "  # 与 subjects/ 的唯一差异：frontmatter description 剥离了「不要直接选择」类禁令。\n"
-        f"  dir: {DST.as_posix()}",
-    )
+    # skills.dir 只替换最后一段目录名，保留基线套件里的路径形式（绝对或相对均可）。
+    # 直接硬编码绝对路径会在基线改用相对路径后静默失效。
+    m_dir = re.search(r'^  dir: (.+)$', suite, re.M)
+    if m_dir:
+        base_dir = m_dir.group(1).strip()
+        stem, sep, tail = base_dir.rpartition('/') if '/' in base_dir else base_dir.rpartition('\\')
+        sep = sep or '/'
+        new_dir = f"{stem}{sep}subjects_control_no_prohibition" if stem else "subjects_control_no_prohibition"
+        suite = suite.replace(
+            "  # 由 evals/sync_subjects.py 从 skills/ 生成；skills/ 是唯一事实源。\n"
+            f"  dir: {base_dir}",
+            "  # 由 evals/build_control_subjects.py 从 subjects/ 派生；勿手工编辑。\n"
+            "  # 与 subjects/ 的唯一差异：frontmatter description 剥离了「不要直接选择」类禁令。\n"
+            f"  dir: {new_dir}",
+            1,
+        )
+        print(f"对照组 skills.dir：{base_dir} → {new_dir}")
     DST_SUITE.write_text(suite, encoding="utf-8")
     print(f"\n已生成对照组套件：{DST_SUITE.relative_to(ROOT)}")
     return 0

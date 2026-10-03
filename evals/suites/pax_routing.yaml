@@ -19,7 +19,11 @@ description: >
   catalog 为全部 18 个 pax skill，expected 为 pax-orchestrate（rej 类为空集）。
 
 # --- 问题集 ---
-dataset: C:/Users/sinvi/Documents/codes/pax-skills/evals/datasets/pax_routing_v1.0.jsonl
+# 路径是相对于 skillEval ROOT 的相对路径（plan.py 里 `ROOT / suite["dataset"]`）。
+# skillEval ROOT = <父目录>/agent-skills-tooling/skillEval，pax-skills 与 agent-skills-tooling
+# 在同一父目录下，所以用 `../../pax-skills/...`。换机只要求两个仓库保持这个相对位置；
+# 不再写死 `C:/Users/<owner>/...`。若布局变化，改成绝对路径即可。
+dataset: ../../pax-skills/evals/datasets/pax_routing_v1.0.jsonl
 dataset_kind: capability
 
 # --- 执行环境 ---
@@ -31,7 +35,7 @@ routing_input:
 # --- 被测对象 ---
 skills:
   # 由 evals/sync_subjects.py 从 skills/ 生成；skills/ 是唯一事实源。
-  dir: C:/Users/sinvi/Documents/codes/pax-skills/evals/subjects
+  dir: ../../pax-skills/evals/subjects
   # target 是实验归属，与 include（模型看见谁）严格分开。
   target: [pax-orchestrate]
   include:
