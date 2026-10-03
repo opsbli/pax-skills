@@ -188,6 +188,36 @@ risk_score 85% 门槛在数学上不可能达到。
 
 ---
 
+
+#### G15. W1 security 是否覆盖「涉及敏感个人信息」？ ⚠️ 待业务裁决
+
+**场景**：新增管理员后台，可以查看/修改所有用户个人信息（含身份证号、手机号）。
+这算不算 `security` 二级意图？
+
+**两边判读依据**：
+- **gold**（`pax-route-fs-01`，holdout）：`diagnose_required=true`，
+  即隐含 `secondary` 含 `security` → 强制诊断。依据可能是「涉及敏感个人信息 = 安全风险」。
+- **契约原文**：`security` 触发条件 = 「安全漏洞、权限异常、数据泄露」。
+  这是**新建功能的权限设计**，不是「权限异常」，无「安全漏洞」，无「数据泄露」。
+  按原文推导 `secondary=[]` → `diagnose_required=False`。
+
+**跨模型证据（2026-10-03，跨模型验证新发现）**：
+
+| 模型 | `diagnose_required` | 是否 PASS |
+|------|------|------|
+| deepseek-flash | true（跟 gold） | PASS |
+| deepseek-v4-pro | false（严格按契约） | **FAIL** |
+
+同一题、同一契约，两个模型判定相反——**说明 gold 无法从契约唯一推导**。
+v4-pro 严格按契约反而「错」，flash 猜对了。
+
+**这是「gold 判定依据不在契约里」，不是「gold 与契约直接矛盾」**（类似 G10/D3）。
+按 holdout 锁定规则不能改 gold。需要业务裁决：
+- 选 A：补契约——`security` 触发条件加「涉及敏感个人信息（身份证号、手机号、支付凭证等）」
+- 选 B：改 gold——`diagnose_required=false`（但违反锁定规则，除非确认 gold 与契约矛盾）
+
+**建议选 A**（补契约），与 D3 的处理一致。
+
 ## 二、决策清单（4 项，都阻塞 gold 定形）
 
 ### D1. 【外部】用户明确说出 skill 名/同义词时，该不该直选 L1 skill？✅ 已决：B（2026-10-03）
@@ -265,6 +295,34 @@ risk_score 85% 门槛在数学上不可能达到。
   risk_scoring 类目的 75% 也无法解读
 
 ---
+
+
+### 跨模型验证（2026-10-03，deepseek-v4-pro）
+
+用同一套 44 题、同一契约，换 `deepseek-v4-pro` 跑 1 repeat（44 次付费）：
+
+| 检查项 | deepseek-flash（5r） | deepseek-v4-pro（1r） | 差异 |
+|------|------|------|------|
+| 能力分 | 90.3% | 88.6% | -1.7pp |
+| risk_score | 79.5% | 81.2% | +1.7pp |
+| risk_level | 92.3% | 100% | +7.7pp |
+| coordination_cost | 89.7% | 93.8% | +4.1pp |
+| impact_scope | 97.4% | 100% | +2.6pp |
+| irreversibility | 96.2% | 100% | +3.8pp |
+| uncertainty | 85.9% | 81.2% | -4.7pp |
+| diagnose_required | 100% | 87.5% | **-12.5pp ✗** |
+| route | 100% | 87.5% | **-12.5pp ✗** |
+
+**结论**：
+
+1. **契约质量跨模型基本一致**（90.3% vs 88.6%，差 1.7pp）——
+   说明契约不是只对某一个模型「调参」出来的。
+2. **失败点不同**：
+   - flash 弱在 risk_scoring（cco/unc 边界）
+   - v4-pro 弱在 route（`pax-route-fs-01` 的 security 判定）
+3. **v4-pro 的 risk 判断更接近 gold**（risk_level +7.7pp、irr +3.8pp、imp +2.6pp）
+4. **跨模型暴露了 G15**：`pax-route-fs-01` 的 diagnose_required 在两个模型上判定相反，
+   说明该题 gold 无法从契约唯一推导。
 
 ## 三、决策记录与落地结果（2026-10-03）
 

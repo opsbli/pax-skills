@@ -312,6 +312,8 @@ DeepSeek 官方 OpenAI 兼容端点，2026-10-02 实测；该账号可用模型�
 
 ### 基线结果（2026-10-03 15:30，deepseek-flash，temperature=0，repeats=5）
 
+> 跨模型对照（deepseek-v4-pro）见下方「跨模型验证」小节。
+
 44 案例 × 5 次 = 220 次判定，数据集 `pax_internal_routing_v1.0.json` **version 1.7**
 （gold 未改；契约在 v1.6 基础上补 G3/G5/G6/G7/G9 + 数据操作评分基准，
 G4/G8 补法回滚；契约 9111 字符）：
@@ -412,6 +414,31 @@ holdout +4.5pp。uncertainty 未改善——prompt 矛盾信号补契约无法�
      并补边界「改动需要部署上线才能生效的，即使可回滚也至少算 2」
 2. **medium-01 的 gold 跟新契约**：irreversibility 1 → 2（总分 7 → 8，仍是 medium）。
    注意方向是**更严格**——模型原本稳定判 1，改完后需要跟上新契约才能通过。
+
+### 跨模型验证（deepseek-v4-pro，2026-10-03）
+
+用同一套 44 题、同一契约，换 `deepseek-v4-pro` 跑 1 repeat（44 次付费）：
+
+| 检查项 | deepseek-flash（5r） | deepseek-v4-pro（1r） |
+|------|------|------|
+| 能力分 | 90.3% | 88.6% |
+| risk_score | 79.5% | **81.2%** |
+| risk_level | 92.3% | **100%** |
+| irreversibility | 96.2% | **100%** |
+| impact_scope | 97.4% | **100%** |
+| coordination_cost | 89.7% | **93.8%** |
+| uncertainty | 85.9% | 81.2% |
+| diagnose_required | 100% | **87.5% ✗** |
+| route | 100% | **87.5% ✗** |
+
+**三条结论**：
+
+1. **契约质量跨模型基本一致**（90.3% vs 88.6%，差 1.7pp）——契约不是只对某一个模型调参出来的。
+2. **失败点不同**：flash 弱在 risk_scoring（cco/unc 边界）；v4-pro 在 risk 判断上更好
+   （risk_level +7.7pp、irr +3.8pp、imp +2.6pp），但弱在 route。
+3. **跨模型暴露了新缺口 G15**：`pax-route-fs-01` 的 `diagnose_required` 在两个模型上
+   判定相反（flash 判 true 跟 gold，v4-pro 判 false 严格按契约），说明该题 gold
+   无法从契约唯一推导。详见 `CONTRACT_GAPS.md`。
 
 ### 因果证据：模型确实在读契约，不是背答案
 
