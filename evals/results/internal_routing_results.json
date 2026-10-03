@@ -1,29 +1,29 @@
 {
   "summary": {
-    "total": 54,
-    "passed": 54,
+    "total": 90,
+    "passed": 90,
     "failed": 0,
     "accuracy": 100.0,
     "note": "原始口径，不可单独引用"
   },
   "summary_adjusted": {
-    "total": 54,
-    "passed": 54,
+    "total": 90,
+    "passed": 90,
     "failed": 0,
     "accuracy": 100.0,
     "excluded_checks": [],
     "note": "剔除 gold/契约不一致字段；仍包含输出无法解析的行"
   },
   "summary_parsable": {
-    "total": 54,
-    "passed": 54,
+    "total": 90,
+    "passed": 90,
     "failed": 0,
     "accuracy": 100.0,
     "note": "能力口径：剔除 gold/契约冲突字段，也剔除输出无法解析或自相矛盾的行。gate 以此为准。"
   },
   "robustness": {
-    "total": 54,
-    "valid": 54,
+    "total": 90,
+    "valid": 90,
     "failures": 0,
     "parse_rate": 1.0,
     "valid_rate": 1.0,
@@ -33,120 +33,120 @@
   },
   "by_category": {
     "cross_repo_detection": {
-      "total": 3,
-      "passed_raw": 3,
-      "passed_adjusted": 3,
+      "total": 5,
+      "passed_raw": 5,
+      "passed_adjusted": 5,
       "accuracy_raw": 100.0,
       "accuracy_adjusted": 100.0,
-      "parsable": 3,
-      "passed_parsable": 3,
+      "parsable": 5,
+      "passed_parsable": 5,
       "accuracy_parsable": 100.0
     },
     "intent_classification": {
-      "total": 21,
-      "passed_raw": 21,
-      "passed_adjusted": 21,
+      "total": 35,
+      "passed_raw": 35,
+      "passed_adjusted": 35,
       "accuracy_raw": 100.0,
       "accuracy_adjusted": 100.0,
-      "parsable": 21,
-      "passed_parsable": 21,
+      "parsable": 35,
+      "passed_parsable": 35,
       "accuracy_parsable": 100.0
     },
     "risk_scoring": {
-      "total": 21,
-      "passed_raw": 21,
-      "passed_adjusted": 21,
+      "total": 35,
+      "passed_raw": 35,
+      "passed_adjusted": 35,
       "accuracy_raw": 100.0,
       "accuracy_adjusted": 100.0,
-      "parsable": 21,
-      "passed_parsable": 21,
+      "parsable": 35,
+      "passed_parsable": 35,
       "accuracy_parsable": 100.0
     },
     "route_building": {
-      "total": 9,
-      "passed_raw": 9,
-      "passed_adjusted": 9,
+      "total": 15,
+      "passed_raw": 15,
+      "passed_adjusted": 15,
       "accuracy_raw": 100.0,
       "accuracy_adjusted": 100.0,
-      "parsable": 9,
-      "passed_parsable": 9,
+      "parsable": 15,
+      "passed_parsable": 15,
       "accuracy_parsable": 100.0
     }
   },
   "by_check": {
     "coordination_cost": {
-      "passed": 21,
-      "total": 21
+      "passed": 35,
+      "total": 35
     },
     "cross_repo": {
-      "passed": 3,
-      "total": 3
+      "passed": 5,
+      "total": 5
     },
     "diagnose_required": {
-      "passed": 9,
-      "total": 9
+      "passed": 15,
+      "total": 15
     },
     "execution_strategy_required": {
-      "passed": 3,
-      "total": 3
+      "passed": 5,
+      "total": 5
     },
     "impact_scope": {
-      "passed": 21,
-      "total": 21
+      "passed": 35,
+      "total": 35
     },
     "irreversibility": {
-      "passed": 21,
-      "total": 21
+      "passed": 35,
+      "total": 35
     },
     "primary_intent": {
-      "passed": 21,
-      "total": 21
+      "passed": 35,
+      "total": 35
     },
     "risk_level": {
-      "passed": 21,
-      "total": 21
+      "passed": 35,
+      "total": 35
     },
     "risk_score": {
-      "passed": 21,
-      "total": 21
+      "passed": 35,
+      "total": 35
     },
     "route": {
-      "passed": 9,
-      "total": 9
+      "passed": 15,
+      "total": 15
     },
     "secondary_intent": {
-      "passed": 21,
-      "total": 21
+      "passed": 35,
+      "total": 35
     },
     "storage_backend_required": {
-      "passed": 9,
-      "total": 9
+      "passed": 15,
+      "total": 15
     },
     "uncertainty": {
-      "passed": 21,
-      "total": 21
+      "passed": 35,
+      "total": 35
     }
   },
   "by_holdout": {
     "revised": {
-      "total": 42,
+      "total": 70,
       "cases": 14,
-      "parsable": 42,
-      "passed_parsable": 42,
+      "parsable": 70,
+      "passed_parsable": 70,
       "accuracy_parsable": 100.0,
       "valid_rate": 1.0
     },
     "holdout": {
-      "total": 12,
+      "total": 20,
       "cases": 4,
-      "parsable": 12,
-      "passed_parsable": 12,
+      "parsable": 20,
+      "passed_parsable": 20,
       "accuracy_parsable": 100.0,
       "valid_rate": 1.0
     }
   },
   "stability": {
-    "repeats": 3,
+    "repeats": 5,
     "flaky_cases": [],
     "flaky_count": 0,
     "total_cases": 18
@@ -186,14 +186,14 @@
       "metric": "accuracy_parsable",
       "observed": 1.0,
       "threshold": 0.9,
-      "n": 54,
+      "n": 90,
       "pass": true
     },
     "robustness": {
       "metric": "valid_rate",
       "observed": 1.0,
       "threshold": 0.95,
-      "n": 54,
+      "n": 90,
       "failures": 0,
       "parse_failures": 0,
       "structure_failures": 0,
@@ -204,91 +204,91 @@
         "metric": "primary_intent",
         "observed": 1.0,
         "threshold": 0.95,
-        "n": 21,
+        "n": 35,
         "pass": true
       },
       {
         "metric": "diagnose_required",
         "observed": 1.0,
         "threshold": 0.95,
-        "n": 9,
+        "n": 15,
         "pass": true
       },
       {
         "metric": "cross_repo",
         "observed": 1.0,
         "threshold": 0.95,
-        "n": 3,
+        "n": 5,
         "pass": true
       },
       {
         "metric": "execution_strategy_required",
         "observed": 1.0,
         "threshold": 0.95,
-        "n": 3,
+        "n": 5,
         "pass": true
       },
       {
         "metric": "route",
         "observed": 1.0,
         "threshold": 0.9,
-        "n": 9,
+        "n": 15,
         "pass": true
       },
       {
         "metric": "storage_backend_required",
         "observed": 1.0,
         "threshold": 0.9,
-        "n": 9,
+        "n": 15,
         "pass": true
       },
       {
         "metric": "secondary_intent",
         "observed": 1.0,
         "threshold": 0.85,
-        "n": 21,
+        "n": 35,
         "pass": true
       },
       {
         "metric": "risk_score",
         "observed": 1.0,
         "threshold": 0.85,
-        "n": 21,
+        "n": 35,
         "pass": true
       },
       {
         "metric": "risk_level",
         "observed": 1.0,
         "threshold": 0.85,
-        "n": 21,
+        "n": 35,
         "pass": true
       },
       {
         "metric": "irreversibility",
         "observed": 1.0,
         "threshold": 0.8,
-        "n": 21,
+        "n": 35,
         "pass": true
       },
       {
         "metric": "impact_scope",
         "observed": 1.0,
         "threshold": 0.8,
-        "n": 21,
+        "n": 35,
         "pass": true
       },
       {
         "metric": "uncertainty",
         "observed": 1.0,
         "threshold": 0.8,
-        "n": 21,
+        "n": 35,
         "pass": true
       },
       {
         "metric": "coordination_cost",
         "observed": 1.0,
         "threshold": 0.8,
-        "n": 21,
+        "n": 35,
         "pass": true
       }
     ],
@@ -297,28 +297,28 @@
         "metric": "category:intent_classification",
         "observed": 1.0,
         "threshold": 0.95,
-        "n": 21,
+        "n": 35,
         "pass": true
       },
       {
         "metric": "category:risk_scoring",
         "observed": 1.0,
         "threshold": 0.85,
-        "n": 21,
+        "n": 35,
         "pass": true
       },
       {
         "metric": "category:route_building",
         "observed": 1.0,
         "threshold": 0.9,
-        "n": 9,
+        "n": 15,
         "pass": true
       },
       {
         "metric": "category:cross_repo_detection",
         "observed": 1.0,
         "threshold": 0.9,
-        "n": 3,
+        "n": 5,
         "pass": true
       }
     ],
@@ -326,21 +326,19 @@
     "note": "能力门槛按契约确定性分档，非从单次测量反推。n 很小时一次判定偏差就能移动 11–33pp，这是回归警报而不是质量证明。"
   },
   "usage": {
-    "input_tokens": 214698,
-    "output_tokens": 77299,
+    "input_tokens": 357830,
+    "output_tokens": 139915,
     "model": "deepseek-flash",
     "api_base": "https://api.deepseek.com",
-    "contract_source": "skills/pax-orchestrate/SKILL.md#W1-W4",
-    "contract_chars": 8635
+    "contract_source": "skills/pax-orchestrate/SKILL.md#W1-W4"
   },
   "meta": {
-    "run_at": "2026-10-03T12:24:13+08:00",
+    "run_at": "2026-10-03T13:44:13+08:00",
     "version": "2.1",
     "dataset_version": "1.6",
-    "repeats": 3,
-    "note": "系统提示 = SKILL.md W1–W4 原文，未注入契约外澄清。能力分用「可解析且自洽」口径；gold/契约冲突项已逐条解决并记录在 gold_contract_resolutions 与数据集 changelog。meta 时间戳由 stamp_meta 维护：run_at 只在真实调用模型时写入，graded_at 只在重判实际改变判定时刷新，保证同样的评分逻辑重跑得到字节一致的结果文件。",
+    "repeats": 5,
     "contract_chars": 8635,
-    "graded_at": "2026-10-03T12:25:44+08:00"
+    "note": "系统提示 = SKILL.md W1–W4 原文，未注入契约外澄清。能力分用「可解析且自洽」口径；gold/契约冲突项已逐条解决并记录在 gold_contract_resolutions 与数据集 changelog。meta 时间戳由 stamp_meta 维护：run_at 只在真实调用模型时写入，graded_at 只在重判实际改变判定时刷新，保证同样的评分逻辑重跑得到字节一致的结果文件。"
   },
   "results": [
     {
@@ -377,7 +375,7 @@
         "storage_backend_required": true,
         "cross_repo": false,
         "execution_strategy_required": false,
-        "reasoning": "依赖信号：用户报告 CMDB 字段校验『有问题』且填写后『报错』（缺陷信号≥2项→diagnose_fix）；报错内容为时间类型字段未通过正则校验，根因在数据契约/校验规则本身而非前端渲染交互，按契约边界归入 data_integrity 且不标 ux_error；命中 data_integrity 故强制诊断并要求存储后端确认；未提及前端/后端/多仓库，故 cross_repo=false；校验规则修复需上线生效（不可逆2）、影响多使用人的内部平台字段录入（范围2）、根因待探索（不确定2）、需模块内联动改动（协调2），总分8为中等风险。"
+        "reasoning": "依赖信号：'报错/校验有问题'构成缺陷信号判为 diagnose_fix；填值未通过正则校验、根因在数据契约/校验规则而非渲染层，按易混淆边界归 data_integrity（不标 ux_error），并触发强制诊断与存储/校验后端确认；文本未出现前后端/多仓库信号故非跨仓库；CMDB 为多使用人共用的内部平台且修复大概率需发布生效，取不可逆性 2、影响范围 2、根因待查取不确定性 2、需模块内校验规则与字段类型联动改动取协调成本 2。"
       },
       "error": null,
       "passed": true,
@@ -400,13 +398,73 @@
           ]
         }
       ],
-      "reasoning": "依赖信号：用户报告 CMDB 字段校验『有问题』且填写后『报错』（缺陷信号≥2项→diagnose_fix）；报错内容为时间类型字段未通过正则校验，根因在数据契约/校验规则本身而非前端渲染交互，按契约边界归入 data_integrity 且不标 ux_error；命中 data_integrity 故强制诊断并要求存储后端确认；未提及前端/后端/多仓库，故 cross_repo=false；校验规则修复需上线生效（不可逆2）、影响多使用人的内部平台字段录入（范围2）、根因待探索（不确定2）、需模块内联动改动（协调2），总分8为中等风险。",
+      "reasoning": "依赖信号：'报错/校验有问题'构成缺陷信号判为 diagnose_fix；填值未通过正则校验、根因在数据契约/校验规则而非渲染层，按易混淆边界归 data_integrity（不标 ux_error），并触发强制诊断与存储/校验后端确认；文本未出现前后端/多仓库信号故非跨仓库；CMDB 为多使用人共用的内部平台且修复大概率需发布生效，取不可逆性 2、影响范围 2、根因待查取不确定性 2、需模块内校验规则与字段类型联动改动取协调成本 2。",
       "input_tokens": 3965
     },
     {
       "case_id": "pax-intent-df-01",
       "category": "intent_classification",
       "repeat": 1,
+      "holdout": false,
+      "prompt": "CMDB 字段校验有问题，时间类型的字段填写后报错说字段不为设定的正则表达式",
+      "expected": {
+        "primary_intent": "diagnose_fix",
+        "secondary_intent": [
+          "data_integrity"
+        ]
+      },
+      "actual": {
+        "primary_intent": "diagnose_fix",
+        "secondary_intent": [
+          "data_integrity"
+        ],
+        "irreversibility": 2,
+        "impact_scope": 2,
+        "uncertainty": 2,
+        "coordination_cost": 2,
+        "risk_score": 8,
+        "risk_level": "medium",
+        "diagnose_required": true,
+        "route": [
+          "pax-clarify",
+          "pax-diagnose",
+          "pax-plan",
+          "pax-execute",
+          "pax-review"
+        ],
+        "storage_backend_required": true,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "依赖‘报错/有问题’缺陷信号判定 diagnose_fix；‘字段校验/正则表达式’指向数据契约与校验规则本身，按边界归 data_integrity 而非 ux_error；CMDB 多使用人、需诊断根因，风险 8 分中。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "primary_intent",
+          "passed": true,
+          "expected": "diagnose_fix",
+          "actual": "diagnose_fix"
+        },
+        {
+          "check": "secondary_intent",
+          "passed": true,
+          "expected": [
+            "data_integrity"
+          ],
+          "actual": [
+            "data_integrity"
+          ]
+        }
+      ],
+      "reasoning": "依赖‘报错/有问题’缺陷信号判定 diagnose_fix；‘字段校验/正则表达式’指向数据契约与校验规则本身，按边界归 data_integrity 而非 ux_error；CMDB 多使用人、需诊断根因，风险 8 分中。",
+      "input_tokens": 3965
+    },
+    {
+      "case_id": "pax-intent-df-01",
+      "category": "intent_classification",
+      "repeat": 2,
       "holdout": false,
       "prompt": "CMDB 字段校验有问题，时间类型的字段填写后报错说字段不为设定的正则表达式",
       "expected": {
@@ -428,16 +486,16 @@
         "risk_level": "medium",
         "diagnose_required": true,
         "route": [
-          "pax-clarify",
-          "pax-diagnose",
-          "pax-plan",
-          "pax-execute",
-          "pax-review"
+          "clarify",
+          "diagnose",
+          "plan",
+          "execute",
+          "review"
         ],
         "storage_backend_required": true,
         "cross_repo": false,
         "execution_strategy_required": false,
-        "reasoning": "依赖信号：用户报告“字段校验有问题/报错”构成缺陷信号（报错+报错信息≥2项）判为 diagnose_fix；按契约边界，字段值不满足正则/格式校验即使报错出现在页面也归 data_integrity（根因在数据契约/校验规则）而非 ux_error；校验规则改动需上线生效故不可逆性取2，CMDB 为多使用人共享内部系统（无核心业务链路）取影响2，正则与时间类型不匹配的根因及正确规则待确认取不确定2，未见前后端/多仓库信号故 coord=1、cross_repo=false。"
+        "reasoning": "用户报告 CMDB 字段校验报错，包含明确缺陷信号，判定为 diagnose_fix；时间字段正则校验失败归因于数据契约/校验规则，属 data_integrity；修复需部署且影响多使用人，根因未知需诊断。"
       },
       "error": null,
       "passed": true,
@@ -460,13 +518,13 @@
           ]
         }
       ],
-      "reasoning": "依赖信号：用户报告“字段校验有问题/报错”构成缺陷信号（报错+报错信息≥2项）判为 diagnose_fix；按契约边界，字段值不满足正则/格式校验即使报错出现在页面也归 data_integrity（根因在数据契约/校验规则）而非 ux_error；校验规则改动需上线生效故不可逆性取2，CMDB 为多使用人共享内部系统（无核心业务链路）取影响2，正则与时间类型不匹配的根因及正确规则待确认取不确定2，未见前后端/多仓库信号故 coord=1、cross_repo=false。",
+      "reasoning": "用户报告 CMDB 字段校验报错，包含明确缺陷信号，判定为 diagnose_fix；时间字段正则校验失败归因于数据契约/校验规则，属 data_integrity；修复需部署且影响多使用人，根因未知需诊断。",
       "input_tokens": 3965
     },
     {
       "case_id": "pax-intent-df-01",
       "category": "intent_classification",
-      "repeat": 2,
+      "repeat": 3,
       "holdout": false,
       "prompt": "CMDB 字段校验有问题，时间类型的字段填写后报错说字段不为设定的正则表达式",
       "expected": {
@@ -480,11 +538,11 @@
         "secondary_intent": [
           "data_integrity"
         ],
-        "irreversibility": 1,
+        "irreversibility": 2,
         "impact_scope": 2,
         "uncertainty": 2,
         "coordination_cost": 2,
-        "risk_score": 7,
+        "risk_score": 8,
         "risk_level": "medium",
         "diagnose_required": true,
         "route": [
@@ -497,7 +555,7 @@
         "storage_backend_required": true,
         "cross_repo": false,
         "execution_strategy_required": false,
-        "reasoning": "依赖信号：'报错'构成缺陷信号且根因未定位→diagnose_fix；报错原因为字段未通过正则/格式校验，按易混淆边界归入 data_integrity（不标 ux_error）；仅单处字段校验规则/配置问题、无部署与跨团队信号→不可逆性1、影响多使用人2；根因与修复方式待验证→不确定性2、需改校验逻辑并回归→协调2；上下文未出现前端/后端/多仓库信号→cross_repo=false。"
+        "reasoning": "用户报告“字段校验有问题/填写后报错”属既有行为缺陷（报错+校验失败双信号）故判 diagnose_fix；按契约易混淆边界，字段值未通过正则/格式校验而报错、根因在数据契约与校验规则本身，归 data_integrity 而非 ux_error，从而强制诊断且需确认存储后端；根因未定需验证“时间类型字段为何被正则拒绝”的假设、改动需生效于线上故不可逆性与不确定性各 2，影响限于 CMDB 该字段的多使用人范围故 2，无明显跨仓库/跨团队信号故协调成本 2；总分 8 触发 medium，按 data_integrity 标注 storage_backend_required。"
       },
       "error": null,
       "passed": true,
@@ -520,7 +578,67 @@
           ]
         }
       ],
-      "reasoning": "依赖信号：'报错'构成缺陷信号且根因未定位→diagnose_fix；报错原因为字段未通过正则/格式校验，按易混淆边界归入 data_integrity（不标 ux_error）；仅单处字段校验规则/配置问题、无部署与跨团队信号→不可逆性1、影响多使用人2；根因与修复方式待验证→不确定性2、需改校验逻辑并回归→协调2；上下文未出现前端/后端/多仓库信号→cross_repo=false。",
+      "reasoning": "用户报告“字段校验有问题/填写后报错”属既有行为缺陷（报错+校验失败双信号）故判 diagnose_fix；按契约易混淆边界，字段值未通过正则/格式校验而报错、根因在数据契约与校验规则本身，归 data_integrity 而非 ux_error，从而强制诊断且需确认存储后端；根因未定需验证“时间类型字段为何被正则拒绝”的假设、改动需生效于线上故不可逆性与不确定性各 2，影响限于 CMDB 该字段的多使用人范围故 2，无明显跨仓库/跨团队信号故协调成本 2；总分 8 触发 medium，按 data_integrity 标注 storage_backend_required。",
+      "input_tokens": 3965
+    },
+    {
+      "case_id": "pax-intent-df-01",
+      "category": "intent_classification",
+      "repeat": 4,
+      "holdout": false,
+      "prompt": "CMDB 字段校验有问题，时间类型的字段填写后报错说字段不为设定的正则表达式",
+      "expected": {
+        "primary_intent": "diagnose_fix",
+        "secondary_intent": [
+          "data_integrity"
+        ]
+      },
+      "actual": {
+        "primary_intent": "diagnose_fix",
+        "secondary_intent": [
+          "data_integrity"
+        ],
+        "irreversibility": 2,
+        "impact_scope": 2,
+        "uncertainty": 2,
+        "coordination_cost": 2,
+        "risk_score": 8,
+        "risk_level": "medium",
+        "diagnose_required": true,
+        "route": [
+          "pax-clarify",
+          "pax-diagnose",
+          "pax-plan",
+          "pax-execute",
+          "pax-review"
+        ],
+        "storage_backend_required": true,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "依据用户报告的报错信息（字段不满足设定的正则表达式）与 CMDB 字段校验问题信号，判定为诊断修复；字段值未通过正则校验归入数据完整性，需确认存储后端。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "primary_intent",
+          "passed": true,
+          "expected": "diagnose_fix",
+          "actual": "diagnose_fix"
+        },
+        {
+          "check": "secondary_intent",
+          "passed": true,
+          "expected": [
+            "data_integrity"
+          ],
+          "actual": [
+            "data_integrity"
+          ]
+        }
+      ],
+      "reasoning": "依据用户报告的报错信息（字段不满足设定的正则表达式）与 CMDB 字段校验问题信号，判定为诊断修复；字段值未通过正则校验归入数据完整性，需确认存储后端。",
       "input_tokens": 3965
     },
     {
@@ -557,7 +675,7 @@
         "storage_backend_required": false,
         "cross_repo": false,
         "execution_strategy_required": false,
-        "reasoning": "依赖“响应变慢/以前1秒现在5秒/用户抱怨很多”等性能退化信号，判定为 diagnose_fix + performance；系统级且多用户受影响，根因未知，修复需上线，评分为 10 高风险。"
+        "reasoning": "依赖信号：'最近响应变慢'、'从1秒到5秒'、'用户抱怨很多'，判定为 diagnose_fix + performance；根因未知且影响系统级用户，修复可能需部署，未提及跨仓库。"
       },
       "error": null,
       "passed": true,
@@ -580,7 +698,7 @@
           ]
         }
       ],
-      "reasoning": "依赖“响应变慢/以前1秒现在5秒/用户抱怨很多”等性能退化信号，判定为 diagnose_fix + performance；系统级且多用户受影响，根因未知，修复需上线，评分为 10 高风险。",
+      "reasoning": "依赖信号：'最近响应变慢'、'从1秒到5秒'、'用户抱怨很多'，判定为 diagnose_fix + performance；根因未知且影响系统级用户，修复可能需部署，未提及跨仓库。",
       "input_tokens": 3969
     },
     {
@@ -617,7 +735,7 @@
         "storage_backend_required": false,
         "cross_repo": false,
         "execution_strategy_required": false,
-        "reasoning": "用户报告响应时间从1秒退化到5秒且多用户抱怨，属于性能退化缺陷信号，根因未知且影响系统级用户，因此需要诊断并高风险处理。"
+        "reasoning": "依赖‘最近响应变慢/以前1秒现在5秒’的性能退化信号，判定为 diagnose_fix + performance；系统级多用户影响、根因未知、修复需部署，故风险偏高。"
       },
       "error": null,
       "passed": true,
@@ -640,7 +758,7 @@
           ]
         }
       ],
-      "reasoning": "用户报告响应时间从1秒退化到5秒且多用户抱怨，属于性能退化缺陷信号，根因未知且影响系统级用户，因此需要诊断并高风险处理。",
+      "reasoning": "依赖‘最近响应变慢/以前1秒现在5秒’的性能退化信号，判定为 diagnose_fix + performance；系统级多用户影响、根因未知、修复需部署，故风险偏高。",
       "input_tokens": 3969
     },
     {
@@ -668,114 +786,8 @@
         "risk_level": "high",
         "diagnose_required": true,
         "route": [
-          "pax-clarify",
-          "pax-diagnose",
-          "pax-plan",
-          "pax-execute",
-          "pax-review"
-        ],
-        "storage_backend_required": false,
-        "cross_repo": false,
-        "execution_strategy_required": false,
-        "reasoning": "依赖信号：『最近/以前』的时间对比 + 请求耗时 1s→5s 的延迟退化构成缺陷信号（判定诊断类），『响应变慢』命中 performance 二级意图；『系统』级退化且用户抱怨多 → 影响范围 3，根因未知 → 不确定性 3，修复需上线可回滚 → 不可逆性 2，无明确跨仓库/前后端信号故 coordination_cost 取 2、cross_repo 为 false。"
-      },
-      "error": null,
-      "passed": true,
-      "failed_checks": [],
-      "checks": [
-        {
-          "check": "primary_intent",
-          "passed": true,
-          "expected": "diagnose_fix",
-          "actual": "diagnose_fix"
-        },
-        {
-          "check": "secondary_intent",
-          "passed": true,
-          "expected": [
-            "performance"
-          ],
-          "actual": [
-            "performance"
-          ]
-        }
-      ],
-      "reasoning": "依赖信号：『最近/以前』的时间对比 + 请求耗时 1s→5s 的延迟退化构成缺陷信号（判定诊断类），『响应变慢』命中 performance 二级意图；『系统』级退化且用户抱怨多 → 影响范围 3，根因未知 → 不确定性 3，修复需上线可回滚 → 不可逆性 2，无明确跨仓库/前后端信号故 coordination_cost 取 2、cross_repo 为 false。",
-      "input_tokens": 3969
-    },
-    {
-      "case_id": "pax-intent-fd-01",
-      "category": "intent_classification",
-      "repeat": 0,
-      "holdout": false,
-      "prompt": "给系统加一个导出功能，能把用户列表导出成 Excel 文件",
-      "expected": {
-        "primary_intent": "feature_dev",
-        "secondary_intent": []
-      },
-      "actual": {
-        "primary_intent": "feature_dev",
-        "secondary_intent": [],
-        "irreversibility": 1,
-        "impact_scope": 2,
-        "uncertainty": 2,
-        "coordination_cost": 2,
-        "risk_score": 7,
-        "risk_level": "medium",
-        "diagnose_required": false,
-        "route": [
-          "pax-clarify",
-          "pax-plan",
-          "pax-execute",
-          "pax-review"
-        ],
-        "storage_backend_required": false,
-        "cross_repo": false,
-        "execution_strategy_required": false,
-        "reasoning": "输入为新增导出能力的诉求，无报错/异常/退化信号也无数据订正信号，判定 feature_dev；导出字段、筛选条件、权限与交互细节未给，需产品确认故 uncertainty=2；未出现前端/后端/跨仓库等信号，故不标 cross_repo、无既有缺陷故跳过 diagnose。"
-      },
-      "error": null,
-      "passed": true,
-      "failed_checks": [],
-      "checks": [
-        {
-          "check": "primary_intent",
-          "passed": true,
-          "expected": "feature_dev",
-          "actual": "feature_dev"
-        },
-        {
-          "check": "secondary_intent",
-          "passed": true,
-          "expected": [],
-          "actual": []
-        }
-      ],
-      "reasoning": "输入为新增导出能力的诉求，无报错/异常/退化信号也无数据订正信号，判定 feature_dev；导出字段、筛选条件、权限与交互细节未给，需产品确认故 uncertainty=2；未出现前端/后端/跨仓库等信号，故不标 cross_repo、无既有缺陷故跳过 diagnose。",
-      "input_tokens": 3960
-    },
-    {
-      "case_id": "pax-intent-fd-01",
-      "category": "intent_classification",
-      "repeat": 1,
-      "holdout": false,
-      "prompt": "给系统加一个导出功能，能把用户列表导出成 Excel 文件",
-      "expected": {
-        "primary_intent": "feature_dev",
-        "secondary_intent": []
-      },
-      "actual": {
-        "primary_intent": "feature_dev",
-        "secondary_intent": [],
-        "irreversibility": 2,
-        "impact_scope": 2,
-        "uncertainty": 2,
-        "coordination_cost": 2,
-        "risk_score": 8,
-        "risk_level": "medium",
-        "diagnose_required": false,
-        "route": [
           "clarify",
+          "diagnose",
           "plan",
           "execute",
           "review"
@@ -783,7 +795,182 @@
         "storage_backend_required": false,
         "cross_repo": false,
         "execution_strategy_required": false,
-        "reasoning": "依赖了输入信号：新增导出功能、无既有缺陷、需求部分未明确（导出字段/权限/格式），需部署上线且多用户使用。"
+        "reasoning": "依赖信号：『最近响应变慢、1秒变5秒』属性能退化，『用户抱怨很多』表明生产系统级影响，根因未知需诊断；无数据/安全/跨仓库信号。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "primary_intent",
+          "passed": true,
+          "expected": "diagnose_fix",
+          "actual": "diagnose_fix"
+        },
+        {
+          "check": "secondary_intent",
+          "passed": true,
+          "expected": [
+            "performance"
+          ],
+          "actual": [
+            "performance"
+          ]
+        }
+      ],
+      "reasoning": "依赖信号：『最近响应变慢、1秒变5秒』属性能退化，『用户抱怨很多』表明生产系统级影响，根因未知需诊断；无数据/安全/跨仓库信号。",
+      "input_tokens": 3969
+    },
+    {
+      "case_id": "pax-intent-df-02",
+      "category": "intent_classification",
+      "repeat": 3,
+      "holdout": false,
+      "prompt": "系统最近响应变慢了，以前 1 秒能完成的请求现在要 5 秒，用户抱怨很多",
+      "expected": {
+        "primary_intent": "diagnose_fix",
+        "secondary_intent": [
+          "performance"
+        ]
+      },
+      "actual": {
+        "primary_intent": "diagnose_fix",
+        "secondary_intent": [
+          "performance"
+        ],
+        "irreversibility": 2,
+        "impact_scope": 3,
+        "uncertainty": 3,
+        "coordination_cost": 2,
+        "risk_score": 10,
+        "risk_level": "high",
+        "diagnose_required": true,
+        "route": [
+          "clarify",
+          "diagnose",
+          "plan",
+          "execute",
+          "review"
+        ],
+        "storage_backend_required": false,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "依赖了“最近响应变慢、1秒变5秒、用户抱怨很多”等性能退化与缺陷信号，判定为 diagnose_fix + performance；系统级影响且根因未知，风险总分10。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "primary_intent",
+          "passed": true,
+          "expected": "diagnose_fix",
+          "actual": "diagnose_fix"
+        },
+        {
+          "check": "secondary_intent",
+          "passed": true,
+          "expected": [
+            "performance"
+          ],
+          "actual": [
+            "performance"
+          ]
+        }
+      ],
+      "reasoning": "依赖了“最近响应变慢、1秒变5秒、用户抱怨很多”等性能退化与缺陷信号，判定为 diagnose_fix + performance；系统级影响且根因未知，风险总分10。",
+      "input_tokens": 3969
+    },
+    {
+      "case_id": "pax-intent-df-02",
+      "category": "intent_classification",
+      "repeat": 4,
+      "holdout": false,
+      "prompt": "系统最近响应变慢了，以前 1 秒能完成的请求现在要 5 秒，用户抱怨很多",
+      "expected": {
+        "primary_intent": "diagnose_fix",
+        "secondary_intent": [
+          "performance"
+        ]
+      },
+      "actual": {
+        "primary_intent": "diagnose_fix",
+        "secondary_intent": [
+          "performance"
+        ],
+        "irreversibility": 2,
+        "impact_scope": 3,
+        "uncertainty": 3,
+        "coordination_cost": 2,
+        "risk_score": 10,
+        "risk_level": "high",
+        "diagnose_required": true,
+        "route": [
+          "clarify",
+          "diagnose",
+          "plan",
+          "execute",
+          "review"
+        ],
+        "storage_backend_required": false,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "依赖信号：'系统最近响应变慢'、'1秒变5秒'、'用户抱怨很多'，属于系统级性能退化缺陷，根因未知且修复通常涉及部署上线。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "primary_intent",
+          "passed": true,
+          "expected": "diagnose_fix",
+          "actual": "diagnose_fix"
+        },
+        {
+          "check": "secondary_intent",
+          "passed": true,
+          "expected": [
+            "performance"
+          ],
+          "actual": [
+            "performance"
+          ]
+        }
+      ],
+      "reasoning": "依赖信号：'系统最近响应变慢'、'1秒变5秒'、'用户抱怨很多'，属于系统级性能退化缺陷，根因未知且修复通常涉及部署上线。",
+      "input_tokens": 3969
+    },
+    {
+      "case_id": "pax-intent-fd-01",
+      "category": "intent_classification",
+      "repeat": 0,
+      "holdout": false,
+      "prompt": "给系统加一个导出功能，能把用户列表导出成 Excel 文件",
+      "expected": {
+        "primary_intent": "feature_dev",
+        "secondary_intent": []
+      },
+      "actual": {
+        "primary_intent": "feature_dev",
+        "secondary_intent": [],
+        "irreversibility": 2,
+        "impact_scope": 2,
+        "uncertainty": 2,
+        "coordination_cost": 2,
+        "risk_score": 8,
+        "risk_level": "medium",
+        "diagnose_required": false,
+        "route": [
+          "pax-clarify",
+          "pax-plan",
+          "pax-execute",
+          "pax-review"
+        ],
+        "storage_backend_required": false,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "输入仅一句“给系统加一个导出功能”，无任何异常/报错/失败信号，故判为 feature_dev 且无二级意图；导出功能需部署上线才生效故不可逆性 2，面向用户列表的多使用人故影响范围 2，导出字段/范围/权限等需求细节未定需确认故不确定性 2，预计涉及同仓库后端接口与前端入口联动故协调成本 2；无数据订正/迁移语义故不标 storage_backend_required，无前端后端分属多仓库信号故 cross_repo 为 false。"
       },
       "error": null,
       "passed": true,
@@ -802,7 +989,58 @@
           "actual": []
         }
       ],
-      "reasoning": "依赖了输入信号：新增导出功能、无既有缺陷、需求部分未明确（导出字段/权限/格式），需部署上线且多用户使用。",
+      "reasoning": "输入仅一句“给系统加一个导出功能”，无任何异常/报错/失败信号，故判为 feature_dev 且无二级意图；导出功能需部署上线才生效故不可逆性 2，面向用户列表的多使用人故影响范围 2，导出字段/范围/权限等需求细节未定需确认故不确定性 2，预计涉及同仓库后端接口与前端入口联动故协调成本 2；无数据订正/迁移语义故不标 storage_backend_required，无前端后端分属多仓库信号故 cross_repo 为 false。",
+      "input_tokens": 3960
+    },
+    {
+      "case_id": "pax-intent-fd-01",
+      "category": "intent_classification",
+      "repeat": 1,
+      "holdout": false,
+      "prompt": "给系统加一个导出功能，能把用户列表导出成 Excel 文件",
+      "expected": {
+        "primary_intent": "feature_dev",
+        "secondary_intent": []
+      },
+      "actual": {
+        "primary_intent": "feature_dev",
+        "secondary_intent": [],
+        "irreversibility": 2,
+        "impact_scope": 2,
+        "uncertainty": 2,
+        "coordination_cost": 2,
+        "risk_score": 8,
+        "risk_level": "medium",
+        "diagnose_required": false,
+        "route": [
+          "pax-clarify",
+          "pax-plan",
+          "pax-execute",
+          "pax-review"
+        ],
+        "storage_backend_required": false,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "信号为『加一个导出功能』这类新建功能诉求，无异常/报错/失败等缺陷信号，故判 feature_dev（跳过诊断，new_feature_no_prior_behavior）；未出现安全/性能/前端/集成/部署等二级意图触发词；改动需部署上线才生效故不可逆性 2；面向用户列表的共享导出能力、跨内部模块故影响范围 2；导出字段、权限、数据量与前后端分工均未明确故不确定性 2；多文件多层实现且需 review 故协调成本 2，总分 8 判 medium；未提及多仓库/前后端分离，故 cross_repo=false。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "primary_intent",
+          "passed": true,
+          "expected": "feature_dev",
+          "actual": "feature_dev"
+        },
+        {
+          "check": "secondary_intent",
+          "passed": true,
+          "expected": [],
+          "actual": []
+        }
+      ],
+      "reasoning": "信号为『加一个导出功能』这类新建功能诉求，无异常/报错/失败等缺陷信号，故判 feature_dev（跳过诊断，new_feature_no_prior_behavior）；未出现安全/性能/前端/集成/部署等二级意图触发词；改动需部署上线才生效故不可逆性 2；面向用户列表的共享导出能力、跨内部模块故影响范围 2；导出字段、权限、数据量与前后端分工均未明确故不确定性 2；多文件多层实现且需 review 故协调成本 2，总分 8 判 medium；未提及多仓库/前后端分离，故 cross_repo=false。",
       "input_tokens": 3960
     },
     {
@@ -834,7 +1072,7 @@
         "storage_backend_required": false,
         "cross_repo": false,
         "execution_strategy_required": false,
-        "reasoning": "目标仅为「加一个导出功能」，无异常/报错/回归等缺陷信号，故判 feature_dev 且跳过诊断；未提及前后端分离或多仓库，故 cross_repo=false；导出字段、权限范围、数据量上限等需求细节未明确→uncertainty=2；涉及用户列表页的接口+交互联动多文件改动→coordination=2；新功能需部署上线才生效且影响多使用人→不可逆性与影响范围均为 2；无 security/data_integrity 二级意图，故不强制升级、不要求存储后端与脚本语言。"
+        "reasoning": "输入为新增导出功能的诉求，无异常/报错/失败等缺陷信号，也无性能、安全、数据一致性、集成、部署关键词，故判 feature_dev 且无二级意图；但因涉及上线生效（不可逆性 2）、多使用人共享功能（影响 2）、导出字段/范围/权限等待需求方确认（不确定性 2）且需跨层联动实现（协调 2），总分 8 属中风险；契约允许 feature_dev 跳过诊断，路由走 clarify→plan→execute→review，亦未出现数据订正/迁移语义或前后端分离信号，故 storage_backend_required、cross_repo、execution_strategy_required 均为 false。"
       },
       "error": null,
       "passed": true,
@@ -853,7 +1091,109 @@
           "actual": []
         }
       ],
-      "reasoning": "目标仅为「加一个导出功能」，无异常/报错/回归等缺陷信号，故判 feature_dev 且跳过诊断；未提及前后端分离或多仓库，故 cross_repo=false；导出字段、权限范围、数据量上限等需求细节未明确→uncertainty=2；涉及用户列表页的接口+交互联动多文件改动→coordination=2；新功能需部署上线才生效且影响多使用人→不可逆性与影响范围均为 2；无 security/data_integrity 二级意图，故不强制升级、不要求存储后端与脚本语言。",
+      "reasoning": "输入为新增导出功能的诉求，无异常/报错/失败等缺陷信号，也无性能、安全、数据一致性、集成、部署关键词，故判 feature_dev 且无二级意图；但因涉及上线生效（不可逆性 2）、多使用人共享功能（影响 2）、导出字段/范围/权限等待需求方确认（不确定性 2）且需跨层联动实现（协调 2），总分 8 属中风险；契约允许 feature_dev 跳过诊断，路由走 clarify→plan→execute→review，亦未出现数据订正/迁移语义或前后端分离信号，故 storage_backend_required、cross_repo、execution_strategy_required 均为 false。",
+      "input_tokens": 3960
+    },
+    {
+      "case_id": "pax-intent-fd-01",
+      "category": "intent_classification",
+      "repeat": 3,
+      "holdout": false,
+      "prompt": "给系统加一个导出功能，能把用户列表导出成 Excel 文件",
+      "expected": {
+        "primary_intent": "feature_dev",
+        "secondary_intent": []
+      },
+      "actual": {
+        "primary_intent": "feature_dev",
+        "secondary_intent": [],
+        "irreversibility": 2,
+        "impact_scope": 2,
+        "uncertainty": 2,
+        "coordination_cost": 2,
+        "risk_score": 8,
+        "risk_level": "medium",
+        "diagnose_required": false,
+        "route": [
+          "pax-clarify",
+          "pax-plan",
+          "pax-execute",
+          "pax-review"
+        ],
+        "storage_backend_required": false,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "依赖信号：目标是新增导出功能且无任何报错/异常/退化信号（primary=feature_dev）；未提及安全、数据完整性、性能等二级信号故 secondaries 为空；功能需部署上线才生效（不可逆性2），改动涉及前端入口+后端导出接口多模块（影响2、协调2），导出字段/范围/权限/数据量等细节未明确需澄清（不确定性2）；无跨仓库与存储后端变更信号，故跳过诊断，skip_reason=new_feature_no_prior_behavior。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "primary_intent",
+          "passed": true,
+          "expected": "feature_dev",
+          "actual": "feature_dev"
+        },
+        {
+          "check": "secondary_intent",
+          "passed": true,
+          "expected": [],
+          "actual": []
+        }
+      ],
+      "reasoning": "依赖信号：目标是新增导出功能且无任何报错/异常/退化信号（primary=feature_dev）；未提及安全、数据完整性、性能等二级信号故 secondaries 为空；功能需部署上线才生效（不可逆性2），改动涉及前端入口+后端导出接口多模块（影响2、协调2），导出字段/范围/权限/数据量等细节未明确需澄清（不确定性2）；无跨仓库与存储后端变更信号，故跳过诊断，skip_reason=new_feature_no_prior_behavior。",
+      "input_tokens": 3960
+    },
+    {
+      "case_id": "pax-intent-fd-01",
+      "category": "intent_classification",
+      "repeat": 4,
+      "holdout": false,
+      "prompt": "给系统加一个导出功能，能把用户列表导出成 Excel 文件",
+      "expected": {
+        "primary_intent": "feature_dev",
+        "secondary_intent": []
+      },
+      "actual": {
+        "primary_intent": "feature_dev",
+        "secondary_intent": [],
+        "irreversibility": 1,
+        "impact_scope": 2,
+        "uncertainty": 2,
+        "coordination_cost": 2,
+        "risk_score": 7,
+        "risk_level": "medium",
+        "diagnose_required": false,
+        "route": [
+          "pax-clarify",
+          "pax-plan",
+          "pax-execute",
+          "pax-review"
+        ],
+        "storage_backend_required": false,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "用户目标是「加导出功能」属新建功能无既有缺陷信号（无报错/修复/日志类≥2项触发），故 primary=feature_dev、无二级意图；导出字段/权限/量级等交互细节未定需需求方确认故 uncertainty=2，典型需前后端联动（同仓库）多文件改造故 coordination=2，功能面向系统多使用人非核心链路故 impact_scope=2，代码新增未上线且无数据删除/迁移故 irreversibility=1，总分7→medium；契约中 storage_backend_required 与 cross_repo/execution_strategy_required 仅由 data_ops、data_integrity 或前端/后端/多仓库等显式信号触发，本输入未出现故均为 false，按 feature_dev 默认跳过诊断走 [clarify, plan, execute, review]。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "primary_intent",
+          "passed": true,
+          "expected": "feature_dev",
+          "actual": "feature_dev"
+        },
+        {
+          "check": "secondary_intent",
+          "passed": true,
+          "expected": [],
+          "actual": []
+        }
+      ],
+      "reasoning": "用户目标是「加导出功能」属新建功能无既有缺陷信号（无报错/修复/日志类≥2项触发），故 primary=feature_dev、无二级意图；导出字段/权限/量级等交互细节未定需需求方确认故 uncertainty=2，典型需前后端联动（同仓库）多文件改造故 coordination=2，功能面向系统多使用人非核心链路故 impact_scope=2，代码新增未上线且无数据删除/迁移故 irreversibility=1，总分7→medium；契约中 storage_backend_required 与 cross_repo/execution_strategy_required 仅由 data_ops、data_integrity 或前端/后端/多仓库等显式信号触发，本输入未出现故均为 false，按 feature_dev 默认跳过诊断走 [clarify, plan, execute, review]。",
       "input_tokens": 3960
     },
     {
@@ -885,7 +1225,7 @@
         "storage_backend_required": false,
         "cross_repo": false,
         "execution_strategy_required": false,
-        "reasoning": "输入仅含“拆分 500 行方法、提高可读性”，无报错/异常/失败等缺陷信号、无数据变更与文档咨询信号，故判定为不改变外部行为的重构（refactor）；本地代码改动、单模块单文件、成熟抽取函数模式且无需跨团队协调，四维均为 1，总分 4 属低风险，按契约跳过诊断（refactor_no_behavior_change），无 security/data_integrity/跨仓库信号，故 storage_backend、cross_repo、execution_strategy 均为 false。"
+        "reasoning": "输入信号只有「拆分 500 行方法、提高可读性」，属不改外部行为的纯重构，无缺陷/报错/数据/安全/性能信号，未提及部署与跨仓库，按单模块本地代码修改判定四维均为 1，按 refactor_no_behavior_change 跳过 diagnose。"
       },
       "error": null,
       "passed": true,
@@ -904,7 +1244,7 @@
           "actual": []
         }
       ],
-      "reasoning": "输入仅含“拆分 500 行方法、提高可读性”，无报错/异常/失败等缺陷信号、无数据变更与文档咨询信号，故判定为不改变外部行为的重构（refactor）；本地代码改动、单模块单文件、成熟抽取函数模式且无需跨团队协调，四维均为 1，总分 4 属低风险，按契约跳过诊断（refactor_no_behavior_change），无 security/data_integrity/跨仓库信号，故 storage_backend、cross_repo、execution_strategy 均为 false。",
+      "reasoning": "输入信号只有「拆分 500 行方法、提高可读性」，属不改外部行为的纯重构，无缺陷/报错/数据/安全/性能信号，未提及部署与跨仓库，按单模块本地代码修改判定四维均为 1，按 refactor_no_behavior_change 跳过 diagnose。",
       "input_tokens": 3962
     },
     {
@@ -921,10 +1261,10 @@
         "primary_intent": "refactor",
         "secondary_intent": [],
         "irreversibility": 1,
-        "impact_scope": 2,
-        "uncertainty": 2,
+        "impact_scope": 1,
+        "uncertainty": 1,
         "coordination_cost": 1,
-        "risk_score": 6,
+        "risk_score": 4,
         "risk_level": "low",
         "diagnose_required": false,
         "route": [
@@ -936,7 +1276,7 @@
         "storage_backend_required": false,
         "cross_repo": false,
         "execution_strategy_required": false,
-        "reasoning": "仅凭「拆分成更小的函数、提高可读性」这一无缺陷信号、无数据变更的重构诉求判定为 refactor；无部署/环境/跨仓库/安全等信号，故不可逆性与协调成本取 1；500 行方法的内部分解方式与调用方依赖未明，取影响范围与不确定性为 2；路由主干按 refactor 跳过诊断（refactor_no_behavior_change）。"
+        "reasoning": "用户仅要求拆分 500 行方法提可读性，无缺陷/报错信号故为纯重构；无安全/数据完整性/性能/前端/集成/部署二级信号，本地单模块代码结构调整、需求明确无先例缺失，故各维均取 1 分（总分 4，低风险），跳过诊断（refactor_no_behavior_change），无跨仓库或存储后端需求。"
       },
       "error": null,
       "passed": true,
@@ -955,7 +1295,7 @@
           "actual": []
         }
       ],
-      "reasoning": "仅凭「拆分成更小的函数、提高可读性」这一无缺陷信号、无数据变更的重构诉求判定为 refactor；无部署/环境/跨仓库/安全等信号，故不可逆性与协调成本取 1；500 行方法的内部分解方式与调用方依赖未明，取影响范围与不确定性为 2；路由主干按 refactor 跳过诊断（refactor_no_behavior_change）。",
+      "reasoning": "用户仅要求拆分 500 行方法提可读性，无缺陷/报错信号故为纯重构；无安全/数据完整性/性能/前端/集成/部署二级信号，本地单模块代码结构调整、需求明确无先例缺失，故各维均取 1 分（总分 4，低风险），跳过诊断（refactor_no_behavior_change），无跨仓库或存储后端需求。",
       "input_tokens": 3962
     },
     {
@@ -987,7 +1327,7 @@
         "storage_backend_required": false,
         "cross_repo": false,
         "execution_strategy_required": false,
-        "reasoning": "输入仅含「拆分 500 行方法、提高可读性」，无异常/报错等缺陷信号，也无 performance/security/data_integrity/ux_error/integration/deployment 及跨仓库、多使用人、需部署等上下文，故判为不改变外部行为的纯重构，单人单模块可完成、可本地回滚，风险低；按契约 refactor 跳过诊断（skip_reason: refactor_no_behavior_change）。"
+        "reasoning": "依赖“拆分方法/提高可读性”信号判定为不改变外部行为的纯重构，未出现缺陷、数据、安全或跨仓库信号，且无需部署流程。"
       },
       "error": null,
       "passed": true,
@@ -1006,133 +1346,115 @@
           "actual": []
         }
       ],
-      "reasoning": "输入仅含「拆分 500 行方法、提高可读性」，无异常/报错等缺陷信号，也无 performance/security/data_integrity/ux_error/integration/deployment 及跨仓库、多使用人、需部署等上下文，故判为不改变外部行为的纯重构，单人单模块可完成、可本地回滚，风险低；按契约 refactor 跳过诊断（skip_reason: refactor_no_behavior_change）。",
+      "reasoning": "依赖“拆分方法/提高可读性”信号判定为不改变外部行为的纯重构，未出现缺陷、数据、安全或跨仓库信号，且无需部署流程。",
+      "input_tokens": 3962
+    },
+    {
+      "case_id": "pax-intent-rf-01",
+      "category": "intent_classification",
+      "repeat": 3,
+      "holdout": false,
+      "prompt": "把这段 500 行的方法拆分成更小的函数，提高可读性",
+      "expected": {
+        "primary_intent": "refactor",
+        "secondary_intent": []
+      },
+      "actual": {
+        "primary_intent": "refactor",
+        "secondary_intent": [],
+        "irreversibility": 1,
+        "impact_scope": 1,
+        "uncertainty": 1,
+        "coordination_cost": 1,
+        "risk_score": 4,
+        "risk_level": "low",
+        "diagnose_required": false,
+        "route": [
+          "pax-clarify",
+          "pax-plan",
+          "pax-execute",
+          "pax-review"
+        ],
+        "storage_backend_required": false,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "依赖“拆分为更小函数/提高可读性”属于纯重构、无缺陷/安全/数据完整性信号、单方法局部代码改动等输入信号。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "primary_intent",
+          "passed": true,
+          "expected": "refactor",
+          "actual": "refactor"
+        },
+        {
+          "check": "secondary_intent",
+          "passed": true,
+          "expected": [],
+          "actual": []
+        }
+      ],
+      "reasoning": "依赖“拆分为更小函数/提高可读性”属于纯重构、无缺陷/安全/数据完整性信号、单方法局部代码改动等输入信号。",
+      "input_tokens": 3962
+    },
+    {
+      "case_id": "pax-intent-rf-01",
+      "category": "intent_classification",
+      "repeat": 4,
+      "holdout": false,
+      "prompt": "把这段 500 行的方法拆分成更小的函数，提高可读性",
+      "expected": {
+        "primary_intent": "refactor",
+        "secondary_intent": []
+      },
+      "actual": {
+        "primary_intent": "refactor",
+        "secondary_intent": [],
+        "irreversibility": 1,
+        "impact_scope": 1,
+        "uncertainty": 1,
+        "coordination_cost": 1,
+        "risk_score": 4,
+        "risk_level": "low",
+        "diagnose_required": false,
+        "route": [
+          "pax-clarify",
+          "pax-plan",
+          "pax-execute",
+          "pax-review"
+        ],
+        "storage_backend_required": false,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "依赖“拆分方法/提高可读性”明确为不改变外部行为的重构，无缺陷、数据、安全信号；单模块本地代码改动。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "primary_intent",
+          "passed": true,
+          "expected": "refactor",
+          "actual": "refactor"
+        },
+        {
+          "check": "secondary_intent",
+          "passed": true,
+          "expected": [],
+          "actual": []
+        }
+      ],
+      "reasoning": "依赖“拆分方法/提高可读性”明确为不改变外部行为的重构，无缺陷、数据、安全信号；单模块本地代码改动。",
       "input_tokens": 3962
     },
     {
       "case_id": "pax-intent-do-01",
       "category": "intent_classification",
       "repeat": 0,
-      "holdout": false,
-      "prompt": "有一批用户数据字段填错了，需要批量订正，大概 500 条记录",
-      "expected": {
-        "primary_intent": "data_ops",
-        "secondary_intent": [
-          "data_integrity"
-        ]
-      },
-      "actual": {
-        "primary_intent": "data_ops",
-        "secondary_intent": [
-          "data_integrity"
-        ],
-        "irreversibility": 2,
-        "impact_scope": 2,
-        "uncertainty": 2,
-        "coordination_cost": 1,
-        "risk_score": 7,
-        "risk_level": "medium",
-        "diagnose_required": true,
-        "route": [
-          "pax-clarify",
-          "pax-diagnose",
-          "pax-plan",
-          "pax-execute",
-          "pax-review"
-        ],
-        "storage_backend_required": true,
-        "cross_repo": false,
-        "execution_strategy_required": false,
-        "reasoning": "依赖“批量订正”“字段填错”“约500条记录”等数据操作与数据完整性信号，判定为 data_ops，需先诊断并确认存储后端。"
-      },
-      "error": null,
-      "passed": true,
-      "failed_checks": [],
-      "checks": [
-        {
-          "check": "primary_intent",
-          "passed": true,
-          "expected": "data_ops",
-          "actual": "data_ops"
-        },
-        {
-          "check": "secondary_intent",
-          "passed": true,
-          "expected": [
-            "data_integrity"
-          ],
-          "actual": [
-            "data_integrity"
-          ]
-        }
-      ],
-      "reasoning": "依赖“批量订正”“字段填错”“约500条记录”等数据操作与数据完整性信号，判定为 data_ops，需先诊断并确认存储后端。",
-      "input_tokens": 3964
-    },
-    {
-      "case_id": "pax-intent-do-01",
-      "category": "intent_classification",
-      "repeat": 1,
-      "holdout": false,
-      "prompt": "有一批用户数据字段填错了，需要批量订正，大概 500 条记录",
-      "expected": {
-        "primary_intent": "data_ops",
-        "secondary_intent": [
-          "data_integrity"
-        ]
-      },
-      "actual": {
-        "primary_intent": "data_ops",
-        "secondary_intent": [
-          "data_integrity"
-        ],
-        "irreversibility": 2,
-        "impact_scope": 2,
-        "uncertainty": 2,
-        "coordination_cost": 1,
-        "risk_score": 7,
-        "risk_level": "medium",
-        "diagnose_required": true,
-        "route": [
-          "pax-clarify",
-          "pax-diagnose",
-          "pax-plan",
-          "pax-execute",
-          "pax-review"
-        ],
-        "storage_backend_required": true,
-        "cross_repo": false,
-        "execution_strategy_required": false,
-        "reasoning": "依赖了“批量订正用户数据字段”和“字段填错”信号判定为 data_ops + data_integrity，500 条记录属单表/单业务面范围，未给出明确订正映射与存储后端故需诊断确认，且无跨仓库信号。"
-      },
-      "error": null,
-      "passed": true,
-      "failed_checks": [],
-      "checks": [
-        {
-          "check": "primary_intent",
-          "passed": true,
-          "expected": "data_ops",
-          "actual": "data_ops"
-        },
-        {
-          "check": "secondary_intent",
-          "passed": true,
-          "expected": [
-            "data_integrity"
-          ],
-          "actual": [
-            "data_integrity"
-          ]
-        }
-      ],
-      "reasoning": "依赖了“批量订正用户数据字段”和“字段填错”信号判定为 data_ops + data_integrity，500 条记录属单表/单业务面范围，未给出明确订正映射与存储后端故需诊断确认，且无跨仓库信号。",
-      "input_tokens": 3964
-    },
-    {
-      "case_id": "pax-intent-do-01",
-      "category": "intent_classification",
-      "repeat": 2,
       "holdout": false,
       "prompt": "有一批用户数据字段填错了，需要批量订正，大概 500 条记录",
       "expected": {
@@ -1163,7 +1485,7 @@
         "storage_backend_required": true,
         "cross_repo": false,
         "execution_strategy_required": false,
-        "reasoning": "依赖「批量订正/字段填错/500 条记录」信号判定为数据操作叠加 data_integrity（须走诊断并确认存储后端），未出现任何前端/后端/多仓库信号，故 cross_repo 为 false；字段名与正确值来源未说明使不确定性达 2。"
+        "reasoning": "依赖「批量订正/500 条记录/用户数据字段填错」信号判定为 data_ops 且触发 data_integrity（需确认存储后端与影响字段）；单表小批量、可借备份或回滚脚本恢复、仅需团队内评审，故不可逆性/范围/协调各 2；错误值来源与正确口径需与需求方确认，不确定性 2，总分 8 属中风险；未出现安全、前端交互或跨仓库/跨服务信号，故不升级 council、不标 cross_repo，但因 data_ops+data_integrity 强制进入诊断阶段。"
       },
       "error": null,
       "passed": true,
@@ -1186,7 +1508,247 @@
           ]
         }
       ],
-      "reasoning": "依赖「批量订正/字段填错/500 条记录」信号判定为数据操作叠加 data_integrity（须走诊断并确认存储后端），未出现任何前端/后端/多仓库信号，故 cross_repo 为 false；字段名与正确值来源未说明使不确定性达 2。",
+      "reasoning": "依赖「批量订正/500 条记录/用户数据字段填错」信号判定为 data_ops 且触发 data_integrity（需确认存储后端与影响字段）；单表小批量、可借备份或回滚脚本恢复、仅需团队内评审，故不可逆性/范围/协调各 2；错误值来源与正确口径需与需求方确认，不确定性 2，总分 8 属中风险；未出现安全、前端交互或跨仓库/跨服务信号，故不升级 council、不标 cross_repo，但因 data_ops+data_integrity 强制进入诊断阶段。",
+      "input_tokens": 3964
+    },
+    {
+      "case_id": "pax-intent-do-01",
+      "category": "intent_classification",
+      "repeat": 1,
+      "holdout": false,
+      "prompt": "有一批用户数据字段填错了，需要批量订正，大概 500 条记录",
+      "expected": {
+        "primary_intent": "data_ops",
+        "secondary_intent": [
+          "data_integrity"
+        ]
+      },
+      "actual": {
+        "primary_intent": "data_ops",
+        "secondary_intent": [
+          "data_integrity"
+        ],
+        "irreversibility": 2,
+        "impact_scope": 2,
+        "uncertainty": 2,
+        "coordination_cost": 2,
+        "risk_score": 8,
+        "risk_level": "medium",
+        "diagnose_required": true,
+        "route": [
+          "clarify",
+          "diagnose",
+          "plan",
+          "execute",
+          "review"
+        ],
+        "storage_backend_required": true,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "依赖“批量订正”“字段填错”“500 条记录”等信号，判定为 data_ops + data_integrity，需确认存储后端并进入诊断；风险中等。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "primary_intent",
+          "passed": true,
+          "expected": "data_ops",
+          "actual": "data_ops"
+        },
+        {
+          "check": "secondary_intent",
+          "passed": true,
+          "expected": [
+            "data_integrity"
+          ],
+          "actual": [
+            "data_integrity"
+          ]
+        }
+      ],
+      "reasoning": "依赖“批量订正”“字段填错”“500 条记录”等信号，判定为 data_ops + data_integrity，需确认存储后端并进入诊断；风险中等。",
+      "input_tokens": 3964
+    },
+    {
+      "case_id": "pax-intent-do-01",
+      "category": "intent_classification",
+      "repeat": 2,
+      "holdout": false,
+      "prompt": "有一批用户数据字段填错了，需要批量订正，大概 500 条记录",
+      "expected": {
+        "primary_intent": "data_ops",
+        "secondary_intent": [
+          "data_integrity"
+        ]
+      },
+      "actual": {
+        "primary_intent": "data_ops",
+        "secondary_intent": [
+          "data_integrity"
+        ],
+        "irreversibility": 2,
+        "impact_scope": 2,
+        "uncertainty": 2,
+        "coordination_cost": 1,
+        "risk_score": 7,
+        "risk_level": "medium",
+        "diagnose_required": true,
+        "route": [
+          "pax-clarify",
+          "pax-diagnose",
+          "pax-plan",
+          "pax-execute",
+          "pax-review"
+        ],
+        "storage_backend_required": true,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "用户报告用户数据字段填错并需批量订正约500条，属数据操作且含数据完整性信号，无跨仓库/安全信号。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "primary_intent",
+          "passed": true,
+          "expected": "data_ops",
+          "actual": "data_ops"
+        },
+        {
+          "check": "secondary_intent",
+          "passed": true,
+          "expected": [
+            "data_integrity"
+          ],
+          "actual": [
+            "data_integrity"
+          ]
+        }
+      ],
+      "reasoning": "用户报告用户数据字段填错并需批量订正约500条，属数据操作且含数据完整性信号，无跨仓库/安全信号。",
+      "input_tokens": 3964
+    },
+    {
+      "case_id": "pax-intent-do-01",
+      "category": "intent_classification",
+      "repeat": 3,
+      "holdout": false,
+      "prompt": "有一批用户数据字段填错了，需要批量订正，大概 500 条记录",
+      "expected": {
+        "primary_intent": "data_ops",
+        "secondary_intent": [
+          "data_integrity"
+        ]
+      },
+      "actual": {
+        "primary_intent": "data_ops",
+        "secondary_intent": [
+          "data_integrity"
+        ],
+        "irreversibility": 2,
+        "impact_scope": 2,
+        "uncertainty": 2,
+        "coordination_cost": 1,
+        "risk_score": 7,
+        "risk_level": "medium",
+        "diagnose_required": true,
+        "route": [
+          "clarify",
+          "diagnose",
+          "plan",
+          "execute",
+          "review"
+        ],
+        "storage_backend_required": true,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "输入含「订正/批量/字段填错」数据操作信号且无 ≥2 项缺陷信号，判定为 data_ops + data_integrity；500 条单表订正属可回滚但需脚本与备份、影响面限于单表，故不可逆性与影响范围各 2；未给出字段与正确值来源需澄清，故不确定性 2；未提及跨团队/跨仓库或前后端，故协调成本 1、cross_repo=false；合计 7 分中等风险，data_ops 强制进入诊断并要求确认存储后端。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "primary_intent",
+          "passed": true,
+          "expected": "data_ops",
+          "actual": "data_ops"
+        },
+        {
+          "check": "secondary_intent",
+          "passed": true,
+          "expected": [
+            "data_integrity"
+          ],
+          "actual": [
+            "data_integrity"
+          ]
+        }
+      ],
+      "reasoning": "输入含「订正/批量/字段填错」数据操作信号且无 ≥2 项缺陷信号，判定为 data_ops + data_integrity；500 条单表订正属可回滚但需脚本与备份、影响面限于单表，故不可逆性与影响范围各 2；未给出字段与正确值来源需澄清，故不确定性 2；未提及跨团队/跨仓库或前后端，故协调成本 1、cross_repo=false；合计 7 分中等风险，data_ops 强制进入诊断并要求确认存储后端。",
+      "input_tokens": 3964
+    },
+    {
+      "case_id": "pax-intent-do-01",
+      "category": "intent_classification",
+      "repeat": 4,
+      "holdout": false,
+      "prompt": "有一批用户数据字段填错了，需要批量订正，大概 500 条记录",
+      "expected": {
+        "primary_intent": "data_ops",
+        "secondary_intent": [
+          "data_integrity"
+        ]
+      },
+      "actual": {
+        "primary_intent": "data_ops",
+        "secondary_intent": [
+          "data_integrity"
+        ],
+        "irreversibility": 3,
+        "impact_scope": 2,
+        "uncertainty": 2,
+        "coordination_cost": 1,
+        "risk_score": 8,
+        "risk_level": "medium",
+        "diagnose_required": true,
+        "route": [
+          "pax-clarify",
+          "pax-diagnose",
+          "pax-plan",
+          "pax-execute",
+          "pax-review"
+        ],
+        "storage_backend_required": true,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "用户报告 500 条用户数据字段填错需批量订正，命中 data_ops 与 data_integrity 信号；未提及跨仓库、安全或部署信号。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "primary_intent",
+          "passed": true,
+          "expected": "data_ops",
+          "actual": "data_ops"
+        },
+        {
+          "check": "secondary_intent",
+          "passed": true,
+          "expected": [
+            "data_integrity"
+          ],
+          "actual": [
+            "data_integrity"
+          ]
+        }
+      ],
+      "reasoning": "用户报告 500 条用户数据字段填错需批量订正，命中 data_ops 与 data_integrity 信号；未提及跨仓库、安全或部署信号。",
       "input_tokens": 3964
     },
     {
@@ -1215,7 +1777,7 @@
         "storage_backend_required": false,
         "cross_repo": false,
         "execution_strategy_required": false,
-        "reasoning": "用户目标为纯解释/咨询（'解释一下什么是微服务架构'），无缺陷信号、无数据操作与代码变更，属纯文档咨询类，四维均取最低档；未出现具体仓库名或前后端/API 对接语境，故不判跨仓库。"
+        "reasoning": "用户仅要求解释微服务架构概念与优缺点，属纯咨询/纯解释，无代码修改、无数据变更、无异常信号，故判 doc_consult，四维均取最低档，路由止于 clarify。"
       },
       "error": null,
       "passed": true,
@@ -1234,7 +1796,7 @@
           "actual": []
         }
       ],
-      "reasoning": "用户目标为纯解释/咨询（'解释一下什么是微服务架构'），无缺陷信号、无数据操作与代码变更，属纯文档咨询类，四维均取最低档；未出现具体仓库名或前后端/API 对接语境，故不判跨仓库。",
+      "reasoning": "用户仅要求解释微服务架构概念与优缺点，属纯咨询/纯解释，无代码修改、无数据变更、无异常信号，故判 doc_consult，四维均取最低档，路由止于 clarify。",
       "input_tokens": 3954
     },
     {
@@ -1263,7 +1825,7 @@
         "storage_backend_required": false,
         "cross_repo": false,
         "execution_strategy_required": false,
-        "reasoning": "输入为“解释微服务架构及优缺点”，命中纯咨询/解释信号且无缺陷、无数据操作、无跨仓库信号，故判定 doc_consult，四维均取最低档，risk=4。"
+        "reasoning": "输入为纯概念解释请求（“解释一下什么是微服务架构，有什么优缺点”），命中 is_pure_documentation 的“咨询/解释”信号，无缺陷信号、无数据操作、无仓库上下文，故归类 doc_consult，四维均取最低档，跳过诊断，路由仅 clarify。"
       },
       "error": null,
       "passed": true,
@@ -1282,7 +1844,7 @@
           "actual": []
         }
       ],
-      "reasoning": "输入为“解释微服务架构及优缺点”，命中纯咨询/解释信号且无缺陷、无数据操作、无跨仓库信号，故判定 doc_consult，四维均取最低档，risk=4。",
+      "reasoning": "输入为纯概念解释请求（“解释一下什么是微服务架构，有什么优缺点”），命中 is_pure_documentation 的“咨询/解释”信号，无缺陷信号、无数据操作、无仓库上下文，故归类 doc_consult，四维均取最低档，跳过诊断，路由仅 clarify。",
       "input_tokens": 3954
     },
     {
@@ -1306,12 +1868,12 @@
         "risk_level": "low",
         "diagnose_required": false,
         "route": [
-          "clarify"
+          "pax-clarify"
         ],
         "storage_backend_required": false,
         "cross_repo": false,
         "execution_strategy_required": false,
-        "reasoning": "输入为“解释/优缺点”类纯咨询提问，无异常报错、无数据变更、无重构或工具构建信号，也未提及前后端/多仓库，按 W1 判定为 doc_consult 且无二级意图，四维均取最低档。"
+        "reasoning": "用户仅要求解释微服务架构的概念与优缺点，属纯咨询/解释，无缺陷信号、无数据操作、无代码或部署变更，因此判定为 doc_consult，四维均为最低档，路由仅 clarify。"
       },
       "error": null,
       "passed": true,
@@ -1330,7 +1892,103 @@
           "actual": []
         }
       ],
-      "reasoning": "输入为“解释/优缺点”类纯咨询提问，无异常报错、无数据变更、无重构或工具构建信号，也未提及前后端/多仓库，按 W1 判定为 doc_consult 且无二级意图，四维均取最低档。",
+      "reasoning": "用户仅要求解释微服务架构的概念与优缺点，属纯咨询/解释，无缺陷信号、无数据操作、无代码或部署变更，因此判定为 doc_consult，四维均为最低档，路由仅 clarify。",
+      "input_tokens": 3954
+    },
+    {
+      "case_id": "pax-intent-dc-01",
+      "category": "intent_classification",
+      "repeat": 3,
+      "holdout": false,
+      "prompt": "解释一下什么是微服务架构，有什么优缺点",
+      "expected": {
+        "primary_intent": "doc_consult",
+        "secondary_intent": []
+      },
+      "actual": {
+        "primary_intent": "doc_consult",
+        "secondary_intent": [],
+        "irreversibility": 1,
+        "impact_scope": 1,
+        "uncertainty": 1,
+        "coordination_cost": 1,
+        "risk_score": 4,
+        "risk_level": "low",
+        "diagnose_required": false,
+        "route": [
+          "pax-clarify"
+        ],
+        "storage_backend_required": false,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "用户仅要求解释微服务架构的概念与优缺点，属纯咨询/纯解释，无缺陷信号、无数据操作、无代码变更，四维均取最低档（总分4）"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "primary_intent",
+          "passed": true,
+          "expected": "doc_consult",
+          "actual": "doc_consult"
+        },
+        {
+          "check": "secondary_intent",
+          "passed": true,
+          "expected": [],
+          "actual": []
+        }
+      ],
+      "reasoning": "用户仅要求解释微服务架构的概念与优缺点，属纯咨询/纯解释，无缺陷信号、无数据操作、无代码变更，四维均取最低档（总分4）",
+      "input_tokens": 3954
+    },
+    {
+      "case_id": "pax-intent-dc-01",
+      "category": "intent_classification",
+      "repeat": 4,
+      "holdout": false,
+      "prompt": "解释一下什么是微服务架构，有什么优缺点",
+      "expected": {
+        "primary_intent": "doc_consult",
+        "secondary_intent": []
+      },
+      "actual": {
+        "primary_intent": "doc_consult",
+        "secondary_intent": [],
+        "irreversibility": 1,
+        "impact_scope": 1,
+        "uncertainty": 1,
+        "coordination_cost": 1,
+        "risk_score": 4,
+        "risk_level": "low",
+        "diagnose_required": false,
+        "route": [
+          "clarify"
+        ],
+        "storage_backend_required": false,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "用户仅要求解释概念与优缺点，命中 is_pure_documentation 信号（解释/咨询），无缺陷信号、无数据操作、无代码或数据变更，故一级意图为 doc_consult，四维均取 1，总分 4 低风险，按 W3 强制跳过诊断，路由仅 [clarify]。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "primary_intent",
+          "passed": true,
+          "expected": "doc_consult",
+          "actual": "doc_consult"
+        },
+        {
+          "check": "secondary_intent",
+          "passed": true,
+          "expected": [],
+          "actual": []
+        }
+      ],
+      "reasoning": "用户仅要求解释概念与优缺点，命中 is_pure_documentation 信号（解释/咨询），无缺陷信号、无数据操作、无代码或数据变更，故一级意图为 doc_consult，四维均取 1，总分 4 低风险，按 W3 强制跳过诊断，路由仅 [clarify]。",
       "input_tokens": 3954
     },
     {
@@ -1348,9 +2006,9 @@
         "secondary_intent": [],
         "irreversibility": 1,
         "impact_scope": 1,
-        "uncertainty": 1,
+        "uncertainty": 2,
         "coordination_cost": 1,
-        "risk_score": 4,
+        "risk_score": 5,
         "risk_level": "low",
         "diagnose_required": false,
         "route": [
@@ -1362,7 +2020,7 @@
         "storage_backend_required": false,
         "cross_repo": false,
         "execution_strategy_required": false,
-        "reasoning": "依赖“写一个脚本/自动检查变更/生成 commit message”等工具构建信号：无异常报错与既有行为缺陷，故跳过诊断；无数据订正或存储后端信号，无前后端/多仓库信号，纯本地单人脚本，四维均取最低档。"
+        "reasoning": "信号为“写一个脚本/自动检查”属工具构建且无缺陷、数据或文档纯咨询信号，故 primary=tool_build；无 secondary 触发词；本地脚本可轻易回滚且不触发部署（不可逆性=1、单文件单人工具影响=1、协调=1），但脚本语言、commit message 生成方式（LLM 还是规则）等细节未明确需先 clarify，故不确定性=2，总分 5 属低风险并跳过诊断。"
       },
       "error": null,
       "passed": true,
@@ -1381,7 +2039,7 @@
           "actual": []
         }
       ],
-      "reasoning": "依赖“写一个脚本/自动检查变更/生成 commit message”等工具构建信号：无异常报错与既有行为缺陷，故跳过诊断；无数据订正或存储后端信号，无前后端/多仓库信号，纯本地单人脚本，四维均取最低档。",
+      "reasoning": "信号为“写一个脚本/自动检查”属工具构建且无缺陷、数据或文档纯咨询信号，故 primary=tool_build；无 secondary 触发词；本地脚本可轻易回滚且不触发部署（不可逆性=1、单文件单人工具影响=1、协调=1），但脚本语言、commit message 生成方式（LLM 还是规则）等细节未明确需先 clarify，故不确定性=2，总分 5 属低风险并跳过诊断。",
       "input_tokens": 3960
     },
     {
@@ -1399,9 +2057,9 @@
         "secondary_intent": [],
         "irreversibility": 1,
         "impact_scope": 1,
-        "uncertainty": 1,
+        "uncertainty": 2,
         "coordination_cost": 1,
-        "risk_score": 4,
+        "risk_score": 5,
         "risk_level": "low",
         "diagnose_required": false,
         "route": [
@@ -1413,7 +2071,7 @@
         "storage_backend_required": false,
         "cross_repo": false,
         "execution_strategy_required": false,
-        "reasoning": "输入仅要求编写脚本自动检查未提交变更并生成 commit message，属于工具构建，无缺陷信号、无数据/安全/跨仓库信号，单人本地脚本风险低。"
+        "reasoning": "用户目标是编写自动检查未提交变更并生成 commit message 的脚本，属于工具构建；无缺陷、数据、安全或跨仓库信号，且为本地单人脚本，但 commit message 生成规则/格式未明确。"
       },
       "error": null,
       "passed": true,
@@ -1432,7 +2090,7 @@
           "actual": []
         }
       ],
-      "reasoning": "输入仅要求编写脚本自动检查未提交变更并生成 commit message，属于工具构建，无缺陷信号、无数据/安全/跨仓库信号，单人本地脚本风险低。",
+      "reasoning": "用户目标是编写自动检查未提交变更并生成 commit message 的脚本，属于工具构建；无缺陷、数据、安全或跨仓库信号，且为本地单人脚本，但 commit message 生成规则/格式未明确。",
       "input_tokens": 3960
     },
     {
@@ -1464,7 +2122,7 @@
         "storage_backend_required": false,
         "cross_repo": false,
         "execution_strategy_required": false,
-        "reasoning": "依赖信号：目标是「写一个脚本」做变更检查+生成 commit message，属工具/脚本构建且无任何报错、失败、回归等缺陷信号，故 primary=tool_build；无性能/安全/数据一致性/前端/集成/部署等二级信号，故 secondary 为空；纯本地单人脚本、不触发部署，不可逆性与影响范围均为 1，协调成本 1；未说明 commit message 格式规范、是否调用模型、是否自动提交等细节，需求部分未明确故不确定性 2，总分 5 落入低风险；契约规定 tool_build 默认跳过诊断（tool_build_no_prior_behavior），主干路由为 clarify→plan→execute→review；未出现前后端/多仓库/微服务信号，故 cross_repo 与 execution_strategy_required 为 false；非数据操作且无 data_integrity，故无需存储后端确认。"
+        "reasoning": "输入为「写一个脚本」的自动化工具构建诉求，无异常/报错/退化等缺陷信号、无数据订正或迁移信号、非纯文档咨询，故一级意图判为 tool_build；未出现前端/后端/多仓库/安全/性能/数据一致性等二级信号，二级意图为空。信号依据：脚本为本地单人可完成的配置类代码产物，可轻易回滚且不触发部署，不可逆性 1；未提及使用人数或团队共享，按仅本人使用的内部脚本判影响范围 1；「生成 commit message」的具体方式（规则模板还是模型生成）与是否自动提交未说明，属部分需求未明确，不确定性 2；单人可完成、无需他人配合，协调成本 1。无 security/data_integrity 二级意图、不可逆性与影响范围均非 3，不触发强制升级。tool_build 且无既有行为缺陷，按 W3 跳过诊断（skip_reason: tool_build_no_prior_behavior），路由取主干 [clarify, plan, execute, review]；无跨仓库、无存储后端、无前端参与，故三项标注均为 false。"
       },
       "error": null,
       "passed": true,
@@ -1483,7 +2141,109 @@
           "actual": []
         }
       ],
-      "reasoning": "依赖信号：目标是「写一个脚本」做变更检查+生成 commit message，属工具/脚本构建且无任何报错、失败、回归等缺陷信号，故 primary=tool_build；无性能/安全/数据一致性/前端/集成/部署等二级信号，故 secondary 为空；纯本地单人脚本、不触发部署，不可逆性与影响范围均为 1，协调成本 1；未说明 commit message 格式规范、是否调用模型、是否自动提交等细节，需求部分未明确故不确定性 2，总分 5 落入低风险；契约规定 tool_build 默认跳过诊断（tool_build_no_prior_behavior），主干路由为 clarify→plan→execute→review；未出现前后端/多仓库/微服务信号，故 cross_repo 与 execution_strategy_required 为 false；非数据操作且无 data_integrity，故无需存储后端确认。",
+      "reasoning": "输入为「写一个脚本」的自动化工具构建诉求，无异常/报错/退化等缺陷信号、无数据订正或迁移信号、非纯文档咨询，故一级意图判为 tool_build；未出现前端/后端/多仓库/安全/性能/数据一致性等二级信号，二级意图为空。信号依据：脚本为本地单人可完成的配置类代码产物，可轻易回滚且不触发部署，不可逆性 1；未提及使用人数或团队共享，按仅本人使用的内部脚本判影响范围 1；「生成 commit message」的具体方式（规则模板还是模型生成）与是否自动提交未说明，属部分需求未明确，不确定性 2；单人可完成、无需他人配合，协调成本 1。无 security/data_integrity 二级意图、不可逆性与影响范围均非 3，不触发强制升级。tool_build 且无既有行为缺陷，按 W3 跳过诊断（skip_reason: tool_build_no_prior_behavior），路由取主干 [clarify, plan, execute, review]；无跨仓库、无存储后端、无前端参与，故三项标注均为 false。",
+      "input_tokens": 3960
+    },
+    {
+      "case_id": "pax-intent-tb-01",
+      "category": "intent_classification",
+      "repeat": 3,
+      "holdout": false,
+      "prompt": "写一个脚本，自动检查所有未提交的变更并生成 commit message",
+      "expected": {
+        "primary_intent": "tool_build",
+        "secondary_intent": []
+      },
+      "actual": {
+        "primary_intent": "tool_build",
+        "secondary_intent": [],
+        "irreversibility": 1,
+        "impact_scope": 1,
+        "uncertainty": 2,
+        "coordination_cost": 1,
+        "risk_score": 5,
+        "risk_level": "low",
+        "diagnose_required": false,
+        "route": [
+          "pax-clarify",
+          "pax-plan",
+          "pax-execute",
+          "pax-review"
+        ],
+        "storage_backend_required": false,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "输入为“写一个脚本”的构建类诉求，无异常/报错/退化等缺陷信号，也无数据订正或纯文档咨询特征，故判 tool_build；脚本仅本地运行、单人使用、不触发部署，故不可逆性与影响范围、协调成本均取 1；但 commit message 生成方式（模型/格式规范/是否自动提交）未明确，不确定性取 2；未出现前后端/多仓库等跨仓库信号，故 cross_repo 与 execution_strategy_required 为 false。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "primary_intent",
+          "passed": true,
+          "expected": "tool_build",
+          "actual": "tool_build"
+        },
+        {
+          "check": "secondary_intent",
+          "passed": true,
+          "expected": [],
+          "actual": []
+        }
+      ],
+      "reasoning": "输入为“写一个脚本”的构建类诉求，无异常/报错/退化等缺陷信号，也无数据订正或纯文档咨询特征，故判 tool_build；脚本仅本地运行、单人使用、不触发部署，故不可逆性与影响范围、协调成本均取 1；但 commit message 生成方式（模型/格式规范/是否自动提交）未明确，不确定性取 2；未出现前后端/多仓库等跨仓库信号，故 cross_repo 与 execution_strategy_required 为 false。",
+      "input_tokens": 3960
+    },
+    {
+      "case_id": "pax-intent-tb-01",
+      "category": "intent_classification",
+      "repeat": 4,
+      "holdout": false,
+      "prompt": "写一个脚本，自动检查所有未提交的变更并生成 commit message",
+      "expected": {
+        "primary_intent": "tool_build",
+        "secondary_intent": []
+      },
+      "actual": {
+        "primary_intent": "tool_build",
+        "secondary_intent": [],
+        "irreversibility": 1,
+        "impact_scope": 1,
+        "uncertainty": 2,
+        "coordination_cost": 1,
+        "risk_score": 5,
+        "risk_level": "low",
+        "diagnose_required": false,
+        "route": [
+          "pax-clarify",
+          "pax-plan",
+          "pax-execute",
+          "pax-review"
+        ],
+        "storage_backend_required": false,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "输入是新建脚本请求，无缺陷信号/数据操作/文档咨询信号，按 tool_build 跳过诊断；实现细节尚未明确，按低风险处理。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "primary_intent",
+          "passed": true,
+          "expected": "tool_build",
+          "actual": "tool_build"
+        },
+        {
+          "check": "secondary_intent",
+          "passed": true,
+          "expected": [],
+          "actual": []
+        }
+      ],
+      "reasoning": "输入是新建脚本请求，无缺陷信号/数据操作/文档咨询信号，按 tool_build 跳过诊断；实现细节尚未明确，按低风险处理。",
       "input_tokens": 3960
     },
     {
@@ -1522,7 +2282,7 @@
         "storage_backend_required": true,
         "cross_repo": false,
         "execution_strategy_required": false,
-        "reasoning": "依赖信号：生产账务模块存量数据迁移（data_ops）、要求保留全部历史数据且脚本不可回滚、涉及30张表约800万条（≥5表触发不可逆3与影响3）、账务属用户核心链路、明确不跨仓库不跨团队（协调成本仅跨文件=2），据data_integrity强制诊断与高风险升级。"
+        "reasoning": "依赖信号：『存量数据迁移到新表结构/30张表/800万条/脚本无法回滚重跑』→ 数据操作类且跨≥5张表达大规模迁移阈值（不可逆3、影响3），『账务模块』属用户核心链路（影响3），『保留全部历史数据』触发data_integrity，『改动都在账务模块内部、涉及多个文件和表结构定义、不涉及其他仓库和其他团队』→ 模块内多文件协调为2、非跨仓库；迁移方案与完整性/性能校验需验证假设故不确定性2。"
       },
       "error": null,
       "passed": true,
@@ -1565,7 +2325,7 @@
           "actual": "high"
         }
       ],
-      "reasoning": "依赖信号：生产账务模块存量数据迁移（data_ops）、要求保留全部历史数据且脚本不可回滚、涉及30张表约800万条（≥5表触发不可逆3与影响3）、账务属用户核心链路、明确不跨仓库不跨团队（协调成本仅跨文件=2），据data_integrity强制诊断与高风险升级。",
+      "reasoning": "依赖信号：『存量数据迁移到新表结构/30张表/800万条/脚本无法回滚重跑』→ 数据操作类且跨≥5张表达大规模迁移阈值（不可逆3、影响3），『账务模块』属用户核心链路（影响3），『保留全部历史数据』触发data_integrity，『改动都在账务模块内部、涉及多个文件和表结构定义、不涉及其他仓库和其他团队』→ 模块内多文件协调为2、非跨仓库；迁移方案与完整性/性能校验需验证假设故不确定性2。",
       "input_tokens": 4012
     },
     {
@@ -1604,7 +2364,7 @@
         "storage_backend_required": true,
         "cross_repo": false,
         "execution_strategy_required": false,
-        "reasoning": "依据信号：'迁移存量数据/批量'触发数据操作一级意图，'保留全部历史数据'叠加 data_integrity 二级意图；'30 张表/800 万条/账务模块'按数据类基准(跨≥5表且覆盖账务核心链路)定影响范围 3；'生产环境+脚本无法回滚重跑'定不可逆性 3(命中不可逆或回滚成本极高)；需先验证迁移正确性假设故不确定性 2；'多文件与表结构定义修改、不涉及其他仓库和团队'定协调成本 2；data_integrity 且影响范围 3 与不可逆 3+影响 3 双重强制升级为 high。"
+        "reasoning": "「迁移/存量数据到新表结构」命中 data_ops；30 张表(跨≥5 张)且为账务核心链路、800 万条历史记录 → 影响范围 3；「迁移脚本无法回滚重跑」+生产环境 → 不可逆 3；仅账务模块内部、明确不涉及其他仓库/团队 → 协调 2 且 cross_repo=false；需求明确但表结构与迁移方案需验证假设 → 不确定性 2；命中 data_integrity×影响范围 3 强制升级 high。"
       },
       "error": null,
       "passed": true,
@@ -1647,7 +2407,7 @@
           "actual": "high"
         }
       ],
-      "reasoning": "依据信号：'迁移存量数据/批量'触发数据操作一级意图，'保留全部历史数据'叠加 data_integrity 二级意图；'30 张表/800 万条/账务模块'按数据类基准(跨≥5表且覆盖账务核心链路)定影响范围 3；'生产环境+脚本无法回滚重跑'定不可逆性 3(命中不可逆或回滚成本极高)；需先验证迁移正确性假设故不确定性 2；'多文件与表结构定义修改、不涉及其他仓库和团队'定协调成本 2；data_integrity 且影响范围 3 与不可逆 3+影响 3 双重强制升级为 high。",
+      "reasoning": "「迁移/存量数据到新表结构」命中 data_ops；30 张表(跨≥5 张)且为账务核心链路、800 万条历史记录 → 影响范围 3；「迁移脚本无法回滚重跑」+生产环境 → 不可逆 3；仅账务模块内部、明确不涉及其他仓库/团队 → 协调 2 且 cross_repo=false；需求明确但表结构与迁移方案需验证假设 → 不确定性 2；命中 data_integrity×影响范围 3 强制升级 high。",
       "input_tokens": 4012
     },
     {
@@ -1686,7 +2446,7 @@
         "storage_backend_required": true,
         "cross_repo": false,
         "execution_strategy_required": false,
-        "reasoning": "依赖信号：『迁移存量数据到新表结构/批量修改』→ data_ops；『保留全部历史数据』+生产账务数据→ data_integrity 且影响面覆盖核心账务链路；『30 张表(≥5)、800 万条』→ 影响范围 3；『迁移脚本无法回滚重跑』→ 不可逆性 3，强制升级 high；『改动在账务模块内部、不涉及其他仓库和团队』→ 非跨仓库，协调成本 2；新表结构映射需先验证假设 → 不确定性 2。"
+        "reasoning": "输入明确为生产环境账务模块数据迁移（30 张表/800 万条、不可回滚、需保留全部历史数据），含 data_integrity 信号且同模块内多文件多表修改、无跨仓库跨团队，因此判为 data_ops + data_integrity，风险按不可逆性3/影响3/不确定性2/协调2计。"
       },
       "error": null,
       "passed": true,
@@ -1729,7 +2489,171 @@
           "actual": "high"
         }
       ],
-      "reasoning": "依赖信号：『迁移存量数据到新表结构/批量修改』→ data_ops；『保留全部历史数据』+生产账务数据→ data_integrity 且影响面覆盖核心账务链路；『30 张表(≥5)、800 万条』→ 影响范围 3；『迁移脚本无法回滚重跑』→ 不可逆性 3，强制升级 high；『改动在账务模块内部、不涉及其他仓库和团队』→ 非跨仓库，协调成本 2；新表结构映射需先验证假设 → 不确定性 2。",
+      "reasoning": "输入明确为生产环境账务模块数据迁移（30 张表/800 万条、不可回滚、需保留全部历史数据），含 data_integrity 信号且同模块内多文件多表修改、无跨仓库跨团队，因此判为 data_ops + data_integrity，风险按不可逆性3/影响3/不确定性2/协调2计。",
+      "input_tokens": 4012
+    },
+    {
+      "case_id": "pax-risk-high-01",
+      "category": "risk_scoring",
+      "repeat": 3,
+      "holdout": false,
+      "prompt": "把生产环境账务模块的存量数据迁移到新表结构，涉及 30 张表、约 800 万条历史记录，需要保留全部历史数据，迁移脚本无法回滚重跑。改动都在账务模块内部，涉及多个文件和表结构定义的修改，不涉及其他仓库和其他团队。",
+      "expected": {
+        "risk_score": 10,
+        "risk_level": "high",
+        "irreversibility": 3,
+        "impact_scope": 3,
+        "uncertainty": 2,
+        "coordination_cost": 2
+      },
+      "actual": {
+        "primary_intent": "data_ops",
+        "secondary_intent": [
+          "data_integrity"
+        ],
+        "irreversibility": 3,
+        "impact_scope": 3,
+        "uncertainty": 2,
+        "coordination_cost": 2,
+        "risk_score": 10,
+        "risk_level": "high",
+        "diagnose_required": true,
+        "route": [
+          "pax-clarify",
+          "pax-diagnose",
+          "pax-plan",
+          "pax-execute",
+          "pax-review"
+        ],
+        "storage_backend_required": true,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "依赖了生产环境账务存量迁移、30张表/800万行、不可回滚、需保留全部历史数据等信号，判定为data_ops+data_integrity；模块内多文件改动但无跨仓库/跨团队，故不触发跨仓库执行策略。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "irreversibility",
+          "passed": true,
+          "expected": 3,
+          "actual": 3
+        },
+        {
+          "check": "impact_scope",
+          "passed": true,
+          "expected": 3,
+          "actual": 3
+        },
+        {
+          "check": "uncertainty",
+          "passed": true,
+          "expected": 2,
+          "actual": 2
+        },
+        {
+          "check": "coordination_cost",
+          "passed": true,
+          "expected": 2,
+          "actual": 2
+        },
+        {
+          "check": "risk_score",
+          "passed": true,
+          "expected": 10,
+          "actual": 10
+        },
+        {
+          "check": "risk_level",
+          "passed": true,
+          "expected": "high",
+          "actual": "high"
+        }
+      ],
+      "reasoning": "依赖了生产环境账务存量迁移、30张表/800万行、不可回滚、需保留全部历史数据等信号，判定为data_ops+data_integrity；模块内多文件改动但无跨仓库/跨团队，故不触发跨仓库执行策略。",
+      "input_tokens": 4012
+    },
+    {
+      "case_id": "pax-risk-high-01",
+      "category": "risk_scoring",
+      "repeat": 4,
+      "holdout": false,
+      "prompt": "把生产环境账务模块的存量数据迁移到新表结构，涉及 30 张表、约 800 万条历史记录，需要保留全部历史数据，迁移脚本无法回滚重跑。改动都在账务模块内部，涉及多个文件和表结构定义的修改，不涉及其他仓库和其他团队。",
+      "expected": {
+        "risk_score": 10,
+        "risk_level": "high",
+        "irreversibility": 3,
+        "impact_scope": 3,
+        "uncertainty": 2,
+        "coordination_cost": 2
+      },
+      "actual": {
+        "primary_intent": "data_ops",
+        "secondary_intent": [
+          "data_integrity"
+        ],
+        "irreversibility": 3,
+        "impact_scope": 3,
+        "uncertainty": 2,
+        "coordination_cost": 2,
+        "risk_score": 10,
+        "risk_level": "high",
+        "diagnose_required": true,
+        "route": [
+          "pax-clarify",
+          "pax-diagnose",
+          "pax-plan",
+          "pax-execute",
+          "pax-review"
+        ],
+        "storage_backend_required": true,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "依据「迁移/存量数据/30 张表/800 万条/保留全部历史数据/脚本无法回滚重跑」判定为 data_ops（数据迁移）+ data_integrity，生产账务核心链路且跨 30 张表达影响 3，不可回滚达不可逆 3，模块内多文件改表结构判协调 2、需求映射细节待澄清判不确定 2，总计 10 触发高危并以 data_ops 强制诊断；用户明确不涉及其他仓库与团队故 cross_repo 为 false。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "irreversibility",
+          "passed": true,
+          "expected": 3,
+          "actual": 3
+        },
+        {
+          "check": "impact_scope",
+          "passed": true,
+          "expected": 3,
+          "actual": 3
+        },
+        {
+          "check": "uncertainty",
+          "passed": true,
+          "expected": 2,
+          "actual": 2
+        },
+        {
+          "check": "coordination_cost",
+          "passed": true,
+          "expected": 2,
+          "actual": 2
+        },
+        {
+          "check": "risk_score",
+          "passed": true,
+          "expected": 10,
+          "actual": 10
+        },
+        {
+          "check": "risk_level",
+          "passed": true,
+          "expected": "high",
+          "actual": "high"
+        }
+      ],
+      "reasoning": "依据「迁移/存量数据/30 张表/800 万条/保留全部历史数据/脚本无法回滚重跑」判定为 data_ops（数据迁移）+ data_integrity，生产账务核心链路且跨 30 张表达影响 3，不可回滚达不可逆 3，模块内多文件改表结构判协调 2、需求映射细节待澄清判不确定 2，总计 10 触发高危并以 data_ops 强制诊断；用户明确不涉及其他仓库与团队故 cross_repo 为 false。",
       "input_tokens": 4012
     },
     {
@@ -1757,15 +2681,15 @@
         "risk_level": "medium",
         "diagnose_required": false,
         "route": [
-          "clarify",
-          "plan",
-          "execute",
-          "review"
+          "pax-clarify",
+          "pax-plan",
+          "pax-execute",
+          "pax-review"
         ],
         "storage_backend_required": false,
         "cross_repo": false,
         "execution_strategy_required": false,
-        "reasoning": "依赖信号：'加一个导出功能/新增接口和按钮/无既有缺陷'→feature_dev（无缺陷信号，故 diagnose_required=false，skip=new_feature_no_prior_behavior）；'多个业务用户'→影响范围2；'同一仓库+需code review+前后端联动'→协调成本2；'需部署上线后业务用户才可用'→不可逆2；前端交互/导出细节未明确→不确定性2；未出现 security/data_integrity/performance 等二级信号，且'改动都在同一仓库内'故 cross_repo=false。"
+        "reasoning": "输入信号：'新增导出功能/新建接口/新增按钮'属新建功能且无报错/失败/排查等缺陷信号→feature_dev；无性能退化、安全、数据一致性、集成故障、部署失败、前端缺陷等次级信号→secondary 为空；后端接口+前端按钮同仓库联动且需 code review→协调成本 2，作为面向多业务用户的线上功能需部署生效→不可逆 2，多业务用户+多模块（前端/后端）→影响 2，导出字段范围/权限等细节未指定→不确定 2；用户已明示'改动都在同一个仓库内'，故不按前后端分离启发式判为跨仓库。"
       },
       "error": null,
       "passed": true,
@@ -1808,7 +2732,7 @@
           "actual": "medium"
         }
       ],
-      "reasoning": "依赖信号：'加一个导出功能/新增接口和按钮/无既有缺陷'→feature_dev（无缺陷信号，故 diagnose_required=false，skip=new_feature_no_prior_behavior）；'多个业务用户'→影响范围2；'同一仓库+需code review+前后端联动'→协调成本2；'需部署上线后业务用户才可用'→不可逆2；前端交互/导出细节未明确→不确定性2；未出现 security/data_integrity/performance 等二级信号，且'改动都在同一仓库内'故 cross_repo=false。",
+      "reasoning": "输入信号：'新增导出功能/新建接口/新增按钮'属新建功能且无报错/失败/排查等缺陷信号→feature_dev；无性能退化、安全、数据一致性、集成故障、部署失败、前端缺陷等次级信号→secondary 为空；后端接口+前端按钮同仓库联动且需 code review→协调成本 2，作为面向多业务用户的线上功能需部署生效→不可逆 2，多业务用户+多模块（前端/后端）→影响 2，导出字段范围/权限等细节未指定→不确定 2；用户已明示'改动都在同一个仓库内'，故不按前后端分离启发式判为跨仓库。",
       "input_tokens": 3989
     },
     {
@@ -1844,7 +2768,7 @@
         "storage_backend_required": false,
         "cross_repo": false,
         "execution_strategy_required": false,
-        "reasoning": "输入信号为『加导出功能』（新建功能、无既有缺陷 → feature_dev），无 security/data_integrity/performance 等二级信号；前后端改动明确在同一仓库且需求方为多个业务用户，需上线后生效并需 code review，故不可逆性/影响范围/协调成本各 2，导出范围与权限规格未明确故不确定性 2，总分 8 判 medium。"
+        "reasoning": "信号：『加一个导出功能』无缺陷/错误/日志等异常信号且非数据订正/纯文档，判为 feature_dev；无 security/data_integrity/ux_error 等二级信号（前端新增按钮属功能而非交互层缺陷）；改动需部署上线生效故不可逆性=2，『多个业务用户』+跨前后端两模块故影响范围=2，导出字段/权限/交互细节未定故不确定性=2，同仓库前后端联动+需 code review 故协调成本=2（用户明示『改动都在同一个仓库内』，故不触发跨仓库标注）；无既有行为缺陷，跳过诊断。"
       },
       "error": null,
       "passed": true,
@@ -1887,7 +2811,7 @@
           "actual": "medium"
         }
       ],
-      "reasoning": "输入信号为『加导出功能』（新建功能、无既有缺陷 → feature_dev），无 security/data_integrity/performance 等二级信号；前后端改动明确在同一仓库且需求方为多个业务用户，需上线后生效并需 code review，故不可逆性/影响范围/协调成本各 2，导出范围与权限规格未明确故不确定性 2，总分 8 判 medium。",
+      "reasoning": "信号：『加一个导出功能』无缺陷/错误/日志等异常信号且非数据订正/纯文档，判为 feature_dev；无 security/data_integrity/ux_error 等二级信号（前端新增按钮属功能而非交互层缺陷）；改动需部署上线生效故不可逆性=2，『多个业务用户』+跨前后端两模块故影响范围=2，导出字段/权限/交互细节未定故不确定性=2，同仓库前后端联动+需 code review 故协调成本=2（用户明示『改动都在同一个仓库内』，故不触发跨仓库标注）；无既有行为缺陷，跳过诊断。",
       "input_tokens": 3989
     },
     {
@@ -1923,7 +2847,7 @@
         "storage_backend_required": false,
         "cross_repo": false,
         "execution_strategy_required": false,
-        "reasoning": "依赖信号：用户描述为“加一个导出功能”（新建功能，无报错/退化等缺陷信号，也无数据订正或数据一致性诉求），故判 feature_dev 且二级意图为空；前后端联动但明确“改动都在同一个仓库内”，故协调成本按同仓库前后端联动+需 code review 记 2、不触发 cross_repo；新增接口与按钮需部署上线才能生效，不可逆性记 2；面向“多个业务用户”属多使用人，影响范围记 2；导出字段范围/权限等交互细节需与需求方确认，不确定性记 2，总分 8 属 medium，路由为 clarify→plan→execute→review，跳过诊断（new_feature_no_prior_behavior）。"
+        "reasoning": "依赖了输入信号：新增导出功能且无缺陷信号，前后端同仓库改动加 code review 推高协调成本，多业务用户使用推高影响范围，需上线生效推高不可逆性。"
       },
       "error": null,
       "passed": true,
@@ -1966,7 +2890,165 @@
           "actual": "medium"
         }
       ],
-      "reasoning": "依赖信号：用户描述为“加一个导出功能”（新建功能，无报错/退化等缺陷信号，也无数据订正或数据一致性诉求），故判 feature_dev 且二级意图为空；前后端联动但明确“改动都在同一个仓库内”，故协调成本按同仓库前后端联动+需 code review 记 2、不触发 cross_repo；新增接口与按钮需部署上线才能生效，不可逆性记 2；面向“多个业务用户”属多使用人，影响范围记 2；导出字段范围/权限等交互细节需与需求方确认，不确定性记 2，总分 8 属 medium，路由为 clarify→plan→execute→review，跳过诊断（new_feature_no_prior_behavior）。",
+      "reasoning": "依赖了输入信号：新增导出功能且无缺陷信号，前后端同仓库改动加 code review 推高协调成本，多业务用户使用推高影响范围，需上线生效推高不可逆性。",
+      "input_tokens": 3989
+    },
+    {
+      "case_id": "pax-risk-medium-01",
+      "category": "risk_scoring",
+      "repeat": 3,
+      "holdout": false,
+      "prompt": "给系统加一个导出功能，多个业务用户都能把用户列表导出成 Excel 文件，涉及后端新增一个导出接口和前端新增一个导出按钮，改动都在同一个仓库内，完成后需要 code review。",
+      "expected": {
+        "risk_score": 8,
+        "risk_level": "medium",
+        "irreversibility": 2,
+        "impact_scope": 2,
+        "uncertainty": 2,
+        "coordination_cost": 2
+      },
+      "actual": {
+        "primary_intent": "feature_dev",
+        "secondary_intent": [],
+        "irreversibility": 2,
+        "impact_scope": 2,
+        "uncertainty": 2,
+        "coordination_cost": 2,
+        "risk_score": 8,
+        "risk_level": "medium",
+        "diagnose_required": false,
+        "route": [
+          "pax-clarify",
+          "pax-plan",
+          "pax-execute",
+          "pax-review"
+        ],
+        "storage_backend_required": false,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "依赖'加一个导出功能'的新建功能信号（无报错/异常/退化，故非 diagnose_fix，也非重构/数据操作/文档），'多个业务用户都能导出'的多使用人信号→影响范围2，'新增后端接口+前端按钮、同一仓库、需 code review'的联动与评审信号→协调成本2，'需上线才生效'→不可逆性2；需求细节（导出字段范围、权限、大数据量同步/异步）需确认→不确定性2；用户明确声明改动在同一仓库内，故否定跨仓库信号；无 security/data_integrity 二级意图，不触发强制升级，总分8落中风险。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "irreversibility",
+          "passed": true,
+          "expected": 2,
+          "actual": 2
+        },
+        {
+          "check": "impact_scope",
+          "passed": true,
+          "expected": 2,
+          "actual": 2
+        },
+        {
+          "check": "uncertainty",
+          "passed": true,
+          "expected": 2,
+          "actual": 2
+        },
+        {
+          "check": "coordination_cost",
+          "passed": true,
+          "expected": 2,
+          "actual": 2
+        },
+        {
+          "check": "risk_score",
+          "passed": true,
+          "expected": 8,
+          "actual": 8
+        },
+        {
+          "check": "risk_level",
+          "passed": true,
+          "expected": "medium",
+          "actual": "medium"
+        }
+      ],
+      "reasoning": "依赖'加一个导出功能'的新建功能信号（无报错/异常/退化，故非 diagnose_fix，也非重构/数据操作/文档），'多个业务用户都能导出'的多使用人信号→影响范围2，'新增后端接口+前端按钮、同一仓库、需 code review'的联动与评审信号→协调成本2，'需上线才生效'→不可逆性2；需求细节（导出字段范围、权限、大数据量同步/异步）需确认→不确定性2；用户明确声明改动在同一仓库内，故否定跨仓库信号；无 security/data_integrity 二级意图，不触发强制升级，总分8落中风险。",
+      "input_tokens": 3989
+    },
+    {
+      "case_id": "pax-risk-medium-01",
+      "category": "risk_scoring",
+      "repeat": 4,
+      "holdout": false,
+      "prompt": "给系统加一个导出功能，多个业务用户都能把用户列表导出成 Excel 文件，涉及后端新增一个导出接口和前端新增一个导出按钮，改动都在同一个仓库内，完成后需要 code review。",
+      "expected": {
+        "risk_score": 8,
+        "risk_level": "medium",
+        "irreversibility": 2,
+        "impact_scope": 2,
+        "uncertainty": 2,
+        "coordination_cost": 2
+      },
+      "actual": {
+        "primary_intent": "feature_dev",
+        "secondary_intent": [],
+        "irreversibility": 2,
+        "impact_scope": 2,
+        "uncertainty": 2,
+        "coordination_cost": 2,
+        "risk_score": 8,
+        "risk_level": "medium",
+        "diagnose_required": false,
+        "route": [
+          "clarify",
+          "plan",
+          "execute",
+          "review"
+        ],
+        "storage_backend_required": false,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "信号：新增导出功能无既有缺陷（非 diagnose_fix）、无数据订正/迁移（非 data_ops）、非纯文档；涉及后端接口+前端按钮的前后端联动但明确同一仓库，故 coordination=2 且 cross_repo=false；多业务用户使用故 impact=2；导出字段/权限等交互细节需产品确认、形成新接口需部署生效，故 uncertainty=2、irreversibility=2；无 security/data_integrity 信号，不触发强制升级与存储后端确认。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "irreversibility",
+          "passed": true,
+          "expected": 2,
+          "actual": 2
+        },
+        {
+          "check": "impact_scope",
+          "passed": true,
+          "expected": 2,
+          "actual": 2
+        },
+        {
+          "check": "uncertainty",
+          "passed": true,
+          "expected": 2,
+          "actual": 2
+        },
+        {
+          "check": "coordination_cost",
+          "passed": true,
+          "expected": 2,
+          "actual": 2
+        },
+        {
+          "check": "risk_score",
+          "passed": true,
+          "expected": 8,
+          "actual": 8
+        },
+        {
+          "check": "risk_level",
+          "passed": true,
+          "expected": "medium",
+          "actual": "medium"
+        }
+      ],
+      "reasoning": "信号：新增导出功能无既有缺陷（非 diagnose_fix）、无数据订正/迁移（非 data_ops）、非纯文档；涉及后端接口+前端按钮的前后端联动但明确同一仓库，故 coordination=2 且 cross_repo=false；多业务用户使用故 impact=2；导出字段/权限等交互细节需产品确认、形成新接口需部署生效，故 uncertainty=2、irreversibility=2；无 security/data_integrity 信号，不触发强制升级与存储后端确认。",
       "input_tokens": 3989
     },
     {
@@ -1994,12 +3076,12 @@
         "risk_level": "low",
         "diagnose_required": false,
         "route": [
-          "clarify"
+          "pax-clarify"
         ],
         "storage_backend_required": false,
         "cross_repo": false,
         "execution_strategy_required": false,
-        "reasoning": "用户仅要求解释微服务架构概念与优缺点，命中 doc_consult 信号（解释/咨询），无缺陷信号、无数据操作信号、不涉及代码或数据变更，故不可逆性/影响范围/不确定性/协调成本均为 1，跳过诊断，路由仅 clarify。"
+        "reasoning": "输入为纯概念解释请求（‘解释一下什么是微服务架构’），无缺陷/报错信号、无数据操作、无重构或工具构建信号，命中 is_pure_documentation 的‘咨询/解释’条件，判定为 doc_consult；不涉及代码或数据变更，四维各为 1 分，路由主干仅 clarify 且按契约强制跳过诊断。"
       },
       "error": null,
       "passed": true,
@@ -2042,7 +3124,7 @@
           "actual": "low"
         }
       ],
-      "reasoning": "用户仅要求解释微服务架构概念与优缺点，命中 doc_consult 信号（解释/咨询），无缺陷信号、无数据操作信号、不涉及代码或数据变更，故不可逆性/影响范围/不确定性/协调成本均为 1，跳过诊断，路由仅 clarify。",
+      "reasoning": "输入为纯概念解释请求（‘解释一下什么是微服务架构’），无缺陷/报错信号、无数据操作、无重构或工具构建信号，命中 is_pure_documentation 的‘咨询/解释’条件，判定为 doc_consult；不涉及代码或数据变更，四维各为 1 分，路由主干仅 clarify 且按契约强制跳过诊断。",
       "input_tokens": 3954
     },
     {
@@ -2075,7 +3157,7 @@
         "storage_backend_required": false,
         "cross_repo": false,
         "execution_strategy_required": false,
-        "reasoning": "输入为「解释什么是微服务架构」的纯咨询请求，命中 doc_consult 信号（解释/咨询且不涉及代码或数据变更），无缺陷信号、无数据操作、无跨仓库/前后端信号，四维均为最低档，故总分 4 判定 low 风险且强制跳过诊断，主干路由仅 clarify。"
+        "reasoning": "输入为“解释一下…有什么优缺点”，命中 is_pure_documentation 的咨询/解释信号，无缺陷信号、无数据操作、无代码修改，判定 doc_consult，四维均取最低档，skip_reason=doc_consult_only。"
       },
       "error": null,
       "passed": true,
@@ -2118,7 +3200,7 @@
           "actual": "low"
         }
       ],
-      "reasoning": "输入为「解释什么是微服务架构」的纯咨询请求，命中 doc_consult 信号（解释/咨询且不涉及代码或数据变更），无缺陷信号、无数据操作、无跨仓库/前后端信号，四维均为最低档，故总分 4 判定 low 风险且强制跳过诊断，主干路由仅 clarify。",
+      "reasoning": "输入为“解释一下…有什么优缺点”，命中 is_pure_documentation 的咨询/解释信号，无缺陷信号、无数据操作、无代码修改，判定 doc_consult，四维均取最低档，skip_reason=doc_consult_only。",
       "input_tokens": 3954
     },
     {
@@ -2151,7 +3233,7 @@
         "storage_backend_required": false,
         "cross_repo": false,
         "execution_strategy_required": false,
-        "reasoning": "输入为“解释什么是微服务架构、优缺点”，命中纯咨询/解释信号且不涉及代码改动或数据变更，故判 doc_consult，四维均为最低档（无需部署、单人、话题明确、无协调），总分 4 分低风险，按 doc_consult 主干只走 clarify 且不进入诊断。"
+        "reasoning": "输入为“解释一下…有什么优缺点”，命中纯咨询/解释信号，无缺陷信号、无数据操作、无代码或数据变更，故判 doc_consult 且跳过诊断，四维风险均为 1。"
       },
       "error": null,
       "passed": true,
@@ -2194,92 +3276,165 @@
           "actual": "low"
         }
       ],
-      "reasoning": "输入为“解释什么是微服务架构、优缺点”，命中纯咨询/解释信号且不涉及代码改动或数据变更，故判 doc_consult，四维均为最低档（无需部署、单人、话题明确、无协调），总分 4 分低风险，按 doc_consult 主干只走 clarify 且不进入诊断。",
+      "reasoning": "输入为“解释一下…有什么优缺点”，命中纯咨询/解释信号，无缺陷信号、无数据操作、无代码或数据变更，故判 doc_consult 且跳过诊断，四维风险均为 1。",
       "input_tokens": 3954
     },
     {
-      "case_id": "pax-route-df-01",
-      "category": "route_building",
-      "repeat": 0,
+      "case_id": "pax-risk-low-01",
+      "category": "risk_scoring",
+      "repeat": 3,
       "holdout": false,
-      "prompt": "CMDB 字段校验有问题，时间类型的字段填写后报错说字段不为设定的正则表达式",
+      "prompt": "解释一下什么是微服务架构，有什么优缺点",
       "expected": {
-        "route": [
-          "clarify",
-          "diagnose",
-          "plan",
-          "execute",
-          "review"
-        ],
-        "diagnose_required": true,
-        "storage_backend_required": true
+        "risk_score": 4,
+        "risk_level": "low",
+        "irreversibility": 1,
+        "impact_scope": 1,
+        "uncertainty": 1,
+        "coordination_cost": 1
       },
       "actual": {
-        "primary_intent": "diagnose_fix",
-        "secondary_intent": [
-          "data_integrity"
-        ],
-        "irreversibility": 2,
-        "impact_scope": 2,
-        "uncertainty": 2,
-        "coordination_cost": 2,
-        "risk_score": 8,
-        "risk_level": "medium",
-        "diagnose_required": true,
+        "primary_intent": "doc_consult",
+        "secondary_intent": [],
+        "irreversibility": 1,
+        "impact_scope": 1,
+        "uncertainty": 1,
+        "coordination_cost": 1,
+        "risk_score": 4,
+        "risk_level": "low",
+        "diagnose_required": false,
         "route": [
-          "pax-clarify",
-          "pax-diagnose",
-          "pax-plan",
-          "pax-execute",
-          "pax-review"
+          "pax-clarify"
         ],
-        "storage_backend_required": true,
+        "storage_backend_required": false,
         "cross_repo": false,
         "execution_strategy_required": false,
-        "reasoning": "依赖信号：『校验有问题』『报错』构成缺陷信号（≥2项）判为 diagnose_fix；时间字段不满足正则属校验规则/数据契约缺陷，按易混淆边界归 data_integrity 而非 ux_error；缺陷修复需部署上线生效故不可逆性≥2，影响 CMDB 多使用人/多模块但无系统级或跨团队证据取2，根因未确认且需验证正则假设取2，单模块内改动需评审取2，总分8→medium；主意图 diagnose_fix 强制诊断，data_integrity 触发 storage_backend_required；用户目标未出现前端/后端/api/多仓库等跨仓库信号，故 cross_repo=false。"
+        "reasoning": "用户仅要求解释微服务架构概念与优缺点，属纯咨询，无代码/数据变更、无缺陷信号、无跨仓库信号，故按 doc_consult 低风险处理。"
       },
       "error": null,
       "passed": true,
       "failed_checks": [],
       "checks": [
         {
-          "check": "route",
+          "check": "irreversibility",
           "passed": true,
-          "expected": [
-            "clarify",
-            "diagnose",
-            "plan",
-            "execute",
-            "review"
-          ],
-          "actual": [
-            "clarify",
-            "diagnose",
-            "plan",
-            "execute",
-            "review"
-          ]
+          "expected": 1,
+          "actual": 1
         },
         {
-          "check": "diagnose_required",
+          "check": "impact_scope",
           "passed": true,
-          "expected": true,
-          "actual": true
+          "expected": 1,
+          "actual": 1
         },
         {
-          "check": "storage_backend_required",
+          "check": "uncertainty",
           "passed": true,
-          "expected": true,
-          "actual": true
+          "expected": 1,
+          "actual": 1
+        },
+        {
+          "check": "coordination_cost",
+          "passed": true,
+          "expected": 1,
+          "actual": 1
+        },
+        {
+          "check": "risk_score",
+          "passed": true,
+          "expected": 4,
+          "actual": 4
+        },
+        {
+          "check": "risk_level",
+          "passed": true,
+          "expected": "low",
+          "actual": "low"
         }
       ],
-      "reasoning": "依赖信号：『校验有问题』『报错』构成缺陷信号（≥2项）判为 diagnose_fix；时间字段不满足正则属校验规则/数据契约缺陷，按易混淆边界归 data_integrity 而非 ux_error；缺陷修复需部署上线生效故不可逆性≥2，影响 CMDB 多使用人/多模块但无系统级或跨团队证据取2，根因未确认且需验证正则假设取2，单模块内改动需评审取2，总分8→medium；主意图 diagnose_fix 强制诊断，data_integrity 触发 storage_backend_required；用户目标未出现前端/后端/api/多仓库等跨仓库信号，故 cross_repo=false。",
-      "input_tokens": 3965
+      "reasoning": "用户仅要求解释微服务架构概念与优缺点，属纯咨询，无代码/数据变更、无缺陷信号、无跨仓库信号，故按 doc_consult 低风险处理。",
+      "input_tokens": 3954
+    },
+    {
+      "case_id": "pax-risk-low-01",
+      "category": "risk_scoring",
+      "repeat": 4,
+      "holdout": false,
+      "prompt": "解释一下什么是微服务架构，有什么优缺点",
+      "expected": {
+        "risk_score": 4,
+        "risk_level": "low",
+        "irreversibility": 1,
+        "impact_scope": 1,
+        "uncertainty": 1,
+        "coordination_cost": 1
+      },
+      "actual": {
+        "primary_intent": "doc_consult",
+        "secondary_intent": [],
+        "irreversibility": 1,
+        "impact_scope": 1,
+        "uncertainty": 1,
+        "coordination_cost": 1,
+        "risk_score": 4,
+        "risk_level": "low",
+        "diagnose_required": false,
+        "route": [
+          "pax-clarify"
+        ],
+        "storage_backend_required": false,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "用户仅要求解释微服务架构概念及优缺点，属纯咨询/解释类信号（'解释一下'），无缺陷、数据操作、代码修改信号，故判 doc_consult 且跳过诊断，路由仅 clarify。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "irreversibility",
+          "passed": true,
+          "expected": 1,
+          "actual": 1
+        },
+        {
+          "check": "impact_scope",
+          "passed": true,
+          "expected": 1,
+          "actual": 1
+        },
+        {
+          "check": "uncertainty",
+          "passed": true,
+          "expected": 1,
+          "actual": 1
+        },
+        {
+          "check": "coordination_cost",
+          "passed": true,
+          "expected": 1,
+          "actual": 1
+        },
+        {
+          "check": "risk_score",
+          "passed": true,
+          "expected": 4,
+          "actual": 4
+        },
+        {
+          "check": "risk_level",
+          "passed": true,
+          "expected": "low",
+          "actual": "low"
+        }
+      ],
+      "reasoning": "用户仅要求解释微服务架构概念及优缺点，属纯咨询/解释类信号（'解释一下'），无缺陷、数据操作、代码修改信号，故判 doc_consult 且跳过诊断，路由仅 clarify。",
+      "input_tokens": 3954
     },
     {
       "case_id": "pax-route-df-01",
       "category": "route_building",
-      "repeat": 1,
+      "repeat": 0,
       "holdout": false,
       "prompt": "CMDB 字段校验有问题，时间类型的字段填写后报错说字段不为设定的正则表达式",
       "expected": {
@@ -2315,7 +3470,7 @@
         "storage_backend_required": true,
         "cross_repo": false,
         "execution_strategy_required": false,
-        "reasoning": "依据『校验有问题/报错』的既有缺陷信号判为 diagnose_fix；错误是字段值未通过正则/格式校验、根因在校验规则本身，按边界规则归 data_integrity（不标 ux_error）；CMDB 为多使用人内部平台、需发布生效故不可逆性与影响范围各 2，根因未定故不确定性 2，未见跨团队/跨仓库信号故协调成本 1，总分 7 为中风险。"
+        "reasoning": "依赖「字段校验有问题 + 填写后报错 + 正则表达式」缺陷信号判定 diagnose_fix；按契约混边界规则，字段值未通过正则/格式校验属校验规则本身缺陷，归 data_integrity 而非 ux_error；校验规则改动需发布生效故不可逆性 2，CMDB 字段多使用人故影响范围 2，根因待诊断但属已知模式故不确定性 2，无跨团队/跨仓库信号故协调成本 1，总分 7 未触发 data_integrity+范围3 的强制升级。"
       },
       "error": null,
       "passed": true,
@@ -2352,13 +3507,13 @@
           "actual": true
         }
       ],
-      "reasoning": "依据『校验有问题/报错』的既有缺陷信号判为 diagnose_fix；错误是字段值未通过正则/格式校验、根因在校验规则本身，按边界规则归 data_integrity（不标 ux_error）；CMDB 为多使用人内部平台、需发布生效故不可逆性与影响范围各 2，根因未定故不确定性 2，未见跨团队/跨仓库信号故协调成本 1，总分 7 为中风险。",
+      "reasoning": "依赖「字段校验有问题 + 填写后报错 + 正则表达式」缺陷信号判定 diagnose_fix；按契约混边界规则，字段值未通过正则/格式校验属校验规则本身缺陷，归 data_integrity 而非 ux_error；校验规则改动需发布生效故不可逆性 2，CMDB 字段多使用人故影响范围 2，根因待诊断但属已知模式故不确定性 2，无跨团队/跨仓库信号故协调成本 1，总分 7 未触发 data_integrity+范围3 的强制升级。",
       "input_tokens": 3965
     },
     {
       "case_id": "pax-route-df-01",
       "category": "route_building",
-      "repeat": 2,
+      "repeat": 1,
       "holdout": false,
       "prompt": "CMDB 字段校验有问题，时间类型的字段填写后报错说字段不为设定的正则表达式",
       "expected": {
@@ -2394,7 +3549,7 @@
         "storage_backend_required": true,
         "cross_repo": false,
         "execution_strategy_required": false,
-        "reasoning": "依据\"有问题/报错\"缺陷信号判为 diagnose_fix，报错源于字段值未过正则/格式校验（根因在数据契约与校验规则而非渲染层），按易混淆边界归 data_integrity 而非 ux_error；修复需部署生效故不可逆性 2，CMDB 多使用人共享校验规则故影响范围 2，根因（正则规则本身还是时间格式/时区）未定需验证假设故不确定性 2，模块内多文件联动需 code review 故协调成本 2；无跨仓库信号（无前后端/多仓库字样），data_integrity 强制 storage_backend_required 且不允许跳过诊断。"
+        "reasoning": "依据“校验有问题/填写后报错”的缺陷信号判为 diagnose_fix；错误本质是字段值与正则校验规则不匹配（数据契约层），按边界规则归入 data_integrity 而非 ux_error；无前后端/多仓库信号故 cross_repo=false；根因（正则配置错误 vs 时间值格式约定）需验证假设、且修复可能需上线生效，故不确定性与不可逆性均取 2。"
       },
       "error": null,
       "passed": true,
@@ -2431,7 +3586,244 @@
           "actual": true
         }
       ],
-      "reasoning": "依据\"有问题/报错\"缺陷信号判为 diagnose_fix，报错源于字段值未过正则/格式校验（根因在数据契约与校验规则而非渲染层），按易混淆边界归 data_integrity 而非 ux_error；修复需部署生效故不可逆性 2，CMDB 多使用人共享校验规则故影响范围 2，根因（正则规则本身还是时间格式/时区）未定需验证假设故不确定性 2，模块内多文件联动需 code review 故协调成本 2；无跨仓库信号（无前后端/多仓库字样），data_integrity 强制 storage_backend_required 且不允许跳过诊断。",
+      "reasoning": "依据“校验有问题/填写后报错”的缺陷信号判为 diagnose_fix；错误本质是字段值与正则校验规则不匹配（数据契约层），按边界规则归入 data_integrity 而非 ux_error；无前后端/多仓库信号故 cross_repo=false；根因（正则配置错误 vs 时间值格式约定）需验证假设、且修复可能需上线生效，故不确定性与不可逆性均取 2。",
+      "input_tokens": 3965
+    },
+    {
+      "case_id": "pax-route-df-01",
+      "category": "route_building",
+      "repeat": 2,
+      "holdout": false,
+      "prompt": "CMDB 字段校验有问题，时间类型的字段填写后报错说字段不为设定的正则表达式",
+      "expected": {
+        "route": [
+          "clarify",
+          "diagnose",
+          "plan",
+          "execute",
+          "review"
+        ],
+        "diagnose_required": true,
+        "storage_backend_required": true
+      },
+      "actual": {
+        "primary_intent": "diagnose_fix",
+        "secondary_intent": [
+          "data_integrity"
+        ],
+        "irreversibility": 2,
+        "impact_scope": 2,
+        "uncertainty": 2,
+        "coordination_cost": 2,
+        "risk_score": 8,
+        "risk_level": "medium",
+        "diagnose_required": true,
+        "route": [
+          "clarify",
+          "diagnose",
+          "plan",
+          "execute",
+          "review"
+        ],
+        "storage_backend_required": true,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "依赖输入中的缺陷信号（“字段校验有问题”“填写后报错说字段不为设定的正则表达式”）判定为 diagnose_fix；依契约易混淆边界，报错源于字段值未通过正则/格式校验、根因在数据契约与校验规则本身，故标 data_integrity 而非 ux_error；未出现前后端/多仓库等跨仓库信号；校验规则生效方式未明（可能需发布），故不可逆性取 2。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "route",
+          "passed": true,
+          "expected": [
+            "clarify",
+            "diagnose",
+            "plan",
+            "execute",
+            "review"
+          ],
+          "actual": [
+            "clarify",
+            "diagnose",
+            "plan",
+            "execute",
+            "review"
+          ]
+        },
+        {
+          "check": "diagnose_required",
+          "passed": true,
+          "expected": true,
+          "actual": true
+        },
+        {
+          "check": "storage_backend_required",
+          "passed": true,
+          "expected": true,
+          "actual": true
+        }
+      ],
+      "reasoning": "依赖输入中的缺陷信号（“字段校验有问题”“填写后报错说字段不为设定的正则表达式”）判定为 diagnose_fix；依契约易混淆边界，报错源于字段值未通过正则/格式校验、根因在数据契约与校验规则本身，故标 data_integrity 而非 ux_error；未出现前后端/多仓库等跨仓库信号；校验规则生效方式未明（可能需发布），故不可逆性取 2。",
+      "input_tokens": 3965
+    },
+    {
+      "case_id": "pax-route-df-01",
+      "category": "route_building",
+      "repeat": 3,
+      "holdout": false,
+      "prompt": "CMDB 字段校验有问题，时间类型的字段填写后报错说字段不为设定的正则表达式",
+      "expected": {
+        "route": [
+          "clarify",
+          "diagnose",
+          "plan",
+          "execute",
+          "review"
+        ],
+        "diagnose_required": true,
+        "storage_backend_required": true
+      },
+      "actual": {
+        "primary_intent": "diagnose_fix",
+        "secondary_intent": [
+          "data_integrity"
+        ],
+        "irreversibility": 2,
+        "impact_scope": 2,
+        "uncertainty": 2,
+        "coordination_cost": 2,
+        "risk_score": 8,
+        "risk_level": "medium",
+        "diagnose_required": true,
+        "route": [
+          "pax-clarify",
+          "pax-diagnose",
+          "pax-plan",
+          "pax-execute",
+          "pax-review"
+        ],
+        "storage_backend_required": true,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "依赖信号：用户报告'有问题/报错'的既有缺陷→diagnose_fix；报错为字段未通过正则校验（根因在数据契约/校验规则而非渲染交互），按易混淆边界归 data_integrity 且不标 ux_error，故触发 storage_backend_required 与强制诊断；输入未出现前后端/多仓库等信号，按单仓库、需部署生效与根因待定位评为中风险。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "route",
+          "passed": true,
+          "expected": [
+            "clarify",
+            "diagnose",
+            "plan",
+            "execute",
+            "review"
+          ],
+          "actual": [
+            "clarify",
+            "diagnose",
+            "plan",
+            "execute",
+            "review"
+          ]
+        },
+        {
+          "check": "diagnose_required",
+          "passed": true,
+          "expected": true,
+          "actual": true
+        },
+        {
+          "check": "storage_backend_required",
+          "passed": true,
+          "expected": true,
+          "actual": true
+        }
+      ],
+      "reasoning": "依赖信号：用户报告'有问题/报错'的既有缺陷→diagnose_fix；报错为字段未通过正则校验（根因在数据契约/校验规则而非渲染交互），按易混淆边界归 data_integrity 且不标 ux_error，故触发 storage_backend_required 与强制诊断；输入未出现前后端/多仓库等信号，按单仓库、需部署生效与根因待定位评为中风险。",
+      "input_tokens": 3965
+    },
+    {
+      "case_id": "pax-route-df-01",
+      "category": "route_building",
+      "repeat": 4,
+      "holdout": false,
+      "prompt": "CMDB 字段校验有问题，时间类型的字段填写后报错说字段不为设定的正则表达式",
+      "expected": {
+        "route": [
+          "clarify",
+          "diagnose",
+          "plan",
+          "execute",
+          "review"
+        ],
+        "diagnose_required": true,
+        "storage_backend_required": true
+      },
+      "actual": {
+        "primary_intent": "diagnose_fix",
+        "secondary_intent": [
+          "data_integrity"
+        ],
+        "irreversibility": 2,
+        "impact_scope": 2,
+        "uncertainty": 2,
+        "coordination_cost": 2,
+        "risk_score": 8,
+        "risk_level": "medium",
+        "diagnose_required": true,
+        "route": [
+          "clarify",
+          "diagnose",
+          "plan",
+          "execute",
+          "review"
+        ],
+        "storage_backend_required": true,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "依据输入中的缺陷信号（「有问题」+「报错」+ 具体报错文案「字段不为设定的正则表达式」）判定为 diagnose_fix；按契约边界「字段值未通过正则/格式校验而报错，即使提示出现在页面也归 data_integrity、不标 ux_error」取二级意图 data_integrity（触发强制诊断与存储后端确认）；CMDB 校验规则通常需发布生效故不可逆性 2，影响多使用人的内部平台故范围 2，根因（时间类型为何被正则拦截）待验证故不确定性 2，需模块内多文件联动与 code review 故协调 2；输入未出现前后端/多仓库信号，故 cross_repo 与 execution_strategy_required 为 false。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "route",
+          "passed": true,
+          "expected": [
+            "clarify",
+            "diagnose",
+            "plan",
+            "execute",
+            "review"
+          ],
+          "actual": [
+            "clarify",
+            "diagnose",
+            "plan",
+            "execute",
+            "review"
+          ]
+        },
+        {
+          "check": "diagnose_required",
+          "passed": true,
+          "expected": true,
+          "actual": true
+        },
+        {
+          "check": "storage_backend_required",
+          "passed": true,
+          "expected": true,
+          "actual": true
+        }
+      ],
+      "reasoning": "依据输入中的缺陷信号（「有问题」+「报错」+ 具体报错文案「字段不为设定的正则表达式」）判定为 diagnose_fix；按契约边界「字段值未通过正则/格式校验而报错，即使提示出现在页面也归 data_integrity、不标 ux_error」取二级意图 data_integrity（触发强制诊断与存储后端确认）；CMDB 校验规则通常需发布生效故不可逆性 2，影响多使用人的内部平台故范围 2，根因（时间类型为何被正则拦截）待验证故不确定性 2，需模块内多文件联动与 code review 故协调 2；输入未出现前后端/多仓库信号，故 cross_repo 与 execution_strategy_required 为 false。",
       "input_tokens": 3965
     },
     {
@@ -2453,152 +3845,6 @@
       "actual": {
         "primary_intent": "feature_dev",
         "secondary_intent": [],
-        "irreversibility": 2,
-        "impact_scope": 2,
-        "uncertainty": 2,
-        "coordination_cost": 2,
-        "risk_score": 8,
-        "risk_level": "medium",
-        "diagnose_required": false,
-        "route": [
-          "pax-clarify",
-          "pax-plan",
-          "pax-execute",
-          "pax-review"
-        ],
-        "storage_backend_required": false,
-        "cross_repo": false,
-        "execution_strategy_required": false,
-        "reasoning": "输入是新增导出用户列表为 Excel 的功能需求，无缺陷/报错信号，且未提及安全、数据完整性、跨仓库或部署异常，因此按 feature_dev 处理，并因需求规格未明确而给出中等风险评分。"
-      },
-      "error": null,
-      "passed": true,
-      "failed_checks": [],
-      "checks": [
-        {
-          "check": "route",
-          "passed": true,
-          "expected": [
-            "clarify",
-            "plan",
-            "execute",
-            "review"
-          ],
-          "actual": [
-            "clarify",
-            "plan",
-            "execute",
-            "review"
-          ]
-        },
-        {
-          "check": "diagnose_required",
-          "passed": true,
-          "expected": false,
-          "actual": false
-        },
-        {
-          "check": "storage_backend_required",
-          "passed": true,
-          "expected": false,
-          "actual": false
-        }
-      ],
-      "reasoning": "输入是新增导出用户列表为 Excel 的功能需求，无缺陷/报错信号，且未提及安全、数据完整性、跨仓库或部署异常，因此按 feature_dev 处理，并因需求规格未明确而给出中等风险评分。",
-      "input_tokens": 3960
-    },
-    {
-      "case_id": "pax-route-fd-01",
-      "category": "route_building",
-      "repeat": 1,
-      "holdout": false,
-      "prompt": "给系统加一个导出功能，能把用户列表导出成 Excel 文件",
-      "expected": {
-        "route": [
-          "clarify",
-          "plan",
-          "execute",
-          "review"
-        ],
-        "diagnose_required": false,
-        "storage_backend_required": false
-      },
-      "actual": {
-        "primary_intent": "feature_dev",
-        "secondary_intent": [],
-        "irreversibility": 2,
-        "impact_scope": 2,
-        "uncertainty": 2,
-        "coordination_cost": 2,
-        "risk_score": 8,
-        "risk_level": "medium",
-        "diagnose_required": false,
-        "route": [
-          "clarify",
-          "plan",
-          "execute",
-          "review"
-        ],
-        "storage_backend_required": false,
-        "cross_repo": false,
-        "execution_strategy_required": false,
-        "reasoning": "输入仅包含新增导出能力的目标，无缺陷/安全/数据一致性信号，故为 feature_dev；需求细节未定需 clarify，功能上线需部署且面向多用户，风险中。"
-      },
-      "error": null,
-      "passed": true,
-      "failed_checks": [],
-      "checks": [
-        {
-          "check": "route",
-          "passed": true,
-          "expected": [
-            "clarify",
-            "plan",
-            "execute",
-            "review"
-          ],
-          "actual": [
-            "clarify",
-            "plan",
-            "execute",
-            "review"
-          ]
-        },
-        {
-          "check": "diagnose_required",
-          "passed": true,
-          "expected": false,
-          "actual": false
-        },
-        {
-          "check": "storage_backend_required",
-          "passed": true,
-          "expected": false,
-          "actual": false
-        }
-      ],
-      "reasoning": "输入仅包含新增导出能力的目标，无缺陷/安全/数据一致性信号，故为 feature_dev；需求细节未定需 clarify，功能上线需部署且面向多用户，风险中。",
-      "input_tokens": 3960
-    },
-    {
-      "case_id": "pax-route-fd-01",
-      "category": "route_building",
-      "repeat": 2,
-      "holdout": false,
-      "prompt": "给系统加一个导出功能，能把用户列表导出成 Excel 文件",
-      "expected": {
-        "route": [
-          "clarify",
-          "plan",
-          "execute",
-          "review"
-        ],
-        "diagnose_required": false,
-        "storage_backend_required": false
-      },
-      "actual": {
-        "primary_intent": "给系统增加导出用户列表为 Excel 的新功能，无任何缺陷/报错/退化信号，也不涉及数据订正迁移或纯文档咨询，按默认归入 feature_dev；",
-        "secondary_intent": [],
         "irreversibility": 1,
         "impact_scope": 2,
         "uncertainty": 2,
@@ -2615,7 +3861,7 @@
         "storage_backend_required": false,
         "cross_repo": false,
         "execution_strategy_required": false,
-        "reasoning": "依据输入仅有「加导出功能/用户列表/Excel」这一新增功能描述：无异常-修复类关键词故非 diagnose_fix，无订正/迁移/脏数据信号故非 data_ops，非文档规划故非 doc_consult，无未验证的既有行为；影响范围按多使用人+涉及接口与展示层判 2，导出字段/格式/权限范围需产品确认故不确定性 2，跨文件联动且需 code review 故协调成本 2，纯代码新增可回滚判不可逆性 1；未出现前端/后端/多仓库等跨仓库信号，也未出现 security/data_integrity 二级意图，故跳过诊断且不标存储后端与跨仓库。"
+        "reasoning": "输入信号为“加一个导出功能”，属新建功能且无任何缺陷/报错关键词，也无 security 或 data_integrity 触发词，故判定 feature_dev；导出字段、数据范围与权限口径未明确（需需求确认）计不确定性 2，面向多使用人的系统功能计影响范围 2，代码改动可本地回滚计不可逆性 1，功能实现需跨文件改动并走 review 计协调成本 2；无前端/后端/多仓库信号，故不标跨仓库与存储后端确认。"
       },
       "error": null,
       "passed": true,
@@ -2650,7 +3896,299 @@
           "actual": false
         }
       ],
-      "reasoning": "依据输入仅有「加导出功能/用户列表/Excel」这一新增功能描述：无异常-修复类关键词故非 diagnose_fix，无订正/迁移/脏数据信号故非 data_ops，非文档规划故非 doc_consult，无未验证的既有行为；影响范围按多使用人+涉及接口与展示层判 2，导出字段/格式/权限范围需产品确认故不确定性 2，跨文件联动且需 code review 故协调成本 2，纯代码新增可回滚判不可逆性 1；未出现前端/后端/多仓库等跨仓库信号，也未出现 security/data_integrity 二级意图，故跳过诊断且不标存储后端与跨仓库。",
+      "reasoning": "输入信号为“加一个导出功能”，属新建功能且无任何缺陷/报错关键词，也无 security 或 data_integrity 触发词，故判定 feature_dev；导出字段、数据范围与权限口径未明确（需需求确认）计不确定性 2，面向多使用人的系统功能计影响范围 2，代码改动可本地回滚计不可逆性 1，功能实现需跨文件改动并走 review 计协调成本 2；无前端/后端/多仓库信号，故不标跨仓库与存储后端确认。",
+      "input_tokens": 3960
+    },
+    {
+      "case_id": "pax-route-fd-01",
+      "category": "route_building",
+      "repeat": 1,
+      "holdout": false,
+      "prompt": "给系统加一个导出功能，能把用户列表导出成 Excel 文件",
+      "expected": {
+        "route": [
+          "clarify",
+          "plan",
+          "execute",
+          "review"
+        ],
+        "diagnose_required": false,
+        "storage_backend_required": false
+      },
+      "actual": {
+        "primary_intent": "feature_dev",
+        "secondary_intent": [],
+        "irreversibility": 2,
+        "impact_scope": 2,
+        "uncertainty": 2,
+        "coordination_cost": 2,
+        "risk_score": 8,
+        "risk_level": "medium",
+        "diagnose_required": false,
+        "route": [
+          "pax-clarify",
+          "pax-plan",
+          "pax-execute",
+          "pax-review"
+        ],
+        "storage_backend_required": false,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "用户目标为“加一个导出功能”，属新建功能且无任何报错/异常/退化等缺陷信号，故 primary=feature_dev；无性能、安全、数据一致性、集成、部署等二级信号；新增功能需部署上线方可生效且可回滚，不可逆性取 2；导出用户列表涉及用户管理模块的多使用人与内部依赖，影响范围取 2；导出字段、权限、格式、数据范围等需求细节未明确需产品确认，不确定性取 2；需前后端/多文件联动并过 code review，协调成本取 2；无缺陷故按 new_feature_no_prior_behavior 跳过诊断，路由为 clarify→plan→execute→review；未出现前后端/多仓库关键词，且导出非数据订正类操作，故 cross_repo 与 storage_backend_required 均为 false。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "route",
+          "passed": true,
+          "expected": [
+            "clarify",
+            "plan",
+            "execute",
+            "review"
+          ],
+          "actual": [
+            "clarify",
+            "plan",
+            "execute",
+            "review"
+          ]
+        },
+        {
+          "check": "diagnose_required",
+          "passed": true,
+          "expected": false,
+          "actual": false
+        },
+        {
+          "check": "storage_backend_required",
+          "passed": true,
+          "expected": false,
+          "actual": false
+        }
+      ],
+      "reasoning": "用户目标为“加一个导出功能”，属新建功能且无任何报错/异常/退化等缺陷信号，故 primary=feature_dev；无性能、安全、数据一致性、集成、部署等二级信号；新增功能需部署上线方可生效且可回滚，不可逆性取 2；导出用户列表涉及用户管理模块的多使用人与内部依赖，影响范围取 2；导出字段、权限、格式、数据范围等需求细节未明确需产品确认，不确定性取 2；需前后端/多文件联动并过 code review，协调成本取 2；无缺陷故按 new_feature_no_prior_behavior 跳过诊断，路由为 clarify→plan→execute→review；未出现前后端/多仓库关键词，且导出非数据订正类操作，故 cross_repo 与 storage_backend_required 均为 false。",
+      "input_tokens": 3960
+    },
+    {
+      "case_id": "pax-route-fd-01",
+      "category": "route_building",
+      "repeat": 2,
+      "holdout": false,
+      "prompt": "给系统加一个导出功能，能把用户列表导出成 Excel 文件",
+      "expected": {
+        "route": [
+          "clarify",
+          "plan",
+          "execute",
+          "review"
+        ],
+        "diagnose_required": false,
+        "storage_backend_required": false
+      },
+      "actual": {
+        "primary_intent": "feature_dev",
+        "secondary_intent": [],
+        "irreversibility": 2,
+        "impact_scope": 2,
+        "uncertainty": 2,
+        "coordination_cost": 2,
+        "risk_score": 8,
+        "risk_level": "medium",
+        "diagnose_required": false,
+        "route": [
+          "pax-clarify",
+          "pax-plan",
+          "pax-execute",
+          "pax-review"
+        ],
+        "storage_backend_required": false,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "目标是新增导出功能且无异常/报错/失败等缺陷词，故判 feature_dev；未出现性能、安全、数据一致性、集成、部署信号，故二级意图为空；改动需部署生效故不可逆性 2，涉及用户列表新导出入口、多模块联动且面向多使用人故影响范围 2，导出字段/格式/权限/数据量等交互细节需产品确认故不确定性 2，需跨文件改动与 code review 但未出现前后端/多仓库/跨团队信号故协调成本 2、cross_repo 为 false，总分 8 落中风险，feature_dev 无既有缺陷故跳过诊断，路由为 clarify→plan→execute→review。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "route",
+          "passed": true,
+          "expected": [
+            "clarify",
+            "plan",
+            "execute",
+            "review"
+          ],
+          "actual": [
+            "clarify",
+            "plan",
+            "execute",
+            "review"
+          ]
+        },
+        {
+          "check": "diagnose_required",
+          "passed": true,
+          "expected": false,
+          "actual": false
+        },
+        {
+          "check": "storage_backend_required",
+          "passed": true,
+          "expected": false,
+          "actual": false
+        }
+      ],
+      "reasoning": "目标是新增导出功能且无异常/报错/失败等缺陷词，故判 feature_dev；未出现性能、安全、数据一致性、集成、部署信号，故二级意图为空；改动需部署生效故不可逆性 2，涉及用户列表新导出入口、多模块联动且面向多使用人故影响范围 2，导出字段/格式/权限/数据量等交互细节需产品确认故不确定性 2，需跨文件改动与 code review 但未出现前后端/多仓库/跨团队信号故协调成本 2、cross_repo 为 false，总分 8 落中风险，feature_dev 无既有缺陷故跳过诊断，路由为 clarify→plan→execute→review。",
+      "input_tokens": 3960
+    },
+    {
+      "case_id": "pax-route-fd-01",
+      "category": "route_building",
+      "repeat": 3,
+      "holdout": false,
+      "prompt": "给系统加一个导出功能，能把用户列表导出成 Excel 文件",
+      "expected": {
+        "route": [
+          "clarify",
+          "plan",
+          "execute",
+          "review"
+        ],
+        "diagnose_required": false,
+        "storage_backend_required": false
+      },
+      "actual": {
+        "primary_intent": "feature_dev",
+        "secondary_intent": [],
+        "irreversibility": 2,
+        "impact_scope": 2,
+        "uncertainty": 2,
+        "coordination_cost": 2,
+        "risk_score": 8,
+        "risk_level": "medium",
+        "diagnose_required": false,
+        "route": [
+          "pax-clarify",
+          "pax-plan",
+          "pax-execute",
+          "pax-review"
+        ],
+        "storage_backend_required": false,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "仅凭“加一个导出功能”这一新建功能信号（无报错/异常/失败等缺陷关键词，也无订正/迁移/批量修改等数据操作信号），判定为 feature_dev；导出用户列表属多使用人共享的内部功能且需部署生效，故不可逆性与影响范围均取 2，导出字段/筛选/权限等细节未定需需求确认取不确定性 2，同一仓库内跨文件联动的模块内协调取协调成本 2；未提及前端/后端/多仓库等跨仓库信号，故 cross_repo 与 execution_strategy_required 为 false，无 security/data_integrity 二级意图故跳过诊断且无需确认存储后端。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "route",
+          "passed": true,
+          "expected": [
+            "clarify",
+            "plan",
+            "execute",
+            "review"
+          ],
+          "actual": [
+            "clarify",
+            "plan",
+            "execute",
+            "review"
+          ]
+        },
+        {
+          "check": "diagnose_required",
+          "passed": true,
+          "expected": false,
+          "actual": false
+        },
+        {
+          "check": "storage_backend_required",
+          "passed": true,
+          "expected": false,
+          "actual": false
+        }
+      ],
+      "reasoning": "仅凭“加一个导出功能”这一新建功能信号（无报错/异常/失败等缺陷关键词，也无订正/迁移/批量修改等数据操作信号），判定为 feature_dev；导出用户列表属多使用人共享的内部功能且需部署生效，故不可逆性与影响范围均取 2，导出字段/筛选/权限等细节未定需需求确认取不确定性 2，同一仓库内跨文件联动的模块内协调取协调成本 2；未提及前端/后端/多仓库等跨仓库信号，故 cross_repo 与 execution_strategy_required 为 false，无 security/data_integrity 二级意图故跳过诊断且无需确认存储后端。",
+      "input_tokens": 3960
+    },
+    {
+      "case_id": "pax-route-fd-01",
+      "category": "route_building",
+      "repeat": 4,
+      "holdout": false,
+      "prompt": "给系统加一个导出功能，能把用户列表导出成 Excel 文件",
+      "expected": {
+        "route": [
+          "clarify",
+          "plan",
+          "execute",
+          "review"
+        ],
+        "diagnose_required": false,
+        "storage_backend_required": false
+      },
+      "actual": {
+        "primary_intent": "feature_dev",
+        "secondary_intent": [],
+        "irreversibility": 2,
+        "impact_scope": 2,
+        "uncertainty": 2,
+        "coordination_cost": 2,
+        "risk_score": 8,
+        "risk_level": "medium",
+        "diagnose_required": false,
+        "route": [
+          "pax-clarify",
+          "pax-plan",
+          "pax-execute",
+          "pax-review"
+        ],
+        "storage_backend_required": false,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "信号：『加一个导出功能』为新增能力、无报错/失败等缺陷词，且不含订正/迁移类数据操作词，故判 feature_dev 且 diagnose_required=false（new_feature_no_prior_behavior）；未出现前端/后端/api/多仓库等跨仓库信号，故 cross_repo=false；该功能需部署上线才能被使用→不可逆 2，面向系统多使用人、涉及用户数据模块→影响 2；导出字段范围/权限/数据量与交互细节均未给出，需需求方确认→不确定性 2；预计新增接口与页面联动、需 code review→协调 2，总分 8 属中风险。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "route",
+          "passed": true,
+          "expected": [
+            "clarify",
+            "plan",
+            "execute",
+            "review"
+          ],
+          "actual": [
+            "clarify",
+            "plan",
+            "execute",
+            "review"
+          ]
+        },
+        {
+          "check": "diagnose_required",
+          "passed": true,
+          "expected": false,
+          "actual": false
+        },
+        {
+          "check": "storage_backend_required",
+          "passed": true,
+          "expected": false,
+          "actual": false
+        }
+      ],
+      "reasoning": "信号：『加一个导出功能』为新增能力、无报错/失败等缺陷词，且不含订正/迁移类数据操作词，故判 feature_dev 且 diagnose_required=false（new_feature_no_prior_behavior）；未出现前端/后端/api/多仓库等跨仓库信号，故 cross_repo=false；该功能需部署上线才能被使用→不可逆 2，面向系统多使用人、涉及用户数据模块→影响 2；导出字段范围/权限/数据量与交互细节均未给出，需需求方确认→不确定性 2；预计新增接口与页面联动、需 code review→协调 2，总分 8 属中风险。",
       "input_tokens": 3960
     },
     {
@@ -2682,7 +4220,7 @@
         "storage_backend_required": false,
         "cross_repo": false,
         "execution_strategy_required": false,
-        "reasoning": "用户请求为“解释什么是微服务架构及优缺点”，属纯咨询/纯解释，无缺陷信号、无数据变更、无代码修改，故判 doc_consult，四维均为最低档（总分 4，低风险），跳过诊断，路由仅 clarify。"
+        "reasoning": "输入为“解释…有什么优缺点”的纯知识性咨询，无缺陷信号、无数据操作、无代码/数据变更，命中 is_pure_documentation（解释/咨询）；无二级意图触发条件，“微服务架构”虽含“服务”但非跨仓库信号（契约信号为“另一个服务”），故不标 cross_repo；四维均取最低档，总分 4 → low，按 doc_consult 主干仅路由 clarify。"
       },
       "error": null,
       "passed": true,
@@ -2711,7 +4249,7 @@
           "actual": false
         }
       ],
-      "reasoning": "用户请求为“解释什么是微服务架构及优缺点”，属纯咨询/纯解释，无缺陷信号、无数据变更、无代码修改，故判 doc_consult，四维均为最低档（总分 4，低风险），跳过诊断，路由仅 clarify。",
+      "reasoning": "输入为“解释…有什么优缺点”的纯知识性咨询，无缺陷信号、无数据操作、无代码/数据变更，命中 is_pure_documentation（解释/咨询）；无二级意图触发条件，“微服务架构”虽含“服务”但非跨仓库信号（契约信号为“另一个服务”），故不标 cross_repo；四维均取最低档，总分 4 → low，按 doc_consult 主干仅路由 clarify。",
       "input_tokens": 3954
     },
     {
@@ -2743,7 +4281,7 @@
         "storage_backend_required": false,
         "cross_repo": false,
         "execution_strategy_required": false,
-        "reasoning": "用户目标为「解释一下什么是微服务架构，有什么优缺点」，属纯解释/咨询，无缺陷信号（无报错/失败/修复类词）、无数据操作信号（无订正/迁移/数据不一致）、无代码或数据变更诉求，故判定 doc_consult；四维均取最低档（不触发部署、仅提问者本人、问题明确有先例、单人即可回答），总分 4 为低风险，按契约强制跳过诊断，路由仅保留 clarify。"
+        "reasoning": "用户目标为“解释/了解”类纯咨询（微服务架构概念与优缺点），无缺陷信号、无数据变更、无代码改动，命中 doc_consult 判定与强制跳过诊断，无二级意图与跨仓库/部署信号，四维均取最低档。"
       },
       "error": null,
       "passed": true,
@@ -2772,7 +4310,7 @@
           "actual": false
         }
       ],
-      "reasoning": "用户目标为「解释一下什么是微服务架构，有什么优缺点」，属纯解释/咨询，无缺陷信号（无报错/失败/修复类词）、无数据操作信号（无订正/迁移/数据不一致）、无代码或数据变更诉求，故判定 doc_consult；四维均取最低档（不触发部署、仅提问者本人、问题明确有先例、单人即可回答），总分 4 为低风险，按契约强制跳过诊断，路由仅保留 clarify。",
+      "reasoning": "用户目标为“解释/了解”类纯咨询（微服务架构概念与优缺点），无缺陷信号、无数据变更、无代码改动，命中 doc_consult 判定与强制跳过诊断，无二级意图与跨仓库/部署信号，四维均取最低档。",
       "input_tokens": 3954
     },
     {
@@ -2799,12 +4337,12 @@
         "risk_level": "low",
         "diagnose_required": false,
         "route": [
-          "clarify"
+          "pax-clarify"
         ],
         "storage_backend_required": false,
         "cross_repo": false,
         "execution_strategy_required": false,
-        "reasoning": "用户目标为「解释一下什么是微服务架构，有什么优缺点」，属纯解释/咨询类，无缺陷信号、无数据操作信号、无代码或数据变更诉求，故判 doc_consult 且跳过诊断；四维均取最低档。"
+        "reasoning": "用户输入为『解释一下什么是微服务架构，有什么优缺点』，命中『解释/咨询』信号且不涉及代码修改或数据变更，判定为纯文档咨询（doc_consult），无异常/失败等缺陷信号、无数据操作信号，故无二级意图；不涉及仓库、部署或数据，四维均取最低分，总计 4 分属低风险。"
       },
       "error": null,
       "passed": true,
@@ -2833,7 +4371,129 @@
           "actual": false
         }
       ],
-      "reasoning": "用户目标为「解释一下什么是微服务架构，有什么优缺点」，属纯解释/咨询类，无缺陷信号、无数据操作信号、无代码或数据变更诉求，故判 doc_consult 且跳过诊断；四维均取最低档。",
+      "reasoning": "用户输入为『解释一下什么是微服务架构，有什么优缺点』，命中『解释/咨询』信号且不涉及代码修改或数据变更，判定为纯文档咨询（doc_consult），无异常/失败等缺陷信号、无数据操作信号，故无二级意图；不涉及仓库、部署或数据，四维均取最低分，总计 4 分属低风险。",
+      "input_tokens": 3954
+    },
+    {
+      "case_id": "pax-route-dc-01",
+      "category": "route_building",
+      "repeat": 3,
+      "holdout": false,
+      "prompt": "解释一下什么是微服务架构，有什么优缺点",
+      "expected": {
+        "route": [
+          "clarify"
+        ],
+        "diagnose_required": false,
+        "storage_backend_required": false
+      },
+      "actual": {
+        "primary_intent": "doc_consult",
+        "secondary_intent": [],
+        "irreversibility": 1,
+        "impact_scope": 1,
+        "uncertainty": 1,
+        "coordination_cost": 1,
+        "risk_score": 4,
+        "risk_level": "low",
+        "diagnose_required": false,
+        "route": [
+          "pax-clarify"
+        ],
+        "storage_backend_required": false,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "输入是纯概念解释与优缺点咨询，无缺陷、代码或数据变更信号，概念明确且单人即可完成。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "route",
+          "passed": true,
+          "expected": [
+            "clarify"
+          ],
+          "actual": [
+            "clarify"
+          ]
+        },
+        {
+          "check": "diagnose_required",
+          "passed": true,
+          "expected": false,
+          "actual": false
+        },
+        {
+          "check": "storage_backend_required",
+          "passed": true,
+          "expected": false,
+          "actual": false
+        }
+      ],
+      "reasoning": "输入是纯概念解释与优缺点咨询，无缺陷、代码或数据变更信号，概念明确且单人即可完成。",
+      "input_tokens": 3954
+    },
+    {
+      "case_id": "pax-route-dc-01",
+      "category": "route_building",
+      "repeat": 4,
+      "holdout": false,
+      "prompt": "解释一下什么是微服务架构，有什么优缺点",
+      "expected": {
+        "route": [
+          "clarify"
+        ],
+        "diagnose_required": false,
+        "storage_backend_required": false
+      },
+      "actual": {
+        "primary_intent": "doc_consult",
+        "secondary_intent": [],
+        "irreversibility": 1,
+        "impact_scope": 1,
+        "uncertainty": 1,
+        "coordination_cost": 1,
+        "risk_score": 4,
+        "risk_level": "low",
+        "diagnose_required": false,
+        "route": [
+          "pax-clarify"
+        ],
+        "storage_backend_required": false,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "输入为“解释一下什么是微服务架构，有什么优缺点”，属纯解释/咨询、无缺陷信号、无数据变更、无代码或仓库上下文，按 W1 判为 doc_consult，四维均取 1 分共 4 分（low），W3 强制跳过诊断，W4 主干路由仅 clarify，无 secondary 与跨仓库信号故无额外标注。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "route",
+          "passed": true,
+          "expected": [
+            "clarify"
+          ],
+          "actual": [
+            "clarify"
+          ]
+        },
+        {
+          "check": "diagnose_required",
+          "passed": true,
+          "expected": false,
+          "actual": false
+        },
+        {
+          "check": "storage_backend_required",
+          "passed": true,
+          "expected": false,
+          "actual": false
+        }
+      ],
+      "reasoning": "输入为“解释一下什么是微服务架构，有什么优缺点”，属纯解释/咨询、无缺陷信号、无数据变更、无代码或仓库上下文，按 W1 判为 doc_consult，四维均取 1 分共 4 分（low），W3 强制跳过诊断，W4 主干路由仅 clarify，无 secondary 与跨仓库信号故无额外标注。",
       "input_tokens": 3954
     },
     {
@@ -2867,7 +4527,7 @@
         "storage_backend_required": false,
         "cross_repo": true,
         "execution_strategy_required": true,
-        "reasoning": "依赖「前端 React 调用后端 API 新增接口」这一新增对接需求（无异常/报错/退化等缺陷信号）判为 feature_dev，并因「前后端分离/前端/后端/API」跨仓库信号叠加 integration 二级意图，故需跨仓库执行策略且无需诊断阶段。"
+        "reasoning": "依赖信号：'新增接口' 且无报错/异常/退化等缺陷词，也无数据订正/迁移词，故判 feature_dev 而非 diagnose_fix/data_ops；'前后端分离'+'前端 React'+'后端 API' 命中跨仓库信号（frontend/backend），触发 cross_repo 与 execution_strategy_required；新增接口需确认接口契约，标 integration；接口字段/交互未明确故 uncertainty=2；前后端联动跨仓库协调成本=3，改动需部署上线生效故不可逆性=2，涉及前后端多模块内部依赖故影响范围=2，无 security/data_integrity 二级意图，不触发强制升级与强制诊断，也不需存储后端确认。"
       },
       "error": null,
       "passed": true,
@@ -2886,7 +4546,7 @@
           "actual": true
         }
       ],
-      "reasoning": "依赖「前端 React 调用后端 API 新增接口」这一新增对接需求（无异常/报错/退化等缺陷信号）判为 feature_dev，并因「前后端分离/前端/后端/API」跨仓库信号叠加 integration 二级意图，故需跨仓库执行策略且无需诊断阶段。",
+      "reasoning": "依赖信号：'新增接口' 且无报错/异常/退化等缺陷词，也无数据订正/迁移词，故判 feature_dev 而非 diagnose_fix/data_ops；'前后端分离'+'前端 React'+'后端 API' 命中跨仓库信号（frontend/backend），触发 cross_repo 与 execution_strategy_required；新增接口需确认接口契约，标 integration；接口字段/交互未明确故 uncertainty=2；前后端联动跨仓库协调成本=3，改动需部署上线生效故不可逆性=2，涉及前后端多模块内部依赖故影响范围=2，无 security/data_integrity 二级意图，不触发强制升级与强制诊断，也不需存储后端确认。",
       "input_tokens": 3961
     },
     {
@@ -2918,7 +4578,7 @@
         "storage_backend_required": false,
         "cross_repo": true,
         "execution_strategy_required": true,
-        "reasoning": "依赖「前后端分离」「React 调用后端新增接口」信号：无缺陷/报错关键词且属新建能力，判 feature_dev；接口契约未给定故不确定性 2；前后端分属不同仓库使协调成本 3，触发 cross_repo 与 execution_strategy；改动需部署生效故不可逆 2；仅新增单个接口、影响多模块而非系统级故范围 2，合计 9 分中风险。"
+        "reasoning": "输入信号无任何缺陷关键词（无报错/异常/修复/日志等 ≥2 项），仅为前端 React 对接后端新增接口的新增功能 → feature_dev；\"前后端分离/前端/后端/api\" 命中跨仓库信号 → cross_repo 且需 execution_strategy_required；无 data_ops/security/data_integrity 触发故跳过诊断；改动需部署上线方可生效 → 不可逆性 2；跨前端与后端多模块 → 影响范围 2；接口契约细节未明需验证假设 → 不确定性 2；跨仓库协作 → 协调成本 3。"
       },
       "error": null,
       "passed": true,
@@ -2937,13 +4597,117 @@
           "actual": true
         }
       ],
-      "reasoning": "依赖「前后端分离」「React 调用后端新增接口」信号：无缺陷/报错关键词且属新建能力，判 feature_dev；接口契约未给定故不确定性 2；前后端分属不同仓库使协调成本 3，触发 cross_repo 与 execution_strategy；改动需部署生效故不可逆 2；仅新增单个接口、影响多模块而非系统级故范围 2，合计 9 分中风险。",
+      "reasoning": "输入信号无任何缺陷关键词（无报错/异常/修复/日志等 ≥2 项），仅为前端 React 对接后端新增接口的新增功能 → feature_dev；\"前后端分离/前端/后端/api\" 命中跨仓库信号 → cross_repo 且需 execution_strategy_required；无 data_ops/security/data_integrity 触发故跳过诊断；改动需部署上线方可生效 → 不可逆性 2；跨前端与后端多模块 → 影响范围 2；接口契约细节未明需验证假设 → 不确定性 2；跨仓库协作 → 协调成本 3。",
       "input_tokens": 3961
     },
     {
       "case_id": "pax-cross-repo-01",
       "category": "cross_repo_detection",
       "repeat": 2,
+      "holdout": false,
+      "prompt": "前后端分离的系统，前端 React 需要调用后端 API 的新增接口",
+      "expected": {
+        "cross_repo": true,
+        "execution_strategy_required": true
+      },
+      "actual": {
+        "primary_intent": "feature_dev",
+        "secondary_intent": [],
+        "irreversibility": 2,
+        "impact_scope": 2,
+        "uncertainty": 2,
+        "coordination_cost": 3,
+        "risk_score": 9,
+        "risk_level": "medium",
+        "diagnose_required": false,
+        "route": [
+          "pax-clarify",
+          "pax-plan",
+          "pax-execute",
+          "pax-review"
+        ],
+        "storage_backend_required": false,
+        "cross_repo": true,
+        "execution_strategy_required": true,
+        "reasoning": "依赖“前端 React 调用后端新增接口”信号：无报错/退化等缺陷信号故判 feature_dev（skip_reason=new_feature_no_prior_behavior），未出现对接异常故不标 integration；“前后端分离/前端/后端”命中跨仓库检测，coordination_cost 取 3、需执行策略；改动需部署生效且可回滚取不可逆性 2，仅接口级内部依赖取影响范围 2，接口契约细节待确认取不确定性 2，无数据操作信号故无需存储后端。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "cross_repo",
+          "passed": true,
+          "expected": true,
+          "actual": true
+        },
+        {
+          "check": "execution_strategy_required",
+          "passed": true,
+          "expected": true,
+          "actual": true
+        }
+      ],
+      "reasoning": "依赖“前端 React 调用后端新增接口”信号：无报错/退化等缺陷信号故判 feature_dev（skip_reason=new_feature_no_prior_behavior），未出现对接异常故不标 integration；“前后端分离/前端/后端”命中跨仓库检测，coordination_cost 取 3、需执行策略；改动需部署生效且可回滚取不可逆性 2，仅接口级内部依赖取影响范围 2，接口契约细节待确认取不确定性 2，无数据操作信号故无需存储后端。",
+      "input_tokens": 3961
+    },
+    {
+      "case_id": "pax-cross-repo-01",
+      "category": "cross_repo_detection",
+      "repeat": 3,
+      "holdout": false,
+      "prompt": "前后端分离的系统，前端 React 需要调用后端 API 的新增接口",
+      "expected": {
+        "cross_repo": true,
+        "execution_strategy_required": true
+      },
+      "actual": {
+        "primary_intent": "feature_dev",
+        "secondary_intent": [
+          "integration"
+        ],
+        "irreversibility": 2,
+        "impact_scope": 2,
+        "uncertainty": 2,
+        "coordination_cost": 3,
+        "risk_score": 9,
+        "risk_level": "medium",
+        "diagnose_required": false,
+        "route": [
+          "clarify",
+          "plan",
+          "execute",
+          "review"
+        ],
+        "storage_backend_required": false,
+        "cross_repo": true,
+        "execution_strategy_required": true,
+        "reasoning": "输入信号为「新增接口」「前端 React 调用后端 API」，无任何报错/退化/修复类缺陷关键词，故判为 feature_dev；「前后端分离」触发跨仓库信号（cross_repo、协调成本 3），接口契约与新增需求细节未明确使不确定性为 2，改动需前后端联调上线才能生效使不可逆性为 2，影响面为多模块/多使用人内部依赖为 2；无 security/data_integrity 二级意图，故不强制诊断、不升级 council。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "cross_repo",
+          "passed": true,
+          "expected": true,
+          "actual": true
+        },
+        {
+          "check": "execution_strategy_required",
+          "passed": true,
+          "expected": true,
+          "actual": true
+        }
+      ],
+      "reasoning": "输入信号为「新增接口」「前端 React 调用后端 API」，无任何报错/退化/修复类缺陷关键词，故判为 feature_dev；「前后端分离」触发跨仓库信号（cross_repo、协调成本 3），接口契约与新增需求细节未明确使不确定性为 2，改动需前后端联调上线才能生效使不可逆性为 2，影响面为多模块/多使用人内部依赖为 2；无 security/data_integrity 二级意图，故不强制诊断、不升级 council。",
+      "input_tokens": 3961
+    },
+    {
+      "case_id": "pax-cross-repo-01",
+      "category": "cross_repo_detection",
+      "repeat": 4,
       "holdout": false,
       "prompt": "前后端分离的系统，前端 React 需要调用后端 API 的新增接口",
       "expected": {
@@ -2971,7 +4735,7 @@
         "storage_backend_required": false,
         "cross_repo": true,
         "execution_strategy_required": true,
-        "reasoning": "依赖信号：无任何异常/报错/修复词（非诊断类）、『新增接口』属新建功能；『前后端分离／前端 React／后端 API』命中跨仓库与 API 契约信号，需前后端协调；接口规格未给出故需 clarify，无 security/data_integrity 故跳过 diagnose。"
+        "reasoning": "依赖信号：'前后端分离'/'前端 React'/'后端 API 新增接口' 无任何缺陷或报错描述，判为 feature_dev；接口对接触发 integration 二级意图；跨仓库信号（前端/后端/API）使跨仓库与执行策略标注为真，协调成本取 3；需上线生效且需与后端确认新接口契约（交互细节未定）故不可逆性与不确定性各取 2，影响范围为前后端多模块协同取 2，总分 9 落在 medium。"
       },
       "error": null,
       "passed": true,
@@ -2990,7 +4754,7 @@
           "actual": true
         }
       ],
-      "reasoning": "依赖信号：无任何异常/报错/修复词（非诊断类）、『新增接口』属新建功能；『前后端分离／前端 React／后端 API』命中跨仓库与 API 契约信号，需前后端协调；接口规格未给出故需 clarify，无 security/data_integrity 故跳过 diagnose。",
+      "reasoning": "依赖信号：'前后端分离'/'前端 React'/'后端 API 新增接口' 无任何缺陷或报错描述，判为 feature_dev；接口对接触发 integration 二级意图；跨仓库信号（前端/后端/API）使跨仓库与执行策略标注为真，协调成本取 3；需上线生效且需与后端确认新接口契约（交互细节未定）故不可逆性与不确定性各取 2，影响范围为前后端多模块协同取 2，总分 9 落在 medium。",
       "input_tokens": 3961
     },
     {
@@ -3018,15 +4782,15 @@
         "risk_level": "low",
         "diagnose_required": false,
         "route": [
-          "pax-clarify",
-          "pax-plan",
-          "pax-execute",
-          "pax-review"
+          "clarify",
+          "plan",
+          "execute",
+          "review"
         ],
         "storage_backend_required": false,
         "cross_repo": false,
         "execution_strategy_required": false,
-        "reasoning": "依赖信号：无缺陷/报错关键词且为行为调整（feature_dev）；有备份可直还原、无部署流程故不可逆=1；财务+运营两组共用作`多使用人`故影响=2；需求明确无待确认项故不确定=1；需 code review 故协调=2；无 security/data_integrity/跨仓库信号。"
+        "reasoning": "用户明确需求为修改脚本配置项，有备份可还原，涉及两个文件需 code review，无缺陷信号和安全/数据完整性风险，故归为 feature_dev，低风险，跳过诊断。"
       },
       "error": null,
       "passed": true,
@@ -3069,7 +4833,7 @@
           "actual": "low"
         }
       ],
-      "reasoning": "依赖信号：无缺陷/报错关键词且为行为调整（feature_dev）；有备份可直还原、无部署流程故不可逆=1；财务+运营两组共用作`多使用人`故影响=2；需求明确无待确认项故不确定=1；需 code review 故协调=2；无 security/data_integrity/跨仓库信号。",
+      "reasoning": "用户明确需求为修改脚本配置项，有备份可还原，涉及两个文件需 code review，无缺陷信号和安全/数据完整性风险，故归为 feature_dev，低风险，跳过诊断。",
       "input_tokens": 4025
     },
     {
@@ -3105,7 +4869,7 @@
         "storage_backend_required": false,
         "cross_repo": false,
         "execution_strategy_required": false,
-        "reasoning": "信号：无异常/报错/堆栈等缺陷词且无数据订正/迁移语义，判为修改既有脚本行为的 feature_dev；有备份可直接还原且不触发部署→不可逆性1，财务+运营两组每周使用（多使用人内部工具）→影响范围2，需求明确无待验证假设→不确定性1，同团队内2文件联动且需 code review→协调成本2；无 security/data_integrity/ux_error 等二级信号，故跳过诊断并按 feature_dev 主干路由。"
+        "reasoning": "依据信号：无任何报错/异常/失败缺陷词（排除 diagnose_fix），改动对象是既有脚本的参数行为而非数据订正/迁移（排除 data_ops），非纯文档咨询、非新建工具、且改变了外部行为（排除 doc_consult/refactor/tool_build）故定 feature_dev；『需求明确、无其他改动』对应 uncertainty=1；『有备份、可还原、不触发部署』对应 irreversibility=1；财务与运营两组每周使用（多使用人）对应 impact_scope=2；『同团队内 2 个文件 + 需 code review』对应 coordination_cost=2；无 security/data_integrity/ux_error/integration/deployment 信号，同团队单仓无跨仓库信号，故各项标注为 false。"
       },
       "error": null,
       "passed": true,
@@ -3148,7 +4912,7 @@
           "actual": "low"
         }
       ],
-      "reasoning": "信号：无异常/报错/堆栈等缺陷词且无数据订正/迁移语义，判为修改既有脚本行为的 feature_dev；有备份可直接还原且不触发部署→不可逆性1，财务+运营两组每周使用（多使用人内部工具）→影响范围2，需求明确无待验证假设→不确定性1，同团队内2文件联动且需 code review→协调成本2；无 security/data_integrity/ux_error 等二级信号，故跳过诊断并按 feature_dev 主干路由。",
+      "reasoning": "依据信号：无任何报错/异常/失败缺陷词（排除 diagnose_fix），改动对象是既有脚本的参数行为而非数据订正/迁移（排除 data_ops），非纯文档咨询、非新建工具、且改变了外部行为（排除 doc_consult/refactor/tool_build）故定 feature_dev；『需求明确、无其他改动』对应 uncertainty=1；『有备份、可还原、不触发部署』对应 irreversibility=1；财务与运营两组每周使用（多使用人）对应 impact_scope=2；『同团队内 2 个文件 + 需 code review』对应 coordination_cost=2；无 security/data_integrity/ux_error/integration/deployment 信号，同团队单仓无跨仓库信号，故各项标注为 false。",
       "input_tokens": 4025
     },
     {
@@ -3184,7 +4948,7 @@
         "storage_backend_required": false,
         "cross_repo": false,
         "execution_strategy_required": false,
-        "reasoning": "依赖信号：明确为“调整脚本配置项/修改既有行为”且无报错或退化描述→feature_dev；有备份可还原、无部署流程→不可逆性1；财务+运营两组周度共用→多使用人影响范围2；需求明确无待确认项→不确定性1；同团队内2文件+一次code review→协调成本2；无security/data_integrity/ux_error/跨仓库信号。"
+        "reasoning": "依据用户明示信号：改配置项属功能行为变更且无缺陷信号（非diagnose_fix）、非数据订正/迁移（非data_ops）、非纯文档（非doc_consult）、非新建工具；有备份可还原且不触发部署→不可逆性1；同一内部脚本被财务和运营两组使用→影响范围2；需求明确无待验证假设→不确定性1；需一次code review与2文件联动→协调成本2；无跨仓库/前端/API等信号故cross_repo=false。"
       },
       "error": null,
       "passed": true,
@@ -3227,7 +4991,165 @@
           "actual": "low"
         }
       ],
-      "reasoning": "依赖信号：明确为“调整脚本配置项/修改既有行为”且无报错或退化描述→feature_dev；有备份可还原、无部署流程→不可逆性1；财务+运营两组周度共用→多使用人影响范围2；需求明确无待确认项→不确定性1；同团队内2文件+一次code review→协调成本2；无security/data_integrity/ux_error/跨仓库信号。",
+      "reasoning": "依据用户明示信号：改配置项属功能行为变更且无缺陷信号（非diagnose_fix）、非数据订正/迁移（非data_ops）、非纯文档（非doc_consult）、非新建工具；有备份可还原且不触发部署→不可逆性1；同一内部脚本被财务和运营两组使用→影响范围2；需求明确无待验证假设→不确定性1；需一次code review与2文件联动→协调成本2；无跨仓库/前端/API等信号故cross_repo=false。",
+      "input_tokens": 4025
+    },
+    {
+      "case_id": "pax-risk-low-02",
+      "category": "risk_scoring",
+      "repeat": 3,
+      "holdout": true,
+      "prompt": "调整内部数据导出脚本的一个配置项，把导出的时间窗口从 7 天改成 30 天。改动前脚本有备份，改错了可以直接还原。这个脚本财务和运营两个组每周各用一次。需求明确，就是把窗口参数改掉，没有其他改动。改动都在同一个团队内部，涉及 2 个文件，需要走一次 code review。",
+      "expected": {
+        "irreversibility": 1,
+        "impact_scope": 2,
+        "uncertainty": 1,
+        "coordination_cost": 2,
+        "risk_score": 6,
+        "risk_level": "low"
+      },
+      "actual": {
+        "primary_intent": "feature_dev",
+        "secondary_intent": [],
+        "irreversibility": 1,
+        "impact_scope": 2,
+        "uncertainty": 1,
+        "coordination_cost": 2,
+        "risk_score": 6,
+        "risk_level": "low",
+        "diagnose_required": false,
+        "route": [
+          "clarify",
+          "plan",
+          "execute",
+          "review"
+        ],
+        "storage_backend_required": false,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "依赖信号：无报错/异常/修复等缺陷词且明确为改参数→feature_dev；无安全/数据完整性/性能等二级信号；本地脚本+有备份且不触发部署→不可逆性1；财务与运营两组共用→多使用人影响范围2；需求明确无待确认→不确定性1；同团队、2文件+需code review→协调成本2；无前后端/多仓库信号→非跨仓库。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "irreversibility",
+          "passed": true,
+          "expected": 1,
+          "actual": 1
+        },
+        {
+          "check": "impact_scope",
+          "passed": true,
+          "expected": 2,
+          "actual": 2
+        },
+        {
+          "check": "uncertainty",
+          "passed": true,
+          "expected": 1,
+          "actual": 1
+        },
+        {
+          "check": "coordination_cost",
+          "passed": true,
+          "expected": 2,
+          "actual": 2
+        },
+        {
+          "check": "risk_score",
+          "passed": true,
+          "expected": 6,
+          "actual": 6
+        },
+        {
+          "check": "risk_level",
+          "passed": true,
+          "expected": "low",
+          "actual": "low"
+        }
+      ],
+      "reasoning": "依赖信号：无报错/异常/修复等缺陷词且明确为改参数→feature_dev；无安全/数据完整性/性能等二级信号；本地脚本+有备份且不触发部署→不可逆性1；财务与运营两组共用→多使用人影响范围2；需求明确无待确认→不确定性1；同团队、2文件+需code review→协调成本2；无前后端/多仓库信号→非跨仓库。",
+      "input_tokens": 4025
+    },
+    {
+      "case_id": "pax-risk-low-02",
+      "category": "risk_scoring",
+      "repeat": 4,
+      "holdout": true,
+      "prompt": "调整内部数据导出脚本的一个配置项，把导出的时间窗口从 7 天改成 30 天。改动前脚本有备份，改错了可以直接还原。这个脚本财务和运营两个组每周各用一次。需求明确，就是把窗口参数改掉，没有其他改动。改动都在同一个团队内部，涉及 2 个文件，需要走一次 code review。",
+      "expected": {
+        "irreversibility": 1,
+        "impact_scope": 2,
+        "uncertainty": 1,
+        "coordination_cost": 2,
+        "risk_score": 6,
+        "risk_level": "low"
+      },
+      "actual": {
+        "primary_intent": "feature_dev",
+        "secondary_intent": [],
+        "irreversibility": 1,
+        "impact_scope": 2,
+        "uncertainty": 1,
+        "coordination_cost": 2,
+        "risk_score": 6,
+        "risk_level": "low",
+        "diagnose_required": false,
+        "route": [
+          "pax-clarify",
+          "pax-plan",
+          "pax-execute",
+          "pax-review"
+        ],
+        "storage_backend_required": false,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "依赖了'配置项调整、需求明确、有备份可还原、财务和运营两组每周使用、同团队2个文件、需要code review'等信号，判定为无既有缺陷的功能修改。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "irreversibility",
+          "passed": true,
+          "expected": 1,
+          "actual": 1
+        },
+        {
+          "check": "impact_scope",
+          "passed": true,
+          "expected": 2,
+          "actual": 2
+        },
+        {
+          "check": "uncertainty",
+          "passed": true,
+          "expected": 1,
+          "actual": 1
+        },
+        {
+          "check": "coordination_cost",
+          "passed": true,
+          "expected": 2,
+          "actual": 2
+        },
+        {
+          "check": "risk_score",
+          "passed": true,
+          "expected": 6,
+          "actual": 6
+        },
+        {
+          "check": "risk_level",
+          "passed": true,
+          "expected": "low",
+          "actual": "low"
+        }
+      ],
+      "reasoning": "依赖了'配置项调整、需求明确、有备份可还原、财务和运营两组每周使用、同团队2个文件、需要code review'等信号，判定为无既有缺陷的功能修改。",
       "input_tokens": 4025
     },
     {
@@ -3243,414 +5165,727 @@
         "coordination_cost": 2,
         "risk_score": 9,
         "risk_level": "medium"
+      },
+      "actual": {
+        "primary_intent": "refactor",
+        "secondary_intent": [],
+        "irreversibility": 2,
+        "impact_scope": 3,
+        "uncertainty": 2,
+        "coordination_cost": 2,
+        "risk_score": 9,
+        "risk_level": "medium",
+        "diagnose_required": false,
+        "route": [
+          "clarify",
+          "plan",
+          "execute",
+          "review"
+        ],
+        "storage_backend_required": false,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "依赖信号：无任何报错/异常/失败等缺陷信号且明确'同步改异步、外部行为不变'→ refactor（跳过诊断，refactor_no_behavior_change）；'所有客户下单前必经入口'命中核心下单链路→ impact 3；'需部署上线生效+有回滚脚本可切回'→ irreversibility 2（可回滚但需工具与发布流程）；'调用顺序需在测试环境验证一轮'属未验证假设→ uncertainty 2；'团队内 3 个服务调用改造+需 code review'且明确'改动都在同一个仓库内'→ coordination 2、cross_repo false；二级意图无性能退化/集成故障/安全/数据一致性信号，故为空；总分 9 → medium，未触发强制升级。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "irreversibility",
+          "passed": true,
+          "expected": 2,
+          "actual": 2
+        },
+        {
+          "check": "impact_scope",
+          "passed": true,
+          "expected": 3,
+          "actual": 3
+        },
+        {
+          "check": "uncertainty",
+          "passed": true,
+          "expected": 2,
+          "actual": 2
+        },
+        {
+          "check": "coordination_cost",
+          "passed": true,
+          "expected": 2,
+          "actual": 2
+        },
+        {
+          "check": "risk_score",
+          "passed": true,
+          "expected": 9,
+          "actual": 9
+        },
+        {
+          "check": "risk_level",
+          "passed": true,
+          "expected": "medium",
+          "actual": "medium"
+        }
+      ],
+      "reasoning": "依赖信号：无任何报错/异常/失败等缺陷信号且明确'同步改异步、外部行为不变'→ refactor（跳过诊断，refactor_no_behavior_change）；'所有客户下单前必经入口'命中核心下单链路→ impact 3；'需部署上线生效+有回滚脚本可切回'→ irreversibility 2（可回滚但需工具与发布流程）；'调用顺序需在测试环境验证一轮'属未验证假设→ uncertainty 2；'团队内 3 个服务调用改造+需 code review'且明确'改动都在同一个仓库内'→ coordination 2、cross_repo false；二级意图无性能退化/集成故障/安全/数据一致性信号，故为空；总分 9 → medium，未触发强制升级。",
+      "input_tokens": 4013
+    },
+    {
+      "case_id": "pax-risk-medium-02",
+      "category": "risk_scoring",
+      "repeat": 1,
+      "holdout": true,
+      "prompt": "把商品详情查询接口从同步调用改成异步。这个接口是所有客户下单前必经的查询入口，涉及团队内 3 个服务的调用改造，改动都在同一个仓库内。上线后有回滚脚本可以切回同步模式。调用顺序需要在测试环境验证一轮再上线，改动完成后需要走一次 code review。",
+      "expected": {
+        "irreversibility": 2,
+        "impact_scope": 3,
+        "uncertainty": 2,
+        "coordination_cost": 2,
+        "risk_score": 9,
+        "risk_level": "medium"
+      },
+      "actual": {
+        "primary_intent": "refactor",
+        "secondary_intent": [],
+        "irreversibility": 2,
+        "impact_scope": 3,
+        "uncertainty": 2,
+        "coordination_cost": 2,
+        "risk_score": 9,
+        "risk_level": "medium",
+        "diagnose_required": false,
+        "route": [
+          "clarify",
+          "plan",
+          "execute",
+          "review"
+        ],
+        "storage_backend_required": false,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "依赖信号：同步改异步属不改变外部查询语义的内部调用模式改造（refactor），无报错/退化等缺陷信号故不判 diagnose_fix，也非数据订正或纯咨询；商品详情为所有客户下单前必经入口+团队内 3 服务改造判影响范围 3，需部署并有回滚脚本判不可逆性 2，调用顺序需测试环境验证一轮判不确定性 2，同仓库内多服务联动+需 code review 判协调成本 2；用户明确‘改动都在同一个仓库内’故 cross_repo=false，无 security/data_integrity/performance 二级信号，总分 9 判 medium。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "irreversibility",
+          "passed": true,
+          "expected": 2,
+          "actual": 2
+        },
+        {
+          "check": "impact_scope",
+          "passed": true,
+          "expected": 3,
+          "actual": 3
+        },
+        {
+          "check": "uncertainty",
+          "passed": true,
+          "expected": 2,
+          "actual": 2
+        },
+        {
+          "check": "coordination_cost",
+          "passed": true,
+          "expected": 2,
+          "actual": 2
+        },
+        {
+          "check": "risk_score",
+          "passed": true,
+          "expected": 9,
+          "actual": 9
+        },
+        {
+          "check": "risk_level",
+          "passed": true,
+          "expected": "medium",
+          "actual": "medium"
+        }
+      ],
+      "reasoning": "依赖信号：同步改异步属不改变外部查询语义的内部调用模式改造（refactor），无报错/退化等缺陷信号故不判 diagnose_fix，也非数据订正或纯咨询；商品详情为所有客户下单前必经入口+团队内 3 服务改造判影响范围 3，需部署并有回滚脚本判不可逆性 2，调用顺序需测试环境验证一轮判不确定性 2，同仓库内多服务联动+需 code review 判协调成本 2；用户明确‘改动都在同一个仓库内’故 cross_repo=false，无 security/data_integrity/performance 二级信号，总分 9 判 medium。",
+      "input_tokens": 4013
+    },
+    {
+      "case_id": "pax-risk-medium-02",
+      "category": "risk_scoring",
+      "repeat": 2,
+      "holdout": true,
+      "prompt": "把商品详情查询接口从同步调用改成异步。这个接口是所有客户下单前必经的查询入口，涉及团队内 3 个服务的调用改造，改动都在同一个仓库内。上线后有回滚脚本可以切回同步模式。调用顺序需要在测试环境验证一轮再上线，改动完成后需要走一次 code review。",
+      "expected": {
+        "irreversibility": 2,
+        "impact_scope": 3,
+        "uncertainty": 2,
+        "coordination_cost": 2,
+        "risk_score": 9,
+        "risk_level": "medium"
+      },
+      "actual": {
+        "primary_intent": "refactor",
+        "secondary_intent": [],
+        "irreversibility": 2,
+        "impact_scope": 3,
+        "uncertainty": 2,
+        "coordination_cost": 2,
+        "risk_score": 9,
+        "risk_level": "medium",
+        "diagnose_required": false,
+        "route": [
+          "pax-clarify",
+          "pax-plan",
+          "pax-execute",
+          "pax-review"
+        ],
+        "storage_backend_required": false,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "依赖信号：同步改异步且无缺陷/报错信号，商品详情查询为核心下单链路，3 个服务改造但同仓库且有回滚脚本，需测试环境验证调用顺序并走 code review。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "irreversibility",
+          "passed": true,
+          "expected": 2,
+          "actual": 2
+        },
+        {
+          "check": "impact_scope",
+          "passed": true,
+          "expected": 3,
+          "actual": 3
+        },
+        {
+          "check": "uncertainty",
+          "passed": true,
+          "expected": 2,
+          "actual": 2
+        },
+        {
+          "check": "coordination_cost",
+          "passed": true,
+          "expected": 2,
+          "actual": 2
+        },
+        {
+          "check": "risk_score",
+          "passed": true,
+          "expected": 9,
+          "actual": 9
+        },
+        {
+          "check": "risk_level",
+          "passed": true,
+          "expected": "medium",
+          "actual": "medium"
+        }
+      ],
+      "reasoning": "依赖信号：同步改异步且无缺陷/报错信号，商品详情查询为核心下单链路，3 个服务改造但同仓库且有回滚脚本，需测试环境验证调用顺序并走 code review。",
+      "input_tokens": 4013
+    },
+    {
+      "case_id": "pax-risk-medium-02",
+      "category": "risk_scoring",
+      "repeat": 3,
+      "holdout": true,
+      "prompt": "把商品详情查询接口从同步调用改成异步。这个接口是所有客户下单前必经的查询入口，涉及团队内 3 个服务的调用改造，改动都在同一个仓库内。上线后有回滚脚本可以切回同步模式。调用顺序需要在测试环境验证一轮再上线，改动完成后需要走一次 code review。",
+      "expected": {
+        "irreversibility": 2,
+        "impact_scope": 3,
+        "uncertainty": 2,
+        "coordination_cost": 2,
+        "risk_score": 9,
+        "risk_level": "medium"
+      },
+      "actual": {
+        "primary_intent": "refactor",
+        "secondary_intent": [],
+        "irreversibility": 2,
+        "impact_scope": 3,
+        "uncertainty": 2,
+        "coordination_cost": 2,
+        "risk_score": 9,
+        "risk_level": "medium",
+        "diagnose_required": false,
+        "route": [
+          "clarify",
+          "plan",
+          "execute",
+          "review"
+        ],
+        "storage_backend_required": false,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "依赖信号：无任何报错/异常/退化描述而是主动把同步调用改为异步、不改变对外返回语义→refactor（跳过诊断，refactor_no_behavior_change）；『所有客户下单前必经的查询入口』→影响范围3；『需上线才能生效、有回滚脚本可切回同步』→不可逆性2（未达不可逆/高回滚成本）；『调用顺序需在测试环境验证一轮』→需验证未验证假设，不确定性2（需求本身明确，未到3）；『同仓库内3个服务调用改造+需一次 code review』为单团队内跨模块联动，未跨团队/跨仓库→协调成本2、cross_repo=false、无 storage/data_integrity/security 信号故不强制升级；总分9→medium。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "irreversibility",
+          "passed": true,
+          "expected": 2,
+          "actual": 2
+        },
+        {
+          "check": "impact_scope",
+          "passed": true,
+          "expected": 3,
+          "actual": 3
+        },
+        {
+          "check": "uncertainty",
+          "passed": true,
+          "expected": 2,
+          "actual": 2
+        },
+        {
+          "check": "coordination_cost",
+          "passed": true,
+          "expected": 2,
+          "actual": 2
+        },
+        {
+          "check": "risk_score",
+          "passed": true,
+          "expected": 9,
+          "actual": 9
+        },
+        {
+          "check": "risk_level",
+          "passed": true,
+          "expected": "medium",
+          "actual": "medium"
+        }
+      ],
+      "reasoning": "依赖信号：无任何报错/异常/退化描述而是主动把同步调用改为异步、不改变对外返回语义→refactor（跳过诊断，refactor_no_behavior_change）；『所有客户下单前必经的查询入口』→影响范围3；『需上线才能生效、有回滚脚本可切回同步』→不可逆性2（未达不可逆/高回滚成本）；『调用顺序需在测试环境验证一轮』→需验证未验证假设，不确定性2（需求本身明确，未到3）；『同仓库内3个服务调用改造+需一次 code review』为单团队内跨模块联动，未跨团队/跨仓库→协调成本2、cross_repo=false、无 storage/data_integrity/security 信号故不强制升级；总分9→medium。",
+      "input_tokens": 4013
+    },
+    {
+      "case_id": "pax-risk-medium-02",
+      "category": "risk_scoring",
+      "repeat": 4,
+      "holdout": true,
+      "prompt": "把商品详情查询接口从同步调用改成异步。这个接口是所有客户下单前必经的查询入口，涉及团队内 3 个服务的调用改造，改动都在同一个仓库内。上线后有回滚脚本可以切回同步模式。调用顺序需要在测试环境验证一轮再上线，改动完成后需要走一次 code review。",
+      "expected": {
+        "irreversibility": 2,
+        "impact_scope": 3,
+        "uncertainty": 2,
+        "coordination_cost": 2,
+        "risk_score": 9,
+        "risk_level": "medium"
+      },
+      "actual": {
+        "primary_intent": "feature_dev",
+        "secondary_intent": [],
+        "irreversibility": 2,
+        "impact_scope": 3,
+        "uncertainty": 2,
+        "coordination_cost": 2,
+        "risk_score": 9,
+        "risk_level": "medium",
+        "diagnose_required": false,
+        "route": [
+          "pax-clarify",
+          "pax-plan",
+          "pax-execute",
+          "pax-review"
+        ],
+        "storage_backend_required": false,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "无报错/修复/日志等缺陷信号、无订正迁移等数据信号、非纯文档咨询，故一级意图取默认 feature_dev（同步改异步会改变调用方契约与调用顺序，非'不改变外部行为'的重构）；无 performance/security/data_integrity/ux_error 等二级触发词，故二级为空；不可逆性 2 依赖'上线后有回滚脚本可切回同步模式'（需部署且可回退）；影响范围 3 依赖'所有客户下单前必经的查询入口'（覆盖核心下单链路）；不确定性 2 依赖'调用顺序需在测试环境验证一轮再上线'（需验证未验证假设）；协调成本 2 依赖'团队内 3 个服务调用改造 + 走一次 code review'；跨仓库为 false 依赖用户明确说明'改动都在同一个仓库内'。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "irreversibility",
+          "passed": true,
+          "expected": 2,
+          "actual": 2
+        },
+        {
+          "check": "impact_scope",
+          "passed": true,
+          "expected": 3,
+          "actual": 3
+        },
+        {
+          "check": "uncertainty",
+          "passed": true,
+          "expected": 2,
+          "actual": 2
+        },
+        {
+          "check": "coordination_cost",
+          "passed": true,
+          "expected": 2,
+          "actual": 2
+        },
+        {
+          "check": "risk_score",
+          "passed": true,
+          "expected": 9,
+          "actual": 9
+        },
+        {
+          "check": "risk_level",
+          "passed": true,
+          "expected": "medium",
+          "actual": "medium"
+        }
+      ],
+      "reasoning": "无报错/修复/日志等缺陷信号、无订正迁移等数据信号、非纯文档咨询，故一级意图取默认 feature_dev（同步改异步会改变调用方契约与调用顺序，非'不改变外部行为'的重构）；无 performance/security/data_integrity/ux_error 等二级触发词，故二级为空；不可逆性 2 依赖'上线后有回滚脚本可切回同步模式'（需部署且可回退）；影响范围 3 依赖'所有客户下单前必经的查询入口'（覆盖核心下单链路）；不确定性 2 依赖'调用顺序需在测试环境验证一轮再上线'（需验证未验证假设）；协调成本 2 依赖'团队内 3 个服务调用改造 + 走一次 code review'；跨仓库为 false 依赖用户明确说明'改动都在同一个仓库内'。",
+      "input_tokens": 4013
+    },
+    {
+      "case_id": "pax-risk-high-02",
+      "category": "risk_scoring",
+      "repeat": 0,
+      "holdout": true,
+      "prompt": "清理生产数据库中 3 年前的过期订单记录，物理删除无法恢复，涉及公司所有用户的订单历史。这是标准的数据清理流程，公司有明确的清理脚本和操作手册，由我单人执行即可，不需要其他人配合。",
+      "expected": {
+        "irreversibility": 3,
+        "impact_scope": 3,
+        "uncertainty": 1,
+        "coordination_cost": 1,
+        "risk_score": 8,
+        "risk_level": "high"
+      },
+      "actual": {
+        "primary_intent": "data_ops",
+        "secondary_intent": [],
+        "irreversibility": 3,
+        "impact_scope": 3,
+        "uncertainty": 1,
+        "coordination_cost": 1,
+        "risk_score": 8,
+        "risk_level": "high",
+        "diagnose_required": true,
+        "route": [
+          "pax-clarify",
+          "pax-diagnose",
+          "pax-plan",
+          "pax-execute",
+          "pax-review"
+        ],
+        "storage_backend_required": true,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "依赖“清理数据/批量删除”判定为 data_ops；“物理删除无法恢复”给不可逆性3，“所有用户订单历史（订单核心链路）”给影响范围3，触发不可逆3×影响3强制升级为 high（总分3+3+1+1=8）；“有既有脚本与操作手册、单人执行”给不确定性1、协调成本1；data_ops 强制诊断并需确认存储后端；无前端/后端/多仓库信号故 cross_repo=false。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "irreversibility",
+          "passed": true,
+          "expected": 3,
+          "actual": 3
+        },
+        {
+          "check": "impact_scope",
+          "passed": true,
+          "expected": 3,
+          "actual": 3
+        },
+        {
+          "check": "uncertainty",
+          "passed": true,
+          "expected": 1,
+          "actual": 1
+        },
+        {
+          "check": "coordination_cost",
+          "passed": true,
+          "expected": 1,
+          "actual": 1
+        },
+        {
+          "check": "risk_score",
+          "passed": true,
+          "expected": 8,
+          "actual": 8
+        },
+        {
+          "check": "risk_level",
+          "passed": true,
+          "expected": "high",
+          "actual": "high"
+        }
+      ],
+      "reasoning": "依赖“清理数据/批量删除”判定为 data_ops；“物理删除无法恢复”给不可逆性3，“所有用户订单历史（订单核心链路）”给影响范围3，触发不可逆3×影响3强制升级为 high（总分3+3+1+1=8）；“有既有脚本与操作手册、单人执行”给不确定性1、协调成本1；data_ops 强制诊断并需确认存储后端；无前端/后端/多仓库信号故 cross_repo=false。",
+      "input_tokens": 3993
+    },
+    {
+      "case_id": "pax-risk-high-02",
+      "category": "risk_scoring",
+      "repeat": 1,
+      "holdout": true,
+      "prompt": "清理生产数据库中 3 年前的过期订单记录，物理删除无法恢复，涉及公司所有用户的订单历史。这是标准的数据清理流程，公司有明确的清理脚本和操作手册，由我单人执行即可，不需要其他人配合。",
+      "expected": {
+        "irreversibility": 3,
+        "impact_scope": 3,
+        "uncertainty": 1,
+        "coordination_cost": 1,
+        "risk_score": 8,
+        "risk_level": "high"
+      },
+      "actual": {
+        "primary_intent": "data_ops",
+        "secondary_intent": [],
+        "irreversibility": 3,
+        "impact_scope": 3,
+        "uncertainty": 1,
+        "coordination_cost": 1,
+        "risk_score": 8,
+        "risk_level": "high",
+        "diagnose_required": true,
+        "route": [
+          "pax-clarify",
+          "pax-diagnose",
+          "pax-plan",
+          "pax-execute",
+          "pax-review"
+        ],
+        "storage_backend_required": true,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "依赖信号：'清理/批量删除过期订单记录'判定一级意图 data_ops；'物理删除无法恢复'→不可逆性=3，'涉及公司所有用户的订单历史+生产库+订单核心链路'→影响范围=3（触发不可逆3且影响3的强制升级为 high），'标准清理脚本+操作手册、单人执行不需要配合'→不确定性=1、协调成本=1；data_ops 强制诊断并需确认存储后端，无前后端/多仓库信号故 cross_repo=false。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "irreversibility",
+          "passed": true,
+          "expected": 3,
+          "actual": 3
+        },
+        {
+          "check": "impact_scope",
+          "passed": true,
+          "expected": 3,
+          "actual": 3
+        },
+        {
+          "check": "uncertainty",
+          "passed": true,
+          "expected": 1,
+          "actual": 1
+        },
+        {
+          "check": "coordination_cost",
+          "passed": true,
+          "expected": 1,
+          "actual": 1
+        },
+        {
+          "check": "risk_score",
+          "passed": true,
+          "expected": 8,
+          "actual": 8
+        },
+        {
+          "check": "risk_level",
+          "passed": true,
+          "expected": "high",
+          "actual": "high"
+        }
+      ],
+      "reasoning": "依赖信号：'清理/批量删除过期订单记录'判定一级意图 data_ops；'物理删除无法恢复'→不可逆性=3，'涉及公司所有用户的订单历史+生产库+订单核心链路'→影响范围=3（触发不可逆3且影响3的强制升级为 high），'标准清理脚本+操作手册、单人执行不需要配合'→不确定性=1、协调成本=1；data_ops 强制诊断并需确认存储后端，无前后端/多仓库信号故 cross_repo=false。",
+      "input_tokens": 3993
+    },
+    {
+      "case_id": "pax-risk-high-02",
+      "category": "risk_scoring",
+      "repeat": 2,
+      "holdout": true,
+      "prompt": "清理生产数据库中 3 年前的过期订单记录，物理删除无法恢复，涉及公司所有用户的订单历史。这是标准的数据清理流程，公司有明确的清理脚本和操作手册，由我单人执行即可，不需要其他人配合。",
+      "expected": {
+        "irreversibility": 3,
+        "impact_scope": 3,
+        "uncertainty": 1,
+        "coordination_cost": 1,
+        "risk_score": 8,
+        "risk_level": "high"
+      },
+      "actual": {
+        "primary_intent": "data_ops",
+        "secondary_intent": [],
+        "irreversibility": 3,
+        "impact_scope": 3,
+        "uncertainty": 1,
+        "coordination_cost": 1,
+        "risk_score": 8,
+        "risk_level": "high",
+        "diagnose_required": true,
+        "route": [
+          "pax-clarify",
+          "pax-diagnose",
+          "pax-plan",
+          "pax-execute",
+          "pax-review"
+        ],
+        "storage_backend_required": true,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "用户明确描述生产库批量清理订单（data_ops 信号）+ 物理删除不可恢复（不可逆性3）+ 覆盖全公司用户订单历史核心链路（影响范围3），虽自述有手册脚本、单人执行（不确定性1、协调成本1），但触发『不可逆性3且影响范围3』强制升级为 high"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "irreversibility",
+          "passed": true,
+          "expected": 3,
+          "actual": 3
+        },
+        {
+          "check": "impact_scope",
+          "passed": true,
+          "expected": 3,
+          "actual": 3
+        },
+        {
+          "check": "uncertainty",
+          "passed": true,
+          "expected": 1,
+          "actual": 1
+        },
+        {
+          "check": "coordination_cost",
+          "passed": true,
+          "expected": 1,
+          "actual": 1
+        },
+        {
+          "check": "risk_score",
+          "passed": true,
+          "expected": 8,
+          "actual": 8
+        },
+        {
+          "check": "risk_level",
+          "passed": true,
+          "expected": "high",
+          "actual": "high"
+        }
+      ],
+      "reasoning": "用户明确描述生产库批量清理订单（data_ops 信号）+ 物理删除不可恢复（不可逆性3）+ 覆盖全公司用户订单历史核心链路（影响范围3），虽自述有手册脚本、单人执行（不确定性1、协调成本1），但触发『不可逆性3且影响范围3』强制升级为 high",
+      "input_tokens": 3993
+    },
+    {
+      "case_id": "pax-risk-high-02",
+      "category": "risk_scoring",
+      "repeat": 3,
+      "holdout": true,
+      "prompt": "清理生产数据库中 3 年前的过期订单记录，物理删除无法恢复，涉及公司所有用户的订单历史。这是标准的数据清理流程，公司有明确的清理脚本和操作手册，由我单人执行即可，不需要其他人配合。",
+      "expected": {
+        "irreversibility": 3,
+        "impact_scope": 3,
+        "uncertainty": 1,
+        "coordination_cost": 1,
+        "risk_score": 8,
+        "risk_level": "high"
+      },
+      "actual": {
+        "primary_intent": "data_ops",
+        "secondary_intent": [
+          "data_integrity"
+        ],
+        "irreversibility": 3,
+        "impact_scope": 3,
+        "uncertainty": 1,
+        "coordination_cost": 1,
+        "risk_score": 8,
+        "risk_level": "high",
+        "diagnose_required": true,
+        "route": [
+          "pax-clarify",
+          "pax-diagnose",
+          "pax-plan",
+          "pax-execute",
+          "pax-review"
+        ],
+        "storage_backend_required": true,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "依赖用户明确的生产库物理删除、3年前订单、全用户订单历史、标准清理脚本/手册及单人执行信号，按数据操作与数据完整性处理，并因不可逆性3和影响范围3强制高风险。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "irreversibility",
+          "passed": true,
+          "expected": 3,
+          "actual": 3
+        },
+        {
+          "check": "impact_scope",
+          "passed": true,
+          "expected": 3,
+          "actual": 3
+        },
+        {
+          "check": "uncertainty",
+          "passed": true,
+          "expected": 1,
+          "actual": 1
+        },
+        {
+          "check": "coordination_cost",
+          "passed": true,
+          "expected": 1,
+          "actual": 1
+        },
+        {
+          "check": "risk_score",
+          "passed": true,
+          "expected": 8,
+          "actual": 8
+        },
+        {
+          "check": "risk_level",
+          "passed": true,
+          "expected": "high",
+          "actual": "high"
+        }
+      ],
+      "reasoning": "依赖用户明确的生产库物理删除、3年前订单、全用户订单历史、标准清理脚本/手册及单人执行信号，按数据操作与数据完整性处理，并因不可逆性3和影响范围3强制高风险。",
+      "input_tokens": 3993
+    },
+    {
+      "case_id": "pax-risk-high-02",
+      "category": "risk_scoring",
+      "repeat": 4,
+      "holdout": true,
+      "prompt": "清理生产数据库中 3 年前的过期订单记录，物理删除无法恢复，涉及公司所有用户的订单历史。这是标准的数据清理流程，公司有明确的清理脚本和操作手册，由我单人执行即可，不需要其他人配合。",
+      "expected": {
+        "irreversibility": 3,
+        "impact_scope": 3,
+        "uncertainty": 1,
+        "coordination_cost": 1,
+        "risk_score": 8,
+        "risk_level": "high"
       },
       "actual": {
         "primary_intent": "diagnose_fix",
         "secondary_intent": [
-          "performance",
-          "integration"
-        ],
-        "irreversibility": 2,
-        "impact_scope": 3,
-        "uncertainty": 2,
-        "coordination_cost": 2,
-        "risk_score": 9,
-        "risk_level": "medium",
-        "diagnose_required": true,
-        "route": [
-          "pax-diagnose",
-          "pax-plan",
-          "pax-execute",
-          "pax-review"
-        ],
-        "storage_backend_required": false,
-        "cross_repo": false,
-        "execution_strategy_required": false,
-        "reasoning": "核心信号：『所有客户下单前必经的查询入口』+『3 个服务的调用改造』+『测试环境验证一轮』+『上线后回滚脚本』+『同仓库』+『code review』——影响范围判 3（覆盖下单核心链路且跨服务），不可逆性判 2（需上线部署但有回滚脚本），不确定性判 2（调用顺序假设须先在测试环境验证），协调成本判 2（同仓库同团队多服务联动 + code review，非跨团队跨仓库）；无缺陷报错+改异步属性能相关改造，故主意图为 refactor 而非 diagnose_fix。"
-      },
-      "error": null,
-      "passed": true,
-      "failed_checks": [],
-      "checks": [
-        {
-          "check": "irreversibility",
-          "passed": true,
-          "expected": 2,
-          "actual": 2
-        },
-        {
-          "check": "impact_scope",
-          "passed": true,
-          "expected": 3,
-          "actual": 3
-        },
-        {
-          "check": "uncertainty",
-          "passed": true,
-          "expected": 2,
-          "actual": 2
-        },
-        {
-          "check": "coordination_cost",
-          "passed": true,
-          "expected": 2,
-          "actual": 2
-        },
-        {
-          "check": "risk_score",
-          "passed": true,
-          "expected": 9,
-          "actual": 9
-        },
-        {
-          "check": "risk_level",
-          "passed": true,
-          "expected": "medium",
-          "actual": "medium"
-        }
-      ],
-      "reasoning": "核心信号：『所有客户下单前必经的查询入口』+『3 个服务的调用改造』+『测试环境验证一轮』+『上线后回滚脚本』+『同仓库』+『code review』——影响范围判 3（覆盖下单核心链路且跨服务），不可逆性判 2（需上线部署但有回滚脚本），不确定性判 2（调用顺序假设须先在测试环境验证），协调成本判 2（同仓库同团队多服务联动 + code review，非跨团队跨仓库）；无缺陷报错+改异步属性能相关改造，故主意图为 refactor 而非 diagnose_fix。",
-      "input_tokens": 4013
-    },
-    {
-      "case_id": "pax-risk-medium-02",
-      "category": "risk_scoring",
-      "repeat": 1,
-      "holdout": true,
-      "prompt": "把商品详情查询接口从同步调用改成异步。这个接口是所有客户下单前必经的查询入口，涉及团队内 3 个服务的调用改造，改动都在同一个仓库内。上线后有回滚脚本可以切回同步模式。调用顺序需要在测试环境验证一轮再上线，改动完成后需要走一次 code review。",
-      "expected": {
-        "irreversibility": 2,
-        "impact_scope": 3,
-        "uncertainty": 2,
-        "coordination_cost": 2,
-        "risk_score": 9,
-        "risk_level": "medium"
-      },
-      "actual": {
-        "primary_intent": "refactor",
-        "secondary_intent": [],
-        "irreversibility": 2,
-        "impact_scope": 3,
-        "uncertainty": 2,
-        "coordination_cost": 2,
-        "risk_score": 9,
-        "risk_level": "medium",
-        "diagnose_required": false,
-        "route": [
-          "pax-clarify",
-          "pax-plan",
-          "pax-execute",
-          "pax-review"
-        ],
-        "storage_backend_required": false,
-        "cross_repo": false,
-        "execution_strategy_required": false,
-        "reasoning": "信号：无报错/异常/失败等缺陷词（判 refactor 而非 diagnose_fix）；核心下单链路全用户=影响3；需部署上线且有回滚脚本=不可逆2；调用顺序需测试环境验证一个未验证假设=不确定2；团队内3服务同仓库+需 code review=协调2；明确『改动都在同一个仓库内』故 cross_repo=false，无 security/data_integrity/performance 退化信号故二级意图为空、跳过诊断"
-      },
-      "error": null,
-      "passed": true,
-      "failed_checks": [],
-      "checks": [
-        {
-          "check": "irreversibility",
-          "passed": true,
-          "expected": 2,
-          "actual": 2
-        },
-        {
-          "check": "impact_scope",
-          "passed": true,
-          "expected": 3,
-          "actual": 3
-        },
-        {
-          "check": "uncertainty",
-          "passed": true,
-          "expected": 2,
-          "actual": 2
-        },
-        {
-          "check": "coordination_cost",
-          "passed": true,
-          "expected": 2,
-          "actual": 2
-        },
-        {
-          "check": "risk_score",
-          "passed": true,
-          "expected": 9,
-          "actual": 9
-        },
-        {
-          "check": "risk_level",
-          "passed": true,
-          "expected": "medium",
-          "actual": "medium"
-        }
-      ],
-      "reasoning": "信号：无报错/异常/失败等缺陷词（判 refactor 而非 diagnose_fix）；核心下单链路全用户=影响3；需部署上线且有回滚脚本=不可逆2；调用顺序需测试环境验证一个未验证假设=不确定2；团队内3服务同仓库+需 code review=协调2；明确『改动都在同一个仓库内』故 cross_repo=false，无 security/data_integrity/performance 退化信号故二级意图为空、跳过诊断",
-      "input_tokens": 4013
-    },
-    {
-      "case_id": "pax-risk-medium-02",
-      "category": "risk_scoring",
-      "repeat": 2,
-      "holdout": true,
-      "prompt": "把商品详情查询接口从同步调用改成异步。这个接口是所有客户下单前必经的查询入口，涉及团队内 3 个服务的调用改造，改动都在同一个仓库内。上线后有回滚脚本可以切回同步模式。调用顺序需要在测试环境验证一轮再上线，改动完成后需要走一次 code review。",
-      "expected": {
-        "irreversibility": 2,
-        "impact_scope": 3,
-        "uncertainty": 2,
-        "coordination_cost": 2,
-        "risk_score": 9,
-        "risk_level": "medium"
-      },
-      "actual": {
-        "primary_intent": "refactor",
-        "secondary_intent": [
-          "performance"
-        ],
-        "irreversibility": 2,
-        "impact_scope": 3,
-        "uncertainty": 2,
-        "coordination_cost": 2,
-        "risk_score": 9,
-        "risk_level": "medium",
-        "diagnose_required": false,
-        "route": [
-          "pax-clarify",
-          "pax-plan",
-          "pax-execute",
-          "pax-review"
-        ],
-        "storage_backend_required": false,
-        "cross_repo": false,
-        "execution_strategy_required": false,
-        "reasoning": "依赖信号：无报错/异常等缺陷关键词但有异步化性能改善诉求（refactor+performance）；上线后需部署且仅靠回滚脚本切回同步故不可逆性=2；接口是所有客户下单前必经入口属核心链路故影响范围=3；调用顺序需在测试环境验证一轮属未验证假设且需 code review 故不确定性=2；改动集中在同一仓库内的团队内 3 个服务、无跨仓库信号故协调成本=2，总分 9 且无 security/data_integrity 强制升级项，判为 medium、跳过诊断走 [clarify, plan, execute, review]。"
-      },
-      "error": null,
-      "passed": true,
-      "failed_checks": [],
-      "checks": [
-        {
-          "check": "irreversibility",
-          "passed": true,
-          "expected": 2,
-          "actual": 2
-        },
-        {
-          "check": "impact_scope",
-          "passed": true,
-          "expected": 3,
-          "actual": 3
-        },
-        {
-          "check": "uncertainty",
-          "passed": true,
-          "expected": 2,
-          "actual": 2
-        },
-        {
-          "check": "coordination_cost",
-          "passed": true,
-          "expected": 2,
-          "actual": 2
-        },
-        {
-          "check": "risk_score",
-          "passed": true,
-          "expected": 9,
-          "actual": 9
-        },
-        {
-          "check": "risk_level",
-          "passed": true,
-          "expected": "medium",
-          "actual": "medium"
-        }
-      ],
-      "reasoning": "依赖信号：无报错/异常等缺陷关键词但有异步化性能改善诉求（refactor+performance）；上线后需部署且仅靠回滚脚本切回同步故不可逆性=2；接口是所有客户下单前必经入口属核心链路故影响范围=3；调用顺序需在测试环境验证一轮属未验证假设且需 code review 故不确定性=2；改动集中在同一仓库内的团队内 3 个服务、无跨仓库信号故协调成本=2，总分 9 且无 security/data_integrity 强制升级项，判为 medium、跳过诊断走 [clarify, plan, execute, review]。",
-      "input_tokens": 4013
-    },
-    {
-      "case_id": "pax-risk-high-02",
-      "category": "risk_scoring",
-      "repeat": 0,
-      "holdout": true,
-      "prompt": "清理生产数据库中 3 年前的过期订单记录，物理删除无法恢复，涉及公司所有用户的订单历史。这是标准的数据清理流程，公司有明确的清理脚本和操作手册，由我单人执行即可，不需要其他人配合。",
-      "expected": {
-        "irreversibility": 3,
-        "impact_scope": 3,
-        "uncertainty": 1,
-        "coordination_cost": 1,
-        "risk_score": 8,
-        "risk_level": "high"
-      },
-      "actual": {
-        "primary_intent": "data_ops",
-        "secondary_intent": [
-          "data_integrity"
-        ],
-        "irreversibility": 3,
-        "impact_scope": 3,
-        "uncertainty": 1,
-        "coordination_cost": 1,
-        "risk_score": 8,
-        "risk_level": "high",
-        "diagnose_required": true,
-        "route": [
-          "clarify",
-          "diagnose",
-          "plan",
-          "execute",
-          "review"
-        ],
-        "storage_backend_required": true,
-        "cross_repo": false,
-        "execution_strategy_required": false,
-        "reasoning": "依赖信号：数据清理/批量物理删除→data_ops；物理删除无法恢复→不可逆性3；涉及公司所有用户订单历史（核心链路+全客户可见）→影响范围3，触发「data_integrity且影响范围3」强制升级为high；用户明确有既有脚本手册且有先例→不确定性1；用户明示单人执行无需配合→协调成本1；无前后端/多仓库信号→cross_repo为false。"
-      },
-      "error": null,
-      "passed": true,
-      "failed_checks": [],
-      "checks": [
-        {
-          "check": "irreversibility",
-          "passed": true,
-          "expected": 3,
-          "actual": 3
-        },
-        {
-          "check": "impact_scope",
-          "passed": true,
-          "expected": 3,
-          "actual": 3
-        },
-        {
-          "check": "uncertainty",
-          "passed": true,
-          "expected": 1,
-          "actual": 1
-        },
-        {
-          "check": "coordination_cost",
-          "passed": true,
-          "expected": 1,
-          "actual": 1
-        },
-        {
-          "check": "risk_score",
-          "passed": true,
-          "expected": 8,
-          "actual": 8
-        },
-        {
-          "check": "risk_level",
-          "passed": true,
-          "expected": "high",
-          "actual": "high"
-        }
-      ],
-      "reasoning": "依赖信号：数据清理/批量物理删除→data_ops；物理删除无法恢复→不可逆性3；涉及公司所有用户订单历史（核心链路+全客户可见）→影响范围3，触发「data_integrity且影响范围3」强制升级为high；用户明确有既有脚本手册且有先例→不确定性1；用户明示单人执行无需配合→协调成本1；无前后端/多仓库信号→cross_repo为false。",
-      "input_tokens": 3993
-    },
-    {
-      "case_id": "pax-risk-high-02",
-      "category": "risk_scoring",
-      "repeat": 1,
-      "holdout": true,
-      "prompt": "清理生产数据库中 3 年前的过期订单记录，物理删除无法恢复，涉及公司所有用户的订单历史。这是标准的数据清理流程，公司有明确的清理脚本和操作手册，由我单人执行即可，不需要其他人配合。",
-      "expected": {
-        "irreversibility": 3,
-        "impact_scope": 3,
-        "uncertainty": 1,
-        "coordination_cost": 1,
-        "risk_score": 8,
-        "risk_level": "high"
-      },
-      "actual": {
-        "primary_intent": "data_ops",
-        "secondary_intent": [],
-        "irreversibility": 3,
-        "impact_scope": 3,
-        "uncertainty": 1,
-        "coordination_cost": 1,
-        "risk_score": 8,
-        "risk_level": "high",
-        "diagnose_required": true,
-        "route": [
-          "clarify",
-          "diagnose",
-          "plan",
-          "execute",
-          "review"
-        ],
-        "storage_backend_required": true,
-        "cross_repo": false,
-        "execution_strategy_required": false,
-        "reasoning": "依赖了“物理删除无法恢复/生产数据库/所有用户订单历史”等不可逆与影响范围信号，以及“标准脚本、操作手册、单人执行”等不确定性与协调成本信号；不可逆性3且影响范围3触发强制高风险升级。"
-      },
-      "error": null,
-      "passed": true,
-      "failed_checks": [],
-      "checks": [
-        {
-          "check": "irreversibility",
-          "passed": true,
-          "expected": 3,
-          "actual": 3
-        },
-        {
-          "check": "impact_scope",
-          "passed": true,
-          "expected": 3,
-          "actual": 3
-        },
-        {
-          "check": "uncertainty",
-          "passed": true,
-          "expected": 1,
-          "actual": 1
-        },
-        {
-          "check": "coordination_cost",
-          "passed": true,
-          "expected": 1,
-          "actual": 1
-        },
-        {
-          "check": "risk_score",
-          "passed": true,
-          "expected": 8,
-          "actual": 8
-        },
-        {
-          "check": "risk_level",
-          "passed": true,
-          "expected": "high",
-          "actual": "high"
-        }
-      ],
-      "reasoning": "依赖了“物理删除无法恢复/生产数据库/所有用户订单历史”等不可逆与影响范围信号，以及“标准脚本、操作手册、单人执行”等不确定性与协调成本信号；不可逆性3且影响范围3触发强制高风险升级。",
-      "input_tokens": 3993
-    },
-    {
-      "case_id": "pax-risk-high-02",
-      "category": "risk_scoring",
-      "repeat": 2,
-      "holdout": true,
-      "prompt": "清理生产数据库中 3 年前的过期订单记录，物理删除无法恢复，涉及公司所有用户的订单历史。这是标准的数据清理流程，公司有明确的清理脚本和操作手册，由我单人执行即可，不需要其他人配合。",
-      "expected": {
-        "irreversibility": 3,
-        "impact_scope": 3,
-        "uncertainty": 1,
-        "coordination_cost": 1,
-        "risk_score": 8,
-        "risk_level": "high"
-      },
-      "actual": {
-        "primary_intent": "data_ops",
-        "secondary_intent": [
           "data_integrity"
         ],
         "irreversibility": 3,
@@ -3670,7 +5905,7 @@
         "storage_backend_required": true,
         "cross_repo": false,
         "execution_strategy_required": false,
-        "reasoning": "依赖信号：'清理生产数据库/物理删除无法恢复'→data_ops+不可逆性3；'所有用户的订单历史'命中核心链路→影响范围3+data_integrity（触发强制升级为high）；'标准流程/明确脚本手册'→不确定性1；'单人执行、不需配合'→协调成本1；无前后端/多仓库信号→非跨仓库。"
+        "reasoning": "依据「清理生产数据库订单记录/物理删除无法恢复」判定为 data_ops 且含 data_integrity 信号（不可逆 3）、覆盖订单核心链路且全用户可见（影响 3）、有既有脚本手册故不确定性 1、用户明示单人执行故协调成本 1，但不可逆 3 且影响 3 触发强制升级为 high。"
       },
       "error": null,
       "passed": true,
@@ -3713,7 +5948,7 @@
           "actual": "high"
         }
       ],
-      "reasoning": "依赖信号：'清理生产数据库/物理删除无法恢复'→data_ops+不可逆性3；'所有用户的订单历史'命中核心链路→影响范围3+data_integrity（触发强制升级为high）；'标准流程/明确脚本手册'→不确定性1；'单人执行、不需配合'→协调成本1；无前后端/多仓库信号→非跨仓库。",
+      "reasoning": "依据「清理生产数据库订单记录/物理删除无法恢复」判定为 data_ops 且含 data_integrity 信号（不可逆 3）、覆盖订单核心链路且全用户可见（影响 3）、有既有脚本手册故不确定性 1、用户明示单人执行故协调成本 1，但不可逆 3 且影响 3 触发强制升级为 high。",
       "input_tokens": 3993
     },
     {
@@ -3749,7 +5984,7 @@
         "storage_backend_required": false,
         "cross_repo": false,
         "execution_strategy_required": false,
-        "reasoning": "依据「旧版组件换新版组件库、3 个文件、上线后一键切回、需先确认一次交互需求、单人完成无需他人配合」等信号：无缺陷与数据信号故判 refactor；需部署才生效故不可逆性 2，运营后台多人使用故影响范围 2，需需求方确认交互细节故不确定性 2，明确单人完成故协调成本 1，无 security/data_integrity/ux_error 二级意图与跨仓库信号。"
+        "reasoning": "依赖信号：'从旧版换成新版组件库'属组件替换且无缺陷信号、非数据/文档类→refactor；'上线后一键切回旧版'可回退但需部署生效→不可逆性2；'内部运营后台订单列表页、运营团队多使用人'→影响范围2；'交互细节需先确认一次需求'需需求方确认→不确定性2；'我一个人完成、不需要其他人配合'明示单人完成→协调成本1；仅涉及运营模块同仓库3个文件、无跨仓库/安全/数据完整性信号，故跳过诊断、主干去掉 diagnose 节点。"
       },
       "error": null,
       "passed": true,
@@ -3792,7 +6027,7 @@
           "actual": "medium"
         }
       ],
-      "reasoning": "依据「旧版组件换新版组件库、3 个文件、上线后一键切回、需先确认一次交互需求、单人完成无需他人配合」等信号：无缺陷与数据信号故判 refactor；需部署才生效故不可逆性 2，运营后台多人使用故影响范围 2，需需求方确认交互细节故不确定性 2，明确单人完成故协调成本 1，无 security/data_integrity/ux_error 二级意图与跨仓库信号。",
+      "reasoning": "依赖信号：'从旧版换成新版组件库'属组件替换且无缺陷信号、非数据/文档类→refactor；'上线后一键切回旧版'可回退但需部署生效→不可逆性2；'内部运营后台订单列表页、运营团队多使用人'→影响范围2；'交互细节需先确认一次需求'需需求方确认→不确定性2；'我一个人完成、不需要其他人配合'明示单人完成→协调成本1；仅涉及运营模块同仓库3个文件、无跨仓库/安全/数据完整性信号，故跳过诊断、主干去掉 diagnose 节点。",
       "input_tokens": 4006
     },
     {
@@ -3810,7 +6045,7 @@
         "risk_level": "medium"
       },
       "actual": {
-        "primary_intent": "feature_dev",
+        "primary_intent": "refactor",
         "secondary_intent": [],
         "irreversibility": 2,
         "impact_scope": 2,
@@ -3820,15 +6055,15 @@
         "risk_level": "medium",
         "diagnose_required": false,
         "route": [
-          "clarify",
-          "plan",
-          "execute",
-          "review"
+          "pax-clarify",
+          "pax-plan",
+          "pax-execute",
+          "pax-review"
         ],
         "storage_backend_required": false,
         "cross_repo": false,
         "execution_strategy_required": false,
-        "reasoning": "依赖信号：主动替换筛选组件无缺陷信号、交互细节需确认一次需求、上线可一键回滚但需部署生效、用户明确单人完成不需协调，故判 feature_dev 且跳过诊断。"
+        "reasoning": "无异常/报错/退化等缺陷信号，非数据操作、非纯文档，属不改外部行为的组件替换故判 refactor，跳过诊断；组件改动需上线生效故不可逆性 2，运营后台多使用人故影响范围 2，交互细节需确认一次需求故不确定性 2，用户明确单人完成无需配合故协调成本 1，总分 7 为 medium；上下文无前后端多仓库信号故不标 cross_repo。"
       },
       "error": null,
       "passed": true,
@@ -3871,7 +6106,7 @@
           "actual": "medium"
         }
       ],
-      "reasoning": "依赖信号：主动替换筛选组件无缺陷信号、交互细节需确认一次需求、上线可一键回滚但需部署生效、用户明确单人完成不需协调，故判 feature_dev 且跳过诊断。",
+      "reasoning": "无异常/报错/退化等缺陷信号，非数据操作、非纯文档，属不改外部行为的组件替换故判 refactor，跳过诊断；组件改动需上线生效故不可逆性 2，运营后台多使用人故影响范围 2，交互细节需确认一次需求故不确定性 2，用户明确单人完成无需配合故协调成本 1，总分 7 为 medium；上下文无前后端多仓库信号故不标 cross_repo。",
       "input_tokens": 4006
     },
     {
@@ -3907,7 +6142,7 @@
         "storage_backend_required": false,
         "cross_repo": false,
         "execution_strategy_required": false,
-        "reasoning": "依赖信号：无缺陷/报错/根因未知描述（非 diagnose_fix），虽替换前端筛选组件但交互细节待确认、有一键回滚开关、明确「单人完成不需要其他人配合」，故判 refactor、不触发诊断与跨仓库标注；但改动需部署上线生效故不可逆性 2，运营后台多使用人故影响范围 2，需求需确认一次故不确定性 2，协调成本 1，总分 7 为中等风险。"
+        "reasoning": "依赖信号：目标是组件库替换、无任何报错/异常/退化等缺陷词，故为 refactor；需二次确认交互细节（不确定性≥2）且上线需部署才生效（不可逆=2）；内部运营后台多使用人、3 个文件、订单列表页筛选（影响=2）；用户明确『由我一个人完成、不需要其他人配合』故协调成本按单人可完成判 1；无 security/data_integrity/ux_error 缺陷信号，故不触发诊断与跨仓库、存储后端标注。"
       },
       "error": null,
       "passed": true,
@@ -3950,7 +6185,165 @@
           "actual": "medium"
         }
       ],
-      "reasoning": "依赖信号：无缺陷/报错/根因未知描述（非 diagnose_fix），虽替换前端筛选组件但交互细节待确认、有一键回滚开关、明确「单人完成不需要其他人配合」，故判 refactor、不触发诊断与跨仓库标注；但改动需部署上线生效故不可逆性 2，运营后台多使用人故影响范围 2，需求需确认一次故不确定性 2，协调成本 1，总分 7 为中等风险。",
+      "reasoning": "依赖信号：目标是组件库替换、无任何报错/异常/退化等缺陷词，故为 refactor；需二次确认交互细节（不确定性≥2）且上线需部署才生效（不可逆=2）；内部运营后台多使用人、3 个文件、订单列表页筛选（影响=2）；用户明确『由我一个人完成、不需要其他人配合』故协调成本按单人可完成判 1；无 security/data_integrity/ux_error 缺陷信号，故不触发诊断与跨仓库、存储后端标注。",
+      "input_tokens": 4006
+    },
+    {
+      "case_id": "pax-risk-medium-03",
+      "category": "risk_scoring",
+      "repeat": 3,
+      "holdout": true,
+      "prompt": "把内部运营后台的订单列表页筛选组件从旧版换成新版组件库的组件，改动涉及运营模块的 3 个文件，上线后可以一键切回旧版组件。组件交互细节需要先确认一次需求，确认后改动由我一个人完成，不需要其他人配合。",
+      "expected": {
+        "irreversibility": 2,
+        "impact_scope": 2,
+        "uncertainty": 2,
+        "coordination_cost": 1,
+        "risk_score": 7,
+        "risk_level": "medium"
+      },
+      "actual": {
+        "primary_intent": "refactor",
+        "secondary_intent": [],
+        "irreversibility": 2,
+        "impact_scope": 2,
+        "uncertainty": 2,
+        "coordination_cost": 1,
+        "risk_score": 7,
+        "risk_level": "medium",
+        "diagnose_required": false,
+        "route": [
+          "pax-clarify",
+          "pax-plan",
+          "pax-execute",
+          "pax-review"
+        ],
+        "storage_backend_required": false,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "依赖信号：无报错/异常等缺陷词（非 diagnose_fix）、非数据订正/迁移（非 data_ops）、有实际代码改动（非 doc_consult），为保留外部行为的组件替换故判 refactor；『需要确认一次需求』使不确定性=2，『上线后可一键切回』但需部署故不可逆=2，运营后台多使用人故影响=2，『我一个人完成、不需要其他人配合』按边界判协调=1；无安全检查/数据一致性/跨仓库信号，refactor 无既有行为缺陷故跳过诊断。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "irreversibility",
+          "passed": true,
+          "expected": 2,
+          "actual": 2
+        },
+        {
+          "check": "impact_scope",
+          "passed": true,
+          "expected": 2,
+          "actual": 2
+        },
+        {
+          "check": "uncertainty",
+          "passed": true,
+          "expected": 2,
+          "actual": 2
+        },
+        {
+          "check": "coordination_cost",
+          "passed": true,
+          "expected": 1,
+          "actual": 1
+        },
+        {
+          "check": "risk_score",
+          "passed": true,
+          "expected": 7,
+          "actual": 7
+        },
+        {
+          "check": "risk_level",
+          "passed": true,
+          "expected": "medium",
+          "actual": "medium"
+        }
+      ],
+      "reasoning": "依赖信号：无报错/异常等缺陷词（非 diagnose_fix）、非数据订正/迁移（非 data_ops）、有实际代码改动（非 doc_consult），为保留外部行为的组件替换故判 refactor；『需要确认一次需求』使不确定性=2，『上线后可一键切回』但需部署故不可逆=2，运营后台多使用人故影响=2，『我一个人完成、不需要其他人配合』按边界判协调=1；无安全检查/数据一致性/跨仓库信号，refactor 无既有行为缺陷故跳过诊断。",
+      "input_tokens": 4006
+    },
+    {
+      "case_id": "pax-risk-medium-03",
+      "category": "risk_scoring",
+      "repeat": 4,
+      "holdout": true,
+      "prompt": "把内部运营后台的订单列表页筛选组件从旧版换成新版组件库的组件，改动涉及运营模块的 3 个文件，上线后可以一键切回旧版组件。组件交互细节需要先确认一次需求，确认后改动由我一个人完成，不需要其他人配合。",
+      "expected": {
+        "irreversibility": 2,
+        "impact_scope": 2,
+        "uncertainty": 2,
+        "coordination_cost": 1,
+        "risk_score": 7,
+        "risk_level": "medium"
+      },
+      "actual": {
+        "primary_intent": "refactor",
+        "secondary_intent": [],
+        "irreversibility": 2,
+        "impact_scope": 2,
+        "uncertainty": 2,
+        "coordination_cost": 1,
+        "risk_score": 7,
+        "risk_level": "medium",
+        "diagnose_required": false,
+        "route": [
+          "pax-clarify",
+          "pax-plan",
+          "pax-execute",
+          "pax-review"
+        ],
+        "storage_backend_required": false,
+        "cross_repo": false,
+        "execution_strategy_required": false,
+        "reasoning": "依据信号：无异常/报错等缺陷关键词且保留一键回退，故判为不改外部行为的组件替换（refactor）；需部署才生效故不可逆性=2；内部运营后台多使用人=2；交互细节需需求方确认一次=2；用户明示\"我一个人完成、不需其他人配合\"故协调成本=1；未出现前后端/多仓库信号故 cross_repo=false，无 security/data_integrity 故不强制诊断。"
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "irreversibility",
+          "passed": true,
+          "expected": 2,
+          "actual": 2
+        },
+        {
+          "check": "impact_scope",
+          "passed": true,
+          "expected": 2,
+          "actual": 2
+        },
+        {
+          "check": "uncertainty",
+          "passed": true,
+          "expected": 2,
+          "actual": 2
+        },
+        {
+          "check": "coordination_cost",
+          "passed": true,
+          "expected": 1,
+          "actual": 1
+        },
+        {
+          "check": "risk_score",
+          "passed": true,
+          "expected": 7,
+          "actual": 7
+        },
+        {
+          "check": "risk_level",
+          "passed": true,
+          "expected": "medium",
+          "actual": "medium"
+        }
+      ],
+      "reasoning": "依据信号：无异常/报错等缺陷关键词且保留一键回退，故判为不改外部行为的组件替换（refactor）；需部署才生效故不可逆性=2；内部运营后台多使用人=2；交互细节需需求方确认一次=2；用户明示\"我一个人完成、不需其他人配合\"故协调成本=1；未出现前后端/多仓库信号故 cross_repo=false，无 security/data_integrity 故不强制诊断。",
       "input_tokens": 4006
     }
   ]
