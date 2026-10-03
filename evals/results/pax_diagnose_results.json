@@ -2,9 +2,9 @@
   "meta": {
     "model": "deepseek-flash",
     "api_base": "https://api.deepseek.com",
-    "dataset": "1.0",
+    "dataset": "1.1",
     "repeats": 5,
-    "run_at": "2026-10-03T22:01:01.178311+08:00",
+    "run_at": "2026-10-03T22:07:58.122174+08:00",
     "contract_chars": 7206
   },
   "results": [
@@ -25,6 +25,7 @@
       },
       "actual": {
         "reproduction_status": "reproduced",
+        "storage_backend_required": false,
         "severity": "P0",
         "severity_rationale": {
           "core_flow_broken": true,
@@ -32,7 +33,7 @@
           "workaround_available": false,
           "security_relevant": false
         },
-        "reasoning": "订单支付接口在生产环境全部返回 500，属核心流程完全不可用（core_flow_broken=true），影响全部用户（affected_users=all），且无任何支付方式与临时规避方案（workaround_available=false），按聚合规则无规避的核心流程不可用定级为 P0。"
+        "reasoning": "支付接口自身返回 500、核心下单流程完全不可用（非权限或展示类问题），全部用户受影响且无任何临时规避方案，故 core_flow_broken=true 且 workaround_available=false，判定 P0。"
       },
       "normalized": {
         "reproduction_status": "reproduced",
@@ -40,7 +41,8 @@
         "core_flow_broken": true,
         "workaround_available": false,
         "security_relevant": false,
-        "affected_users": "all"
+        "affected_users": "all",
+        "storage_backend_required": false
       },
       "error": null,
       "passed": true,
@@ -95,6 +97,7 @@
       },
       "actual": {
         "reproduction_status": "partial",
+        "storage_backend_required": true,
         "severity": "P1",
         "severity_rationale": {
           "core_flow_broken": true,
@@ -102,7 +105,7 @@
           "workaround_available": true,
           "security_relevant": false
         },
-        "reasoning": "优惠券核销接口在高并发时段偶发失败（约 30% 下单用户，属 5%–50% 的 some 区间），接口本身报错导致下单核销流程部分不可用（core_flow_broken=true），但用户稍后重试通常成功、存在可用规避手段（workaround_available=true），且不涉及越权/数据泄露等安全问题（security_relevant=false），按聚合规则 core_flow_broken 且有规避定级 P1；症状仅由用户描述、缺少复现步骤与日志/堆栈/变更证据，仅能确认间歇性特征，复现状态记为 partial。"
+        "reasoning": "优惠券核销接口本身报错导致下单流程部分不可用（core_flow_broken=true），但用户可稍后重试且通常成功（workaround_available=true），影响约30%下单用户（some），无越权/数据泄露等安全问题，故定 P1；复现受高并发时段与间歇性限制，仅部分复现。"
       },
       "normalized": {
         "reproduction_status": "partial",
@@ -110,7 +113,8 @@
         "core_flow_broken": true,
         "workaround_available": true,
         "security_relevant": false,
-        "affected_users": "some"
+        "affected_users": "some",
+        "storage_backend_required": true
       },
       "error": null,
       "passed": true,
@@ -165,6 +169,7 @@
       },
       "actual": {
         "reproduction_status": "partial",
+        "storage_backend_required": false,
         "severity": "P2",
         "severity_rationale": {
           "core_flow_broken": false,
@@ -172,7 +177,7 @@
           "workaround_available": true,
           "security_relevant": false
         },
-        "reasoning": "头像上传属非核心流程（不影响其他功能），受影响用户 <1% 属 few，且刷新重试即可成功说明存在规避手段、无安全相关证据，故按聚合规则先判安全（false）再判核心流程（false）归为 P2；因问题偶发且缺复现步骤与日志证据，复现状态记为 partial。"
+        "reasoning": "头像上传属非核心流程，仅不到 1% 用户偶发失败（few），刷新重试即可成功（有规避），且无安全相关性，核心流程未不可用，按聚合规则判为 P2。"
       },
       "normalized": {
         "reproduction_status": "partial",
@@ -180,7 +185,8 @@
         "core_flow_broken": false,
         "workaround_available": true,
         "security_relevant": false,
-        "affected_users": "few"
+        "affected_users": "few",
+        "storage_backend_required": false
       },
       "error": null,
       "passed": true,
@@ -235,6 +241,7 @@
       },
       "actual": {
         "reproduction_status": "reproduced",
+        "storage_backend_required": false,
         "severity": "P0",
         "severity_rationale": {
           "core_flow_broken": false,
@@ -242,7 +249,7 @@
           "workaround_available": false,
           "security_relevant": true
         },
-        "reasoning": "订单查询接口仅凭订单号返回详情、未校验订单归属，任意登录用户可越权读取他人收货地址与手机号，构成水平越权（IDOR）与敏感个人信息泄露，security_relevant=true 直接定级 P0；接口本身可用，属权限/数据问题，故 core_flow_broken=false。"
+        "reasoning": "订单查询接口缺失归属校验，任意登录用户可越权读取他人订单详情中含收货地址、手机号等个人信息，属越权访问/数据泄露，security_relevant=true 单独定级 P0；接口本身可用，故 core_flow_broken=false。"
       },
       "normalized": {
         "reproduction_status": "reproduced",
@@ -250,7 +257,8 @@
         "core_flow_broken": false,
         "workaround_available": false,
         "security_relevant": true,
-        "affected_users": "all"
+        "affected_users": "all",
+        "storage_backend_required": false
       },
       "error": null,
       "passed": true,
@@ -305,6 +313,7 @@
       },
       "actual": {
         "reproduction_status": "partial",
+        "storage_backend_required": false,
         "severity": "P2",
         "severity_rationale": {
           "core_flow_broken": false,
@@ -312,7 +321,7 @@
           "workaround_available": true,
           "security_relevant": false
         },
-        "reasoning": "公告字体回退为默认字体属展示层样式缺陷，公告内容可正常阅读、不影响任何功能操作，非核心流程不可用且无安全影响，按聚合规则定为 P2。"
+        "reasoning": "字体回退仅造成公告栏展示样式降级，内容可正常阅读且不影响任何功能操作，非核心流程不可用且不涉及安全，按聚合规则定级 P2。"
       },
       "normalized": {
         "reproduction_status": "partial",
@@ -320,7 +329,8 @@
         "core_flow_broken": false,
         "workaround_available": true,
         "security_relevant": false,
-        "affected_users": "all"
+        "affected_users": "all",
+        "storage_backend_required": false
       },
       "error": null,
       "passed": true,
@@ -360,7 +370,7 @@
     },
     {
       "case_id": "pax-diag-repro-01",
-      "category": "reproduction",
+      "category": "severity",
       "repeat": 0,
       "holdout": true,
       "prompt": "用户反馈偶发登录失败（约每天 1–2 次），但服务端日志无异常记录，本地尝试 20 次登录全部成功，无法稳定复现。",
@@ -376,6 +386,7 @@
       },
       "actual": {
         "reproduction_status": "not_reproduced",
+        "storage_backend_required": false,
         "severity": "P1",
         "severity_rationale": {
           "core_flow_broken": true,
@@ -383,7 +394,7 @@
           "workaround_available": true,
           "security_relevant": false
         },
-        "reasoning": "本地 20 次登录全部成功且服务端日志无异常，问题无法稳定复现（not_reproduced），属证据不足需标记 blocked；登录属核心流程且偶发失败（部分不可用），但仅每日 1–2 次、影响少量用户且可通过重试规避，故定 P1。"
+        "reasoning": "偶发登录失败属核心流程部分不可用（本地 20 次全成功、服务端无日志、无法稳定复现，D1 未能复现），但用户重试可绕过且仅每天 1–2 次、影响少量用户，故定 P1 而非 P0；需补充客户端日志、失败时间戳与请求 ID 等证据缺口后才能推进 D2–D5。"
       },
       "normalized": {
         "reproduction_status": "not_reproduced",
@@ -391,7 +402,8 @@
         "core_flow_broken": true,
         "workaround_available": true,
         "security_relevant": false,
-        "affected_users": "few"
+        "affected_users": "few",
+        "storage_backend_required": false
       },
       "error": null,
       "passed": true,
@@ -436,6 +448,216 @@
       ]
     },
     {
+      "case_id": "pax-diag-repro-02",
+      "category": "reproduction",
+      "repeat": 0,
+      "holdout": true,
+      "prompt": "按用户给的步骤，我在测试环境连续 3 次都复现了：每次点击导出按钮都返回 500 错误，日志里有 NullPointerException。",
+      "expected": {
+        "reproduction_status": "reproduced"
+      },
+      "actual": {
+        "reproduction_status": "reproduced",
+        "storage_backend_required": false,
+        "severity": "P1",
+        "severity_rationale": {
+          "core_flow_broken": true,
+          "affected_users": "some",
+          "workaround_available": true,
+          "security_relevant": false
+        },
+        "reasoning": "测试环境连续 3 次稳定复现，导出按钮点击即返回 500 且日志为 NullPointerException，属功能本身报错不可用（core_flow_broken=true）；不涉及越权/数据泄露（security_relevant=false）；导出仅为部分用户使用的子功能且可通过其他途径取数规避，故按有规避的核心流程部分不可用定为 P1。"
+      },
+      "normalized": {
+        "reproduction_status": "reproduced",
+        "severity": "P1",
+        "core_flow_broken": true,
+        "workaround_available": true,
+        "security_relevant": false,
+        "affected_users": "some",
+        "storage_backend_required": false
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "reproduction_status",
+          "passed": true,
+          "actual": "reproduced",
+          "expected": "reproduced"
+        }
+      ]
+    },
+    {
+      "case_id": "pax-diag-repro-03",
+      "category": "reproduction",
+      "repeat": 0,
+      "holdout": true,
+      "prompt": "在测试环境用相同数据复现了 2 次，但在生产环境按同样步骤试了 5 次都正常。",
+      "expected": {
+        "reproduction_status": "partial"
+      },
+      "actual": {
+        "reproduction_status": "partial",
+        "storage_backend_required": false,
+        "severity": "P2",
+        "severity_rationale": {
+          "core_flow_broken": false,
+          "affected_users": "few",
+          "workaround_available": true,
+          "security_relevant": false
+        },
+        "reasoning": "仅测试环境可复现、生产环境 5 次均正常，说明问题与特定环境绑定且生产功能未见中断、无安全迹象，故按非核心流程且有明显规避定为 P2。"
+      },
+      "normalized": {
+        "reproduction_status": "partial",
+        "severity": "P2",
+        "core_flow_broken": false,
+        "workaround_available": true,
+        "security_relevant": false,
+        "affected_users": "few",
+        "storage_backend_required": false
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "reproduction_status",
+          "passed": true,
+          "actual": "partial",
+          "expected": "partial"
+        }
+      ]
+    },
+    {
+      "case_id": "pax-diag-repro-04",
+      "category": "reproduction",
+      "repeat": 0,
+      "holdout": true,
+      "prompt": "按用户描述的操作步骤试了 10 次，都没有出现所述错误，服务端日志也没有异常记录。",
+      "expected": {
+        "reproduction_status": "not_reproduced"
+      },
+      "actual": {
+        "reproduction_status": "not_reproduced",
+        "storage_backend_required": false,
+        "severity": "P2",
+        "severity_rationale": {
+          "core_flow_broken": false,
+          "affected_users": "few",
+          "workaround_available": true,
+          "security_relevant": false
+        },
+        "reasoning": "按给定步骤 10 次均未复现且服务端日志无异常，D1 判定 not_reproduced，流程在 D1 阻塞（blocked_at: D1），缺少可复现环境/版本信息、错误签名、问题时间窗口与触发条件，无法建立最小复现，故无任何核心流程不可用或安全相关证据，按现有证据定为 P2，待补充信息后回落 D1 重跑。"
+      },
+      "normalized": {
+        "reproduction_status": "not_reproduced",
+        "severity": "P2",
+        "core_flow_broken": false,
+        "workaround_available": true,
+        "security_relevant": false,
+        "affected_users": "few",
+        "storage_backend_required": false
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "reproduction_status",
+          "passed": true,
+          "actual": "not_reproduced",
+          "expected": "not_reproduced"
+        }
+      ]
+    },
+    {
+      "case_id": "pax-diag-storage-01",
+      "category": "storage_backend",
+      "repeat": 0,
+      "holdout": true,
+      "prompt": "用户反馈部分订单的支付金额字段变成了 null，需要排查原因并订正这些错误数据。",
+      "expected": {
+        "storage_backend_required": true
+      },
+      "actual": {
+        "reproduction_status": "partial",
+        "storage_backend_required": true,
+        "severity": "P2",
+        "severity_rationale": {
+          "core_flow_broken": false,
+          "affected_users": "some",
+          "workaround_available": true,
+          "security_relevant": false
+        },
+        "reasoning": "仅部分订单的支付金额字段为 null，属数据层异常而非接口报错/超时，无越权或数据泄露迹象，且可通过数据订正规避，按聚合规则判为 P2；因需订正数据，必须先确认存储引擎与迁移工具链（D2 强制项）后再动手。"
+      },
+      "normalized": {
+        "reproduction_status": "partial",
+        "severity": "P2",
+        "core_flow_broken": false,
+        "workaround_available": true,
+        "security_relevant": false,
+        "affected_users": "some",
+        "storage_backend_required": true
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "storage_backend_required",
+          "passed": true,
+          "actual": true,
+          "expected": true
+        }
+      ]
+    },
+    {
+      "case_id": "pax-diag-storage-02",
+      "category": "storage_backend",
+      "repeat": 0,
+      "holdout": true,
+      "prompt": "用户反馈在 Safari 浏览器下订单列表的按钮位置错乱，在 Chrome 下显示正常。",
+      "expected": {
+        "storage_backend_required": false
+      },
+      "actual": {
+        "reproduction_status": "reproduced",
+        "storage_backend_required": false,
+        "severity": "P2",
+        "severity_rationale": {
+          "core_flow_broken": false,
+          "affected_users": "some",
+          "workaround_available": true,
+          "security_relevant": false
+        },
+        "reasoning": "Safari 与 Chrome 渲染差异导致订单列表按钮位置错乱，属纯前端样式/布局展示问题：按钮仍可见可点击、功能可用，核心下单流程未被阻断（core_flow_broken=false）；仅影响使用 Safari 的部分用户（some），且用户可在 Chrome 下正常使用（workaround_available=true），不涉及越权或数据泄露（security_relevant=false），按聚合规则落在非核心流程档，判定 P2。"
+      },
+      "normalized": {
+        "reproduction_status": "reproduced",
+        "severity": "P2",
+        "core_flow_broken": false,
+        "workaround_available": true,
+        "security_relevant": false,
+        "affected_users": "some",
+        "storage_backend_required": false
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "storage_backend_required",
+          "passed": true,
+          "actual": false,
+          "expected": false
+        }
+      ]
+    },
+    {
       "case_id": "pax-diag-p0-01",
       "category": "severity",
       "repeat": 1,
@@ -452,6 +674,7 @@
       },
       "actual": {
         "reproduction_status": "reproduced",
+        "storage_backend_required": false,
         "severity": "P0",
         "severity_rationale": {
           "core_flow_broken": true,
@@ -459,7 +682,7 @@
           "workaround_available": false,
           "security_relevant": false
         },
-        "reasoning": "生产环境支付接口全部 500、核心下单流程完全不可用且无任何临时规避方案，按聚合规则（core_flow_broken=true 且 workaround_available=false）判定为 P0。"
+        "reasoning": "订单支付为核心流程且接口全部返回 500 导致完全不可用（workaround_available=false），影响全部用户，按聚合规则无规避的核心流程不可用判定为 P0，需强制升级 pax-council。"
       },
       "normalized": {
         "reproduction_status": "reproduced",
@@ -467,7 +690,8 @@
         "core_flow_broken": true,
         "workaround_available": false,
         "security_relevant": false,
-        "affected_users": "all"
+        "affected_users": "all",
+        "storage_backend_required": false
       },
       "error": null,
       "passed": true,
@@ -522,6 +746,7 @@
       },
       "actual": {
         "reproduction_status": "partial",
+        "storage_backend_required": false,
         "severity": "P1",
         "severity_rationale": {
           "core_flow_broken": true,
@@ -529,7 +754,7 @@
           "workaround_available": true,
           "security_relevant": false
         },
-        "reasoning": "优惠券核销接口在下单核心流程中偶发失败报错（core_flow_broken=true），影响约30%下单用户（some），且用户重试通常可完成核销（workaround_available=true），非安全相关问题，故定级 P1。"
+        "reasoning": "核销接口在高并发下间歇性报错（约30%下单用户命中，属some档），功能本身不可用故core_flow_broken=true，但重试可成功属有规避，按聚合规则定为P1；非安全类问题，且失败为瞬时、重试即成，无持久化脏数据需订正，故不强制确认存储后端。"
       },
       "normalized": {
         "reproduction_status": "partial",
@@ -537,7 +762,8 @@
         "core_flow_broken": true,
         "workaround_available": true,
         "security_relevant": false,
-        "affected_users": "some"
+        "affected_users": "some",
+        "storage_backend_required": false
       },
       "error": null,
       "passed": true,
@@ -592,6 +818,7 @@
       },
       "actual": {
         "reproduction_status": "partial",
+        "storage_backend_required": false,
         "severity": "P2",
         "severity_rationale": {
           "core_flow_broken": false,
@@ -599,7 +826,7 @@
           "workaround_available": true,
           "security_relevant": false
         },
-        "reasoning": "头像上传属于个人中心外围功能，失败仅偶发（<1% 用户），刷新重试即可成功且不影响其他功能，非核心流程不可用，故定级 P2。"
+        "reasoning": "头像上传属非核心流程、影响用户不足 1% 且刷新重试即可规避，按聚合规则定为 P2。"
       },
       "normalized": {
         "reproduction_status": "partial",
@@ -607,7 +834,8 @@
         "core_flow_broken": false,
         "workaround_available": true,
         "security_relevant": false,
-        "affected_users": "few"
+        "affected_users": "few",
+        "storage_backend_required": false
       },
       "error": null,
       "passed": true,
@@ -662,6 +890,7 @@
       },
       "actual": {
         "reproduction_status": "reproduced",
+        "storage_backend_required": false,
         "severity": "P0",
         "severity_rationale": {
           "core_flow_broken": false,
@@ -669,7 +898,7 @@
           "workaround_available": false,
           "security_relevant": true
         },
-        "reasoning": "订单查询接口缺少归属校验导致越权访问（IDOR），任意登录用户可读取他人收货地址与手机号，属数据泄露类安全问题，按规则单独定为 P0。"
+        "reasoning": "订单查询接口缺失对象级鉴权，任意登录用户可通过订单号越权读取他人收货地址与手机号，属数据泄露类安全缺陷，security_relevant=true 直接判定 P0。"
       },
       "normalized": {
         "reproduction_status": "reproduced",
@@ -677,7 +906,8 @@
         "core_flow_broken": false,
         "workaround_available": false,
         "security_relevant": true,
-        "affected_users": "all"
+        "affected_users": "all",
+        "storage_backend_required": false
       },
       "error": null,
       "passed": true,
@@ -732,6 +962,7 @@
       },
       "actual": {
         "reproduction_status": "partial",
+        "storage_backend_required": false,
         "severity": "P2",
         "severity_rationale": {
           "core_flow_broken": false,
@@ -739,7 +970,7 @@
           "workaround_available": true,
           "security_relevant": false
         },
-        "reasoning": "字体回退为默认字体仅属样式/展示问题，公告内容可正常阅读且不影响任何功能操作，属非核心流程缺陷，依据聚合规则判定为 P2；未提供具体浏览器与复现步骤，故复现状态记为 partial。"
+        "reasoning": "公告字体回退为默认字体属非核心流程的展示问题，公告内容可正常阅读且不影响任何功能操作，无安全相关性，按聚合规则判定为 P2；因未提供具体浏览器与版本，无法完成完整复现，故复现状态记为 partial。"
       },
       "normalized": {
         "reproduction_status": "partial",
@@ -747,7 +978,8 @@
         "core_flow_broken": false,
         "workaround_available": true,
         "security_relevant": false,
-        "affected_users": "all"
+        "affected_users": "all",
+        "storage_backend_required": false
       },
       "error": null,
       "passed": true,
@@ -787,7 +1019,7 @@
     },
     {
       "case_id": "pax-diag-repro-01",
-      "category": "reproduction",
+      "category": "severity",
       "repeat": 1,
       "holdout": true,
       "prompt": "用户反馈偶发登录失败（约每天 1–2 次），但服务端日志无异常记录，本地尝试 20 次登录全部成功，无法稳定复现。",
@@ -803,6 +1035,7 @@
       },
       "actual": {
         "reproduction_status": "not_reproduced",
+        "storage_backend_required": false,
         "severity": "P1",
         "severity_rationale": {
           "core_flow_broken": true,
@@ -810,7 +1043,7 @@
           "workaround_available": true,
           "security_relevant": false
         },
-        "reasoning": "登录属核心流程且偶发报错（功能在该时刻不可用）——core_flow_broken=true，但用户可通过重试/稍后再试规避（workaround_available=true），故定 P1；无任何越权、数据泄露或绕过鉴权的证据，security_relevant=false；本地 20 次登录全部成功、服务端日志无异常，说明问题无法稳定复现，受影响面为低频偶发（few），复现状态 blocked（D1 缺可复现条件与失败请求的错误签名/时间戳/环境版本）。"
+        "reasoning": "本地 20 次登录全部成功且服务端日志无异常记录，D1 复现失败（not_reproduced），证据不足未收敛根因；仅按症状层面评估——登录属核心流程且确有偶发失败，重试即可规避，故按聚合规则定为 P1。"
       },
       "normalized": {
         "reproduction_status": "not_reproduced",
@@ -818,7 +1051,8 @@
         "core_flow_broken": true,
         "workaround_available": true,
         "security_relevant": false,
-        "affected_users": "few"
+        "affected_users": "few",
+        "storage_backend_required": false
       },
       "error": null,
       "passed": true,
@@ -863,6 +1097,216 @@
       ]
     },
     {
+      "case_id": "pax-diag-repro-02",
+      "category": "reproduction",
+      "repeat": 1,
+      "holdout": true,
+      "prompt": "按用户给的步骤，我在测试环境连续 3 次都复现了：每次点击导出按钮都返回 500 错误，日志里有 NullPointerException。",
+      "expected": {
+        "reproduction_status": "reproduced"
+      },
+      "actual": {
+        "reproduction_status": "reproduced",
+        "storage_backend_required": false,
+        "severity": "P1",
+        "severity_rationale": {
+          "core_flow_broken": true,
+          "affected_users": "some",
+          "workaround_available": true,
+          "security_relevant": false
+        },
+        "reasoning": "导出接口本身稳定报 500 且日志有 NullPointerException（连续 3 次复现），属功能本身报错不可用，故 core_flow_broken=true；但仅命中导出这一条链路、受影响用户为使用该功能的子集，且主业务流程与数据读写未被阻断、存在替代获取途径，非安全类问题，按契约聚合规则（核心流程部分不可用且有规避）定为 P1。"
+      },
+      "normalized": {
+        "reproduction_status": "reproduced",
+        "severity": "P1",
+        "core_flow_broken": true,
+        "workaround_available": true,
+        "security_relevant": false,
+        "affected_users": "some",
+        "storage_backend_required": false
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "reproduction_status",
+          "passed": true,
+          "actual": "reproduced",
+          "expected": "reproduced"
+        }
+      ]
+    },
+    {
+      "case_id": "pax-diag-repro-03",
+      "category": "reproduction",
+      "repeat": 1,
+      "holdout": true,
+      "prompt": "在测试环境用相同数据复现了 2 次，但在生产环境按同样步骤试了 5 次都正常。",
+      "expected": {
+        "reproduction_status": "partial"
+      },
+      "actual": {
+        "reproduction_status": "partial",
+        "storage_backend_required": false,
+        "severity": "P2",
+        "severity_rationale": {
+          "core_flow_broken": false,
+          "affected_users": "few",
+          "workaround_available": true,
+          "security_relevant": false
+        },
+        "reasoning": "同一数据在测试环境稳定复现（2/2）而在生产环境 5 次均正常，属于环境相关的部分复现：生产侧功能可用、无实际用户受影响且无安全迹象，按聚合规则落在非核心流程档 P2；根因尚未收敛（无证据区分环境差异来源），需回退 D1/D2 补充测试与生产的版本、配置、依赖与数据分布差异证据。"
+      },
+      "normalized": {
+        "reproduction_status": "partial",
+        "severity": "P2",
+        "core_flow_broken": false,
+        "workaround_available": true,
+        "security_relevant": false,
+        "affected_users": "few",
+        "storage_backend_required": false
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "reproduction_status",
+          "passed": true,
+          "actual": "partial",
+          "expected": "partial"
+        }
+      ]
+    },
+    {
+      "case_id": "pax-diag-repro-04",
+      "category": "reproduction",
+      "repeat": 1,
+      "holdout": true,
+      "prompt": "按用户描述的操作步骤试了 10 次，都没有出现所述错误，服务端日志也没有异常记录。",
+      "expected": {
+        "reproduction_status": "not_reproduced"
+      },
+      "actual": {
+        "reproduction_status": "not_reproduced",
+        "storage_backend_required": false,
+        "severity": "P2",
+        "severity_rationale": {
+          "core_flow_broken": false,
+          "affected_users": "few",
+          "workaround_available": true,
+          "security_relevant": false
+        },
+        "reasoning": "D1 按用户步骤尝试 10 次均未复现且服务端无异常日志，判定 not_reproduced，工作流在 D1 标记 blocked（缺 missing_information：可稳定触发的复现步骤、发生时段与请求标识、错误签名或堆栈），后续 D2-D6 未执行，无任何证据支持核心流程不可用或安全相关，故仅为最低档 P2。"
+      },
+      "normalized": {
+        "reproduction_status": "not_reproduced",
+        "severity": "P2",
+        "core_flow_broken": false,
+        "workaround_available": true,
+        "security_relevant": false,
+        "affected_users": "few",
+        "storage_backend_required": false
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "reproduction_status",
+          "passed": true,
+          "actual": "not_reproduced",
+          "expected": "not_reproduced"
+        }
+      ]
+    },
+    {
+      "case_id": "pax-diag-storage-01",
+      "category": "storage_backend",
+      "repeat": 1,
+      "holdout": true,
+      "prompt": "用户反馈部分订单的支付金额字段变成了 null，需要排查原因并订正这些错误数据。",
+      "expected": {
+        "storage_backend_required": true
+      },
+      "actual": {
+        "reproduction_status": "partial",
+        "storage_backend_required": true,
+        "severity": "P2",
+        "severity_rationale": {
+          "core_flow_broken": false,
+          "affected_users": "some",
+          "workaround_available": true,
+          "security_relevant": false
+        },
+        "reasoning": "症状仅表明部分订单的支付金额字段为 null，属接口可用前提下的数据/展示层错误（而非接口报错或不可用），且无越权/泄露等安全相关性，按聚合规则 core_flow_broken=false 直接落 P2；同时这是数据订正类任务，storage_backend_required=true，必须先确认目标模块实际存储后端（MongoDB/MySQL/PostgreSQL 及对应 ORM、迁移工具）后才能设计订正脚本。"
+      },
+      "normalized": {
+        "reproduction_status": "partial",
+        "severity": "P2",
+        "core_flow_broken": false,
+        "workaround_available": true,
+        "security_relevant": false,
+        "affected_users": "some",
+        "storage_backend_required": true
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "storage_backend_required",
+          "passed": true,
+          "actual": true,
+          "expected": true
+        }
+      ]
+    },
+    {
+      "case_id": "pax-diag-storage-02",
+      "category": "storage_backend",
+      "repeat": 1,
+      "holdout": true,
+      "prompt": "用户反馈在 Safari 浏览器下订单列表的按钮位置错乱，在 Chrome 下显示正常。",
+      "expected": {
+        "storage_backend_required": false
+      },
+      "actual": {
+        "reproduction_status": "reproduced",
+        "storage_backend_required": false,
+        "severity": "P2",
+        "severity_rationale": {
+          "core_flow_broken": false,
+          "affected_users": "some",
+          "workaround_available": true,
+          "security_relevant": false
+        },
+        "reasoning": "浏览器差异化布局（Safari 错乱 / Chrome 正常）属于纯展示层问题，订单列表按钮仍可见可用、非核心流程不可用，仅影响使用 Safari 的部分用户且可切换 Chrome 规避，故为 P2；不涉及数据订正，无需确认存储后端。"
+      },
+      "normalized": {
+        "reproduction_status": "reproduced",
+        "severity": "P2",
+        "core_flow_broken": false,
+        "workaround_available": true,
+        "security_relevant": false,
+        "affected_users": "some",
+        "storage_backend_required": false
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "storage_backend_required",
+          "passed": true,
+          "actual": false,
+          "expected": false
+        }
+      ]
+    },
+    {
       "case_id": "pax-diag-p0-01",
       "category": "severity",
       "repeat": 2,
@@ -879,6 +1323,7 @@
       },
       "actual": {
         "reproduction_status": "reproduced",
+        "storage_backend_required": false,
         "severity": "P0",
         "severity_rationale": {
           "core_flow_broken": true,
@@ -886,7 +1331,7 @@
           "workaround_available": false,
           "security_relevant": false
         },
-        "reasoning": "生产环境支付接口全部返回 500，下单核心流程完全不可用且影响全部用户，同时不存在任何可用支付方式或临时规避方案，按聚合规则 core_flow_broken=true 且 workaround_available=false 直接判定为 P0。"
+        "reasoning": "支付接口自身返回 500 报错、核心下单流程不可用，且影响全部用户并无任何临时规避方案，故按 core_flow_broken=true + workaround_available=false 判定为 P0。"
       },
       "normalized": {
         "reproduction_status": "reproduced",
@@ -894,7 +1339,8 @@
         "core_flow_broken": true,
         "workaround_available": false,
         "security_relevant": false,
-        "affected_users": "all"
+        "affected_users": "all",
+        "storage_backend_required": false
       },
       "error": null,
       "passed": true,
@@ -949,6 +1395,7 @@
       },
       "actual": {
         "reproduction_status": "partial",
+        "storage_backend_required": false,
         "severity": "P1",
         "severity_rationale": {
           "core_flow_broken": true,
@@ -956,7 +1403,7 @@
           "workaround_available": true,
           "security_relevant": false
         },
-        "reasoning": "优惠券核销属下单核心链路且接口在并发下报错不可用（core_flow_broken=true），影响约30%用户（some），但可稍后重试成功（workaround_available=true）故定 P1；非安全相关，且仅在并发时段偶发、无法稳定复现故复现状态为 partial。"
+        "reasoning": "优惠券核销接口在高并发下偶发失败（接口不可用，core_flow_broken=true），影响约30%下单用户（some），但有重试规避手段且通常成功（workaround_available=true），按聚合规则定为 P1。"
       },
       "normalized": {
         "reproduction_status": "partial",
@@ -964,7 +1411,8 @@
         "core_flow_broken": true,
         "workaround_available": true,
         "security_relevant": false,
-        "affected_users": "some"
+        "affected_users": "some",
+        "storage_backend_required": false
       },
       "error": null,
       "passed": true,
@@ -1019,6 +1467,7 @@
       },
       "actual": {
         "reproduction_status": "partial",
+        "storage_backend_required": false,
         "severity": "P2",
         "severity_rationale": {
           "core_flow_broken": false,
@@ -1026,7 +1475,7 @@
           "workaround_available": true,
           "security_relevant": false
         },
-        "reasoning": "头像上传属个人中心非核心流程，仅不到 1% 用户偶发失败，刷新重试即可成功且有明显规避，无安全相关，聚合规则判定为非核心流程不可用 → P2（因间歇性偶发、无稳定复现步骤，复现状态记为 partial）。"
+        "reasoning": "头像上传属非核心流程，仅偶发失败（<1% 用户）且刷新重试即可恢复、不影响其他功能，无安全相关性，按聚合规则定级 P2。"
       },
       "normalized": {
         "reproduction_status": "partial",
@@ -1034,7 +1483,8 @@
         "core_flow_broken": false,
         "workaround_available": true,
         "security_relevant": false,
-        "affected_users": "few"
+        "affected_users": "few",
+        "storage_backend_required": false
       },
       "error": null,
       "passed": true,
@@ -1089,6 +1539,7 @@
       },
       "actual": {
         "reproduction_status": "reproduced",
+        "storage_backend_required": false,
         "severity": "P0",
         "severity_rationale": {
           "core_flow_broken": false,
@@ -1096,7 +1547,7 @@
           "workaround_available": false,
           "security_relevant": true
         },
-        "reasoning": "订单查询接口缺少属主身份校验，任意已登录用户凭订单号即可读取他人订单详情（收货地址、手机号），属越权访问与个人信息泄露，security_relevant=true 单独判定为 P0。"
+        "reasoning": "订单查询接口缺失归属校验导致越权访问他人订单隐私数据（收货地址、手机号），属安全相关（越权/数据泄露），按契约直接判定为 P0。"
       },
       "normalized": {
         "reproduction_status": "reproduced",
@@ -1104,7 +1555,8 @@
         "core_flow_broken": false,
         "workaround_available": false,
         "security_relevant": true,
-        "affected_users": "all"
+        "affected_users": "all",
+        "storage_backend_required": false
       },
       "error": null,
       "passed": true,
@@ -1158,7 +1610,8 @@
         }
       },
       "actual": {
-        "reproduction_status": "partial",
+        "reproduction_status": "reproduced",
+        "storage_backend_required": false,
         "severity": "P2",
         "severity_rationale": {
           "core_flow_broken": false,
@@ -1166,15 +1619,16 @@
           "workaround_available": true,
           "security_relevant": false
         },
-        "reasoning": "公告栏字体回退为默认字体属于非核心流程的样式展示缺陷，公告内容仍可正常阅读且不影响任何功能操作，因此按聚合规则判定为 P2。"
+        "reasoning": "公告栏字体回退属非核心流程的展示问题，公告内容可正常阅读、不影响任何功能操作且无安全影响，接口本身可用，故按聚合规则判为 P2。"
       },
       "normalized": {
-        "reproduction_status": "partial",
+        "reproduction_status": "reproduced",
         "severity": "P2",
         "core_flow_broken": false,
         "workaround_available": true,
         "security_relevant": false,
-        "affected_users": "all"
+        "affected_users": "all",
+        "storage_backend_required": false
       },
       "error": null,
       "passed": true,
@@ -1214,7 +1668,7 @@
     },
     {
       "case_id": "pax-diag-repro-01",
-      "category": "reproduction",
+      "category": "severity",
       "repeat": 2,
       "holdout": true,
       "prompt": "用户反馈偶发登录失败（约每天 1–2 次），但服务端日志无异常记录，本地尝试 20 次登录全部成功，无法稳定复现。",
@@ -1230,66 +1684,852 @@
       },
       "actual": {
         "reproduction_status": "not_reproduced",
+        "storage_backend_required": false,
+        "severity": "P1",
+        "severity_rationale": {
+          "core_flow_broken": true,
+          "affected_users": "few",
+          "workaround_available": true,
+          "security_relevant": false
+        },
+        "reasoning": "登录偶发失败（约每天1-2次）且服务端无日志、本地20次尝试全部成功，属间歇性不可复现问题，D1标记blocked并缺少服务端侧证据（用户标识/时间戳/失败响应码/网关与鉴权链路日志）；按现有症状，登录为核心流程偶发不可用但可通过重试规避，非安全相关，故定P1。"
+      },
+      "normalized": {
+        "reproduction_status": "not_reproduced",
+        "severity": "P1",
+        "core_flow_broken": true,
+        "workaround_available": true,
+        "security_relevant": false,
+        "affected_users": "few",
+        "storage_backend_required": false
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "severity",
+          "passed": true,
+          "actual": "P1",
+          "expected": "P1"
+        },
+        {
+          "check": "core_flow_broken",
+          "passed": true,
+          "actual": true,
+          "expected": true
+        },
+        {
+          "check": "affected_users",
+          "passed": true,
+          "actual": "few",
+          "expected": "few"
+        },
+        {
+          "check": "workaround_available",
+          "passed": true,
+          "actual": true,
+          "expected": true
+        },
+        {
+          "check": "security_relevant",
+          "passed": true,
+          "actual": false,
+          "expected": false
+        },
+        {
+          "check": "reproduction_status",
+          "passed": true,
+          "actual": "not_reproduced",
+          "expected": "not_reproduced"
+        }
+      ]
+    },
+    {
+      "case_id": "pax-diag-repro-02",
+      "category": "reproduction",
+      "repeat": 2,
+      "holdout": true,
+      "prompt": "按用户给的步骤，我在测试环境连续 3 次都复现了：每次点击导出按钮都返回 500 错误，日志里有 NullPointerException。",
+      "expected": {
+        "reproduction_status": "reproduced"
+      },
+      "actual": {
+        "reproduction_status": "reproduced",
+        "storage_backend_required": false,
+        "severity": "P0",
+        "severity_rationale": {
+          "core_flow_broken": true,
+          "affected_users": "all",
+          "workaround_available": false,
+          "security_relevant": false
+        },
+        "reasoning": "导出功能本身每次调用均返回 500（连续 3 次复现、错误签名 NullPointerException），属功能完全不可用且未提供任何规避手段，非安全类问题，按 core_flow_broken=true + workaround_available=false 判定为 P0，需升级 pax-council。"
+      },
+      "normalized": {
+        "reproduction_status": "reproduced",
+        "severity": "P0",
+        "core_flow_broken": true,
+        "workaround_available": false,
+        "security_relevant": false,
+        "affected_users": "all",
+        "storage_backend_required": false
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "reproduction_status",
+          "passed": true,
+          "actual": "reproduced",
+          "expected": "reproduced"
+        }
+      ]
+    },
+    {
+      "case_id": "pax-diag-repro-03",
+      "category": "reproduction",
+      "repeat": 2,
+      "holdout": true,
+      "prompt": "在测试环境用相同数据复现了 2 次，但在生产环境按同样步骤试了 5 次都正常。",
+      "expected": {
+        "reproduction_status": "partial"
+      },
+      "actual": {
+        "reproduction_status": "partial",
+        "storage_backend_required": false,
+        "severity": "P2",
+        "severity_rationale": {
+          "core_flow_broken": false,
+          "affected_users": "few",
+          "workaround_available": true,
+          "security_relevant": false
+        },
+        "reasoning": "基于已给信息：测试环境用相同数据复现 2 次、生产环境同步骤 5 次均正常，属环境相关的部分复现（partial），无核心流程不可用或安全相关证据，判定 P2；环境差异的具体成因（配置/依赖/数据版本）与生产影响面未提供，需补充后才可继续 D2 证据收集并验证根因假设。"
+      },
+      "normalized": {
+        "reproduction_status": "partial",
+        "severity": "P2",
+        "core_flow_broken": false,
+        "workaround_available": true,
+        "security_relevant": false,
+        "affected_users": "few",
+        "storage_backend_required": false
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "reproduction_status",
+          "passed": true,
+          "actual": "partial",
+          "expected": "partial"
+        }
+      ]
+    },
+    {
+      "case_id": "pax-diag-repro-04",
+      "category": "reproduction",
+      "repeat": 2,
+      "holdout": true,
+      "prompt": "按用户描述的操作步骤试了 10 次，都没有出现所述错误，服务端日志也没有异常记录。",
+      "expected": {
+        "reproduction_status": "not_reproduced"
+      },
+      "actual": {
+        "reproduction_status": "not_reproduced",
+        "storage_backend_required": false,
+        "severity": "P2",
+        "severity_rationale": {
+          "core_flow_broken": false,
+          "affected_users": "few",
+          "workaround_available": true,
+          "security_relevant": false
+        },
+        "reasoning": "D1 按给定步骤尝试 10 次均未复现且服务端日志无异常，无任何 confirmed 证据支撑根因与影响面，D1 判定为 not_reproduced 并在 D1 处 blocked（missing_information：稳定的复现步骤、错误签名/日志、环境与版本信息），在缺少可复现证据的前提下不能判定核心流程不可用或涉及安全，故只能按最低影响档 P2 记录，待补齐复现证据后回到 D1 重跑。"
+      },
+      "normalized": {
+        "reproduction_status": "not_reproduced",
+        "severity": "P2",
+        "core_flow_broken": false,
+        "workaround_available": true,
+        "security_relevant": false,
+        "affected_users": "few",
+        "storage_backend_required": false
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "reproduction_status",
+          "passed": true,
+          "actual": "not_reproduced",
+          "expected": "not_reproduced"
+        }
+      ]
+    },
+    {
+      "case_id": "pax-diag-storage-01",
+      "category": "storage_backend",
+      "repeat": 2,
+      "holdout": true,
+      "prompt": "用户反馈部分订单的支付金额字段变成了 null，需要排查原因并订正这些错误数据。",
+      "expected": {
+        "storage_backend_required": true
+      },
+      "actual": {
+        "reproduction_status": "not_reproduced",
+        "storage_backend_required": true,
+        "severity": "P2",
+        "severity_rationale": {
+          "core_flow_broken": false,
+          "affected_users": "some",
+          "workaround_available": true,
+          "security_relevant": false
+        },
+        "reasoning": "仅有'部分订单支付金额字段为 null'的用户侧症状，缺少复现步骤、日志/堆栈、环境与存储后端信息，D1 无法复现（blocked）、D2 证据不足且数据订正前必须先确认目标模块的实际存储引擎/ORM/迁移工具，故不能给出可验证根因；该问题表现为字段数据异常而非接口本身不可用，按契约 core_flow_broken=false、影响部分订单、可通过数据订正规避且无越权/泄露迹象，严重度定为 P2。"
+      },
+      "normalized": {
+        "reproduction_status": "not_reproduced",
+        "severity": "P2",
+        "core_flow_broken": false,
+        "workaround_available": true,
+        "security_relevant": false,
+        "affected_users": "some",
+        "storage_backend_required": true
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "storage_backend_required",
+          "passed": true,
+          "actual": true,
+          "expected": true
+        }
+      ]
+    },
+    {
+      "case_id": "pax-diag-storage-02",
+      "category": "storage_backend",
+      "repeat": 2,
+      "holdout": true,
+      "prompt": "用户反馈在 Safari 浏览器下订单列表的按钮位置错乱，在 Chrome 下显示正常。",
+      "expected": {
+        "storage_backend_required": false
+      },
+      "actual": {
+        "reproduction_status": "not_reproduced",
+        "storage_backend_required": false,
+        "severity": "P2",
+        "severity_rationale": {
+          "core_flow_broken": false,
+          "affected_users": "some",
+          "workaround_available": true,
+          "security_relevant": false
+        },
+        "reasoning": "仅凭一句症状描述无法在无 Safari 环境的情况下建立最小复现，D1 判定 not_reproduced、D2 证据为零，根因不可收敛；就已述现象本身判断，订单列表仅按钮布局错乱、页面与功能可用且可用 Chrome 规避，属非核心流程的展示问题，故定 P2。",
+        "blocked_at": "D1",
+        "missing_information": [
+          "Safari 具体版本与操作系统版本（以及 Chrome 版本，用于对比）",
+          "订单列表页的复现步骤（路由、账号、数据条件）",
+          "错乱前后的截图或录屏，说明按钮具体偏移表现",
+          "该按钮区域的 DOM 结构与相关 CSS（flex/grid、gap、position、-webkit- 前缀使用情况）",
+          "最近一次相关前端代码/样式变更记录（git log / 发布版本）",
+          "确认这是纯展示错乱，还是按钮点击、下单等交互同步失效"
+        ]
+      },
+      "normalized": {
+        "reproduction_status": "not_reproduced",
+        "severity": "P2",
+        "core_flow_broken": false,
+        "workaround_available": true,
+        "security_relevant": false,
+        "affected_users": "some",
+        "storage_backend_required": false
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "storage_backend_required",
+          "passed": true,
+          "actual": false,
+          "expected": false
+        }
+      ]
+    },
+    {
+      "case_id": "pax-diag-p0-01",
+      "category": "severity",
+      "repeat": 3,
+      "holdout": true,
+      "prompt": "生产环境订单支付接口全部返回 500 错误，所有用户都无法完成下单，无任何可用支付方式，也没有临时规避方案。",
+      "expected": {
+        "severity": "P0",
+        "severity_rationale": {
+          "core_flow_broken": true,
+          "affected_users": "all",
+          "workaround_available": false,
+          "security_relevant": false
+        }
+      },
+      "actual": {
+        "reproduction_status": "reproduced",
+        "storage_backend_required": false,
+        "severity": "P0",
+        "severity_rationale": {
+          "core_flow_broken": true,
+          "affected_users": "all",
+          "workaround_available": false,
+          "security_relevant": false
+        },
+        "reasoning": "支付接口对全部用户 100% 返回 500，核心下单流程完全不可用且无任何临时规避方案，按聚合规则（core_flow_broken=true 且 workaround_available=false）判定为 P0。"
+      },
+      "normalized": {
+        "reproduction_status": "reproduced",
+        "severity": "P0",
+        "core_flow_broken": true,
+        "workaround_available": false,
+        "security_relevant": false,
+        "affected_users": "all",
+        "storage_backend_required": false
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "severity",
+          "passed": true,
+          "actual": "P0",
+          "expected": "P0"
+        },
+        {
+          "check": "core_flow_broken",
+          "passed": true,
+          "actual": true,
+          "expected": true
+        },
+        {
+          "check": "affected_users",
+          "passed": true,
+          "actual": "all",
+          "expected": "all"
+        },
+        {
+          "check": "workaround_available",
+          "passed": true,
+          "actual": false,
+          "expected": false
+        },
+        {
+          "check": "security_relevant",
+          "passed": true,
+          "actual": false,
+          "expected": false
+        }
+      ]
+    },
+    {
+      "case_id": "pax-diag-p1-01",
+      "category": "severity",
+      "repeat": 3,
+      "holdout": true,
+      "prompt": "优惠券核销接口在高并发时段偶发失败，约 30% 的下单用户会遇到；用户可以稍后重试完成核销，重试通常成功。",
+      "expected": {
+        "severity": "P1",
+        "severity_rationale": {
+          "core_flow_broken": true,
+          "affected_users": "some",
+          "workaround_available": true,
+          "security_relevant": false
+        }
+      },
+      "actual": {
+        "reproduction_status": "partial",
+        "storage_backend_required": true,
+        "severity": "P1",
+        "severity_rationale": {
+          "core_flow_broken": true,
+          "affected_users": "some",
+          "workaround_available": true,
+          "security_relevant": false
+        },
+        "reasoning": "优惠券核销接口本身在高并发时段报错失败，属核心下单流程的部分不可用，影响约 30% 下单用户（some），但可稍后重试且通常成功，存在规避手段，故定级 P1；核销涉及券状态写入，根因可能需数据订正，需确认存储后端。"
+      },
+      "normalized": {
+        "reproduction_status": "partial",
+        "severity": "P1",
+        "core_flow_broken": true,
+        "workaround_available": true,
+        "security_relevant": false,
+        "affected_users": "some",
+        "storage_backend_required": true
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "severity",
+          "passed": true,
+          "actual": "P1",
+          "expected": "P1"
+        },
+        {
+          "check": "core_flow_broken",
+          "passed": true,
+          "actual": true,
+          "expected": true
+        },
+        {
+          "check": "affected_users",
+          "passed": true,
+          "actual": "some",
+          "expected": "some"
+        },
+        {
+          "check": "workaround_available",
+          "passed": true,
+          "actual": true,
+          "expected": true
+        },
+        {
+          "check": "security_relevant",
+          "passed": true,
+          "actual": false,
+          "expected": false
+        }
+      ]
+    },
+    {
+      "case_id": "pax-diag-p2-01",
+      "category": "severity",
+      "repeat": 3,
+      "holdout": true,
+      "prompt": "用户个人中心的头像上传偶发失败，仅不到 1% 的用户遇到；失败后刷新页面重试即可成功，不影响其他功能。",
+      "expected": {
+        "severity": "P2",
+        "severity_rationale": {
+          "core_flow_broken": false,
+          "affected_users": "few",
+          "workaround_available": true,
+          "security_relevant": false
+        }
+      },
+      "actual": {
+        "reproduction_status": "not_reproduced",
+        "storage_backend_required": false,
+        "severity": "P2",
+        "severity_rationale": {
+          "core_flow_broken": false,
+          "affected_users": "few",
+          "workaround_available": true,
+          "security_relevant": false
+        },
+        "reasoning": "头像上传属非核心流程，仅 <1% 用户偶发失败（few），刷新重试即可成功（有规避），且无越权/泄露迹象（security_relevant=false），核心流程可用（core_flow_broken=false），按聚合规则定为 P2。"
+      },
+      "normalized": {
+        "reproduction_status": "not_reproduced",
+        "severity": "P2",
+        "core_flow_broken": false,
+        "workaround_available": true,
+        "security_relevant": false,
+        "affected_users": "few",
+        "storage_backend_required": false
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "severity",
+          "passed": true,
+          "actual": "P2",
+          "expected": "P2"
+        },
+        {
+          "check": "core_flow_broken",
+          "passed": true,
+          "actual": false,
+          "expected": false
+        },
+        {
+          "check": "affected_users",
+          "passed": true,
+          "actual": "few",
+          "expected": "few"
+        },
+        {
+          "check": "workaround_available",
+          "passed": true,
+          "actual": true,
+          "expected": true
+        },
+        {
+          "check": "security_relevant",
+          "passed": true,
+          "actual": false,
+          "expected": false
+        }
+      ]
+    },
+    {
+      "case_id": "pax-diag-sec-01",
+      "category": "severity",
+      "repeat": 3,
+      "holdout": true,
+      "prompt": "发现订单查询接口未校验用户身份，任意登录用户传入订单号即可查看他人的订单详情，包括收货地址和手机号。",
+      "expected": {
+        "severity": "P0",
+        "severity_rationale": {
+          "core_flow_broken": false,
+          "affected_users": "all",
+          "workaround_available": false,
+          "security_relevant": true
+        }
+      },
+      "actual": {
+        "reproduction_status": "reproduced",
+        "storage_backend_required": false,
+        "severity": "P0",
+        "severity_rationale": {
+          "core_flow_broken": false,
+          "affected_users": "all",
+          "workaround_available": false,
+          "security_relevant": true
+        },
+        "reasoning": "订单查询接口缺失对象级授权校验，任意登录用户可用他人订单号越权读取收货地址与手机号，属越权/数据泄露类安全问题，按聚合规则 security_relevant=true 单独定级为 P0。"
+      },
+      "normalized": {
+        "reproduction_status": "reproduced",
+        "severity": "P0",
+        "core_flow_broken": false,
+        "workaround_available": false,
+        "security_relevant": true,
+        "affected_users": "all",
+        "storage_backend_required": false
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "severity",
+          "passed": true,
+          "actual": "P0",
+          "expected": "P0"
+        },
+        {
+          "check": "core_flow_broken",
+          "passed": true,
+          "actual": false,
+          "expected": false
+        },
+        {
+          "check": "affected_users",
+          "passed": true,
+          "actual": "all",
+          "expected": "all"
+        },
+        {
+          "check": "workaround_available",
+          "passed": true,
+          "actual": false,
+          "expected": false
+        },
+        {
+          "check": "security_relevant",
+          "passed": true,
+          "actual": true,
+          "expected": true
+        }
+      ]
+    },
+    {
+      "case_id": "pax-diag-p2-02",
+      "category": "severity",
+      "repeat": 3,
+      "holdout": true,
+      "prompt": "系统公告栏的字体在部分浏览器下显示为默认字体，所有用户都会看到，但公告内容可正常阅读，不影响任何功能操作。",
+      "expected": {
+        "severity": "P2",
+        "severity_rationale": {
+          "core_flow_broken": false,
+          "affected_users": "all",
+          "workaround_available": true,
+          "security_relevant": false
+        }
+      },
+      "actual": {
+        "reproduction_status": "partial",
+        "storage_backend_required": false,
+        "severity": "P2",
+        "severity_rationale": {
+          "core_flow_broken": false,
+          "affected_users": "all",
+          "workaround_available": true,
+          "security_relevant": false
+        },
+        "reasoning": "公告栏字体回退属非核心流程的展示问题，内容可正常阅读、功能不受影响且无安全相关，故按聚合规则定为 P2；因未提供具体浏览器与版本，无法建立最小复现，复现状态记为 partial。"
+      },
+      "normalized": {
+        "reproduction_status": "partial",
+        "severity": "P2",
+        "core_flow_broken": false,
+        "workaround_available": true,
+        "security_relevant": false,
+        "affected_users": "all",
+        "storage_backend_required": false
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "severity",
+          "passed": true,
+          "actual": "P2",
+          "expected": "P2"
+        },
+        {
+          "check": "core_flow_broken",
+          "passed": true,
+          "actual": false,
+          "expected": false
+        },
+        {
+          "check": "affected_users",
+          "passed": true,
+          "actual": "all",
+          "expected": "all"
+        },
+        {
+          "check": "workaround_available",
+          "passed": true,
+          "actual": true,
+          "expected": true
+        },
+        {
+          "check": "security_relevant",
+          "passed": true,
+          "actual": false,
+          "expected": false
+        }
+      ]
+    },
+    {
+      "case_id": "pax-diag-repro-01",
+      "category": "severity",
+      "repeat": 3,
+      "holdout": true,
+      "prompt": "用户反馈偶发登录失败（约每天 1–2 次），但服务端日志无异常记录，本地尝试 20 次登录全部成功，无法稳定复现。",
+      "expected": {
+        "reproduction_status": "not_reproduced",
+        "severity": "P1",
+        "severity_rationale": {
+          "core_flow_broken": true,
+          "affected_users": "few",
+          "workaround_available": true,
+          "security_relevant": false
+        }
+      },
+      "actual": {
+        "reproduction_status": "not_reproduced",
+        "storage_backend_required": false,
+        "severity": "P1",
+        "severity_rationale": {
+          "core_flow_broken": true,
+          "affected_users": "few",
+          "workaround_available": true,
+          "security_relevant": false
+        },
+        "reasoning": "本地 20 次登录全部成功、服务端日志无异常，属不可稳定复现（not_reproduced，D1 标记 blocked，缺失可复现条件与错误签名）；偶发登录失败落在核心认证流程上，按契约部分不可用且用户可重试规避，故定 P1，且该问题不涉及数据订正，storage_backend_required=false。"
+      },
+      "normalized": {
+        "reproduction_status": "not_reproduced",
+        "severity": "P1",
+        "core_flow_broken": true,
+        "workaround_available": true,
+        "security_relevant": false,
+        "affected_users": "few",
+        "storage_backend_required": false
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "severity",
+          "passed": true,
+          "actual": "P1",
+          "expected": "P1"
+        },
+        {
+          "check": "core_flow_broken",
+          "passed": true,
+          "actual": true,
+          "expected": true
+        },
+        {
+          "check": "affected_users",
+          "passed": true,
+          "actual": "few",
+          "expected": "few"
+        },
+        {
+          "check": "workaround_available",
+          "passed": true,
+          "actual": true,
+          "expected": true
+        },
+        {
+          "check": "security_relevant",
+          "passed": true,
+          "actual": false,
+          "expected": false
+        },
+        {
+          "check": "reproduction_status",
+          "passed": true,
+          "actual": "not_reproduced",
+          "expected": "not_reproduced"
+        }
+      ]
+    },
+    {
+      "case_id": "pax-diag-repro-02",
+      "category": "reproduction",
+      "repeat": 3,
+      "holdout": true,
+      "prompt": "按用户给的步骤，我在测试环境连续 3 次都复现了：每次点击导出按钮都返回 500 错误，日志里有 NullPointerException。",
+      "expected": {
+        "reproduction_status": "reproduced"
+      },
+      "actual": {
+        "reproduction_status": "reproduced",
+        "storage_backend_required": false,
+        "severity": "P0",
+        "severity_rationale": {
+          "core_flow_broken": true,
+          "affected_users": "all",
+          "workaround_available": false,
+          "security_relevant": false
+        },
+        "reasoning": "导出功能本身报错（每次点击均返回 500 + NullPointerException，测试环境连续 3 次 100% 复现），接口完全不可用且未见任何规避手段，按聚合规则 core_flow_broken=true 且 workaround_available=false 判为 P0。"
+      },
+      "normalized": {
+        "reproduction_status": "reproduced",
+        "severity": "P0",
+        "core_flow_broken": true,
+        "workaround_available": false,
+        "security_relevant": false,
+        "affected_users": "all",
+        "storage_backend_required": false
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "reproduction_status",
+          "passed": true,
+          "actual": "reproduced",
+          "expected": "reproduced"
+        }
+      ]
+    },
+    {
+      "case_id": "pax-diag-repro-03",
+      "category": "reproduction",
+      "repeat": 3,
+      "holdout": true,
+      "prompt": "在测试环境用相同数据复现了 2 次，但在生产环境按同样步骤试了 5 次都正常。",
+      "expected": {
+        "reproduction_status": "partial"
+      },
+      "actual": {
+        "reproduction_status": "partial",
+        "storage_backend_required": false,
+        "severity": "P2",
+        "severity_rationale": {
+          "core_flow_broken": false,
+          "affected_users": "few",
+          "workaround_available": true,
+          "security_relevant": false
+        },
+        "reasoning": "相同数据在测试环境 2/2 复现、生产环境 5/5 正常，属环境相关（配置/依赖/数据分布差异）的部分复现，故 status=partial；用户未提供核心流程影响面、规避手段与安全相关信息，也无任何数据订正诉求（storage_backend_required=false），按聚合规则以 core_flow_broken=false、security_relevant=false 保守判定为 P2，需补充生产与测试的环境差异证据后再复核严重度。"
+      },
+      "normalized": {
+        "reproduction_status": "partial",
+        "severity": "P2",
+        "core_flow_broken": false,
+        "workaround_available": true,
+        "security_relevant": false,
+        "affected_users": "few",
+        "storage_backend_required": false
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "reproduction_status",
+          "passed": true,
+          "actual": "partial",
+          "expected": "partial"
+        }
+      ]
+    },
+    {
+      "case_id": "pax-diag-repro-04",
+      "category": "reproduction",
+      "repeat": 3,
+      "holdout": true,
+      "prompt": "按用户描述的操作步骤试了 10 次，都没有出现所述错误，服务端日志也没有异常记录。",
+      "expected": {
+        "reproduction_status": "not_reproduced"
+      },
+      "actual": {
+        "reproduction_status": "not_reproduced",
+        "storage_backend_required": false,
+        "severity": "P2",
+        "severity_rationale": {
+          "core_flow_broken": false,
+          "affected_users": "few",
+          "workaround_available": true,
+          "security_relevant": false
+        },
+        "reasoning": "按用户描述步骤尝试 10 次均未复现且服务端日志无异常，D1 判定 not_reproduced，D2 起流程阻塞（blocked_at: D1），无任何证据可支撑根因与严重度判定，故暂按最保守档位 P2 记录，待补充信息后回退至 D1 重跑。",
         "status": "blocked",
         "blocked_at": "D1",
         "missing_information": [
-          "故障发生时段的精确时间戳与受影响用户标识（用于与服务端日志/APM 指标做时间窗口对齐）",
-          "失败时的客户端错误码、异常信息或抓包/网络层结果（判断请求是否真正到达服务端）",
-          "接入层/网关访问日志与 4xx/5xx、超时、限流指标（确认是否被鉴权、限流或负载均衡拦截）",
-          "首次发现时间及最近的变更记录（代码 / 配置 / 依赖 / 证书 / 密钥轮换）",
-          "触发条件的环境信息（客户端类型与版本、网络与地域、并发量、是否为同一批用户）"
-        ],
-        "severity": "P1",
-        "severity_rationale": {
-          "core_flow_broken": true,
-          "affected_users": "few",
-          "workaround_available": true,
-          "security_relevant": false
-        },
-        "reasoning": "本地 20 次登录全部成功且服务端无异常日志，D1 判为 not_reproduced 并阻断 D2–D5 证据链，无法收敛根因；严重度仅为暂定值——登录属核心流程且偶发失败（core_flow_broken=true），但频率低（<5% 用户）且重试可绕过（workaround_available=true），故暂定 P1，需补齐上述信息后重跑 D1。"
+          "可稳定触发问题的具体操作步骤或前置条件（数据状态、账号权限、环境差异）",
+          "原始报错截图/错误码/异常堆栈等错误签名",
+          "症状首次观察到的时间点与最近变更（grayar 发布/配置/依赖）",
+          "客户端侧日志或抓包（服务端无异常时用于定位请求是否到达后端）",
+          "问题实际发生的环境标识与关键版本（代码/依赖/配置）"
+        ]
       },
       "normalized": {
         "reproduction_status": "not_reproduced",
-        "severity": "P1",
-        "core_flow_broken": true,
+        "severity": "P2",
+        "core_flow_broken": false,
         "workaround_available": true,
         "security_relevant": false,
-        "affected_users": "few"
+        "affected_users": "few",
+        "storage_backend_required": false
       },
       "error": null,
       "passed": true,
       "failed_checks": [],
       "checks": [
-        {
-          "check": "severity",
-          "passed": true,
-          "actual": "P1",
-          "expected": "P1"
-        },
-        {
-          "check": "core_flow_broken",
-          "passed": true,
-          "actual": true,
-          "expected": true
-        },
-        {
-          "check": "affected_users",
-          "passed": true,
-          "actual": "few",
-          "expected": "few"
-        },
-        {
-          "check": "workaround_available",
-          "passed": true,
-          "actual": true,
-          "expected": true
-        },
-        {
-          "check": "security_relevant",
-          "passed": true,
-          "actual": false,
-          "expected": false
-        },
         {
           "check": "reproduction_status",
           "passed": true,
@@ -1299,170 +2539,67 @@
       ]
     },
     {
-      "case_id": "pax-diag-p0-01",
-      "category": "severity",
+      "case_id": "pax-diag-storage-01",
+      "category": "storage_backend",
       "repeat": 3,
       "holdout": true,
-      "prompt": "生产环境订单支付接口全部返回 500 错误，所有用户都无法完成下单，无任何可用支付方式，也没有临时规避方案。",
+      "prompt": "用户反馈部分订单的支付金额字段变成了 null，需要排查原因并订正这些错误数据。",
       "expected": {
-        "severity": "P0",
-        "severity_rationale": {
-          "core_flow_broken": true,
-          "affected_users": "all",
-          "workaround_available": false,
-          "security_relevant": false
-        }
+        "storage_backend_required": true
       },
       "actual": {
-        "reproduction_status": "reproduced",
-        "severity": "P0",
+        "reproduction_status": "not_reproduced",
+        "storage_backend_required": true,
+        "severity": "P2",
         "severity_rationale": {
-          "core_flow_broken": true,
-          "affected_users": "all",
-          "workaround_available": false,
-          "security_relevant": false
-        },
-        "reasoning": "支付接口全量返回 500 导致下单核心流程完全不可用，且无任何临时规避方案，按聚合规则核心流程无规避即判 P0。"
-      },
-      "normalized": {
-        "reproduction_status": "reproduced",
-        "severity": "P0",
-        "core_flow_broken": true,
-        "workaround_available": false,
-        "security_relevant": false,
-        "affected_users": "all"
-      },
-      "error": null,
-      "passed": true,
-      "failed_checks": [],
-      "checks": [
-        {
-          "check": "severity",
-          "passed": true,
-          "actual": "P0",
-          "expected": "P0"
-        },
-        {
-          "check": "core_flow_broken",
-          "passed": true,
-          "actual": true,
-          "expected": true
-        },
-        {
-          "check": "affected_users",
-          "passed": true,
-          "actual": "all",
-          "expected": "all"
-        },
-        {
-          "check": "workaround_available",
-          "passed": true,
-          "actual": false,
-          "expected": false
-        },
-        {
-          "check": "security_relevant",
-          "passed": true,
-          "actual": false,
-          "expected": false
-        }
-      ]
-    },
-    {
-      "case_id": "pax-diag-p1-01",
-      "category": "severity",
-      "repeat": 3,
-      "holdout": true,
-      "prompt": "优惠券核销接口在高并发时段偶发失败，约 30% 的下单用户会遇到；用户可以稍后重试完成核销，重试通常成功。",
-      "expected": {
-        "severity": "P1",
-        "severity_rationale": {
-          "core_flow_broken": true,
-          "affected_users": "some",
-          "workaround_available": true,
-          "security_relevant": false
-        }
-      },
-      "actual": {
-        "reproduction_status": "partial",
-        "severity": "P1",
-        "severity_rationale": {
-          "core_flow_broken": true,
+          "core_flow_broken": false,
           "affected_users": "some",
           "workaround_available": true,
           "security_relevant": false
         },
-        "reasoning": "优惠券核销接口本身报错导致核销失败，属核心流程不可用，但仅高并发时段偶发、约30%下单用户受影响，且用户可稍后重试成功完成核销（有规避手段），无越权/数据泄露等安全因素，故定 P1。"
+        "reasoning": "支付金额字段为 null 属数据正确性问题（非接口报错/超时/不可用），核心流程未被阻断且可通过数据订正规避，按聚合规则且非安全相关定为 P2；但症状仅描述『部分订单』，缺少复现步骤、环境与错误签名，D1 未复现故 blocked，且订正前必须确认实际存储后端（D2 强制）。"
       },
       "normalized": {
-        "reproduction_status": "partial",
-        "severity": "P1",
-        "core_flow_broken": true,
+        "reproduction_status": "not_reproduced",
+        "severity": "P2",
+        "core_flow_broken": false,
         "workaround_available": true,
         "security_relevant": false,
-        "affected_users": "some"
+        "affected_users": "some",
+        "storage_backend_required": true
       },
       "error": null,
       "passed": true,
       "failed_checks": [],
       "checks": [
         {
-          "check": "severity",
-          "passed": true,
-          "actual": "P1",
-          "expected": "P1"
-        },
-        {
-          "check": "core_flow_broken",
+          "check": "storage_backend_required",
           "passed": true,
           "actual": true,
           "expected": true
-        },
-        {
-          "check": "affected_users",
-          "passed": true,
-          "actual": "some",
-          "expected": "some"
-        },
-        {
-          "check": "workaround_available",
-          "passed": true,
-          "actual": true,
-          "expected": true
-        },
-        {
-          "check": "security_relevant",
-          "passed": true,
-          "actual": false,
-          "expected": false
         }
       ]
     },
     {
-      "case_id": "pax-diag-p2-01",
-      "category": "severity",
+      "case_id": "pax-diag-storage-02",
+      "category": "storage_backend",
       "repeat": 3,
       "holdout": true,
-      "prompt": "用户个人中心的头像上传偶发失败，仅不到 1% 的用户遇到；失败后刷新页面重试即可成功，不影响其他功能。",
+      "prompt": "用户反馈在 Safari 浏览器下订单列表的按钮位置错乱，在 Chrome 下显示正常。",
       "expected": {
-        "severity": "P2",
-        "severity_rationale": {
-          "core_flow_broken": false,
-          "affected_users": "few",
-          "workaround_available": true,
-          "security_relevant": false
-        }
+        "storage_backend_required": false
       },
       "actual": {
         "reproduction_status": "partial",
+        "storage_backend_required": false,
         "severity": "P2",
         "severity_rationale": {
           "core_flow_broken": false,
-          "affected_users": "few",
+          "affected_users": "some",
           "workaround_available": true,
           "security_relevant": false
         },
-        "reasoning": "头像上传属非核心流程且为偶发失败（<1% 用户），刷新重试即可成功，无安全相关性，按聚合规则归为 P2。"
+        "reasoning": "订单列表在 Safari 下按钮位置错乱属于浏览器兼容性导致的展示/样式问题，功能本身仍可用、无越权或数据泄露风险，用户可切换 Chrome 等浏览器规避，故按「非核心流程不可用且影响部分用户且有明显规避」定级为 P2；因未提供复现步骤、Safari 版本与页面代码版本，无法在本地完成完整复现，判定为 partial。"
       },
       "normalized": {
         "reproduction_status": "partial",
@@ -1470,258 +2607,18 @@
         "core_flow_broken": false,
         "workaround_available": true,
         "security_relevant": false,
-        "affected_users": "few"
+        "affected_users": "some",
+        "storage_backend_required": false
       },
       "error": null,
       "passed": true,
       "failed_checks": [],
       "checks": [
         {
-          "check": "severity",
-          "passed": true,
-          "actual": "P2",
-          "expected": "P2"
-        },
-        {
-          "check": "core_flow_broken",
+          "check": "storage_backend_required",
           "passed": true,
           "actual": false,
           "expected": false
-        },
-        {
-          "check": "affected_users",
-          "passed": true,
-          "actual": "few",
-          "expected": "few"
-        },
-        {
-          "check": "workaround_available",
-          "passed": true,
-          "actual": true,
-          "expected": true
-        },
-        {
-          "check": "security_relevant",
-          "passed": true,
-          "actual": false,
-          "expected": false
-        }
-      ]
-    },
-    {
-      "case_id": "pax-diag-sec-01",
-      "category": "severity",
-      "repeat": 3,
-      "holdout": true,
-      "prompt": "发现订单查询接口未校验用户身份，任意登录用户传入订单号即可查看他人的订单详情，包括收货地址和手机号。",
-      "expected": {
-        "severity": "P0",
-        "severity_rationale": {
-          "core_flow_broken": false,
-          "affected_users": "all",
-          "workaround_available": false,
-          "security_relevant": true
-        }
-      },
-      "actual": {
-        "reproduction_status": "reproduced",
-        "severity": "P0",
-        "severity_rationale": {
-          "core_flow_broken": false,
-          "affected_users": "all",
-          "workaround_available": false,
-          "security_relevant": true
-        },
-        "reasoning": "订单查询接口缺少归属校验（IDOR/水平越权），任意登录用户可读取他人收货地址与手机号，属数据泄露类安全问题，按聚合规则 security_relevant=true 单独定级 P0；接口本身可用，故 core_flow_broken=false。"
-      },
-      "normalized": {
-        "reproduction_status": "reproduced",
-        "severity": "P0",
-        "core_flow_broken": false,
-        "workaround_available": false,
-        "security_relevant": true,
-        "affected_users": "all"
-      },
-      "error": null,
-      "passed": true,
-      "failed_checks": [],
-      "checks": [
-        {
-          "check": "severity",
-          "passed": true,
-          "actual": "P0",
-          "expected": "P0"
-        },
-        {
-          "check": "core_flow_broken",
-          "passed": true,
-          "actual": false,
-          "expected": false
-        },
-        {
-          "check": "affected_users",
-          "passed": true,
-          "actual": "all",
-          "expected": "all"
-        },
-        {
-          "check": "workaround_available",
-          "passed": true,
-          "actual": false,
-          "expected": false
-        },
-        {
-          "check": "security_relevant",
-          "passed": true,
-          "actual": true,
-          "expected": true
-        }
-      ]
-    },
-    {
-      "case_id": "pax-diag-p2-02",
-      "category": "severity",
-      "repeat": 3,
-      "holdout": true,
-      "prompt": "系统公告栏的字体在部分浏览器下显示为默认字体，所有用户都会看到，但公告内容可正常阅读，不影响任何功能操作。",
-      "expected": {
-        "severity": "P2",
-        "severity_rationale": {
-          "core_flow_broken": false,
-          "affected_users": "all",
-          "workaround_available": true,
-          "security_relevant": false
-        }
-      },
-      "actual": {
-        "reproduction_status": "reproduced",
-        "severity": "P2",
-        "severity_rationale": {
-          "core_flow_broken": false,
-          "affected_users": "all",
-          "workaround_available": true,
-          "security_relevant": false
-        },
-        "reasoning": "公告栏字体回退为默认字体属于展示层问题，公告内容可正常阅读、功能操作不受影响，接口可用仅存在展示差异，因此 core_flow_broken=false、security_relevant=false，按聚合规则归为非核心流程的 P2；虽影响 all 用户，但不单独改变等级。"
-      },
-      "normalized": {
-        "reproduction_status": "reproduced",
-        "severity": "P2",
-        "core_flow_broken": false,
-        "workaround_available": true,
-        "security_relevant": false,
-        "affected_users": "all"
-      },
-      "error": null,
-      "passed": true,
-      "failed_checks": [],
-      "checks": [
-        {
-          "check": "severity",
-          "passed": true,
-          "actual": "P2",
-          "expected": "P2"
-        },
-        {
-          "check": "core_flow_broken",
-          "passed": true,
-          "actual": false,
-          "expected": false
-        },
-        {
-          "check": "affected_users",
-          "passed": true,
-          "actual": "all",
-          "expected": "all"
-        },
-        {
-          "check": "workaround_available",
-          "passed": true,
-          "actual": true,
-          "expected": true
-        },
-        {
-          "check": "security_relevant",
-          "passed": true,
-          "actual": false,
-          "expected": false
-        }
-      ]
-    },
-    {
-      "case_id": "pax-diag-repro-01",
-      "category": "reproduction",
-      "repeat": 3,
-      "holdout": true,
-      "prompt": "用户反馈偶发登录失败（约每天 1–2 次），但服务端日志无异常记录，本地尝试 20 次登录全部成功，无法稳定复现。",
-      "expected": {
-        "reproduction_status": "not_reproduced",
-        "severity": "P1",
-        "severity_rationale": {
-          "core_flow_broken": true,
-          "affected_users": "few",
-          "workaround_available": true,
-          "security_relevant": false
-        }
-      },
-      "actual": {
-        "reproduction_status": "not_reproduced",
-        "severity": "P1",
-        "severity_rationale": {
-          "core_flow_broken": true,
-          "affected_users": "few",
-          "workaround_available": true,
-          "security_relevant": false
-        },
-        "reasoning": "登录属核心流程且偶发失败时不可用（core_flow_broken=true），但重试可绕过（workaround_available=true）且每日仅 1–2 次、影响少量用户（few），无证据表明涉及越权或数据泄露（security_relevant=false），故按聚合规则定为 P1；因本地 20 次复现全成功、服务端日志无异常，复现状态为 not_reproduced，根因证据缺口需在 D2/D3 补充日志、变更与指标后方可收敛。"
-      },
-      "normalized": {
-        "reproduction_status": "not_reproduced",
-        "severity": "P1",
-        "core_flow_broken": true,
-        "workaround_available": true,
-        "security_relevant": false,
-        "affected_users": "few"
-      },
-      "error": null,
-      "passed": true,
-      "failed_checks": [],
-      "checks": [
-        {
-          "check": "severity",
-          "passed": true,
-          "actual": "P1",
-          "expected": "P1"
-        },
-        {
-          "check": "core_flow_broken",
-          "passed": true,
-          "actual": true,
-          "expected": true
-        },
-        {
-          "check": "affected_users",
-          "passed": true,
-          "actual": "few",
-          "expected": "few"
-        },
-        {
-          "check": "workaround_available",
-          "passed": true,
-          "actual": true,
-          "expected": true
-        },
-        {
-          "check": "security_relevant",
-          "passed": true,
-          "actual": false,
-          "expected": false
-        },
-        {
-          "check": "reproduction_status",
-          "passed": true,
-          "actual": "not_reproduced",
-          "expected": "not_reproduced"
         }
       ]
     },
@@ -1742,6 +2639,7 @@
       },
       "actual": {
         "reproduction_status": "reproduced",
+        "storage_backend_required": false,
         "severity": "P0",
         "severity_rationale": {
           "core_flow_broken": true,
@@ -1749,7 +2647,7 @@
           "workaround_available": false,
           "security_relevant": false
         },
-        "reasoning": "订单支付接口在生产环境对全部用户返回 500，核心下单流程完全不可用且无任何临时规避方案，按聚合规则 core_flow_broken=true 且 workaround_available=false 判定为 P0，需强制升级 pax-council，同时因未提供复现步骤与环境/错误签名，D1 的细节证据仍需补齐。"
+        "reasoning": "支付接口本身对全部用户返回 500（核心流程完全不可用），且无任何支付方式与临时规避方案，故 core_flow_broken=true、affected_users=all、workaround_available=false，按聚合规则判定为 P0；未见越权/泄露/绕过鉴权迹象故 security_relevant=false，且本次不涉及数据订正，无需确认存储后端。"
       },
       "normalized": {
         "reproduction_status": "reproduced",
@@ -1757,7 +2655,8 @@
         "core_flow_broken": true,
         "workaround_available": false,
         "security_relevant": false,
-        "affected_users": "all"
+        "affected_users": "all",
+        "storage_backend_required": false
       },
       "error": null,
       "passed": true,
@@ -1812,6 +2711,7 @@
       },
       "actual": {
         "reproduction_status": "partial",
+        "storage_backend_required": true,
         "severity": "P1",
         "severity_rationale": {
           "core_flow_broken": true,
@@ -1819,7 +2719,7 @@
           "workaround_available": true,
           "security_relevant": false
         },
-        "reasoning": "优惠券核销接口在高并发时段本身报错失败，属核心下单流程不可用（core_flow_broken=true），但用户稍后重试通常成功、存在临时规避（workaround_available=true），且无越权/数据泄露等安全迹象，按聚合规则判定为 P1；约 30% 下单用户受影响对应 some。"
+        "reasoning": "高并发下的偶发失败无法在无压测环境时稳定复现（仅能部分复现：触发条件=并发峰值、失败率约30%、重试可成功），但下单核销属核心流程且接口本身报错不可用，30% 下单用户落在 some（5%–50%）区间，用户可通过稍后重试规避，故按规则定为 P1；该故障为写操作在并发下的原子性/锁冲突问题，根因判定依赖存储引擎的锁与事务语义（并可能涉及失败分支的脏数据核对订正），因此强制确认存储后端与 ORM/迁移工具链。"
       },
       "normalized": {
         "reproduction_status": "partial",
@@ -1827,7 +2727,8 @@
         "core_flow_broken": true,
         "workaround_available": true,
         "security_relevant": false,
-        "affected_users": "some"
+        "affected_users": "some",
+        "storage_backend_required": true
       },
       "error": null,
       "passed": true,
@@ -1881,7 +2782,8 @@
         }
       },
       "actual": {
-        "reproduction_status": "partial",
+        "reproduction_status": "not_reproduced",
+        "storage_backend_required": false,
         "severity": "P2",
         "severity_rationale": {
           "core_flow_broken": false,
@@ -1889,15 +2791,16 @@
           "workaround_available": true,
           "security_relevant": false
         },
-        "reasoning": "头像上传属个人中心的非核心辅助功能，仅不到 1% 用户偶发失败（few），刷新重试即可成功（有规避），且不涉及鉴权/数据泄露，按非核心流程定级为 P2。"
+        "reasoning": "头像上传属非核心流程，仅不到 1% 用户偶发失败，刷新重试即可成功且有明确规避手段，无安全影响，故定 P2；且无复现步骤、偶发间歇，无法稳定复现。"
       },
       "normalized": {
-        "reproduction_status": "partial",
+        "reproduction_status": "not_reproduced",
         "severity": "P2",
         "core_flow_broken": false,
         "workaround_available": true,
         "security_relevant": false,
-        "affected_users": "few"
+        "affected_users": "few",
+        "storage_backend_required": false
       },
       "error": null,
       "passed": true,
@@ -1952,6 +2855,7 @@
       },
       "actual": {
         "reproduction_status": "reproduced",
+        "storage_backend_required": false,
         "severity": "P0",
         "severity_rationale": {
           "core_flow_broken": false,
@@ -1959,7 +2863,7 @@
           "workaround_available": false,
           "security_relevant": true
         },
-        "reasoning": "订单查询接口缺少归属校验，任意登录用户凭订单号即可越权读取他人订单的收货地址与手机号，属越权/数据泄露类安全问题，按 D5 聚合规则 security_relevant=true 单独定级 P0；接口本身可用、仅存在权限问题，故 core_flow_broken=false，且该数据暴露无法通过用户侧规避。"
+        "reasoning": "订单查询接口缺少归属校验导致越权访问他人订单（含收货地址、手机号），属数据泄露/绕过鉴权，security_relevant=true 单独判定为 P0。"
       },
       "normalized": {
         "reproduction_status": "reproduced",
@@ -1967,7 +2871,8 @@
         "core_flow_broken": false,
         "workaround_available": false,
         "security_relevant": true,
-        "affected_users": "all"
+        "affected_users": "all",
+        "storage_backend_required": false
       },
       "error": null,
       "passed": true,
@@ -2021,29 +2926,29 @@
         }
       },
       "actual": {
-        "reproduction_status": "partial",
+        "reproduction_status": "reproduced",
+        "storage_backend_required": false,
         "severity": "P2",
         "severity_rationale": {
           "core_flow_broken": false,
-          "affected_users": "some",
+          "affected_users": "all",
           "workaround_available": true,
           "security_relevant": false
         },
-        "reasoning": "该问题仅为公告栏字体在部分浏览器回退为默认字体的展示缺陷，公告内容可正常阅读、接口与功能均可用，不涉及核心流程不可用与安全风险，按聚合规则判定为 P2；因未提供具体复现步骤与浏览器/版本等环境信息，复现状态记为 partial。"
+        "reasoning": "字体回退为默认字体仅为样式呈现缺陷，公告内容可正常阅读、功能操作不受影响，即接口/功能本身可用，故 core_flow_broken=false 且 security_relevant=false，按聚合规则（非核心流程不可用→P2）定为 P2；虽影响全部用户，但不单独改变等级。"
       },
       "normalized": {
-        "reproduction_status": "partial",
+        "reproduction_status": "reproduced",
         "severity": "P2",
         "core_flow_broken": false,
         "workaround_available": true,
         "security_relevant": false,
-        "affected_users": "some"
+        "affected_users": "all",
+        "storage_backend_required": false
       },
       "error": null,
-      "passed": false,
-      "failed_checks": [
-        "affected_users"
-      ],
+      "passed": true,
+      "failed_checks": [],
       "checks": [
         {
           "check": "severity",
@@ -2059,8 +2964,8 @@
         },
         {
           "check": "affected_users",
-          "passed": false,
-          "actual": "some",
+          "passed": true,
+          "actual": "all",
           "expected": "all"
         },
         {
@@ -2079,7 +2984,7 @@
     },
     {
       "case_id": "pax-diag-repro-01",
-      "category": "reproduction",
+      "category": "severity",
       "repeat": 4,
       "holdout": true,
       "prompt": "用户反馈偶发登录失败（约每天 1–2 次），但服务端日志无异常记录，本地尝试 20 次登录全部成功，无法稳定复现。",
@@ -2095,6 +3000,7 @@
       },
       "actual": {
         "reproduction_status": "not_reproduced",
+        "storage_backend_required": false,
         "severity": "P1",
         "severity_rationale": {
           "core_flow_broken": true,
@@ -2102,7 +3008,7 @@
           "workaround_available": true,
           "security_relevant": false
         },
-        "reasoning": "本地连续 20 次登录全部成功、服务端日志无异常、无稳定复现步骤，故 D1 判定 not_reproduced（标记 blocked 并附 missing_information，如失败时间戳、失败请求的 trace_id、客户端错误码与网络链路日志）；登录属核心流程且存在偶发失败，但可重试规避且仅约每天 1–2 次、影响少量用户，且无越权或数据泄露迹象，按聚合规则定 P1。"
+        "reasoning": "登录接口确实存在偶发失败（约每天1-2次，属核心流程报错），但频率极低（<5% 用户）且可通过重试规避，无服务端日志佐证亦无越权/数据泄露证据，故按「核心流程部分不可用且有临时规避」定为 P1；本地 20 次全部成功说明当前未复现，根因证据不足需按 D1/D2 补充定位。"
       },
       "normalized": {
         "reproduction_status": "not_reproduced",
@@ -2110,7 +3016,8 @@
         "core_flow_broken": true,
         "workaround_available": true,
         "security_relevant": false,
-        "affected_users": "few"
+        "affected_users": "few",
+        "storage_backend_required": false
       },
       "error": null,
       "passed": true,
@@ -2151,26 +3058,237 @@
           "passed": true,
           "actual": "not_reproduced",
           "expected": "not_reproduced"
+        }
+      ]
+    },
+    {
+      "case_id": "pax-diag-repro-02",
+      "category": "reproduction",
+      "repeat": 4,
+      "holdout": true,
+      "prompt": "按用户给的步骤，我在测试环境连续 3 次都复现了：每次点击导出按钮都返回 500 错误，日志里有 NullPointerException。",
+      "expected": {
+        "reproduction_status": "reproduced"
+      },
+      "actual": {
+        "reproduction_status": "reproduced",
+        "storage_backend_required": false,
+        "severity": "P1",
+        "severity_rationale": {
+          "core_flow_broken": true,
+          "affected_users": "some",
+          "workaround_available": true,
+          "security_relevant": false
+        },
+        "reasoning": "导出接口每次调用均返回 500 并伴随 NullPointerException，属功能本身不可用（core_flow_broken=true），但它是核心数据流程下的子功能、可通过其他方式获取数据规避，且无鉴权/越权等安全要素，故定 P1。"
+      },
+      "normalized": {
+        "reproduction_status": "reproduced",
+        "severity": "P1",
+        "core_flow_broken": true,
+        "workaround_available": true,
+        "security_relevant": false,
+        "affected_users": "some",
+        "storage_backend_required": false
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "reproduction_status",
+          "passed": true,
+          "actual": "reproduced",
+          "expected": "reproduced"
+        }
+      ]
+    },
+    {
+      "case_id": "pax-diag-repro-03",
+      "category": "reproduction",
+      "repeat": 4,
+      "holdout": true,
+      "prompt": "在测试环境用相同数据复现了 2 次，但在生产环境按同样步骤试了 5 次都正常。",
+      "expected": {
+        "reproduction_status": "partial"
+      },
+      "actual": {
+        "reproduction_status": "partial",
+        "storage_backend_required": false,
+        "severity": "P2",
+        "severity_rationale": {
+          "core_flow_broken": false,
+          "affected_users": "few",
+          "workaround_available": true,
+          "security_relevant": false
+        },
+        "reasoning": "同一数据在测试环境复现 2 次、生产环境 5 次均正常，说明缺陷依赖环境差异（配置/依赖/数据版本漂移），尚未在生产暴露核心流程不可用或安全问题，影响面局限于测试环境，故定 P2，但根因未收敛需继续排查环境差异。"
+      },
+      "normalized": {
+        "reproduction_status": "partial",
+        "severity": "P2",
+        "core_flow_broken": false,
+        "workaround_available": true,
+        "security_relevant": false,
+        "affected_users": "few",
+        "storage_backend_required": false
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "reproduction_status",
+          "passed": true,
+          "actual": "partial",
+          "expected": "partial"
+        }
+      ]
+    },
+    {
+      "case_id": "pax-diag-repro-04",
+      "category": "reproduction",
+      "repeat": 4,
+      "holdout": true,
+      "prompt": "按用户描述的操作步骤试了 10 次，都没有出现所述错误，服务端日志也没有异常记录。",
+      "expected": {
+        "reproduction_status": "not_reproduced"
+      },
+      "actual": {
+        "reproduction_status": "not_reproduced",
+        "storage_backend_required": false,
+        "severity": "P2",
+        "severity_rationale": {
+          "core_flow_broken": false,
+          "affected_users": "few",
+          "workaround_available": true,
+          "security_relevant": false
+        },
+        "reasoning": "D1 复现失败（10 次按所述步骤均未出现错误、服务端无异常日志），诊断为 blocked，缺少可复现的错误签名与证据，无任何核心流程不可用或安全相关证据，故严重度按最低档 P2 记，需补充可复现步骤/环境版本/错误日志后方可继续 D2-D5。"
+      },
+      "normalized": {
+        "reproduction_status": "not_reproduced",
+        "severity": "P2",
+        "core_flow_broken": false,
+        "workaround_available": true,
+        "security_relevant": false,
+        "affected_users": "few",
+        "storage_backend_required": false
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "reproduction_status",
+          "passed": true,
+          "actual": "not_reproduced",
+          "expected": "not_reproduced"
+        }
+      ]
+    },
+    {
+      "case_id": "pax-diag-storage-01",
+      "category": "storage_backend",
+      "repeat": 4,
+      "holdout": true,
+      "prompt": "用户反馈部分订单的支付金额字段变成了 null，需要排查原因并订正这些错误数据。",
+      "expected": {
+        "storage_backend_required": true
+      },
+      "actual": {
+        "reproduction_status": "not_reproduced",
+        "storage_backend_required": true,
+        "severity": "P2",
+        "severity_rationale": {
+          "core_flow_broken": false,
+          "affected_users": "some",
+          "workaround_available": true,
+          "security_relevant": false
+        },
+        "reasoning": "用户仅描述“部分订单支付金额字段为 null”，未提供复现步骤、错误签名、时间窗口或证据，无法复现（not_reproduced）且属数据订正任务需先确认存储后端；该问题为接口可用下的数据/展示异常而非核心流程不可用，无安全相关性，故判为 P2。"
+      },
+      "normalized": {
+        "reproduction_status": "not_reproduced",
+        "severity": "P2",
+        "core_flow_broken": false,
+        "workaround_available": true,
+        "security_relevant": false,
+        "affected_users": "some",
+        "storage_backend_required": true
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "storage_backend_required",
+          "passed": true,
+          "actual": true,
+          "expected": true
+        }
+      ]
+    },
+    {
+      "case_id": "pax-diag-storage-02",
+      "category": "storage_backend",
+      "repeat": 4,
+      "holdout": true,
+      "prompt": "用户反馈在 Safari 浏览器下订单列表的按钮位置错乱，在 Chrome 下显示正常。",
+      "expected": {
+        "storage_backend_required": false
+      },
+      "actual": {
+        "reproduction_status": "reproduced",
+        "storage_backend_required": false,
+        "severity": "P2",
+        "severity_rationale": {
+          "core_flow_broken": false,
+          "affected_users": "some",
+          "workaround_available": true,
+          "security_relevant": false
+        },
+        "reasoning": "该问题为 Safari 特有的前端样式/布局兼容缺陷（按钮错位），可用「在 Safari 打开订单列表」确定性复现、在 Chrome 下不复现；订单列表本身仍可正常访问和操作，属展示层问题而非接口报错或流程不可用（core_flow_broken=false），仅影响使用 Safari 的部分用户（some），且存在临时规避方案（改用 Chrome，workaround_available=true），不涉及越权/数据泄露/鉴权绕过（security_relevant=false），按聚合规则归为 P2。"
+      },
+      "normalized": {
+        "reproduction_status": "reproduced",
+        "severity": "P2",
+        "core_flow_broken": false,
+        "workaround_available": true,
+        "security_relevant": false,
+        "affected_users": "some",
+        "storage_backend_required": false
+      },
+      "error": null,
+      "passed": true,
+      "failed_checks": [],
+      "checks": [
+        {
+          "check": "storage_backend_required",
+          "passed": true,
+          "actual": false,
+          "expected": false
         }
       ]
     }
   ],
   "summary": {
-    "overall": 0.9666666666666667,
+    "overall": 1.0,
     "valid_rate": 1.0,
     "gate_ok": true,
     "gate_fail": [],
     "check_rates": {
-      "affected_users": 0.9666666666666667,
+      "affected_users": 1.0,
       "core_flow_broken": 1.0,
       "reproduction_status": 1.0,
       "security_relevant": 1.0,
       "severity": 1.0,
+      "storage_backend_required": 1.0,
       "workaround_available": 1.0
     }
   },
   "usage": {
-    "input_tokens": 100720,
-    "output_tokens": 16130
+    "input_tokens": 185160,
+    "output_tokens": 49060
   }
 }

@@ -1,7 +1,7 @@
 {
-  "version": "1.0",
-  "description": "pax-diagnose D5 严重度分级评估。6 场景，全部 holdout（锁定，写入后不修订 prompt 或 gold）。gold 仅凭 prompt + SKILL.md 契约文字推导。",
-  "contract_chars": 14187,
+  "version": "1.1",
+  "description": "pax-diagnose 评估扩展。v1.0 的 6 个 D5 严重度场景 + v1.1 新增 5 个（D1 复现状态 3 个 + D2 存储后端确认 2 个）。全部 holdout。",
+  "contract_chars": 14608,
   "cases": [
     {
       "id": "pax-diag-p0-01",
@@ -16,8 +16,7 @@
           "workaround_available": false,
           "security_relevant": false
         }
-      },
-      "basis": "契约聚合规则 2：core_flow_broken=true 且 workaround_available=false → P0。支付是核心流程、完全不可用、无规避。"
+      }
     },
     {
       "id": "pax-diag-p1-01",
@@ -32,8 +31,7 @@
           "workaround_available": true,
           "security_relevant": false
         }
-      },
-      "basis": "契约聚合规则 2：core_flow_broken=true 且 workaround_available=true → P1（部分不可用）。核销属下单链路的核心环节，有重试规避。"
+      }
     },
     {
       "id": "pax-diag-p2-01",
@@ -48,8 +46,7 @@
           "workaround_available": true,
           "security_relevant": false
         }
-      },
-      "basis": "契约聚合规则 3：core_flow_broken=false → P2。头像上传属非核心流程。"
+      }
     },
     {
       "id": "pax-diag-sec-01",
@@ -64,8 +61,7 @@
           "workaround_available": false,
           "security_relevant": true
         }
-      },
-      "basis": "契约聚合规则 1：security_relevant=true 单独定 P0（越权访问）。不要求核心流程不可用。"
+      }
     },
     {
       "id": "pax-diag-p2-02",
@@ -80,12 +76,11 @@
           "workaround_available": true,
           "security_relevant": false
         }
-      },
-      "basis": "契约聚合规则 3 + 边界说明：core_flow_broken=false → P2，即使 affected_users=all。非核心流程、不影响使用。"
+      }
     },
     {
       "id": "pax-diag-repro-01",
-      "category": "reproduction",
+      "category": "severity",
       "holdout": true,
       "prompt": "用户反馈偶发登录失败（约每天 1–2 次），但服务端日志无异常记录，本地尝试 20 次登录全部成功，无法稳定复现。",
       "expected": {
@@ -97,8 +92,52 @@
           "workaround_available": true,
           "security_relevant": false
         }
-      },
-      "basis": "D1：20 次尝试全成功 → not_reproduced（契约 D1 失败处理）。severity 按聚合规则 2：登录是核心流程、偶发（部分不可用）、可重试 → P1。"
+      }
+    },
+    {
+      "id": "pax-diag-repro-02",
+      "category": "reproduction",
+      "holdout": true,
+      "prompt": "按用户给的步骤，我在测试环境连续 3 次都复现了：每次点击导出按钮都返回 500 错误，日志里有 NullPointerException。",
+      "expected": {
+        "reproduction_status": "reproduced"
+      }
+    },
+    {
+      "id": "pax-diag-repro-03",
+      "category": "reproduction",
+      "holdout": true,
+      "prompt": "在测试环境用相同数据复现了 2 次，但在生产环境按同样步骤试了 5 次都正常。",
+      "expected": {
+        "reproduction_status": "partial"
+      }
+    },
+    {
+      "id": "pax-diag-repro-04",
+      "category": "reproduction",
+      "holdout": true,
+      "prompt": "按用户描述的操作步骤试了 10 次，都没有出现所述错误，服务端日志也没有异常记录。",
+      "expected": {
+        "reproduction_status": "not_reproduced"
+      }
+    },
+    {
+      "id": "pax-diag-storage-01",
+      "category": "storage_backend",
+      "holdout": true,
+      "prompt": "用户反馈部分订单的支付金额字段变成了 null，需要排查原因并订正这些错误数据。",
+      "expected": {
+        "storage_backend_required": true
+      }
+    },
+    {
+      "id": "pax-diag-storage-02",
+      "category": "storage_backend",
+      "holdout": true,
+      "prompt": "用户反馈在 Safari 浏览器下订单列表的按钮位置错乱，在 Chrome 下显示正常。",
+      "expected": {
+        "storage_backend_required": false
+      }
     }
   ]
 }

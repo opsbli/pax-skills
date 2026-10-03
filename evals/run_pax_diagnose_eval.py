@@ -42,6 +42,7 @@ GATE_CHECKS = {
     "workaround_available": 0.85,   # 布尔，较明确
     "security_relevant": 0.85,      # 布尔，较明确
     "reproduction_status": 0.95,    # 三值枚举，明确
+    "storage_backend_required": 0.90,  # 布尔，触发条件明确
 }
 GATE_OVERALL = 0.90
 GATE_VALID_RATE = 0.95
@@ -67,6 +68,7 @@ def build_messages(contract: str, prompt: str) -> list[dict[str, str]]:
         "输出 JSON 结构：\n"
         "{\n"
         '  "reproduction_status": "reproduced | not_reproduced | partial",\n'
+        '  "storage_backend_required": true | false,\n'
         '  "severity": "P0 | P1 | P2",\n'
         '  "severity_rationale": {\n'
         '    "core_flow_broken": true | false,\n'
@@ -144,6 +146,11 @@ def normalize_actual(data: dict) -> dict:
         au = str(rat.get("affected_users", "")).strip().lower()
         if au in ("all", "most", "some", "few"):
             out["affected_users"] = au
+    sbr = data.get("storage_backend_required")
+    if isinstance(sbr, bool):
+        out["storage_backend_required"] = sbr
+    elif isinstance(sbr, str) and sbr.strip().lower() in ("true", "false"):
+        out["storage_backend_required"] = sbr.strip().lower() == "true"
     return out
 
 
@@ -166,6 +173,11 @@ def grade(actual: dict, expected: dict) -> list[dict]:
         got = actual.get("reproduction_status")
         exp = expected["reproduction_status"]
         checks.append({"check": "reproduction_status", "passed": got == exp,
+                       "actual": got, "expected": exp})
+    if "storage_backend_required" in expected:
+        got = actual.get("storage_backend_required")
+        exp = expected["storage_backend_required"]
+        checks.append({"check": "storage_backend_required", "passed": got == exp,
                        "actual": got, "expected": exp})
     return checks
 
