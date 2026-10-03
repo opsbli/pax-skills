@@ -700,7 +700,62 @@ $PY -m pytest tests/test_orchestrate_routing.py -v
   不需要修——这是评估发现真实契约边界的结果。
 - **反拟合 5.9pp**：差距主要来自 intent_classification（修订题 100% vs holdout 93.3%），
   risk_scoring 差距几乎为零（73.3% vs 73.8%）。不需要更多 holdout 题。
-## 6. 文件变更
+## 6. pax-diagnose 评估（方向2）
+
+把 pax-orchestrate 的评估方法应用到 **pax-diagnose**，选 D5 严重度分级、
+D1 复现状态、D2 存储后端确认为判定点。完整设计见 `DESIGN_PAX_DIAGNOSE.md`。
+
+### 基线结果（2026-10-03 22:00，deepseek-flash，11 场景 × 5 repeats = 55 判定）
+
+| 检查项 | 通过率 | 门槛 | n |
+|--------|--------|------|---|
+| severity | 100.0% | ≥85% | 30 |
+| core_flow_broken | 100.0% | ≥80% | 30 |
+| affected_users | 100.0% | ≥80% | 30 |
+| workaround_available | 100.0% | ≥85% | 30 |
+| security_relevant | 100.0% | ≥85% | 30 |
+| reproduction_status | 100.0% | ≥95% | 20 |
+| storage_backend_required | 100.0% | ≥90% | 10 |
+| → **能力分** | **55/55 (100.0%)** | ≥90% | 55 |
+
+健壮性 valid_rate = 100%。GATE PASS。
+
+### 过程中补的契约（pax-diagnose）
+
+pax-diagnose 引用了**两个不存在的文件**，均已处理：
+
+| 引用 | 文件 | 处置 |
+|------|------|------|
+| D5 严重度标准 | `references/severity-criteria.md` | 内联进 SKILL.md |
+| D6 报告格式 | `schemas/snapshot.schema.json` | 改为指向文内报告结构 |
+
+补的判定边界（契约 13083 → 14608 字符）：
+
+- **聚合规则**：`security_relevant=true → P0`（安全单独定 P0）；`core_flow_broken=true`
+  再按 `workaround_available` 分 P0/P1；非核心流程 → P2
+- **HD4**：`core_flow_broken` 指「核心流程不可用」非「涉及核心流程」
+- **HD5**：`affected_users` 量化边界 all=100% / most=>50% / some=5–50% / few=<5%
+
+**两次补契约都带来能力分跃升**（都是因果证据）：
+
+| 轮次 | 契约变更 | 能力分 | GATE |
+|------|------|------|------|
+| 初始 | — | 25/30 (83.3%) | FAIL |
+| 补 HD4/HD5 | core_flow_broken 语义 + affected_users 边界 | **29/30 (96.7%)** | PASS |
+| 扩展场景 | +5 场景（D1 复现 3 + D2 存储后端 2） | **55/55 (100.0%)** | PASS |
+
+### 可信度边界（诚实说明）
+
+这个 100% 需要保留余地——**pax-orchestrate 的前车之鉴**：18 题的 100% PASS 在扩到
+44 题后跌到 89%。当前 11 场景的类似风险：
+
+1. 场景数少（11 个），D5 的 6 个 gold 是写契约时新写的，可能已被"预拟合"。
+2. 判定类型偏简单（枚举 / 布尔 / 聚合规则），比 pax-orchestrate 的 1–3 主观量纲容易。
+3. 没有跨模型对照。
+
+要确认泛化，需扩到 25+ 场景 + 跨模型对照。
+
+## 7. 文件变更
 
 评估文件不受 `.gitignore` 限制，应纳入版本控制。
 skillEval 的运行归档（`outputs/`）在仓库外，不进 git。
