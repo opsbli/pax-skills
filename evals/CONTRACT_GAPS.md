@@ -1,11 +1,16 @@
 # pax-orchestrate 契约缺口与决策清单
 
-静态分析产出，不调 API。基线：`skills/pax-orchestrate/SKILL.md` W1–W4（8026 字符，
-与 `evals/results/internal_routing_results.json` 的 `meta.contract_chars` 一致）。
+静态分析产出，不调 API。
+
+**分析基线**：`skills/pax-orchestrate/SKILL.md` W1–W4 的**原始版本**（8026 字符）。
+契约补完 G1–G10 后现为 8635 字符，与 `evals/results/internal_routing_results.json` 的
+`meta.contract_chars` 一致。本文档记录的缺口与决策是基于 8026 字符版本的分析结果，
+补完后的验证结果见第三、四节。
 
 分析对象是**内部路由的 W2 风险评分四个 1–3 量纲** + W1 二级意图边界。
 这些维度是契约里唯一需要主观判断的地方，也是实测中唯一出现能力下降的地方
-（`risk_score` 75.0%、`risk_level` 80.0%，GATE 未达标项全部集中在此）。
+（当时的 `risk_score` 75.0%、`risk_level` 80.0%，GATE 未达标项全部集中在此；
+补完 G1–G10 后三项均 100%，见第三节）。
 查表/MECE/链式拼接类检查项（primary_intent、route、cross_repo 等）两次运行都 ≥95%，
 不在排查范围内。
 
@@ -116,19 +121,24 @@
 - **补法**：「需要产品/需求方确认任何一项（含交互细节）即至少算 2」
 - **实测结果**：与 gold 自洽，无偏差引入
 
-### 已补契约，待业务方确认（1 个）
+### 已补契约并已决（1 个）
 
-#### G10. data_integrity 是否覆盖字段值校验失败
+#### G10. data_integrity 是否覆盖字段值校验失败 ✅ 已决：A（2026-10-03，D3 确认）
 
 - **场景**：表单提交，字段值未通过正则/格式/长度校验而报错
 - **契约现状**：W1 二级意图里 `data_integrity` 触发条件写「数据不一致、数据丢失、字段错误」，
   `ux_error` 写「前端报错、交互异常、UI 缺陷」。两者都可能命中「页面报错」
-- **已做的裁决**：我在 v1.1 判断「字段值校验失败归 data_integrity，不标 ux_error」，
-  并把这条写进契约 W1 的「易混淆边界」段
-- **可争议之处**：如果团队认为「校验失败是 UX 问题」（提示文案、交互引导），
-  那应该归 ux_error，gold 也要改
-- **状态**：契约已补，`pax-intent-df-01` / `pax-route-df-01` 的 gold 已按此裁决落地。
-  **这是我的判断，不是契约原文**。如果业务方不认，两处 gold 要改回
+- **裁决**：字段值校验失败归 `data_integrity`，不标 `ux_error`。理由：即使错误提示
+  出现在页面，根因在数据契约或校验规则本身，不在前端展示/交互层
+- **契约落地**：已写进 W1 的「易混淆边界」段：「`ux_error` 仅指缺陷位于**前端展示或
+  交互层**（渲染错误、状态不同步、点击无响应、UI 布局错乱）。字段值未通过正则/格式/
+  长度校验而报错，即使错误提示出现在页面，根因在数据契约或校验规则本身，归入
+  `data_integrity`，**不标** `ux_error`」
+- **gold 落地**：`pax-intent-df-01` / `pax-route-df-01` 的 secondary 为 `["data_integrity"]`，
+  W4 的 `storage_backend_required=true` 条件成立，路由含存储后端确认
+- **连带影响**：W4 的路由表、强制升级规则（`data_integrity` + impact_scope=3 → high）、
+  cross_repo 条件均依赖这个归因，已一致
+- **状态**：已决，契约与 gold 均已落地，无需再确认
 
 ---
 
@@ -176,16 +186,17 @@
 
 - **对应缺口**：G10
 - **问题**：表单字段值未通过正则/格式/长度校验而报错，根因在数据契约还是 UX？
-- **现状**：我已按「归 data_integrity」裁决并写进契约 + 改了两条 gold
-- **A 选项：覆盖**（我的判断）。字段值校验失败是数据契约问题，归 `data_integrity`
-  - 对 gold 的影响：`pax-intent-df-01`、`pax-route-df-01` 的 secondary 保持 `["data_integrity"]`
+- **现状**：已按「归 data_integrity」裁决并写进契约 + 改了两条 gold
+- **A 选项：覆盖**（已决）。字段值校验失败是数据契约问题，归 `data_integrity`
+  - 对 gold 的影响：`pax-intent-df-01`、`pax-route-df-01` 的 secondary 为 `["data_integrity"]`
   - 连带影响：W4 的 `storage_backend_required=true` 条件成立，路由包含存储后端确认
-- **B 选项：不覆盖**。校验失败是 UX 提示问题，归 `ux_error`
-  - 对 gold 的影响：两条 gold 的 secondary 改回 `["ux_error"]`
-  - 连带影响：W4 的 `storage_backend_required` 条件不成立，gold 要一起改
-  - 连带影响：契约 W1 的「易混淆边界」段要删除或反转
-- **不定的后果**：这是 v1.1 的 4 项裁决里唯一可争议的一项。
-  不定的话，internal 的 18 题里有 2 题的 secondary_intent 归因悬空
+- **B 选项：不覆盖**。校验失败是 UX 提示问题，归 `ux_error`（未采纳）
+- **裁决理由**：`ux_error` 限定为「前端展示或交互层缺陷」（渲染错误、状态不同步、
+  点击无响应、UI 布局错乱）。字段值校验失败即使错误提示出现在页面，根因在数据契约
+  或校验规则本身，不在前端展示层
+- **落地**：契约 W1 易混淆边界段 + 两条 gold 均已落地。W4 的路由表、强制升级规则、
+  cross_repo 条件均依赖这个归因，已一致。内部路由当前 GATE PASS 已覆盖这两题的
+  secondary_intent 判定（21/21 100%）
 
 ### D4. 【内部】内部工具做 UI 组件替换算不算 impact_scope=2？✅ 已决：B（2026-10-03）
 
@@ -235,7 +246,7 @@ medium-02 在 v1.5 有 1 次偏差，v1.6 未复现但不能算已修）。
 
 ### G3–G9 补完与两次重跑（2026-10-03）
 
-补完 G3–G9（除 G10 待业务确认）后重跑 54 次调用。结果分两轮：
+补完 G3–G9（G10 同期确认已决）后重跑 54 次调用。结果分两轮：
 
 **第一轮（含 G4/G8 补法）**：能力 86.8%，GATE FAIL
 
@@ -270,7 +281,7 @@ medium-02 在 v1.5 有 1 次偏差，v1.6 未复现但不能算已修）。
 
 ### G3–G9 补完与三轮重跑（2026-10-03）
 
-补完 G3–G9（除 G10 待业务确认）后重跑 54 次调用。结果分三轮：
+补完 G3–G9（G10 同期确认已决）后重跑 54 次调用。结果分三轮：
 
 **第一轮（含 G4/G8 补法）**：能力 86.8%，GATE FAIL
 

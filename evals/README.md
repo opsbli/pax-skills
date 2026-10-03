@@ -524,8 +524,9 @@ gold 写全名是 **gold 偏离契约**，不是模型错。模型三次里两�
 | `pax-route-df-01` | **改 gold** | secondary 补 `data_integrity` 后 W4 条件成立，`storage_backend_required=true` 与契约一致 |
 | `pax-intent-df-01` | **改 gold + 补契约** | gold 补 `data_integrity`；契约补「校验报错归 data_integrity，不归 ux_error」防未来摆动 |
 
-其中「data_integrity 是否覆盖字段值校验失败」是我的判断，属**可争议决定**，
-待业务方确认。结果 JSON 的 `gold_contract_resolutions` 字段完整记录了 4 项裁决与理由。
+其中「data_integrity 是否覆盖字段值校验失败」（G10 / D3）已由业务方确认为 A：
+校验失败根因在数据契约而非前端交互层，归 `data_integrity`。结果 JSON 的
+`gold_contract_resolutions` 字段完整记录了 4 项裁决与理由。
 
 ### gate 定义
 
@@ -631,8 +632,9 @@ $PY -m pytest tests/test_orchestrate_routing.py -v
    需 repeats 提到 5–10 或题量翻到 40+，都是付费成本
 4. **✅ 外部 100% / 对照组 71.1% 的结论已归档**（D1=B）：禁令是契约必要组成，
    28.9pp 是设计代价而非禁令副作用；对照组只回答「贡献多少」，不回答「要不要」
-5. **G10 待业务方确认**：data_integrity 是否覆盖字段值校验失败。我的裁决已落地
-   到契约和 gold，但如果业务方不认，两处 gold 要改回
+5. **✅ G10 / D3 已确认**（2026-10-03）：data_integrity 覆盖字段值校验失败。裁决理由：
+   校验失败根因在数据契约或校验规则本身，不在前端展示/交互层。契约 W1 易混淆边界段
+   + 两条 gold 均已落地，W4 的路由表/强制升级规则/cross_repo 条件依赖此归因，已一致
 6. **漂移检测 bug 已修**：`meta.contract_chars` 之前从未写入（实际写在 `usage` 里），
    导致主流程与 `--rescore` 读的字段不一致。已统一移到 `meta`，且缺失时也拒跑
    （无法确认契约没变，不能放行）
