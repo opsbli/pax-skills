@@ -1,0 +1,104 @@
+{
+  "version": "1.0",
+  "description": "pax-diagnose D5 严重度分级评估。6 场景，全部 holdout（锁定，写入后不修订 prompt 或 gold）。gold 仅凭 prompt + SKILL.md 契约文字推导。",
+  "contract_chars": 14187,
+  "cases": [
+    {
+      "id": "pax-diag-p0-01",
+      "category": "severity",
+      "holdout": true,
+      "prompt": "生产环境订单支付接口全部返回 500 错误，所有用户都无法完成下单，无任何可用支付方式，也没有临时规避方案。",
+      "expected": {
+        "severity": "P0",
+        "severity_rationale": {
+          "core_flow_broken": true,
+          "affected_users": "all",
+          "workaround_available": false,
+          "security_relevant": false
+        }
+      },
+      "basis": "契约聚合规则 2：core_flow_broken=true 且 workaround_available=false → P0。支付是核心流程、完全不可用、无规避。"
+    },
+    {
+      "id": "pax-diag-p1-01",
+      "category": "severity",
+      "holdout": true,
+      "prompt": "优惠券核销接口在高并发时段偶发失败，约 30% 的下单用户会遇到；用户可以稍后重试完成核销，重试通常成功。",
+      "expected": {
+        "severity": "P1",
+        "severity_rationale": {
+          "core_flow_broken": true,
+          "affected_users": "some",
+          "workaround_available": true,
+          "security_relevant": false
+        }
+      },
+      "basis": "契约聚合规则 2：core_flow_broken=true 且 workaround_available=true → P1（部分不可用）。核销属下单链路的核心环节，有重试规避。"
+    },
+    {
+      "id": "pax-diag-p2-01",
+      "category": "severity",
+      "holdout": true,
+      "prompt": "用户个人中心的头像上传偶发失败，仅不到 1% 的用户遇到；失败后刷新页面重试即可成功，不影响其他功能。",
+      "expected": {
+        "severity": "P2",
+        "severity_rationale": {
+          "core_flow_broken": false,
+          "affected_users": "few",
+          "workaround_available": true,
+          "security_relevant": false
+        }
+      },
+      "basis": "契约聚合规则 3：core_flow_broken=false → P2。头像上传属非核心流程。"
+    },
+    {
+      "id": "pax-diag-sec-01",
+      "category": "severity",
+      "holdout": true,
+      "prompt": "发现订单查询接口未校验用户身份，任意登录用户传入订单号即可查看他人的订单详情，包括收货地址和手机号。",
+      "expected": {
+        "severity": "P0",
+        "severity_rationale": {
+          "core_flow_broken": false,
+          "affected_users": "all",
+          "workaround_available": false,
+          "security_relevant": true
+        }
+      },
+      "basis": "契约聚合规则 1：security_relevant=true 单独定 P0（越权访问）。不要求核心流程不可用。"
+    },
+    {
+      "id": "pax-diag-p2-02",
+      "category": "severity",
+      "holdout": true,
+      "prompt": "系统公告栏的字体在部分浏览器下显示为默认字体，所有用户都会看到，但公告内容可正常阅读，不影响任何功能操作。",
+      "expected": {
+        "severity": "P2",
+        "severity_rationale": {
+          "core_flow_broken": false,
+          "affected_users": "all",
+          "workaround_available": true,
+          "security_relevant": false
+        }
+      },
+      "basis": "契约聚合规则 3 + 边界说明：core_flow_broken=false → P2，即使 affected_users=all。非核心流程、不影响使用。"
+    },
+    {
+      "id": "pax-diag-repro-01",
+      "category": "reproduction",
+      "holdout": true,
+      "prompt": "用户反馈偶发登录失败（约每天 1–2 次），但服务端日志无异常记录，本地尝试 20 次登录全部成功，无法稳定复现。",
+      "expected": {
+        "reproduction_status": "not_reproduced",
+        "severity": "P1",
+        "severity_rationale": {
+          "core_flow_broken": true,
+          "affected_users": "few",
+          "workaround_available": true,
+          "security_relevant": false
+        }
+      },
+      "basis": "D1：20 次尝试全成功 → not_reproduced（契约 D1 失败处理）。severity 按聚合规则 2：登录是核心流程、偶发（部分不可用）、可重试 → P1。"
+    }
+  ]
+}

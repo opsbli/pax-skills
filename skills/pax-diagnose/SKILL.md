@@ -267,13 +267,34 @@ root_cause:
       source: domain_map | inferred
 ```
 
-**严重度量化标准**（`references/severity-criteria.md`）：
+**严重度量化标准**：
 
 | 等级 | 判断标准 | 触发 |
 |------|----------|------|
-| **P0** | 核心流程完全不可用 / 影响所有用户 / 无规避 / 安全相关 | 强制升级 `pax-council` |
-| **P1** | 核心流程部分不可用 / 影响部分用户 / 有临时规避 | 走 `plan → execute → review` |
-| **P2** | 非核心流程部分不可用 / 影响少量用户 / 有明显规避 | 可合并到常规迭代 |
+| **P0** | 满足任一：① `security_relevant=true`（越权 / 数据泄露 / 绕过鉴权）；② 核心流程完全不可用且无规避 | 强制升级 `pax-council` |
+| **P1** | 核心流程部分不可用，或影响部分用户且有临时规避 | 走 `plan → execute → review` |
+| **P2** | 非核心流程不可用，或影响少量用户且有明显规避 | 可合并到常规迭代 |
+
+**聚合规则**（先判安全，再判核心流程，最后按规避情况分档）：
+
+```python
+def severity(rationale):
+    # 1. 安全相关单独定 P0
+    if rationale.security_relevant:
+        return "P0"
+    # 2. 核心流程不可用：无规避 = 完全不可用（P0），有规避 = 部分不可用（P1）
+    if rationale.core_flow_broken:
+        return "P1" if rationale.workaround_available else "P0"
+    # 3. 非核心流程 → P2
+    return "P2"
+```
+
+- `core_flow_broken` 的语义：「完全不可用」和「部分不可用」都记为 `true`，
+  两者的区分由 `workaround_available` 承担——无规避 = 完全不可用（P0），有规避 = 部分不可用（P1）。
+- `security_relevant=true` 时**单独**定 P0，不要求核心流程不可用。
+- 等级由 `core_flow_broken` + `security_relevant` 主导，`affected_users` 与
+  `severity_rationale` 其余字段作为置信度依据，不单独改变等级
+  （例如「影响所有用户但属非核心流程、且不影响使用」仍是 P2）。
 
 ### D6 报告产出（Report）
 
@@ -347,7 +368,7 @@ root_cause:
 
 ## 输出契约
 - `snapshot.diagnosis`（含 `reproduction` / `evidence` / `hypotheses` / `root_cause` / `review_checklist`）
-- `diagnosis_report.md`，格式由 `schemas/snapshot.schema.json` 约束
+- `diagnosis_report.md`，格式由本节的「报告结构」与 RCA1–RC7 Checklist 约束
 
 ## 失败模式
 - 证据不足 → `status: blocked`，附 `blocked_at` 与 `missing_information`

@@ -180,13 +180,66 @@ severity_rationale:
 - 6 场景 × 5 repeats = **30 次付费调用**（单模型）
 - 若要跨模型对照，再 ×2 = 60 次
 
-## 六、待用户裁决
+## 六、决策与评估结果（2026-10-03）
 
-| 项 | 问题 | 候选 |
-|----|------|------|
-| **HD1** | P0/P1/P2 的「/」是「或」还是「且」？ | A 全部条件须同时满足（与 G5 一致） / B 任一即算 |
-| **HD2** | 「安全相关」单独能否定 P0？ | A 能（场景 4 = P0） / B 不能（场景 4 = P1） |
-| **HD3** | 缺失的 `severity-criteria.md` 是否补写？ | A 补写完整量化标准 / B 把标准内联进 SKILL.md |
+### 决策（用户已确认）
 
-**HD3 的建议**：先补 `severity-criteria.md`（选 A）还是内联（选 B），
-影响评估的契约基准——若不补，评估测的是「SKILL.md 简表」而非「完整标准」。
+| 项 | 结果 |
+|----|------|
+| **HD1** | 采纳推荐：补聚合规则（security→P0；core_flow_broken 再按 workaround 分档；非核心→P2） |
+| **HD2** | 采纳推荐：`security_relevant=true` 单独定 P0 |
+| **HD3** | 内联进 SKILL.md（已实施），契约从 13083 → 14187 字符 |
+
+**另外处理了第二个缺失引用**：`schemas/snapshot.schema.json`（D6 引用）改为指向
+文内已有的「报告结构 + RC Checklist」，避免引用缺失文件。
+
+### 评估结果（6 场景 × 5 repeats = 30 次付费）
+
+| 检查项 | 通过率 | 门槛 | 判定 |
+|--------|--------|------|------|
+| **severity** | **100.0%** (30/30) | ≥85% | PASS |
+| workaround_available | 100.0% | ≥85% | PASS |
+| security_relevant | 100.0% | ≥85% | PASS |
+| reproduction_status | 100.0% (5/5) | ≥95% | PASS |
+| core_flow_broken | 90.0% | ≥80% | PASS |
+| affected_users | 90.0% | ≥80% | PASS |
+| → **能力分** | 25/30 (83.3%) | ≥90% | **FAIL** |
+
+健壮性 valid_rate = 100%（无解析失败）。
+
+### 关键结论：补的聚合规则完全生效
+
+**`severity` 100%**——30 次判定的最终等级全部正确。补的聚合规则
+（`security→P0` 优先，`core_flow_broken + workaround` 分档，非核心→P2）被模型准确执行。
+
+**但 `severity_rationale` 的两个字段有边界分歧**，暴露两个新缺口：
+
+#### HD4. `core_flow_broken` 的语义歧义 ⚠️ 待补
+
+**分歧**：`core_flow_broken` 是「核心流程**不可用**」还是「**涉及**核心流程」？
+
+- 场景 4（越权订单查询）：gold `false`（查询接口本身可用，只是权限有问题）；
+  模型 3/5 判 `true`（认为订单查询是核心功能）。
+- 契约字段名 `core_flow_broken`（broken = 损坏/不可用）暗示前者，
+  但契约没有显式定义。
+
+**重要**：即使该字段判错，`severity` 仍是 P0——因为 `security_relevant=true` 单独定 P0。
+**聚合规则的优先级设计让底层字段的误判不影响最终业务判定**。
+
+#### HD5. `affected_users` 的四值边界未定义 ⚠️ 待补
+
+**分歧**：`all / most / some / few` 的边界没有量化标准。
+
+- 场景 4（越权，所有用户数据有泄露风险）：gold `all`，模型 1/5 判 `most`
+- 场景 6（每天 1–2 次登录失败）：gold `few`，模型 2/5 判 `some`
+
+### 遗留：能力分 83.3% < 90% 门槛
+
+5 次失败全部来自 `core_flow_broken`（3 次）和 `affected_users`（2 次）的边界分歧，
+而 **`severity` 100%**。这说明：
+
+- **业务判定（severity）完全正确**——决定是否升级 pax-council 的核心决策无误。
+- **依据字段（rationale）有描述性分歧**——不影响业务结论，但让「全字段 PASS」的能力分低于门槛。
+
+后续可选：补 HD4/HD5 的边界定义后重跑；或按「severity 为主判定、rationale 为辅助」
+调整门槛权重（类似内部路由把 risk_score 与四维分开）。
