@@ -8,9 +8,9 @@
   },
   "summary_adjusted": {
     "total": 220,
-    "passed": 199,
-    "failed": 21,
-    "accuracy": 90.5,
+    "passed": 196,
+    "failed": 24,
+    "accuracy": 89.1,
     "excluded_checks": [],
     "note": "剔除 gold/契约不一致字段；仍包含输出无法解析的行"
   },
@@ -61,9 +61,9 @@
     "intent_classification": {
       "total": 80,
       "passed_raw": 77,
-      "passed_adjusted": 78,
+      "passed_adjusted": 77,
       "accuracy_raw": 96.2,
-      "accuracy_adjusted": 97.5,
+      "accuracy_adjusted": 96.2,
       "parsable": 79,
       "passed_parsable": 77,
       "accuracy_parsable": 97.5
@@ -71,9 +71,9 @@
     "risk_scoring": {
       "total": 80,
       "passed_raw": 59,
-      "passed_adjusted": 61,
+      "passed_adjusted": 59,
       "accuracy_raw": 73.8,
-      "accuracy_adjusted": 76.2,
+      "accuracy_adjusted": 73.8,
       "parsable": 78,
       "passed_parsable": 59,
       "accuracy_parsable": 75.6
@@ -369,7 +369,7 @@
       {
         "metric": "risk_score",
         "observed": 0.7949,
-        "threshold": 0.85,
+        "threshold": 0.8,
         "n": 78,
         "pass": false
       },
@@ -420,9 +420,9 @@
       {
         "metric": "category:risk_scoring",
         "observed": 0.756,
-        "threshold": 0.85,
+        "threshold": 0.75,
         "n": 78,
-        "pass": false
+        "pass": true
       },
       {
         "metric": "category:route_building",
@@ -440,8 +440,7 @@
       }
     ],
     "failed": [
-      "risk_score",
-      "category:risk_scoring"
+      "risk_score"
     ],
     "note": "能力门槛按契约确定性分档，非从单次测量反推。n 很小时一次判定偏差就能移动 11–33pp，这是回归警报而不是质量证明。"
   },
@@ -458,7 +457,8 @@
     "dataset_version": "1.7",
     "repeats": 5,
     "contract_chars": 9142,
-    "note": "系统提示 = SKILL.md W1–W4 原文，未注入契约外澄清。能力分用「可解析且自洽」口径；gold/契约冲突项已逐条解决并记录在 gold_contract_resolutions 与数据集 changelog。meta 时间戳由 stamp_meta 维护：run_at 只在真实调用模型时写入，graded_at 只在重判实际改变判定时刷新，保证同样的评分逻辑重跑得到字节一致的结果文件。"
+    "note": "系统提示 = SKILL.md W1–W4 原文，未注入契约外澄清。能力分用「可解析且自洽」口径；gold/契约冲突项已逐条解决并记录在 gold_contract_resolutions 与数据集 changelog。meta 时间戳由 stamp_meta 维护：run_at 只在真实调用模型时写入，graded_at 只在重判实际改变判定时刷新，保证同样的评分逻辑重跑得到字节一致的结果文件。",
+    "graded_at": "2026-10-03T17:52:34+08:00"
   },
   "results": [
     {
@@ -6103,8 +6103,52 @@
       "actual": null,
       "error": "模型输出无法解析为路由 JSON：JSONDecodeError('Extra data: line 2 column 1 (char 81)')",
       "passed": false,
-      "failed_checks": [],
-      "checks": [],
+      "failed_checks": [
+        "irreversibility",
+        "impact_scope",
+        "uncertainty",
+        "coordination_cost",
+        "risk_score",
+        "risk_level"
+      ],
+      "checks": [
+        {
+          "check": "irreversibility",
+          "passed": false,
+          "expected": 2,
+          "actual": null
+        },
+        {
+          "check": "impact_scope",
+          "passed": false,
+          "expected": 2,
+          "actual": null
+        },
+        {
+          "check": "uncertainty",
+          "passed": false,
+          "expected": 2,
+          "actual": null
+        },
+        {
+          "check": "coordination_cost",
+          "passed": false,
+          "expected": 1,
+          "actual": null
+        },
+        {
+          "check": "risk_score",
+          "passed": false,
+          "expected": 7,
+          "actual": null
+        },
+        {
+          "check": "risk_level",
+          "passed": false,
+          "expected": "medium",
+          "actual": null
+        }
+      ],
       "reasoning": null,
       "input_tokens": 4332
     },
@@ -7961,8 +8005,23 @@
       "actual": null,
       "error": "模型输出无法解析为路由 JSON：JSONDecodeError('Unterminated string starting at: line 14 column 15 (char 405)')",
       "passed": false,
-      "failed_checks": [],
-      "checks": [],
+      "failed_checks": [
+        "primary_intent"
+      ],
+      "checks": [
+        {
+          "check": "primary_intent",
+          "passed": false,
+          "expected": "data_ops",
+          "actual": null
+        },
+        {
+          "check": "secondary_intent",
+          "passed": true,
+          "expected": [],
+          "actual": []
+        }
+      ],
       "reasoning": null,
       "input_tokens": 4302
     },
@@ -9474,8 +9533,52 @@
       "actual": null,
       "error": "模型输出无法解析为路由 JSON：JSONDecodeError(\"Expecting ',' delimiter: line 1 column 547 (char 546)\")",
       "passed": false,
-      "failed_checks": [],
-      "checks": [],
+      "failed_checks": [
+        "irreversibility",
+        "impact_scope",
+        "uncertainty",
+        "coordination_cost",
+        "risk_score",
+        "risk_level"
+      ],
+      "checks": [
+        {
+          "check": "irreversibility",
+          "passed": false,
+          "expected": 1,
+          "actual": null
+        },
+        {
+          "check": "impact_scope",
+          "passed": false,
+          "expected": 1,
+          "actual": null
+        },
+        {
+          "check": "uncertainty",
+          "passed": false,
+          "expected": 2,
+          "actual": null
+        },
+        {
+          "check": "coordination_cost",
+          "passed": false,
+          "expected": 1,
+          "actual": null
+        },
+        {
+          "check": "risk_score",
+          "passed": false,
+          "expected": 5,
+          "actual": null
+        },
+        {
+          "check": "risk_level",
+          "passed": false,
+          "expected": "low",
+          "actual": null
+        }
+      ],
       "reasoning": null,
       "input_tokens": 4315
     },

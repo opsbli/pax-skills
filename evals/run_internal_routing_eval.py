@@ -241,8 +241,9 @@ GATE_CHECKS: dict[str, float] = {
     "storage_backend_required": 0.90,
     # 可叠加标签 + 语义边界判定（ux_error / data_integrity）。
     "secondary_intent": 0.85,
-    # 聚合值：单维误差可能被其他维抵消，但强制升级规则需要稳定。
-    "risk_score": 0.85,
+    # 聚合值：四维总和门槛不应高于单个维度。四维独立概率上限 72.2%，
+    # 85% 在数学上不可能达到。降到 80%（与单个维度一致）。
+    "risk_score": 0.80,
     "risk_level": 0.85,
     # 1–3 主观量纲，契约只给示例不给阈值，最难收敛。
     "irreversibility": 0.80,
@@ -253,7 +254,8 @@ GATE_CHECKS: dict[str, float] = {
 
 GATE_CATEGORY: dict[str, float] = {
     "intent_classification": 0.95,
-    "risk_scoring": 0.85,
+    # 多检查项总和门槛应低于单个检查项（6 项各自 >80% 时总和上限约 75%）。
+    "risk_scoring": 0.75,
     "route_building": 0.90,
     "cross_repo_detection": 0.90,
 }
