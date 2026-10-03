@@ -412,13 +412,17 @@ def dataset_version() -> str:
 
 
 def stamp_meta(meta: dict, *, rescoring: bool, repeats: int | None,
-               unchanged: bool = False) -> dict:
+               unchanged: bool = False, contract_chars: int | None = None) -> dict:
     """统一写 meta，避免主流程与 --rescore 两条路径写出两套不一致的元信息。
 
     run_at 只记录**真实调模型**的时刻；--rescore 不动它。
     graded_at 记录最后一次**实际改变了判定结果**的重判时刻：
     如果重判结果与存档一致，沿用旧值。否则每次 --rescore 时间戳就变，
     同样的评分逻辑重跑得不到字节一致的结果文件，--rescore 就失去了意义。
+
+    contract_chars 是契约指纹：--rescore 靠它判断“模型看到的输入没变”。
+    主流程传入实测值；--rescore 不传，沿用旧值——否则每重判一次指纹就丢，
+    漂移检测对历史结果失效。
     """
     meta = dict(meta or {})
     now = datetime.now(ZoneInfo("Asia/Shanghai")).isoformat(timespec="seconds")
@@ -428,6 +432,7 @@ def stamp_meta(meta: dict, *, rescoring: bool, repeats: int | None,
         "version": "2.1",
         "dataset_version": dataset_version(),
         **({"repeats": repeats} if repeats else {}),
+        **({"contract_chars": contract_chars} if contract_chars else {}),
         # unchanged=True 表示这次重判没改变任何判定，沿用旧 graded_at
         **({"graded_at": now} if rescoring and not unchanged else {}),
         "note": "系统提示 = SKILL.md W1–W4 原文，未注入契约外澄清。"
@@ -542,7 +547,11 @@ def main() -> int:
                 stale.append(f"{cid}: prompt 已变更（旧实测基于旧题面）")
         cur_chars = len(contract)
         old_chars = (saved.get("meta") or {}).get("contract_chars")
-        if old_chars and old_chars != cur_chars:
+        # 旧结果文件没有 contract_chars 时同样拒跑：无法确认契约没变，
+        # 放行等于让漂移检测对历史结果失效。
+        if not old_chars:
+            stale.append(f"已有结果缺少 meta.contract_chars，无法确认契约未漂移")
+        elif old_chars != cur_chars:
             stale.append(f"契约 W1–W4 已从 {old_chars} 字符变为 {cur_chars} 字符")
 
         if stale:
@@ -616,9 +625,9 @@ def main() -> int:
         **summary,
         "gate": check_gate(summary),
         "usage": {**usage_total, "model": MODEL, "api_base": API_BASE,
-                  "contract_source": "skills/pax-orchestrate/SKILL.md#W1-W4",
-                  "contract_chars": len(contract)},
-        "meta": stamp_meta({}, rescoring=False, repeats=args.repeats),
+                  "contract_source": "skills/pax-orchestrate/SKILL.md#W1-W4"},
+        "meta": stamp_meta({}, rescoring=False, repeats=args.repeats,
+                           contract_chars=len(contract)),
         "results": rows,
     }
     out = Path(args.out)
