@@ -291,6 +291,11 @@ def severity(rationale):
 
 - `core_flow_broken` 的语义：「完全不可用」和「部分不可用」都记为 `true`，
   两者的区分由 `workaround_available` 承担——无规避 = 完全不可用（P0），有规避 = 部分不可用（P1）。
+  **`core_flow_broken` 指「核心流程不可用」，不是「涉及核心流程」**：
+  接口/功能本身报错、超时、无法使用 → `true`；
+  接口可用但存在权限/数据/展示问题 → `false`（即使它属于核心流程）。
+- `affected_users` 的量化边界：`all` = 所有用户（100%）；`most` = 多数（>50%）；
+  `some` = 部分（5%–50%）；`few` = 少量（<5%）。
 - `security_relevant=true` 时**单独**定 P0，不要求核心流程不可用。
 - 等级由 `core_flow_broken` + `security_relevant` 主导，`affected_users` 与
   `severity_rationale` 其余字段作为置信度依据，不单独改变等级

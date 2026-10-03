@@ -243,3 +243,30 @@ severity_rationale:
 
 后续可选：补 HD4/HD5 的边界定义后重跑；或按「severity 为主判定、rationale 为辅助」
 调整门槛权重（类似内部路由把 risk_score 与四维分开）。
+
+### 补 HD4/HD5 后重跑：83.3% → 96.7% GATE PASS
+
+补 HD4（`core_flow_broken` 语义）+ HD5（`affected_users` 四值量化边界）后重跑
+（6 场景 × 5 repeats = 30 次付费，契约 7206 → 约 7300 字符的抽取部分）：
+
+| 检查项 | 补前 | 补后 | 变化 |
+|--------|------|------|------|
+| **severity** | 100.0% | **100.0%** | 保持 |
+| core_flow_broken | 90.0% | **100.0%** | **+10pp** |
+| affected_users | 90.0% | **96.7%** | +6.7pp |
+| workaround_available | 100.0% | 100.0% | 保持 |
+| security_relevant | 100.0% | 100.0% | 保持 |
+| reproduction_status | 100.0% | 100.0% | 保持 |
+| → **能力分** | 25/30 (83.3%) | **29/30 (96.7%)** | **+13.4pp** |
+| GATE | FAIL | **PASS** | 转 PASS |
+
+**剩下的 1 次失败**：`pax-diag-p2-02` r4 把 `affected_users` 判成 `some`
+（gold `all`）——场景 5 明确写「所有用户都会看到」，模型 1/5 漏读。属偶发偏差。
+
+**又是因果证据**：唯一变量是契约文本（补充 HD4/HD5 边界），
+`core_flow_broken` 从 90% 收敛到 100%。模型确实是按契约文本推理的。
+
+**补法内容**：
+- HD4：`core_flow_broken` 指「核心流程**不可用**」，不是「涉及核心流程」：
+  接口本身报错/超时/无法使用 → true；接口可用但有权限/数据/展示问题 → false。
+- HD5：`affected_users` 量化边界：all=100%、most=>50%、some=5%–50%、few=<5%。
