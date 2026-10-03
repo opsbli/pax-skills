@@ -18,7 +18,7 @@
 #   现在 include 是全部 18 个 skill，正面案例才真正考验「在 17 个干扰项里
 #   选中 L0 入口」，歧义案例才有暴露 MECE 边界的能力。
 suite_id: pax_routing_control
-suite_version: "2.0-control"
+suite_version: "2.1-control"
 description: >
   pax-* 家族路由基线。19 个用例：10 pos + 4 amb + 3 rej + 2 multi。
   catalog 为全部 18 个 pax skill，expected 为 pax-orchestrate（rej 类为空集）。
@@ -65,7 +65,10 @@ parallelism: 1
 
 # --- 维度评分 ---
 scoring:
-  metrics: [exact_set_match, top1, multi_exact, no_skill_rejection, false_activation,
+  # D2 决策（2026-10-03）：多目标/歧义请求入口单选，由 orchestrator 在工作流内分发。
+  # 因而不是「一次选多个 skill」的题目，multi_exact 已无实际可选题目（结构性 n/a），
+  # 一个永远 NaN 的指标留在报告里只会让人去解读一个没有定义的数字，所以移除。
+  metrics: [exact_set_match, top1, no_skill_rejection, false_activation,
             by_type, per_skill_prf, confusion_matrix]
   gate:
     exact_set_match: ">= 0.80"
