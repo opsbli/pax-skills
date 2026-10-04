@@ -379,3 +379,49 @@ D2 证据类型 2 + D3 假设数量 2）。25 × 5 = 125 次付费。
 11 场景的 100% 扩到 25 场景后跌到 91.7%（修正 gold/prompt 后 95.2%）。
 **这正是扩题的价值**——暴露了 hypotheses_count 的 gold 设计错误、repro-06 的 gold 判错、
 以及 workaround/partial 的契约边界模糊。severity 保持 100% 说明核心判定稳定。
+
+## 九、跨模型对照（E，2026-10-04）
+
+用 deepseek-v4-pro 跑同 25 场景 × 5 = 125 次付费。
+
+### 结果对比
+
+| 检查项 | flash | v4-pro | 差异 |
+|--------|-------|--------|------|
+| severity | 100.0% | 98.3% | -1.7pp |
+| core_flow_broken | 100.0% | 98.3% | -1.7pp |
+| security_relevant | 100.0% | 98.3% | -1.7pp |
+| affected_users | 100.0% | 93.3% | -6.7pp |
+| storage_backend_required | 100.0% | 95.0% | -5.0pp |
+| reproduction_status | 93.3% | 90.0% | -3.3pp |
+| workaround_available | 93.3% | **81.7%** | **-11.7pp** |
+| evidence_types | 100.0% | 100.0% | 0.0pp |
+| hypotheses_count | 100.0% | 100.0% | 0.0pp |
+| → 能力分 | 95.2% | **86.4%** | -8.8pp |
+
+### 关键发现：workaround_available 的语义边界（HD8）
+
+**v4-pro 的 workaround_available 失败集中在"无害问题"**：
+
+| case | prompt 要点 | gold | v4-pro 判错 |
+|------|------|------|------|
+| d5-06 | 版权年份错误 | true | 4/5 判 false |
+| d5-03 | 帮助文档链接失效 | true | 3/5 判 false |
+| p2-02 | 公告栏字体错乱 | true | 1/5 判 false |
+
+**模式**：v4-pro 认为"这不是问题，不需要规避"→ workaround=false；
+gold 认为"有规避方案（可忽略/可绕过）"→ workaround=true。
+
+**这是 HD8**：`workaround_available` 在「无害问题」上的语义未定义——
+是「有临时规避方案」还是「问题严重到需要规避」？
+
+**但 severity 仍稳定**（flash 100% vs v4-pro 98.3%）——workaround 的 11 次分歧中
+只有 1 次影响最终 severity。**再次验证聚合规则的鲁棒性**（workaround 只在
+core_flow_broken=true 时才影响 P0/P1 分档，无害问题的 workaround 分歧不影响 P2）。
+
+### 结论
+
+1. **契约跨模型基本一致**（95.2% vs 86.4%），但差距比 pax-orchestrate 大（8.8pp vs 1.7pp）。
+2. **evidence_types 和 hypotheses_count 两个模型都 100%**——这两个判定点最稳定（契约明确）。
+3. **workaround_available 是最不稳定点**（-11.7pp），根因是 HD8 语义边界未定义。
+4. **severity 最稳定**（两个模型都 ≥98%），说明聚合规则设计正确。
