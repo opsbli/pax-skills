@@ -320,3 +320,62 @@ severity_rationale:
 3. **没有跨模型对照**：只测了 deepseek-flash。
 
 **要确认 100% 是否泛化，应该**：扩到 25+ 场景（覆盖更多 D2/D3 判定）+ 跨模型对照。
+
+## 八、扩题到 25 场景（D，2026-10-03→10-04）
+
+在 11 场景基础上扩到 **25 场景**（新增 14 个：D5 边界 6 + D1 复现 2 + D2 存储后端 2 +
+D2 证据类型 2 + D3 假设数量 2）。25 × 5 = 125 次付费。
+
+### 第一轮：能力分 91.7%，暴露 2 个 gold/prompt 设计问题
+
+| 检查项 | 通过率 | 结果 |
+|--------|--------|------|
+| severity | 100.0% | PASS |
+| core_flow_broken | 100.0% | PASS |
+| affected_users | 100.0% | PASS |
+| evidence_types | 100.0% | PASS |
+| storage_backend_required | 100.0% | PASS |
+| hypotheses_count | **66.7%** | FAIL |
+| reproduction_status | **83.3%** | FAIL |
+| → 能力分 | 111/121 (91.7%) | FAIL |
+
+两个设计问题（都不是模型错）：
+
+1. **hypo-02**（hypotheses_count=0）：模型**正确遵循契约**——prompt 证据不足 → D1 判
+   not_reproduced → blocked → 不生成假设。我的 gold 期望 2-5 条，忽略了契约的 blocked 逻辑。
+   **这是 gold 设计错误**。
+2. **repro-06**（partial vs reproduced）：gold=partial 与契约矛盾——「Chrome 能稳定复现」=
+   契约 D1「确认问题可复现」= reproduced。**gold 判错**。
+
+### 修正（锁定规则的"gold 与契约矛盾"例外）
+
+- hypo-02：**改 prompt** 补证据（CDN 命中率 / 配置变更 / 带宽指标），让模型有足够证据生成假设
+- repro-06：**改 gold** partial → reproduced
+
+同时给 `--rescore` 加 prompt 漂移检测（prompt 变了必须真实调用，不能用旧输出重判）。
+
+### 第二轮（修正后）：能力分 95.2%
+
+| 检查项 | 第一轮 | 第二轮 | 变化 |
+|--------|--------|--------|------|
+| hypotheses_count | 66.7% | **100.0%** | +33.3pp |
+| reproduction_status | 83.3% | **93.3%** | +10pp |
+| evidence_types | 100.0% | 100.0% | 保持 |
+| severity | 100.0% | 100.0% | 保持 |
+| → 能力分 | 91.7% | **95.2%** | +3.5pp |
+| GATE | FAIL | **FAIL**（reproduction_status 93.3% < 95%） | 未达标 |
+
+### 剩余 2 个边界分歧（都是契约边界模糊，不是模型错）
+
+1. **d5-04**（workaround_available 4/5 判 true，gold=false）：密码泄露已发生，
+   用户"改密码"算规避吗？gold 判 false（泄露已发生无法撤销），模型判 true（改密码降低后续风险）。
+   契约 workaround_available 未定义"泄露已发生"场景 → **HD8**。
+
+2. **repro-06**（2/5 判 partial，gold=reproduced）：partial 定义仍模糊 → **HD6 未真正解决**。
+   "Chrome 能复现 Firefox 不能"到底算 reproduced 还是 partial？
+
+### 结论：扩题再次暴露真实问题
+
+11 场景的 100% 扩到 25 场景后跌到 91.7%（修正 gold/prompt 后 95.2%）。
+**这正是扩题的价值**——暴露了 hypotheses_count 的 gold 设计错误、repro-06 的 gold 判错、
+以及 workaround/partial 的契约边界模糊。severity 保持 100% 说明核心判定稳定。

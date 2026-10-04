@@ -43,6 +43,8 @@ GATE_CHECKS = {
     "security_relevant": 0.85,      # 布尔，较明确
     "reproduction_status": 0.95,    # 三值枚举，明确
     "storage_backend_required": 0.90,  # 布尔，触发条件明确
+    "evidence_types": 0.85,         # 集合覆盖（≥3 种）
+    "hypotheses_count": 0.85,       # 区间（2-5）
 }
 GATE_OVERALL = 0.90
 GATE_VALID_RATE = 0.95
@@ -69,6 +71,8 @@ def build_messages(contract: str, prompt: str) -> list[dict[str, str]]:
         "{\n"
         '  "reproduction_status": "reproduced | not_reproduced | partial",\n'
         '  "storage_backend_required": true | false,\n'
+        '  "evidence_types": ["log", "stack_trace", "change", ...],\n'
+        '  "hypotheses_count": 3,\n'
         '  "severity": "P0 | P1 | P2",\n'
         '  "severity_rationale": {\n'
         '    "core_flow_broken": true | false,\n'
@@ -151,6 +155,14 @@ def normalize_actual(data: dict) -> dict:
         out["storage_backend_required"] = sbr
     elif isinstance(sbr, str) and sbr.strip().lower() in ("true", "false"):
         out["storage_backend_required"] = sbr.strip().lower() == "true"
+    et = data.get("evidence_types")
+    if isinstance(et, list):
+        out["evidence_types"] = [str(x).strip().lower() for x in et if str(x).strip()]
+    hc = data.get("hypotheses_count")
+    if isinstance(hc, int):
+        out["hypotheses_count"] = hc
+    elif isinstance(hc, str) and hc.strip().isdigit():
+        out["hypotheses_count"] = int(hc.strip())
     return out
 
 
@@ -179,6 +191,19 @@ def grade(actual: dict, expected: dict) -> list[dict]:
         exp = expected["storage_backend_required"]
         checks.append({"check": "storage_backend_required", "passed": got == exp,
                        "actual": got, "expected": exp})
+    if "evidence_types_min" in expected:
+        got = actual.get("evidence_types") or []
+        uniq = len(set(got))
+        exp_min = expected["evidence_types_min"]
+        checks.append({"check": "evidence_types", "passed": uniq >= exp_min,
+                       "actual": uniq, "expected": f">= {exp_min} 种"})
+    if "hypotheses_count_min" in expected:
+        got = actual.get("hypotheses_count")
+        lo = expected.get("hypotheses_count_min", 2)
+        hi = expected.get("hypotheses_count_max", 5)
+        passed = isinstance(got, int) and lo <= got <= hi
+        checks.append({"check": "hypotheses_count", "passed": passed,
+                       "actual": got, "expected": f"{lo}-{hi}"})
     return checks
 
 
@@ -271,6 +296,15 @@ def main() -> None:
             raise SystemExit(
                 f"契约已变化（旧 {old_chars} / 新 {cur_chars} 字符），--rescore 不可用，"
                 "必须真实调用模型"
+            )
+        # prompt 漂移检测：gold 可改，prompt 不可改（改了必须真实调用）
+        old_prompts = {r["case_id"]: r.get("prompt", "") for r in rows}
+        cur_prompts = {c["id"]: c["prompt"] for c in cases}
+        drifted_prompts = [cid for cid in cur_prompts
+                           if cid in old_prompts and old_prompts[cid] != cur_prompts[cid]]
+        if drifted_prompts:
+            raise SystemExit(
+                f"prompt 已变化，--rescore 不可用（必须真实调用）：{drifted_prompts}"
             )
         for r in rows:
             r["checks"] = grade(normalize_actual(r.get("actual") or {}), r["expected"])

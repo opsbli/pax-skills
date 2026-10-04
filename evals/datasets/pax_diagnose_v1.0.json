@@ -1,6 +1,6 @@
 {
-  "version": "1.1",
-  "description": "pax-diagnose 评估扩展。v1.0 的 6 个 D5 严重度场景 + v1.1 新增 5 个（D1 复现状态 3 个 + D2 存储后端确认 2 个）。全部 holdout。",
+  "version": "1.2",
+  "description": "pax-diagnose 评估。v1.0 6 个 D5 + v1.1 5 个（D1 复现 3 + D2 存储后端 2）+ v1.2 14 个（D5 边界 6 + D1 复现 2 + D2 存储后端 2 + D2 证据 2 + D3 假设 2）= 25 场景。全部 holdout。",
   "contract_chars": 14608,
   "cases": [
     {
@@ -138,6 +138,172 @@
       "expected": {
         "storage_backend_required": false
       }
+    },
+    {
+      "id": "pax-diag-d5-01",
+      "category": "severity",
+      "holdout": true,
+      "prompt": "生产数据库主库宕机，所有写操作（下单、注册、支付）全部失败，无法写入任何数据。",
+      "expected": {
+        "severity": "P0",
+        "severity_rationale": {
+          "core_flow_broken": true,
+          "affected_users": "all",
+          "workaround_available": false,
+          "security_relevant": false
+        }
+      }
+    },
+    {
+      "id": "pax-diag-d5-02",
+      "category": "severity",
+      "holdout": true,
+      "prompt": "商品搜索接口在高峰时段响应超时，约 40% 用户遇到；用户可以通过分类浏览找到商品。",
+      "expected": {
+        "severity": "P1",
+        "severity_rationale": {
+          "core_flow_broken": true,
+          "affected_users": "some",
+          "workaround_available": true,
+          "security_relevant": false
+        }
+      }
+    },
+    {
+      "id": "pax-diag-d5-03",
+      "category": "severity",
+      "holdout": true,
+      "prompt": "帮助中心的文档链接有 3 个失效，点击返回 404；少量用户访问帮助中心时会遇到，不影响核心功能。",
+      "expected": {
+        "severity": "P2",
+        "severity_rationale": {
+          "core_flow_broken": false,
+          "affected_users": "few",
+          "workaround_available": true,
+          "security_relevant": false
+        }
+      }
+    },
+    {
+      "id": "pax-diag-d5-04",
+      "category": "severity",
+      "holdout": true,
+      "prompt": "排查发现应用日志中明文记录了用户的登录密码，所有用户的密码都可能在日志中暴露。",
+      "expected": {
+        "severity": "P0",
+        "severity_rationale": {
+          "core_flow_broken": false,
+          "affected_users": "all",
+          "workaround_available": false,
+          "security_relevant": true
+        }
+      }
+    },
+    {
+      "id": "pax-diag-d5-05",
+      "category": "severity",
+      "holdout": true,
+      "prompt": "支付接口偶发超时，约 15% 的下单请求失败，用户可以重新提交订单完成支付。",
+      "expected": {
+        "severity": "P1",
+        "severity_rationale": {
+          "core_flow_broken": true,
+          "affected_users": "some",
+          "workaround_available": true,
+          "security_relevant": false
+        }
+      }
+    },
+    {
+      "id": "pax-diag-d5-06",
+      "category": "severity",
+      "holdout": true,
+      "prompt": "网站页脚的版权年份显示为 2025 而非 2026，所有用户都能看到，但不影响任何功能。",
+      "expected": {
+        "severity": "P2",
+        "severity_rationale": {
+          "core_flow_broken": false,
+          "affected_users": "all",
+          "workaround_available": true,
+          "security_relevant": false
+        }
+      }
+    },
+    {
+      "id": "pax-diag-repro-05",
+      "category": "reproduction",
+      "holdout": true,
+      "prompt": "按照 bug 报告中的复现步骤操作，我一次就成功复现了问题，报错信息与报告一致。",
+      "expected": {
+        "reproduction_status": "reproduced"
+      }
+    },
+    {
+      "id": "pax-diag-repro-06",
+      "category": "reproduction",
+      "holdout": true,
+      "prompt": "在 Chrome 浏览器下能稳定复现问题，但在 Firefox 浏览器下无法复现。",
+      "expected": {
+        "reproduction_status": "reproduced"
+      },
+      "basis": "gold 修正：partial → reproduced。「Chrome 能稳定复现」= 契约 D1「确认问题可复现」。partial 应指「复现部分症状/间歇性复现」，不是「部分环境能复现」。"
+    },
+    {
+      "id": "pax-diag-storage-03",
+      "category": "storage_backend",
+      "holdout": true,
+      "prompt": "需要把历史订单数据从旧表迁移到新表，迁移过程中要确保数据一致性。",
+      "expected": {
+        "storage_backend_required": true
+      }
+    },
+    {
+      "id": "pax-diag-storage-04",
+      "category": "storage_backend",
+      "holdout": true,
+      "prompt": "需要修改一个配置项，把接口超时时间从 30 秒改成 60 秒。",
+      "expected": {
+        "storage_backend_required": false
+      }
+    },
+    {
+      "id": "pax-diag-evidence-01",
+      "category": "evidence",
+      "holdout": true,
+      "prompt": "用户反馈下单接口偶发 500。错误日志显示 NullPointerException 堆栈指向 OrderService 第 120 行；最近 3 天有两次相关代码提交；监控显示错误率从 0.1% 升到 2%。请判断需要收集哪些类型的证据。",
+      "expected": {
+        "evidence_types_min": 3
+      }
+    },
+    {
+      "id": "pax-diag-evidence-02",
+      "category": "evidence",
+      "holdout": true,
+      "prompt": "用户反馈部分订单金额字段为 null。需要排查原因。请判断需要收集哪些类型的证据。",
+      "expected": {
+        "evidence_types_min": 3
+      }
+    },
+    {
+      "id": "pax-diag-hypo-01",
+      "category": "hypothesis",
+      "holdout": true,
+      "prompt": "用户反馈登录接口偶发超时。日志显示数据库连接池偶尔耗尽，最近部署了新版本的登录模块，也有用户反馈网络波动。请生成根因假设。",
+      "expected": {
+        "hypotheses_count_min": 2,
+        "hypotheses_count_max": 5
+      }
+    },
+    {
+      "id": "pax-diag-hypo-02",
+      "category": "hypothesis",
+      "holdout": true,
+      "prompt": "用户反馈商品图片加载缓慢，加载时间从 200ms 升到 3 秒。监控显示 CDN 命中率从 95% 降到 60%；最近一周更新了图片压缩配置；源站带宽在高峰时段接近上限。请生成根因假设。",
+      "expected": {
+        "hypotheses_count_min": 2,
+        "hypotheses_count_max": 5
+      },
+      "basis": "prompt 补证据：原 prompt 证据不足，模型按契约 D1 正确判 not_reproduced→blocked→不生成假设。补 CDN 命中率/配置变更/带宽指标后，模型应有足够证据生成 2-5 条假设。"
     }
   ]
 }
