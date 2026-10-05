@@ -755,7 +755,23 @@ pax-diagnose 引用了**两个不存在的文件**，均已处理：
 
 要确认泛化，需扩到 25+ 场景 + 跨模型对照。
 
-## 7. 文件变更
+## 7. pax-orchestrate 真实场景验证（F）
+
+数据源：用户在 PiForge 项目里的真实会话 `faf769ef-e67c-4254-bd43-871504fccb95`，
+Agent 实际执行了两次 pax-orchestrate L0 编排。完整核对见 `REAL_SCENARIO_VERIFICATION.md`。
+
+| 场景 | 一级意图 | 二级意图 | 四维 | 诊断 | 路由 | 契约核对 |
+|------|------|------|------|------|------|------|
+| UI 重设计 | `feature_dev` | `ux_error` | (1,2,3,2)=8 中 | 跳过 | `[clarify, plan, execute, review]` | **11/11 ✅** |
+| 对话没回显 | `diagnose_fix` | `ux_error` | (1,2,2,2)=7 中 | 必须 | `[clarify, diagnose, plan, execute, review]` | **9/9 ✅** |
+
+**两个真实场景 20 项判定全部符合契约**。路由主干与评估数据集 gold 一致
+（`feature_dev → [clarify, plan, execute, review]`、`diagnose_fix → [clarify, diagnose, ...]`）。
+
+**可信度边界**：样本量小（2 场景各 1 次）、都是典型场景、是真实会话非受控实验
+（Agent 可能读了项目 AGENTS.md 等额外上下文）。
+
+## 8. 文件变更
 
 评估文件不受 `.gitignore` 限制，应纳入版本控制。
 skillEval 的运行归档（`outputs/`）在仓库外，不进 git。
