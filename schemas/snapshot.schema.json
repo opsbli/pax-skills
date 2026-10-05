@@ -197,7 +197,7 @@
       "additionalProperties": false,
       "properties": {
         "verdict": {"type": "string",
-                    "enum": ["pass", "fail", "partial", "blocked", "escalated"]},
+                    "enum": ["verified", "needs_fix", "partial", "blocked", "needs_review"]},
         "stamp": {
           "type": ["string", "null"],
           "description": "评审所依据的 verify 印章引用（对应 quality.verification_seals 中的 seal id）。"
@@ -225,7 +225,7 @@
             "additionalProperties": true,
             "properties": {
               "result": {"type": "string",
-                         "enum": ["pass", "fail", "partial", "blocked", "escalated"]},
+                         "enum": ["verified", "needs_fix", "partial", "blocked", "needs_review"]},
               "confidence": {"type": "string", "enum": ["high", "medium", "low"]},
               "attempts": {"type": "integer"},
               "duration": {"type": "string"},

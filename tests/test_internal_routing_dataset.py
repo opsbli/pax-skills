@@ -54,7 +54,10 @@ def test_real_dataset_covers_all_known_categories(validator):
 
 def test_main_exits_zero_on_real_dataset(validator, capsys):
     assert validator.main([str(DATASET_PATH)]) == 0
-    assert "Total: 44 cases" in capsys.readouterr().out
+    # 不写死题数：数据集每次扩题都会把这个断言弄红（v1.7→v1.8 就踩过一次，
+    # 44 → 54 时这里仍写死 44）。断言校验器报告的总数与数据集实际条数一致即可。
+    expected = len(json.loads(DATASET_PATH.read_text(encoding="utf-8"))["cases"])
+    assert f"Total: {expected} cases" in capsys.readouterr().out
 
 
 def test_main_exits_two_on_missing_file(validator, tmp_path, capsys):

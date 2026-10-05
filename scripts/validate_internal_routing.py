@@ -35,6 +35,7 @@ KNOWN_CATEGORIES = (
     "risk_scoring",
     "route_building",
     "cross_repo_detection",
+    "extension_route_triggering",
 )
 
 # 每个 category 在 `expected` 里必须出现的键（与数据集实际结构对齐）
@@ -46,6 +47,11 @@ REQUIRED_EXPECTED_KEYS: dict[str, tuple[str, ...]] = {
     ),
     "route_building": ("route", "diagnose_required"),
     "cross_repo_detection": ("cross_repo", "execution_strategy_required"),
+    # extension_route_triggering: 验证 pax-orchestrate 在特定场景下
+    # 是否会触发对应的 L1 扩展 skill（monitor / rollback / test / deploy / learn）。
+    # extension_route: 被触发的扩展 skill 名列表（可为空 = 无扩展）
+    # expected_annotations: 应出现在快照 annotations 里的字段名列表
+    "extension_route_triggering": ("extension_route", "expected_annotations"),
 }
 
 

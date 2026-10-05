@@ -52,6 +52,25 @@ requires_snapshot: true
 
 ## 工作流
 
+#### 维度键空间约定
+
+设计树的 `dimension:` 字段一律使用 **6 个澄清短键**之一（与 `consensus.dimensions` 的键空间一致，
+供 `update_dimension` 写入与 `detect_gaps` 读取）：
+
+| 短键 | 完整快照路径（描述含义） | 适用设计树 |
+|---|---|---|
+| `goal` | `snapshot.goal.statement` | 全部 |
+| `success_criteria` | `snapshot.goal.success_criteria` | 全部 |
+| `constraints` | `snapshot.contract.constraints` | 全部 |
+| `authorization` | `snapshot.contract.authorization` | 全部 |
+| `exceptions` | `snapshot.contract.exceptions` | feature_dev / refactor / data_ops / diagnose_fix |
+| `terminology` | `snapshot.goal.terminology` | feature_dev / refactor |
+
+诊断/数据类设计树中的 `symptom.*` 与 `infrastructure.storage_backend` 节点**不**属于上述 6 个澄清维度——
+它们写入 `snapshot.symptom` / `snapshot.infrastructure`（由 `pax-diagnose` 或 `pax-worker-*` 消费），
+不更新 `consensus.dimensions`。这类节点的 `dimension:` 字段使用对应的完整路径（如 `symptom.description`），
+并在 `update_dimension` 前判断：若短键不在 6 个澄清键中，则走 `snapshot.<section>.<field>` 直写路径，不写入 `consensus.dimensions`。
+
 ### W1 设计树初始化（Design Tree Initialization）
 
 根据 `orchestration.intent.primary` 初始化不同的设计树模板。设计树节点按依赖关系组织，支持 `depends_on`（父依赖）和 `children`（子节点）。
@@ -61,51 +80,51 @@ requires_snapshot: true
 ```yaml
 design_tree:
   - id: D1
-    question: "问题的具体表现是什么？（错误信息、异常行为、影响范围）"
+    question: "问题的具体表现是什么？（错误信息、异常行为、影响范围）——对应 snapshot.symptom.description"
     status: frontier
     dimension: symptom.description
     depends_on: []
     children: [D2]
     
   - id: D2
-    question: "这个问题首次出现的时间？最近有哪些变更？"
+    question: "这个问题首次出现的时间？最近有哪些变更？——对应 snapshot.symptom.first_observed"
     status: frontier
     dimension: symptom.first_observed
     depends_on: [D1]
     children: [D3]
     
   - id: D3
-    question: "影响范围有多大？（影响哪些用户、模块、功能）"
+    question: "影响范围有多大？（影响哪些用户、模块、功能）——对应 snapshot.symptom.impact"
     status: frontier
     dimension: symptom.impact
     depends_on: [D2]
     children: [D4]
     
   - id: D4
-    question: "修复的成功标准是什么？（什么情况下算修复完成）"
+    question: "修复的成功标准是什么？（什么情况下算修复完成）——对应 snapshot.goal.success_criteria"
     status: frontier
-    dimension: goal.success_criteria
+    dimension: success_criteria
     depends_on: [D3]
     children: [D5]
     
   - id: D5
-    question: "有什么约束条件？（不可修改的模块、依赖限制、时间窗口）"
+    question: "有什么约束条件？（不可修改的模块、依赖限制、时间窗口）——对应 snapshot.contract.constraints"
     status: frontier
-    dimension: contract.constraints
+    dimension: constraints
     depends_on: [D4]
     children: [D6]
     
   - id: D6
-    question: "修复的授权范围？（可以修改哪些文件/模块/配置）"
+    question: "修复的授权范围？（可以修改哪些文件/模块/配置）——对应 snapshot.contract.authorization"
     status: frontier
-    dimension: contract.authorization
+    dimension: authorization
     depends_on: [D5]
     children: [D7]
     
   - id: D7
-    question: "是否有例外情况需要特殊处理？"
+    question: "是否有例外情况需要特殊处理？——对应 snapshot.contract.exceptions"
     status: frontier
-    dimension: contract.exceptions
+    dimension: exceptions
     depends_on: [D6]
     children: []
 ```
@@ -115,44 +134,44 @@ design_tree:
 ```yaml
 design_tree:
   - id: D1
-    question: "功能的核心目标是什么？（一句话描述）"
+    question: "功能的核心目标是什么？（一句话描述）——对应 snapshot.goal.statement"
     status: frontier
-    dimension: goal.statement
+    dimension: goal
     depends_on: []
     children: [D2]
     
   - id: D2
-    question: "成功标准是什么？（可验证的验收条件）"
+    question: "成功标准是什么？（可验证的验收条件）——对应 snapshot.goal.success_criteria"
     status: frontier
-    dimension: goal.success_criteria
+    dimension: success_criteria
     depends_on: [D1]
     children: [D3]
     
   - id: D3
-    question: "有哪些约束条件？（技术栈、性能要求、兼容性）"
+    question: "有哪些约束条件？（技术栈、性能要求、兼容性）——对应 snapshot.contract.constraints"
     status: frontier
-    dimension: contract.constraints
+    dimension: constraints
     depends_on: [D2]
     children: [D4]
     
   - id: D4
-    question: "开发授权范围？（可以创建/修改哪些模块）"
+    question: "开发授权范围？（可以创建/修改哪些模块）——对应 snapshot.contract.authorization"
     status: frontier
-    dimension: contract.authorization
+    dimension: authorization
     depends_on: [D3]
     children: [D5]
     
   - id: D5
-    question: "有没有需要向后兼容的场景？"
+    question: "有没有需要向后兼容的场景？——对应 snapshot.contract.exceptions"
     status: frontier
-    dimension: contract.exceptions
+    dimension: exceptions
     depends_on: [D4]
     children: [D6]
     
   - id: D6
-    question: "当前状态和边界条件是什么？"
+    question: "当前状态和边界条件是什么？——对应 snapshot.goal.terminology"
     status: frontier
-    dimension: goal.terminology
+    dimension: terminology
     depends_on: [D5]
     children: []
 ```
@@ -162,30 +181,30 @@ design_tree:
 ```yaml
 design_tree:
   - id: D1
-    question: "重构的目标是什么？（性能、可读性、架构、可维护性）"
+    question: "重构的目标是什么？（性能、可读性、架构、可维护性）——对应 snapshot.goal.statement"
     status: frontier
-    dimension: goal.statement
+    dimension: goal
     depends_on: []
     children: [D2]
     
   - id: D2
-    question: "重构成功标准？（性能提升比例、代码行数减少、测试覆盖率）"
+    question: "重构成功标准？（性能提升比例、代码行数减少、测试覆盖率）——对应 snapshot.goal.success_criteria"
     status: frontier
-    dimension: goal.success_criteria
+    dimension: success_criteria
     depends_on: [D1]
     children: [D3]
     
   - id: D3
-    question: "什么不能改？（外部接口、数据结构、公共契约）"
+    question: "什么不能改？（外部接口、数据结构、公共契约）——对应 snapshot.contract.constraints"
     status: frontier
-    dimension: contract.constraints
+    dimension: constraints
     depends_on: [D2]
     children: [D4]
     
   - id: D4
-    question: "授权范围？（可以修改哪些文件/模块）"
+    question: "授权范围？（可以修改哪些文件/模块）——对应 snapshot.contract.authorization"
     status: frontier
-    dimension: contract.authorization
+    dimension: authorization
     depends_on: [D3]
     children: []
 ```
@@ -195,21 +214,21 @@ design_tree:
 ```yaml
 design_tree:
   - id: D1
-    question: "数据问题的具体表现？（数据不一致、字段错误、数据丢失）"
+    question: "数据问题的具体表现？（数据不一致、字段错误、数据丢失）——对应 snapshot.symptom.description"
     status: frontier
     dimension: symptom.description
     depends_on: []
     children: [D2]
     
   - id: D2
-    question: "数据规模和影响范围？（多少条记录、多少用户、哪些模块）"
+    question: "数据规模和影响范围？（多少条记录、多少用户、哪些模块）——对应 snapshot.symptom.impact"
     status: frontier
     dimension: symptom.impact
     depends_on: [D1]
     children: [D3]
     
   - id: D3
-    question: "存储后端确认？（MongoDB / MySQL / PostgreSQL / 其他）"
+    question: "存储后端确认？（MongoDB / MySQL / PostgreSQL / 其他）——对应 snapshot.infrastructure.storage_backend"
     status: frontier
     dimension: infrastructure.storage_backend
     depends_on: [D2]
@@ -217,30 +236,30 @@ design_tree:
     requires_worker: true
     
   - id: D4
-    question: "订正的成功标准？（数据一致性校验、回归测试通过）"
+    question: "订正的成功标准？（数据一致性校验、回归测试通过）——对应 snapshot.goal.success_criteria"
     status: frontier
-    dimension: goal.success_criteria
+    dimension: success_criteria
     depends_on: [D3]
     children: [D5]
     
   - id: D5
-    question: "约束条件？（不可删除的记录、需要保留的审计轨迹、时间窗口）"
+    question: "约束条件？（不可删除的记录、需要保留的审计轨迹、时间窗口）——对应 snapshot.contract.constraints"
     status: frontier
-    dimension: contract.constraints
+    dimension: constraints
     depends_on: [D4]
     children: [D6]
     
   - id: D6
-    question: "授权范围？（可以修改哪些集合/表/字段）"
+    question: "授权范围？（可以修改哪些集合/表/字段）——对应 snapshot.contract.authorization"
     status: frontier
-    dimension: contract.authorization
+    dimension: authorization
     depends_on: [D5]
     children: [D7]
     
   - id: D7
-    question: "异常处理方案？（订正失败的回滚策略）"
+    question: "异常处理方案？（订正失败的回滚策略）——对应 snapshot.contract.exceptions"
     status: frontier
-    dimension: contract.exceptions
+    dimension: exceptions
     depends_on: [D6]
     children: []
 ```
@@ -250,16 +269,16 @@ design_tree:
 ```yaml
 design_tree:
   - id: D1
-    question: "咨询的具体问题是什么？（一句话描述）"
+    question: "咨询的具体问题是什么？（一句话描述）——对应 snapshot.goal.statement"
     status: frontier
-    dimension: goal.statement
+    dimension: goal
     depends_on: []
     children: [D2]
     
   - id: D2
-    question: "期望的输出形式？（文档、方案、解释、对比）"
+    question: "期望的输出形式？（文档、方案、解释、对比）——对应 snapshot.goal.success_criteria"
     status: frontier
-    dimension: goal.success_criteria
+    dimension: success_criteria
     depends_on: [D1]
     children: []
 ```
@@ -269,30 +288,30 @@ design_tree:
 ```yaml
 design_tree:
   - id: D1
-    question: "工具的核心功能是什么？（一句话描述）"
+    question: "工具的核心功能是什么？（一句话描述）——对应 snapshot.goal.statement"
     status: frontier
-    dimension: goal.statement
+    dimension: goal
     depends_on: []
     children: [D2]
     
   - id: D2
-    question: "输入输出是什么？（接受什么输入、产出什么输出）"
+    question: "输入输出是什么？（接受什么输入、产出什么输出）——对应 snapshot.goal.success_criteria"
     status: frontier
-    dimension: goal.success_criteria
+    dimension: success_criteria
     depends_on: [D1]
     children: [D3]
     
   - id: D3
-    question: "运行环境要求？（Python/Node/Shell、依赖库）"
+    question: "运行环境要求？（Python/Node/Shell、依赖库）——对应 snapshot.contract.constraints"
     status: frontier
-    dimension: contract.constraints
+    dimension: constraints
     depends_on: [D2]
     children: [D4]
     
   - id: D4
-    question: "授权范围？（可以访问哪些文件系统/网络/API）"
+    question: "授权范围？（可以访问哪些文件系统/网络/API）——对应 snapshot.contract.authorization"
     status: frontier
-    dimension: contract.authorization
+    dimension: authorization
     depends_on: [D3]
     children: []
 ```
@@ -340,9 +359,27 @@ unknown → fuzzy → assumption → confirmed → locked
 #### 维度状态更新规则
 
 ```python
-def update_dimension(dimension, user_answer, current_state):
-    """根据用户回答更新维度状态"""
+def update_dimension(dimension, user_answer, current_state, consensus, snapshot=None):
+    """根据用户回答更新维度状态。
+
+    如果 dimension 是 6 个澄清短键之一（goal / success_criteria / constraints /
+    authorization / exceptions / terminology），写入 `consensus.dimensions[dimension]`，
+    供 `detect_gaps` 读取。
+
+    如果 dimension 是完整快照路径（如 `symptom.description` / `infrastructure.storage_backend`），
+    则写入对应的 `snapshot.<section>.<field>`，不更新 `consensus.dimensions`。
+    """
     
+    CLARIFY_DIMENSIONS = {"goal", "success_criteria", "constraints", "authorization", "exceptions", "terminology"}
+    
+    # 非澄清维度：写入 snapshot.<section>.<field>，不更新 consensus.dimensions
+    if dimension not in CLARIFY_DIMENSIONS and snapshot is not None:
+        section, _, field = dimension.partition(".")
+        if section and field and hasattr(snapshot, section):
+            setattr(snapshot, section, {**getattr(snapshot, section, {}), field: user_answer})
+        return "confirmed"
+    
+    # 澄清维度：更新状态
     if current_state == "locked":
         return "locked"  # 不可变
     
@@ -759,9 +796,11 @@ def clarify(snapshot, user):
 - 需要独立评审 → 交由 `pax-review`（在 `pax-execute` 之后）
 - 检测到架构级问题 → 升级决策层
 - 用户连续 2 次回答矛盾 → 升级决策层
-## SkillOpt Cue Map
+## 手工经验条目（历史 SkillOpt 关键词命中产物，未经验证）
 
-<!-- Generated by evals/skillopt/train_pax_offline.py.  Each entry maps a clarify_*/diagnose_* action to its cue keywords so downstream routing can be scored deterministically. -->
+<!-- 原 SkillOpt Cue Map，由 evals/skillopt/train_pax_offline.py 生成。
+     SkillOpt 训练为 dry_run=true（奖励=关键词覆盖率），非真训练。
+     以下条目为历史关键词命中产物，未经真实训练验证，仅作参考。 -->
 
 - **clarify_storage_backend**: DBMS类型；持久层技术栈；存储介质
 - **clarify_performance_impact**: 性能影响评估；SLA退化；响应时间阈值

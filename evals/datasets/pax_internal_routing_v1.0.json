@@ -1,5 +1,5 @@
 {
-  "version": "1.7",
+  "version": "1.8",
   "description": "pax-orchestrate 内部路由评估数据集，测试意图分类、风险评分、路由构建的准确性",
   "cases": [
     {
@@ -148,7 +148,8 @@
       "prompt": "解释一下什么是微服务架构，有什么优缺点",
       "expected": {
         "route": [
-          "clarify"
+          "clarify",
+          "docs"
         ],
         "diagnose_required": false,
         "storage_backend_required": false
@@ -568,6 +569,160 @@
         "cross_repo": true,
         "execution_strategy_required": true
       }
+    },
+    {
+      "id": "pax-ext-monitor-01",
+      "category": "extension_route_triggering",
+      "prompt": "我们要在生产环境做一次 3 小时的批量数据迁移，从旧 MySQL 库迁到新 PostgreSQL 库，涉及 20 张表，需要持续观察迁移进度、错误率和延迟指标。",
+      "expected": {
+        "extension_route": [
+          "monitor"
+        ],
+        "expected_annotations": [
+          "monitor_required"
+        ]
+      },
+      "holdout": true,
+      "note": "长时批量任务+关键指标观察 → 触发 monitor"
+    },
+    {
+      "id": "pax-ext-monitor-02",
+      "category": "extension_route_triggering",
+      "prompt": "部署新版本的推荐算法服务，需要在部署后的 24 小时内持续监控 QPS、p99 延迟、错误率和 GPU 利用率，任何指标异常都要告警。",
+      "expected": {
+        "extension_route": [
+          "monitor",
+          "deploy"
+        ],
+        "expected_annotations": [
+          "monitor_required",
+          "deploy_required"
+        ]
+      },
+      "holdout": true,
+      "note": "部署+持续监控 → 同时触发 monitor 与 deploy"
+    },
+    {
+      "id": "pax-ext-rollback-01",
+      "category": "extension_route_triggering",
+      "prompt": "数据库 schema 变更：给 orders 表增加 status_check 列，需要迁移 500 万行历史数据并做非空约束。这个操作要能回滚。",
+      "expected": {
+        "extension_route": [
+          "rollback"
+        ],
+        "expected_annotations": [
+          "rollback_required"
+        ]
+      },
+      "holdout": true,
+      "note": "大规模数据订正 → 触发 rollback"
+    },
+    {
+      "id": "pax-ext-rollback-02",
+      "category": "extension_route_triggering",
+      "prompt": "上线新支付渠道接入，通过 feature flag 灰度发布，如果发现故障需要立即回滚到旧支付路径。",
+      "expected": {
+        "extension_route": [
+          "rollback",
+          "deploy"
+        ],
+        "expected_annotations": [
+          "rollback_required",
+          "deploy_required"
+        ]
+      },
+      "holdout": true,
+      "note": "灰度+回滚 → 同时触发 rollback 与 deploy"
+    },
+    {
+      "id": "pax-ext-test-01",
+      "category": "extension_route_triggering",
+      "prompt": "修复支付金额计算错误的 bug：当订单包含多个 SKU 且有折扣时，总金额计算错误。修复后必须验证折扣+SKU 组合场景。",
+      "expected": {
+        "extension_route": [
+          "test"
+        ],
+        "expected_annotations": [
+          "test_required"
+        ]
+      },
+      "holdout": true,
+      "note": "bug 修复+边界验证 → 触发 test"
+    },
+    {
+      "id": "pax-ext-test-02",
+      "category": "extension_route_triggering",
+      "prompt": "新增用户注册功能，包含邮箱验证、手机号绑定、邀请码校验等 5 个子功能。",
+      "expected": {
+        "extension_route": [
+          "test"
+        ],
+        "expected_annotations": [
+          "test_required"
+        ]
+      },
+      "holdout": true,
+      "note": "新功能+多子功能 → 触发 test"
+    },
+    {
+      "id": "pax-ext-deploy-01",
+      "category": "extension_route_triggering",
+      "prompt": "把修复后的登录页面代码部署到生产环境，需要在预发布环境验证后再上线。",
+      "expected": {
+        "extension_route": [
+          "deploy"
+        ],
+        "expected_annotations": [
+          "deploy_required"
+        ]
+      },
+      "holdout": true,
+      "note": "明确部署动作 → 触发 deploy"
+    },
+    {
+      "id": "pax-ext-deploy-02",
+      "category": "extension_route_triggering",
+      "prompt": "修复数据库连接池的配置问题，需要在生产环境重启服务后生效。",
+      "expected": {
+        "extension_route": [
+          "deploy"
+        ],
+        "expected_annotations": [
+          "deploy_required"
+        ]
+      },
+      "holdout": true,
+      "note": "配置变更需重启 → 触发 deploy"
+    },
+    {
+      "id": "pax-ext-learn-01",
+      "category": "extension_route_triggering",
+      "prompt": "把系统从单体迁移到微服务架构，需要用 Service Mesh 做服务发现和流量治理。团队没接触过 Istio。",
+      "expected": {
+        "extension_route": [
+          "learn"
+        ],
+        "expected_annotations": [
+          "learn_required"
+        ]
+      },
+      "holdout": true,
+      "note": "陌生技术栈+团队不熟 → 触发 learn"
+    },
+    {
+      "id": "pax-ext-learn-02",
+      "category": "extension_route_triggering",
+      "prompt": "接入 Stripe 支付 API，团队之前一直用支付宝。Stripe 的文档全是英文，webhook 机制和重试策略与支付宝不同。",
+      "expected": {
+        "extension_route": [
+          "learn"
+        ],
+        "expected_annotations": [
+          "learn_required"
+        ]
+      },
+      "holdout": true,
+      "note": "陌生外部系统+需要学习 → 触发 learn"
     }
   ],
   "changelog": [
@@ -657,6 +812,24 @@
         "数据集从 18 题扩到 43 题。"
       ],
       "note": "本批 gold 一次性按契约推导，未参考模型输出。模型答错如实记 FAIL。"
+    },
+    {
+      "version": "1.8",
+      "date": "2026-10-05",
+      "summary": "追加 extension_route_triggering 类别 10 题，覆盖 5 个 L1 扩展 skill",
+      "basis": "pax-orchestrate 的 W4 路由构建会产出 annotations，触发 monitor/rollback/test/deploy/learn 5 个 L1 扩展 skill；这些扩展 skill 在真实会话中从未被触发，需要评估数据集覆盖。",
+      "changes": [
+        "新增 category: extension_route_triggering（10 题，全部 holdout）",
+        "  - monitor ×2 (长时批量任务 / 部署+监控)",
+        "  - rollback ×2 (数据订正 / 灰度+回滚)",
+        "  - test ×2 (bug 修复+边界 / 新功能+多子功能)",
+        "  - deploy ×2 (部署动作 / 配置重启)",
+        "  - learn ×2 (陌生技术栈 / 陌生外部系统)",
+        "  - 每题 expected 包含 extension_route（触发 skill 列表）与 expected_annotations（应出现的 annotation 字段名）",
+        "数据集从 44 题扩展到 54 题。",
+        "route_building +1: pax-route-dc-01 的 route 从 [\"clarify\"] 改为 [\"clarify\", \"docs\"]（doc_consult 路由新增 docs 产出者）"
+      ],
+      "note": "本类别是 pax-orchestrate 路由评估的扩展：验证当场景中出现特定信号（长时任务 / 数据订正 / 部署动作 / 陌生领域）时，路由的 annotations 里是否包含对应的扩展触发标志。与 route_building 类别互补——route_building 验证主干路由，extension_route_triggering 验证扩展触发。"
     }
   ]
 }

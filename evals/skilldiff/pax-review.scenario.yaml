@@ -1,0 +1,26 @@
+# Regression scenario for pax-review (pax-* family).
+#
+# Expected behavior:
+#   * the agent writes a review report under notes/
+#   * the report mentions a review verdict vocabulary token
+
+name: pax-review-regression
+skillPaths:
+  - skills/pax-review/SKILL.md
+fixture: ./evals/skilldiff/fixtures/fixture
+prompt: |
+  Use the pax-review skill to produce a review report for this
+  completed execution and record it in notes/review.md:
+
+    Execution summary: modified `src/util/format.ts` adding
+    `formatDate()`; ran `pytest tests/test_format.py` — 5/5 passed;
+    diff is 12 lines, all within authorized files; contract met.
+
+  Keep the note under 20 lines.  Do NOT create files outside `notes/`.
+expect:
+  files_changed:
+    - notes/review.md
+  tool_calls:
+    - Write
+  output_contains:
+    - 评审

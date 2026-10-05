@@ -236,40 +236,47 @@ Closes #123
 
 ## CI 门禁与外部工具
 
-`pax-ci` 工作流包含 7 个 job，按**实际是否执行**分三类：
+`pax-ci` 工作流包含 7 个 job。判定一个 job 是否真拦人，看两点：**触发条件**是否满足，
+以及是否设了 `continue-on-error`。
 
-- **无条件执行的硬门禁**（3 个）：`contracts-and-tests`、`agentskills-ci-check`、`quality-summary`
-- **硬门禁但默认跳过**（2 个）：`routing-eval`、`quality-gate` —— 它们依赖 `tools/` 下的外部工具，
-  而 `tools/` 被 `.gitignore` 忽略、不在版本库中，因此未置 `PAX_TOOLS_AVAILABLE=true` 时永远记为 `skipped`。
-  **不要把这两个当成正在生效的质量闸门**。
-- **建议性**（2 个）：`internal-routing-check`、`skilldiff-regression`（失败不阻断，但会在 PR 里告警）
+| Job | 触发条件 | `continue-on-error` | 拦人? | 说明 |
+|---|---|---|---|---|
+| `contracts-and-tests` | 总是 | 否 | **是** | `pax-forge test` + `pytest` + 版本一致性校验 |
+| `internal-routing-check` | 总是 | 否 | **是** | 内部路由数据集结构校验（`scripts/validate_internal_routing.py`） |
+| `agentskills-ci-check` | 总是 | 否 | **是** | [agentskills-ci](https://github.com/damanisme/agentskills-ci) 对 `skills/` 打分，**每个 Skill 必须 ≥ 80/100** |
+| `routing-eval` | `main` 或手动触发 | 否 | **是（仅 main）** | skillEval 路由评估；无 `DASHSCOPE_API_KEY` 时跳过 real 模式，只跑 mock |
+| `quality-gate` | `vars.PAX_TOOLS_AVAILABLE == 'true'` | 否 | **默认不拦** | `tools/quality_gate.py` 五项检查 |
+| `skilldiff-regression` | 总是 | **是** | 否（建议性） | 行为回归；失败只告警 |
+| `quality-summary` | `always()` | 否 | 否 | 汇总 6 个 job 的结果到 Step Summary |
 
-| Job | 类型 | 触发条件 | 说明 |
-|-----|------|----------|------|
-| contracts-and-tests | 硬门禁 | 总是 | `pax-forge test` + `pytest` + 版本一致性校验 |
-| internal-routing-check | 建议 | 总是 | 内部路由单元测试数据集校验 |
-| agentskills-ci-check | 硬门禁 | 总是 | [agentskills-ci](https://github.com/damanisme/agentskills-ci) 对 `skills/` 打分，**每个 Skill 必须 ≥ 80/100** |
-| quality-summary | 硬门禁 | 总是 | 汇总前面所有 job；`skipped` 会被显式标为「未执行」而不是「失败」 |
-| routing-eval | 硬门禁（默认跳过） | main / 手动触发 **且** `PAX_TOOLS_AVAILABLE=true` | skillEval 路由评估；无 `DASHSCOPE_API_KEY` 时跳过 real 模式 |
-| quality-gate | 硬门禁（默认跳过） | `PAX_TOOLS_AVAILABLE=true` | `tools/quality_gate.py` 五项检查 |
-| skilldiff-regression | 建议 | 总是（内部再按 harness / `tools/` 决定是否执行） | 行为回归测试 |
+除 `quality-summary` 外，所有 job 都 `needs: contracts-and-tests`；`quality-summary` 需要全部 6 个。
+因此 `contracts-and-tests` 一挂，其余全部变 `skipped`。
 
-### 0. tools/ 工具链与 `PAX_TOOLS_AVAILABLE`
+> 历史口径修正：此前本文与根 README 把 `routing-eval` 归为「硬门禁但默认跳过」，
+> 并称 `internal-routing-check` 是「建议性」。两者都已不准确：
+> `routing-eval` 现在不再依赖 `tools/`（见下），在 `main` 上默认执行；
+> 而 `internal-routing-check` 没有 `continue-on-error`，失败会真的把 workflow 拖红。
 
-`routing-eval` 与 `quality-gate` 依赖 `tools/` 下的外部工具（`tools/skillEval`、`tools/quality_gate.py`），
-而 `tools/` 被 `.gitignore` 忽略、**不在版本库中**，因此 CI 检出里必然不存在。
-为避免「每个 PR 都因缺少工具而变红」这种无信息量的失败，二者默认**显式跳过**而不是失败：
+### 0. 两个 job 的外部依赖
 
-- `PAX_TOOLS_AVAILABLE` 未设置或不为 `'true'` → job 记为 `skipped`，`quality-summary` 会把它列入「以下检查本次未执行」；
-- 置为 `'true'` 时，job 会先断言对应 `tools/` 路径存在，缺失则 `::error` 直接失败——不会静默放过；
-- 真正启用前需要先把工具 vendor 进版本库：
+- **`routing-eval` 不再从 `tools/` 取工具**：它用第二次 `actions/checkout` 把同级仓库
+  `sinvi/agent-skills-tooling` 以 `sparse-checkout: skillEval` 拉进检出目录再安装。
+  所以它在 `main` 上默认**会执行**（mock 模式不需要 API Key；
+  real 模式需 `secrets.DASHSCOPE_API_KEY`，未配置时该步自行跳过）。
+- **`quality-gate` 仍依赖 `tools/quality_gate.py`**。而 `tools/` 被 `.gitignore` 忽略、
+  **不在版本库中**，CI 检出里必然不存在，所以它的触发条件挂在仓库变量 `PAX_TOOLS_AVAILABLE` 上：
+
+  - 未设置或不为 `'true'` → job 记为 `skipped`，`quality-summary` 会把它列入「以下检查本次未执行」；
+  - 置为 `'true'` → job 先断言 `tools/quality_gate.py` 存在，缺失则 `::error` 直接失败，不静默放过。
+
+  真正启用前需要先把工具 vendor 进版本库：
 
 ```bash
 gh variable set PAX_TOOLS_AVAILABLE --repo opsbli/pax-skills --body "true"
 ```
 
-> `skilldiff-regression` 同样依赖 `tools/skilldiff/examples/traces`（仅 recorded demo 用）。
-> 它是建议性 job、不参与上述门禁：内部检测到该路径缺失时会跳过 demo 并在 Step Summary 里写明「未在 CI 中执行」。
+> `skilldiff-regression` 若需要 recorded demo 的 trace 数据，同样来自 `tools/skilldiff/...`。
+> 它设了 `continue-on-error: true`，内部检测到路径缺失时会跳过 demo 并在 Step Summary 写明「未在 CI 中执行」。
 
 ### 1. agentskills-ci 评分要求
 

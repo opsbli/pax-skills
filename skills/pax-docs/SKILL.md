@@ -56,9 +56,25 @@ requires_snapshot: true
 
 ```python
 def extract_decisions(snapshot):
-    """提取已确认硬决策"""
+    """提取已确认硬决策。
+
+    来源：diagnosis / plan / execution / review / consensus（doc_consult 路由）。
+    doc_consult 路由无 diagnosis/plan/execution/review，从 consensus 提取。
+    """
     
     decisions = []
+    
+    # 从 consensus 提取（doc_consult 路由的唯一来源）
+    if snapshot.consensus and snapshot.consensus.dimensions:
+        for dim_name, dim_value in snapshot.consensus.dimensions.items():
+            if isinstance(dim_value, dict) and dim_value.get("status") == "confirmed":
+                decisions.append({
+                    "id": f"D{len(decisions) + 1}",
+                    "type": "clarification",
+                    "statement": dim_value.get("content", ""),
+                    "source": "consensus",
+                    "dimension": dim_name
+                })
     
     # 从 diagnosis 提取
     if snapshot.diagnosis and snapshot.diagnosis.root_cause:

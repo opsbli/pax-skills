@@ -92,7 +92,7 @@ def verify_items(plan, execution):
                 "step": strategy.step,
                 "method": strategy.method,
                 "criteria": strategy.criteria,
-                "result": "fail",
+                "result": "needs_fix",
                 "reason": "步骤未成功执行",
                 "evidence": None
             })
@@ -108,7 +108,7 @@ def verify_items(plan, execution):
             "step": strategy.step,
             "method": strategy.method,
             "criteria": strategy.criteria,
-            "result": result,  # pass | fail
+            "result": result,  # verified | needs_fix | partial
             "reason": evaluate_rationale(strategy, evidence),
             "evidence": evidence
         })
@@ -167,7 +167,7 @@ def check_stamp(snapshot):
         return False, "缺少 pax-verify 印章"
     
     seal = seals[-1]
-    if seal.result not in ("pass", "partial"):
+    if seal.result not in ("verified", "partial"):
         return False, f"印章结果为 {seal.result}，需要 pass 或 partial"
     
     # 检查印章证据
@@ -194,29 +194,29 @@ def determine_verdict(verification_results, deviations, stamp):
         if d.severity == "high" and not d.resolved
     ]
     if unresolved_high:
-        return "fail", f"存在 {len(unresolved_high)} 个未解决的 high 偏差"
+        return "needs_fix", f"存在 {len(unresolved_high)} 个未解决的 high 偏差"
     
     # 条件 3: 验收结果
-    all_pass = all(r.result == "pass" for r in verification_results)
-    some_fail = any(r.result == "fail" for r in verification_results)
+    all_pass = all(r.result == "verified" for r in verification_results)
+    some_fail = any(r.result == "needs_fix" for r in verification_results)
     some_partial = any(
-        r.result == "fail" and 
+        r.result == "needs_fix" and 
         should_allow_deferral(r) 
         for r in verification_results
     )
     
     if all_pass:
-        return "pass", "全部验收项通过"
+        return "verified", "全部验收项通过"
     
     if some_fail and not some_partial:
-        return "fail", "存在未通过的验收项"
+        return "needs_fix", "存在未通过的验收项"
     
     if some_partial:
         return "partial", "部分通过，允许延期"
     
     # 条件 4: 超出评审权限
     if exceeds_review_authority():
-        return "escalated", "超出评审权限"
+        return "needs_review", "超出评审权限"
     
     return "blocked", "证据不足"
 ```
@@ -227,11 +227,11 @@ def determine_verdict(verification_results, deviations, stamp):
 
 | verdict | 语义 | 后续 |
 |---------|------|------|
-| `pass` | 全部通过 | 进入文档沉淀 |
-| `fail` | 存在未通过项 | 返回执行阶段 |
+| `verified` | 全部通过 | 进入文档沉淀 |
+| `needs_fix` | 存在未通过项 | 返回执行阶段 |
 | `partial` | 部分通过，允许延期 | 记录待办，进入文档草稿 |
 | `blocked` | 证据或印章缺失 | 返回执行/验证阶段 |
-| `escalated` | 超出评审权限 | 升级 `pax-council` |
+| `needs_review` | 超出评审权限 | 升级 `pax-council` |
 
 **Finding 分类**：
 

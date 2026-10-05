@@ -118,11 +118,11 @@ jobs:
     name: Routing Evaluation
     runs-on: ubuntu-latest
     needs: contracts-and-tests
-    # 仅在 main / 手动触发时执行；并且必须显式声明 tools/ 工具链可用。
-    # tools/ 被 .gitignore 忽略，CI 检出中不存在，所以默认跳过而不是失败。
-    # 详见 CONTRIBUTING.md「CI 门禁与外部工具」。
+    # 从主分支或手动触发时执行；mock 模式无需 API Key，默认跑通。
+    # real 模式（真实模型评估）需 DASHSCOPE_API_KEY，未配置时跳过。
+    # skillEval 从同级 repo `sinvi/agent-skills-tooling` 拉取，不进 pax-skills 版本库。
     if: >-
-      (github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main') && vars.PAX_TOOLS_AVAILABLE == 'true'
+      github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
     timeout-minutes: 30
 
     env:
@@ -130,8 +130,16 @@ jobs:
       DASHSCOPE_BASE_URL: ${{ vars.DASHSCOPE_BASE_URL }}
 
     steps:
-      - name: Checkout
+      - name: Checkout pax-skills
         uses: actions/checkout@v4
+
+      - name: Checkout skillEval (sibling tool repo)
+        uses: actions/checkout@v4
+        with:
+          repository: sinvi/agent-skills-tooling
+          path: sibling-agent-skills-tooling
+          sparse-checkout: skillEval
+          sparse-checkout-cone-mode: false
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -139,24 +147,17 @@ jobs:
           python-version: '3.13'
           cache: 'pip'
 
-      - name: Assert tools/skillEval is present
-        run: |
-          if [ ! -d tools/skillEval ]; then
-            echo "::error title=tools/skillEval 缺失::PAX_TOOLS_AVAILABLE 已置为 true，但 tools/skillEval 不在检出内容中；请先 vendor 工具链，或取消该变量。"
-            exit 1
-          fi
-
       - name: Install skillEval
         run: |
-          cd tools/skillEval
+          cd sibling-agent-skills-tooling/skillEval
           pip install -r requirements.txt
 
       - name: Run routing evaluation (mock mode)
         run: |
-          cd tools/skillEval
+          cd sibling-agent-skills-tooling/skillEval
           echo "=== Running routing evaluation in mock mode ==="
-          python -m pipeline plan \
-            --suite ../../evals/suites/pax_routing.yaml \
+          PYTHONPATH=. python -m pipeline plan \
+            --suite ../../../evals/suites/pax_routing.yaml \
             --mock
           echo "=== Routing evaluation completed ==="
 
@@ -165,14 +166,14 @@ jobs:
         # 直接拒绝整个 workflow 文件），必须经 job 级 env 中转后再判断。
         if: env.DASHSCOPE_API_KEY != ''
         run: |
-          cd tools/skillEval
+          cd sibling-agent-skills-tooling/skillEval
           echo "=== Running routing evaluation with real model ==="
-          python -m pipeline plan \
-            --suite ../../evals/suites/pax_routing.yaml
+          PYTHONPATH=. python -m pipeline plan \
+            --suite ../../../evals/suites/pax_routing.yaml
           python -m pipeline run \
-            --suite ../../evals/suites/pax_routing.yaml
+            --suite ../../../evals/suites/pax_routing.yaml
           python -m pipeline score \
-            --suite ../../evals/suites/pax_routing.yaml
+            --suite ../../../evals/suites/pax_routing.yaml
           echo "=== Routing evaluation completed ==="
 
   # ============================================================
@@ -380,10 +381,15 @@ jobs:
         run: |
           set -e
           mkdir -p evals/skilldiff
-          npx --yes skilldiff run \
-            evals/skilldiff/pax-clarify.scenario.yaml \
-            --live --base origin/main \
-            --harness "$SKILLDIFF_HARNESS"
+          # 覆盖 6 个主链 skill 的行为回归；任一 scenario 失败即视为该 skill 回归。
+          # 新增/删除 skill 时同步此清单。
+          for scenario in evals/skilldiff/pax-*.scenario.yaml; do
+            echo "=== Running $scenario ===" >> "$GITHUB_STEP_SUMMARY"
+            npx --yes skilldiff run \
+              "$scenario" \
+              --live --base origin/main \
+              --harness "$SKILLDIFF_HARNESS"
+          done
 
       - name: Recorded demo skipped (tools/ unavailable)
         if: steps.tools.outputs.available != 'true'

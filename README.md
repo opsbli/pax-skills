@@ -73,12 +73,20 @@ pax-forge list
 | 层 | 测什么 | 基线（含归档日期） |
 |---|---|---|
 | 外部路由 | 模型面对用户请求时选不选 `pax-orchestrate` | 基线 100%；对照组（剥离 description 禁令）71.1%；28.9pp 差距已归档为「设计代价」（2026-10-03） |
-| 内部路由 | `pax-orchestrate` 内部四步决策（意图 / 风险 / 诊断必要性 / 路由） | 44 题 × 5 repeats，能力分 90.8%，GATE PASS（2026-10-05） |
+| 内部路由 | `pax-orchestrate` 内部四步决策（意图 / 风险 / 诊断必要性 / 路由） | 最近一次归档：**44 题** × 5 repeats，能力分 90.8%，GATE PASS（2026-10-05，跑的是 dataset **1.7**） |
 | pax-diagnose | 严重度分级 / 复现状态 / 存储后端确认 | 25 场景 × 5 repeats，能力分 99.2%，GATE PASS（2026-10-05） |
 
-评估数据集：`evals/datasets/`（外部 30 案例；内部 44 案例，dataset version 1.7）
-评估套件：`evals/suites/pax_routing.yaml`（依赖的 skillEval 克隆在本仓库**同级目录**，不在 `tools/`）
+评估数据集：`evals/datasets/`（外部 30 案例；内部 **54 案例，dataset version 1.8**）
+评估套件：`evals/suites/pax_routing.yaml`（依赖的 skillEval 在本地是**同级目录**副本；
+CI 里由 `routing-eval` job 以 `sparse-checkout` 从同级仓库 `sinvi/agent-skills-tooling` 拉取，均不经过 `tools/`）
 运行方式：见 `evals/README.md` 第 2、3 节
+
+⚠️ **内部路由的数字与数据集版本已不同步**：dataset 已从 1.7（44 题）升到 **1.8（54 题）**——
+新增 10 条 `extension_route_triggering`（覆盖 monitor / rollback / test / deploy / learn
+5 个 L1 扩展 skill，每 skill 2 题，全部 holdout；变更记录见 `evals/README.md` 的 v1.8 行）。
+上表 90.8% 那行**跑的是 1.7，不覆盖这 10 题**。
+要给出 1.8 的基线需重跑真实模型评估（`evals/run_internal_routing_eval.py`，会产生费用）；
+在那之前，请勿把 90.8% 当作「当前数据集的成绩」。
 
 ⚠️ 两处极易误读，务必注意：
 

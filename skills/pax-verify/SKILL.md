@@ -109,11 +109,11 @@ def bounded_loop_verify(subject, criteria, max_attempts=3):
         
         # 检查是否通过
         if attempt_result.all_pass:
-            return build_stamp("pass", results, attempt_result)
+            return build_stamp("verified", results, attempt_result)
         
         # 检查是否可重试
         if not attempt_result.retriable:
-            return build_stamp("fail", results, attempt_result)
+            return build_stamp("needs_fix", results, attempt_result)
         
         # 检查超时
         if attempt_result.duration > timeout_budget:
@@ -165,27 +165,27 @@ evidence:
 
 | 印章 | 语义 | 条件 |
 |------|------|------|
-| `pass` | 全部标准通过 | 所有 criteria 通过 |
-| `fail` | 存在未通过项 | 至少一个 high 权重 criteria 失败 |
+| `verified` | 全部标准通过 | 所有 criteria 通过 |
+| `needs_fix` | 存在未通过项 | 至少一个 high 权重 criteria 失败 |
 | `partial` | 部分通过，允许延期 | medium/low 权重 criteria 失败 |
 | `blocked` | 证据不足或依赖不可用 | 无法执行验证 |
-| `escalated` | 超出验证权限 | 需要人工介入 |
+| `needs_review` | 超出验证权限 | 需要人工介入 |
 
 **印章结构**（作为一条 seal **追加**到 `snapshot.quality.verification_seals` 数组末位）：
 ```yaml
 seal:  # 追加到 snapshot.quality.verification_seals
-  result: pass | fail | partial | blocked | escalated
+  result: verified | needs_fix | partial | blocked | needs_review
   confidence: high | medium | low
   attempts: <验证次数>
   duration: "<总耗时>"
   evidence:
     - criterion_id: C1
-      result: pass
+      result: verified
       data: "..."
       source: "..."
       confidence: high
     - criterion_id: C2
-      result: fail
+      result: needs_fix
       data: "..."
       source: "..."
       confidence: medium
@@ -238,17 +238,17 @@ def handle_failure(result):
     
     # 条件 4: 超出验证权限
     if result.requires_manual_review:
-        return "escalated", "需要人工介入"
+        return "needs_review", "需要人工介入"
     
     # 条件 5: 存在失败项
     if result.has_failures:
         high_failures = [f for f in result.failures if f.weight == "high"]
         if high_failures:
-            return "fail", f"存在 {len(high_failures)} 个 high 权重失败项"
+            return "needs_fix", f"存在 {len(high_failures)} 个 high 权重失败项"
         else:
             return "partial", "部分通过，允许延期"
     
-    return "pass", "全部通过"
+    return "verified", "全部通过"
 ```
 
 ## 输出契约

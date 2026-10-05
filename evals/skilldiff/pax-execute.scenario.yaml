@@ -1,0 +1,26 @@
+# Regression scenario for pax-execute (pax-* family).
+#
+# Expected behavior:
+#   * the agent writes an execution log under notes/
+#   * the log mentions execution/execution vocabulary
+
+name: pax-execute-regression
+skillPaths:
+  - skills/pax-execute/SKILL.md
+fixture: ./evals/skilldiff/fixtures/fixture
+prompt: |
+  Use the pax-execute skill to produce an execution log for this
+  frozen plan and record it in notes/execution.md:
+
+    Frozen plan step: create `src/util/format.ts` with a function
+    `formatDate(date: Date): string` that returns an ISO-8601 date
+    string.  Contract confirmed.  No cross-repo operations.
+
+  Keep the note under 20 lines.  Do NOT create files outside `notes/`.
+expect:
+  files_changed:
+    - notes/execution.md
+  tool_calls:
+    - Write
+  output_contains:
+    - 执行

@@ -62,7 +62,7 @@ pax-family 统一入口。对每个任务先做意图分类（6 类 MECE 意图�
 | **功能开发** | `feature_dev` | 新建功能、修改功能行为，无既有缺陷 | `[clarify, plan, execute, review]` |
 | **重构优化** | `refactor` | 不改变外部行为，改善内部结构/性能 | `[clarify, plan, execute, review]` |
 | **数据操作** | `data_ops` | 数据订正、迁移、批量修改 | `[clarify, diagnose, plan, execute, review]` |
-| **文档咨询** | `doc_consult` | 纯文档、纯咨询、纯规划、纯解释 | `[clarify]` |
+| **文档咨询** | `doc_consult` | 纯文档、纯咨询、纯规划、纯解释 | `[clarify, docs]` |
 | **工具构建** | `tool_build` | 构建工具、脚本、自动化 | `[clarify, plan, execute, review]` |
 
 #### 二级意图（Secondary Intent）
@@ -300,7 +300,7 @@ def build_route(intent, diagnose_required, risk, context):
     
     # 主干路由
     if intent.primary == "doc_consult":
-        route = ["clarify"]
+        route = ["clarify", "docs"]
     elif diagnose_required:
         route = ["clarify", "diagnose", "plan", "execute", "review"]
     else:
@@ -361,7 +361,7 @@ def build_route(intent, diagnose_required, risk, context):
 | `feature_dev` | — | false | `[clarify, plan, execute, review]` | — |
 | `feature_dev` | `security` | true | `[clarify, diagnose, plan, execute, review]` | `escalate_to_council` |
 | `refactor` | — | false | `[clarify, plan, execute, review]` | — |
-| `doc_consult` | — | false | `[clarify]` | — |
+| `doc_consult` | — | false | `[clarify, docs]` | — |
 | `tool_build` | — | false | `[clarify, plan, execute, review]` | — |
 | 任意 | 跨仓库 | 继承 | 继承 | `cross_repo, execution_strategy_required` |
 

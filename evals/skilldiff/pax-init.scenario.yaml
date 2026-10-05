@@ -1,0 +1,23 @@
+# Regression scenario for pax-init (pax-* family).
+#
+# Expected behavior:
+#   * the agent writes AGENTS.md to the fixture root
+#   * the note mentions project/接入 vocabulary
+
+name: pax-init-regression
+skillPaths:
+  - skills/pax-init/SKILL.md
+fixture: ./evals/skilldiff/fixtures/fixture
+prompt: |
+  Use the pax-init skill to onboard this project into the pax family.
+  The fixture is a small Python project.  Write the resulting
+  `AGENTS.md` to the repo root.  Do NOT modify any existing files.
+
+  Keep the AGENTS.md under 40 lines.
+expect:
+  files_changed:
+    - AGENTS.md
+  tool_calls:
+    - Write
+  output_contains:
+    - 项目

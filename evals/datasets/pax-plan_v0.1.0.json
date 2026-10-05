@@ -1,0 +1,35 @@
+{
+  "version": "0.1.0",
+  "description": "pax-plan 单 skill 评估数据集（骨架）",
+  "status": "skeleton",
+  "cases": [
+    {
+      "id": "pax-plan-01",
+      "category": "TODO",
+      "prompt": "TODO: 描述任务",
+      "expected": {}
+    },
+    {
+      "id": "pax-plan-02",
+      "category": "TODO",
+      "prompt": "TODO: 描述任务",
+      "expected": {}
+    },
+    {
+      "id": "pax-plan-03",
+      "category": "TODO",
+      "prompt": "TODO: 描述任务",
+      "expected": {}
+    }
+  ],
+  "changelog": [
+    {
+      "version": "0.1.0",
+      "date": "2026-10-05",
+      "summary": "初始骨架",
+      "changes": [
+        "3 题 TODO"
+      ]
+    }
+  ]
+}

@@ -114,8 +114,11 @@ def execute_steps(plan):
             if not verify_storage_backend(step):
                 return False, f"步骤 {step.id} 存储引擎与 plan 不一致"
         
-        # 执行步骤
-        result = execute_step(step)
+        # 执行步骤（复杂步骤可委派 pax-worker-implement）
+        if step.complexity == "high" and step.delegation_target:
+            result = delegate_to_worker(step)
+        else:
+            result = execute_step(step)
         
         # 内环验证
         if not verify_step(step, result):

@@ -305,7 +305,51 @@ DeepSeek 官方 OpenAI 兼容端点，2026-10-02 实测；该账号可用模型�
 
 ---
 
-## 3. 内部路由评估（真实模型调用）
+## 4. 单 skill 评估
+
+### 背景
+
+pax 家族 19 个 skill 中，仅 pax-orchestrate（路由评估）和 pax-diagnose（诊断评估）有完整的数据集和 runner。其余 17 个 skill 无单 skill 评估覆盖，能力分无法量化。
+
+### 当前状态（2026-10-05）
+
+8 个 L1 skill 已建骨架数据集（3 题 TODO），待填充真实用例：
+
+| skill | 数据集 | 状态 |
+|-------|--------|------|
+| pax-plan | `pax-plan_v0.1.0.json` | skeleton |
+| pax-execute | `pax-execute_v0.1.0.json` | skeleton |
+| pax-review | `pax-review_v0.1.0.json` | skeleton |
+| pax-verify | `pax-verify_v0.1.0.json` | skeleton |
+| pax-test | `pax-test_v0.1.0.json` | skeleton |
+| pax-rollback | `pax-rollback_v0.1.0.json` | skeleton |
+| pax-monitor | `pax-monitor_v0.1.0.json` | skeleton |
+| pax-deploy | `pax-deploy_v0.1.0.json` | skeleton |
+
+### 如何运行
+
+```bash
+# 评估单个 skill
+python scripts/run_skill_eval.py --skill pax-plan --dataset evals/datasets/pax-plan_v0.1.0.json
+
+# JSON 输出
+python scripts/run_skill_eval.py --skill pax-plan --dataset evals/datasets/pax-plan_v0.1.0.json --json
+```
+
+### 如何添加评估用例
+
+1. 编辑对应的数据集 JSON 文件
+2. 填写 `prompt` 和 `expected`
+3. 运行 runner 验证
+4. 更新 `changelog`
+
+### 评估门槛
+
+单 skill 评估的能力分门槛为 **≥0.90**（90%），与内部路由评估一致。
+
+---
+
+## 5. 数据集版本历史
 
 测 pax-orchestrate 的**内部**决策：意图分类（W1）、风险评分（W2）、诊断必要性（W3）、路由构建（W4）。
 与第 1 节是两层：第 1 节测「模型要不要选 pax-orchestrate」，本节测「pax-orchestrate 内部判得对不对」。
@@ -546,6 +590,7 @@ prompt 缺信号 → 改 prompt；契约含糊 → 改契约；gold 与契约矛
 | **v1.5** | 追加 4 条 risk_scoring 锁定题（holdout，`evals/add_holdout_cases.py`）；评估脚本加 holdout 分组口径 | 加题（锁定） |
 | **v1.6** | 补契约 G1/G2（W2 影响范围与不可逆性的判定边界）后，`pax-risk-medium-01` 的 `irreversibility` 1→2、`risk_score` 7→8（risk_level 仍 medium） | 补契约 + 改 gold |
 | **v1.7** | 追加 26 题（intent+9, risk+9, route+5, cross_repo+3），全部 holdout；契约补数据操作评分基准 | 加题（锁定）+ 补契约 |
+| **v1.8** | 追加 10 题 extension_route_triggering，覆盖 monitor/rollback/test/deploy/learn 5 个 L1 扩展 skill（每 skill 2 题，全部 holdout） | 加题（锁定） |
 
 **v1.6 后的契约迭代（2026-10-03 下午，数据集 gold 未改）**：
 

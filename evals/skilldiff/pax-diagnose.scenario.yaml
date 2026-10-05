@@ -1,0 +1,32 @@
+# Regression scenario for pax-diagnose (pax-* family).
+#
+# skilldiff runs this scenario against BOTH the base (main) and candidate
+# (branch) versions of skills/pax-diagnose/SKILL.md, then diffs observable
+# behavior.
+#
+# The prompt is a minimal bug report.  The expected behavior is:
+#   * the agent writes a diagnosis note under notes/
+#   * the note mentions at least one of the diagnosis vocabulary tokens
+
+name: pax-diagnose-regression
+skillPaths:
+  - skills/pax-diagnose/SKILL.md
+fixture: ./evals/skilldiff/fixtures/fixture
+prompt: |
+  Use the pax-diagnose skill to produce a root-cause analysis for this
+  bug report and record it in notes/diagnosis.md:
+
+    Bug report: The login endpoint returns 500 for users with a
+    trailing space in their email address.  It worked yesterday.
+    Stack trace: `ValueError: invalid email format` at
+    `auth/validate.py:42`.  The validate function was last changed
+    in commit abc123 yesterday.
+
+  Keep the note under 30 lines.  Do NOT create files outside `notes/`.
+expect:
+  files_changed:
+    - notes/diagnosis.md
+  tool_calls:
+    - Write
+  output_contains:
+    - 根因

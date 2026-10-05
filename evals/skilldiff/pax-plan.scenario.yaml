@@ -1,0 +1,26 @@
+# Regression scenario for pax-plan (pax-* family).
+#
+# Expected behavior:
+#   * the agent writes a plan note under notes/
+#   * the note mentions at least one planning vocabulary token
+
+name: pax-plan-regression
+skillPaths:
+  - skills/pax-plan/SKILL.md
+fixture: ./evals/skilldiff/fixtures/fixture
+prompt: |
+  Use the pax-plan skill to produce a task plan for this cleared goal
+  and record it in notes/plan.md:
+
+    Goal: Add a "dark mode" toggle to the settings page.  No
+    existing bug.  Frontend is React + TypeScript, backend is
+    Node/Express.  Persist the setting to the user profile.
+
+  Keep the note under 30 lines.  Do NOT create files outside `notes/`.
+expect:
+  files_changed:
+    - notes/plan.md
+  tool_calls:
+    - Write
+  output_contains:
+    - 步骤
