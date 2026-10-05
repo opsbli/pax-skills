@@ -24,6 +24,7 @@ on:
       - 'references/**'
       - 'evals/**'
       - 'pyproject.toml'
+      - '.github/workflows/pax-ci.yml'
   workflow_dispatch:
 
 jobs:
@@ -115,8 +116,16 @@ jobs:
     name: Routing Evaluation
     runs-on: ubuntu-latest
     needs: contracts-and-tests
-    if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
+    # 仅在 main / 手动触发时执行；并且必须显式声明 tools/ 工具链可用。
+    # tools/ 被 .gitignore 忽略，CI 检出中不存在，所以默认跳过而不是失败。
+    # 详见 CONTRIBUTING.md「CI 门禁与外部工具」。
+    if: >-
+      (github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main') && vars.PAX_TOOLS_AVAILABLE == 'true'
     timeout-minutes: 30
+
+    env:
+      DASHSCOPE_API_KEY: ${{ secrets.DASHSCOPE_API_KEY }}
+      DASHSCOPE_BASE_URL: ${{ vars.DASHSCOPE_BASE_URL }}
 
     steps:
       - name: Checkout
@@ -127,6 +136,13 @@ jobs:
         with:
           python-version: '3.13'
           cache: 'pip'
+
+      - name: Assert tools/skillEval is present
+        run: |
+          if [ ! -d tools/skillEval ]; then
+            echo "::error title=tools/skillEval 缺失::PAX_TOOLS_AVAILABLE 已置为 true，但 tools/skillEval 不在检出内容中；请先 vendor 工具链，或取消该变量。"
+            exit 1
+          fi
 
       - name: Install skillEval
         run: |
@@ -143,7 +159,9 @@ jobs:
           echo "=== Routing evaluation completed ==="
 
       - name: Run routing evaluation (real mode)
-        if: secrets.DASHSCOPE_API_KEY != ''
+        # 注意：secrets 上下文不能出现在 step 级 if（GitHub 会在解析阶段
+        # 直接拒绝整个 workflow 文件），必须经 job 级 env 中转后再判断。
+        if: env.DASHSCOPE_API_KEY != ''
         run: |
           cd tools/skillEval
           echo "=== Running routing evaluation with real model ==="
@@ -154,9 +172,6 @@ jobs:
           python -m pipeline score \
             --suite ../../evals/suites/pax_routing.yaml
           echo "=== Routing evaluation completed ==="
-        env:
-          DASHSCOPE_API_KEY: ${{ secrets.DASHSCOPE_API_KEY }}
-          DASHSCOPE_BASE_URL: ${{ vars.DASHSCOPE_BASE_URL }}
 
   # ============================================================
   # 3. 内部路由验证（可选）
@@ -215,6 +230,9 @@ jobs:
     name: Skill Quality Gate
     runs-on: ubuntu-latest
     needs: [contracts-and-tests, internal-routing-check]
+    # 依赖 tools/quality_gate.py，该路径被 .gitignore 忽略、CI 检出中不存在 →
+    # 默认跳过；要真正执行需把工具 vendor 进版本库并置 PAX_TOOLS_AVAILABLE=true。
+    if: vars.PAX_TOOLS_AVAILABLE == 'true'
     timeout-minutes: 10
 
     steps:
@@ -231,6 +249,13 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
+
+      - name: Assert tools/quality_gate.py is present
+        run: |
+          if [ ! -f tools/quality_gate.py ]; then
+            echo "::error title=tools/quality_gate.py 缺失::PAX_TOOLS_AVAILABLE 已置为 true，但 tools/quality_gate.py 不在检出内容中。"
+            exit 1
+          fi
 
       - name: Run quality gate checks
         run: |
@@ -337,6 +362,17 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Detect tools/ availability
+        id: tools
+        shell: bash
+        run: |
+          if [ -d tools/skilldiff/examples/traces ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=tools/ 缺失::recorded demo 未执行（tools/skilldiff/examples/traces 不在检出内容中，.gitignore 忽略 tools/）"
+          fi
+
       - name: Detect available harness
         id: harness
         shell: bash
@@ -373,8 +409,16 @@ jobs:
             --live --base origin/main \
             --harness "$SKILLDIFF_HARNESS"
 
-      - name: Record a demo diff (always runs)
-        if: always()
+      - name: Recorded demo skipped (tools/ unavailable)
+        if: steps.tools.outputs.available != 'true'
+        run: |
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "### SkillDiff recorded demo" >> "$GITHUB_STEP_SUMMARY"
+          echo '未在 CI 中执行：`tools/skilldiff/examples/traces` 不在检出内容中（`.gitignore` 忽略 `tools/`）。' >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Record a demo diff (requires tools/)
+        if: always() && steps.tools.outputs.available == 'true'
         run: |
           # Always emit a recorded-mode demo so the artifact pipeline has
           # something to look at even when no live harness is configured.
@@ -427,24 +471,52 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Summary
+        env:
+          CONTRACTS: ${{ needs.contracts-and-tests.result }}
+          INTERNAL: ${{ needs.internal-routing-check.result }}
+          QUALITY: ${{ needs.quality-gate.result }}
+          ROUTING: ${{ needs.routing-eval.result }}
+          AGENTSKILLS: ${{ needs.agentskills-ci-check.result }}
+          SKILLDIFF: ${{ needs.skilldiff-regression.result }}
         run: |
-          echo "## pax-* CI Quality Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
-          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
-          echo "| Contracts & Tests | ${{ needs.contracts-and-tests.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Internal Routing | ${{ needs.internal-routing-check.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Skill Quality Gate | ${{ needs.quality-gate.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Routing Eval | ${{ needs.routing-eval.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Agent Skills CI | ${{ needs.agentskills-ci-check.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| SkillDiff Regression | ${{ needs.skilldiff-regression.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          
-          if [ "${{ needs.contracts-and-tests.result }}" = "success" ] && 
-             [ "${{ needs.internal-routing-check.result }}" = "success" ] && 
-             [ "${{ needs.quality-gate.result }}" = "success" ]; then
-            echo "✅ **All quality gates passed**" >> $GITHUB_STEP_SUMMARY
+          {
+            echo "## pax-* CI Quality Summary"
+            echo ""
+            echo "| Check | Status |"
+            echo "|-------|--------|"
+            printf '| %s | `%s` |\n' "Contracts & Tests" "$CONTRACTS"
+            printf '| %s | `%s` |\n' "Internal Routing" "$INTERNAL"
+            printf '| %s | `%s` |\n' "Skill Quality Gate" "$QUALITY"
+            printf '| %s | `%s` |\n' "Routing Eval" "$ROUTING"
+            printf '| %s | `%s` |\n' "Agent Skills CI" "$AGENTSKILLS"
+            printf '| %s | `%s` |\n' "SkillDiff Regression" "$SKILLDIFF"
+            echo ""
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          failed=""
+          not_run=""
+          for pair in \
+            "Contracts & Tests=$CONTRACTS" \
+            "Internal Routing=$INTERNAL" \
+            "Skill Quality Gate=$QUALITY" \
+            "Routing Eval=$ROUTING" \
+            "Agent Skills CI=$AGENTSKILLS" \
+            "SkillDiff Regression=$SKILLDIFF"; do
+            name="${pair%%=*}"
+            result="${pair#*=}"
+            case "$result" in
+              success) ;;
+              skipped) not_run="$not_run\n- $name" ;;
+              *) failed="$failed\n- $name：$result" ;;
+            esac
+          done
+
+          if [ -n "$failed" ]; then
+            printf '❌ **质量门禁失败**%b\n' "$failed" >> "$GITHUB_STEP_SUMMARY"
+          elif [ -n "$not_run" ]; then
+            printf '⚠️ **以下检查本次未执行（已执行的检查全部通过）**%b\n' "$not_run" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo '未执行的两类原因：① job 触发条件不满足（如 Routing Eval 仅在 main / 手动触发时运行）；② 依赖 `tools/` 工具链的 job 在仓库变量 `PAX_TOOLS_AVAILABLE` 未置 `true` 时跳过——`tools/` 被 `.gitignore` 忽略，CI 检出中不存在。' >> "$GITHUB_STEP_SUMMARY"
           else
-            echo "❌ **Quality gate failed**" >> $GITHUB_STEP_SUMMARY
-            echo "Please review the failed checks above." >> $GITHUB_STEP_SUMMARY
+            echo "✅ **All quality gates passed**" >> "$GITHUB_STEP_SUMMARY"
           fi

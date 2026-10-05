@@ -26,6 +26,10 @@
 - 将外部工具口径由 7 个修正为 8 个：新添 agentskills-ci（已 clone 到 `tools/agentskills-ci/`）。
 
 ### Fixed
+- **`pax-ci` 工作流此前整体非法，所有 job 从未执行**：`Run routing evaluation (real mode)` 步骤的 `if: secrets.DASHSCOPE_API_KEY != ''` 在 step 级 `if` 使用了 `secrets` 上下文，GitHub 在解析阶段直接拒绝整个 workflow 文件（`Invalid workflow file: .github/workflows/pax-ci.yml#L1` / `Unrecognized named-value: 'secrets'`）。证据：2026-10-05 推送 `feat/add-pax-init` 触发的 run `#37257726172` 中 `All jobs` 为空、无 artifact，即 0 个 job 被创建；该行自 workflow 引入提交 `3fc1fb7`（2026-09-29）起就存在，因此 `main` 徽章长期为红与此无关代码问题无关。现改为经 job 级 `env` 中转后再判断（`if: env.DASHSCOPE_API_KEY != ''`）。
+- `routing-eval` / `quality-gate` 依赖 `tools/skillEval`、`tools/quality_gate.py`，而 `tools/` 被 `.gitignore` 忽略、CI 检出中不存在，workflow 一旦恢复可执行就会必然失败。两者改为在仓库变量 `PAX_TOOLS_AVAILABLE` 未置 `true` 时显式跳过，并在 job 内断言对应路径存在（缺失即 `::error` 失败，不静默放过）；`skilldiff-regression` 的 recorded demo 步骤同样按 `tools/` 存在性跳过并在 Step Summary 中记录。
+- `quality-summary` 原先只在 `contracts-and-tests` / `internal-routing-check` / `quality-gate` 三者皆 `success` 时打印「All quality gates passed」，因此**被跳过的 job 会被误报为「质量门禁失败」**；改为区分 `success` / `skipped` / 失败三类，跳过项显式列为「本次未执行」并说明原因。
+- `pull_request.paths` 缺少 `.github/workflows/pax-ci.yml`（`push.paths` 侧已包含），导致仅修改 workflow 的 PR 不触发 CI；已补齐。
 - `tests/test_loader.py::test_load_versions_shape`：去掉写死的 `version == "0.1.0"` 断言，改为校验语义版本号形式（`\d+\.\d+\.\d+`），避免下次发版后再次变旧。
 - SkillOpt 训练不再因为奖励函数与 `expected_action` 无关而输出恒为 0.888 的空结果。
 - SkillOpt patch 步骤不再重复写入 "## SkillOpt Cue Map" 标题：后续 epoch 会把新增条目 merge 到已有块内。

@@ -238,19 +238,36 @@ Closes #123
 
 `pax-ci` 工作流包含 7 个 job，其中 5 个是**硬门禁**（失败会阻断合并），2 个是**建议性**（失败不阻断，但会在 PR 里告警）：
 
-| Job | 类型 | 说明 |
-|-----|------|------|
-| contracts-and-tests | 硬门禁 | `pax-forge test` + `pytest` + 版本一致性校验 |
-| quality-gate | 硬门禁 | `tools/quality_gate.py` 五项检查 |
-| routing-eval | 硬门禁 | skillEval 路由评估（需 `DASHSCOPE_API_KEY`，无 key 时跳过） |
-| agentskills-ci-check | 硬门禁 | [agentskills-ci](https://github.com/damanisme/agentskills-ci) 对 `skills/` 打分，**每个 Skill 必须 ≥ 80/100** |
-| quality-summary | 硬门禁 | 汇总前面所有 job 的结果 |
-| internal-routing-check | 建议 | 内部路由单元测试数据集校验 |
-| skilldiff-regression | 建议 | 行为回归测试；未配置 live harness 时仍会产出 recorded demo 作为 artifact |
+| Job | 类型 | 触发条件 | 说明 |
+|-----|------|----------|------|
+| contracts-and-tests | 硬门禁 | 总是 | `pax-forge test` + `pytest` + 版本一致性校验 |
+| internal-routing-check | 建议 | 总是 | 内部路由单元测试数据集校验 |
+| agentskills-ci-check | 硬门禁 | 总是 | [agentskills-ci](https://github.com/damanisme/agentskills-ci) 对 `skills/` 打分，**每个 Skill 必须 ≥ 80/100** |
+| quality-summary | 硬门禁 | 总是 | 汇总前面所有 job；`skipped` 会被显式标为「未执行」而不是「失败」 |
+| routing-eval | 硬门禁（默认跳过） | main / 手动触发 **且** `PAX_TOOLS_AVAILABLE=true` | skillEval 路由评估；无 `DASHSCOPE_API_KEY` 时跳过 real 模式 |
+| quality-gate | 硬门禁（默认跳过） | `PAX_TOOLS_AVAILABLE=true` | `tools/quality_gate.py` 五项检查 |
+| skilldiff-regression | 建议 | 总是（内部再按 harness / `tools/` 决定是否执行） | 行为回归测试 |
+
+### 0. tools/ 工具链与 `PAX_TOOLS_AVAILABLE`
+
+`routing-eval` 与 `quality-gate` 依赖 `tools/` 下的外部工具（`tools/skillEval`、`tools/quality_gate.py`），
+而 `tools/` 被 `.gitignore` 忽略、**不在版本库中**，因此 CI 检出里必然不存在。
+为避免「每个 PR 都因缺少工具而变红」这种无信息量的失败，二者默认**显式跳过**而不是失败：
+
+- `PAX_TOOLS_AVAILABLE` 未设置或不为 `'true'` → job 记为 `skipped`，`quality-summary` 会把它列入「以下检查本次未执行」；
+- 置为 `'true'` 时，job 会先断言对应 `tools/` 路径存在，缺失则 `::error` 直接失败——不会静默放过；
+- 真正启用前需要先把工具 vendor 进版本库：
+
+```bash
+gh variable set PAX_TOOLS_AVAILABLE --repo opsbli/pax-skills --body "true"
+```
+
+> `skilldiff-regression` 同样依赖 `tools/skilldiff/examples/traces`（仅 recorded demo 用）。
+> 它是建议性 job、不参与上述门禁：内部检测到该路径缺失时会跳过 demo 并在 Step Summary 里写明「未在 CI 中执行」。
 
 ### 1. agentskills-ci 评分要求
 
-当前 18 个 Skill 得分全部 100/100。要维持这个分数，每个新 Skill 必须包含：
+本地实测中每个既有 Skill 均为 100/100；每个新 Skill 必须包含：
 
 1. Frontmatter 必须含 `name` 和 `description` 字段
 2. `description` 必须以 `Use when ...` / `When to use ...` / `Trigger ...` 开头（中文描述前缀即可）
@@ -306,7 +323,7 @@ gh secret set OPENAI_API_KEY    --repo opsbli/pax-skills --body "$OPENAI_API_KEY
 gh secret set CODEBUFF_API_KEY  --repo opsbli/pax-skills --body "$CODEBUFF_API_KEY"
 
 # 可选：强制指定 harness
-glh var set SKILLDIFF_HARNESS --repo opsbli/pax-skills --body "claude"
+gh variable set SKILLDIFF_HARNESS --repo opsbli/pax-skills --body "claude"
 ```
 
 **方法三：本地开发时手动跑一次**
