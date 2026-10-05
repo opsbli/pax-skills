@@ -705,20 +705,35 @@ $PY -m pytest tests/test_orchestrate_routing.py -v
 把 pax-orchestrate 的评估方法应用到 **pax-diagnose**，选 D5 严重度分级、
 D1 复现状态、D2 存储后端确认为判定点。完整设计见 `DESIGN_PAX_DIAGNOSE.md`。
 
-### 基线结果（2026-10-03 22:00，deepseek-flash，11 场景 × 5 repeats = 55 判定）
+### 基线结果（2026-10-05 17:35，deepseek-flash，25 场景 × 5 repeats = 125 判定）
 
 | 检查项 | 通过率 | 门槛 | n |
 |--------|--------|------|---|
-| severity | 100.0% | ≥85% | 30 |
-| core_flow_broken | 100.0% | ≥80% | 30 |
-| affected_users | 100.0% | ≥80% | 30 |
-| workaround_available | 100.0% | ≥85% | 30 |
-| security_relevant | 100.0% | ≥85% | 30 |
-| reproduction_status | 100.0% | ≥95% | 20 |
-| storage_backend_required | 100.0% | ≥90% | 10 |
-| → **能力分** | **55/55 (100.0%)** | ≥90% | 55 |
+| severity | 100.0% | ≥85% | 60 |
+| core_flow_broken | 100.0% | ≥80% | 60 |
+| affected_users | 100.0% | ≥80% | 60 |
+| workaround_available | 98.3% | ≥85% | 60 |
+| security_relevant | 100.0% | ≥85% | 60 |
+| reproduction_status | 100.0% | ≥95% | 30 |
+| storage_backend_required | 100.0% | ≥90% | 20 |
+| evidence_types | 100.0% | ≥85% | 10 |
+| hypotheses_count | 100.0% | ≥85% | 10 |
+| → **能力分** | **124/125 (99.2%)** | ≥90% | 125 |
 
-健壮性 valid_rate = 100%。GATE PASS。
+健壮性 valid_rate = 100%。GATE PASS。唯一失败是 d5-04 的 workaround（1/5，HD8 边界残留）。
+
+### 演进（补契约 → 重跑，共 6 轮）
+
+| 轮次 | 契约/数据集 | 能力分 | GATE |
+|------|------|------|------|
+| 初始 6 场景 | — | 83.3% | FAIL |
+| 补 HD4/HD5 | core_flow_broken 语义 + affected_users 边界 | 96.7% | PASS |
+| 扩 11 场景 | +D1 复现 3 + D2 存储后端 2 | 100.0% | PASS |
+| 扩 25 场景 | +14 场景 | 91.7% | FAIL |
+| 修正 2 设计问题 | hypo-02 补证据 + repro-06 改 gold | 95.2% | FAIL |
+| **补 HD6/HD8** | 复现状态定义 + workaround 定义 | **99.2%** | **PASS** |
+
+跨模型 v4-pro（HD8 前）：86.4%，最大分歧 workaround_available（-11.7pp）→ 促成 HD8。
 
 ### 过程中补的契约（pax-diagnose）
 
