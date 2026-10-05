@@ -1,6 +1,6 @@
 {
   "family": "pax",
-  "updated_at": "2026-10-01T19:45:00+08:00",
+  "updated_at": "2026-10-05T02:56:14Z",
   "skills": [
     {
       "name": "pax-orchestrate",
@@ -145,6 +145,14 @@
       "version": "0.2.0",
       "path": "skills/pax-learn/SKILL.md",
       "registered_at": "2026-10-01T19:45:00+08:00"
+    },
+    {
+      "name": "pax-init",
+      "layer": "L4",
+      "optional": true,
+      "version": "0.2.0",
+      "path": "skills/pax-init/SKILL.md",
+      "registered_at": "2026-10-05T02:56:14Z"
     }
   ]
 }

@@ -132,6 +132,7 @@ L3     pax-worker-*     ← 工具适配层（可替换）
 L4     pax-verify       ← 运行中验证（横切）
        pax-evolve       ← 自进化（横切）
        pax-docs         ← 文档沉淀（横切）
+       pax-init         ← 项目接入与初始化（内部工具，用户直接调用）
 ```
 
 ### 4.2 各层职责边界
@@ -143,7 +144,7 @@ L4     pax-verify       ← 运行中验证（横切）
 | L1 | 生命周期阶段推进 | 不跨阶段、不越权 |
 | L2 | 特定问题咨询、高风险决策 | 不改变主流程 |
 | L3 | 与具体模型/运行时绑定 | 接口由上层定义 |
-| L4 | 质量保障、自进化、文档 | 不认领路由落点 |
+| L4 | 质量保障、自进化、文档、项目接入 | 不认领路由落点 |
 
 ---
 
@@ -819,6 +820,33 @@ review:
 - 生成后必须运行契约测试，未通过不注册
 - 不修改已有 Skill 的业务逻辑
 - breaking change 必须人工审核
+
+### 6.14 `pax-init`（L4，项目接入）
+
+**职责**：把一个目标项目（新项目或既有项目）接进家族——扫描技术栈、发现项目自有规范文档、生成 `AGENTS.md` 与 `.pax/project-profile.json`、创建 `.pax/` 产物目录。
+
+**输入**：项目路径（单项目 / 前后端分离的多项目）、项目名称、可选的技术栈偏好与代码生成器规范。
+
+**输出**：`<项目根>/AGENTS.md`、`<项目根>/.pax/project-profile.json`、`<项目根>/.pax/`（`plan` / `execute` / `review` / `docs`）。
+
+**与快照的关系**：`requires_snapshot: false`。本 Skill 是**直接调用型内部工具**，输入是项目路径而非任务快照，不认领编排路由落点；它产出的 `project-profile.json` 也不是 pax 快照，而是**项目级长期元数据**，供 L1 规划 / 执行 / 评审层消费。
+
+**诚实性铁律（与 L0 的「自主获取环境事实」一脉相承）**：
+
+- 技术栈结论必须指向实际存在的特征文件，检测不到标「未检测到」，禁止猜测。
+- 目标项目已有 `AGENTS.md` 时必须先请用户三选一（覆盖 / 合并 / 跳过），禁止静默覆盖。
+- 项目自有规范文档只登记**指针 + 结构化摘要**，摘要与原文冲突时以原文为准——防止双源漂移。
+- 重复运行必须幂等。
+
+**支撑资产**：
+
+| 资产 | 作用 |
+|---|---|
+| `references/tech-stack-detection.md` | 技术栈检测规则单一事实源（含包管理器优先级与 lock 文件陷阱） |
+| `references/project-profile-spec.md` | `project-profile.json` 字段规格与消费规则 |
+| `templates/AGENTS.md.tmpl` | 目标项目 `AGENTS.md` 结构模板 |
+| `templates/project-profile.json.tmpl` | profile 结构模板 |
+| `scripts/scan_project.py` | 确定性扫描器（stdlib-only，只收证据、不做推测；宿主持有 Python 时才用） |
 
 ---
 

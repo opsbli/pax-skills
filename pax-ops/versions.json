@@ -19,7 +19,8 @@
     "pax-rollback":         {"layer": "L1", "optional": true,  "version": "0.2.0", "status": "active"},
     "pax-test":             {"layer": "L1", "optional": true,  "version": "0.2.0", "status": "active"},
     "pax-deploy":           {"layer": "L1", "optional": true,  "version": "0.2.0", "status": "active"},
-    "pax-learn":            {"layer": "L1", "optional": true,  "version": "0.2.0", "status": "active"}
+    "pax-learn":            {"layer": "L1", "optional": true,  "version": "0.2.0", "status": "active"},
+    "pax-init":             {"layer": "L4", "optional": true,  "version": "0.2.0", "status": "active"}
   },
   "compatibility_matrix": {
     "pax-orchestrate@0.2": ["pax-clarify@0.2"],

@@ -510,6 +510,93 @@ learning:
 
 ---
 
+## 示例 4: 把一个既有项目接入家族（pax-init，直接调用）
+
+### 场景描述
+
+把一个前后端分离的既有项目接进家族：后端 Spring Boot + RuoYi，前端 Vue 3 + Vite + pnpm。
+
+### 用户输入
+
+```
+把 D:/workspaces/ops-pilot 和 D:/workspaces/ops-pilot-web 接入 pax-family
+```
+
+### 执行流程
+
+```text
+pax-init（直接调用，不经过编排路由）
+```
+
+> `pax-init` 是 L4 层内部工具，`requires_snapshot: false`。它不认领路由落点，也不产出任务快照——输入是项目路径，产物是项目级元数据。
+
+### 详细步骤
+
+#### 1. 模式判定（W1）
+
+前后端各自有特征文件 → `multi_project`。先声明：`本次模式=多项目，目标路径=ops-pilot + ops-pilot-web`。
+
+#### 2. 技术栈扫描（W2）
+
+逐项核对 `references/tech-stack-detection.md` 的特征文件，命中即带证据：
+
+| 检测目标 | 证据文件 | 提取内容 |
+|---|---|---|
+| Java / Maven | `pom.xml` | java 17、`ruoyi-*` 模块清单 |
+| Spring Boot | `pom.xml` | `spring-boot-starter-web` 等 starter |
+| Vue | `package.json` | vue 3.x、element-plus |
+| Vite / TypeScript | `vite.config.ts` / `tsconfig.json` | vite 5.x、ts 5.x |
+| 包管理器 | `pnpm-lock.yaml` | pnpm（`package-lock.json` 同时存在 → 写入 `package_manager_note` 并交用户确认） |
+
+未命中的目标一律标「未检测到」，不猜。
+
+#### 3. 代码生成器规范提取（W3）
+
+从后端 `BaseEntity` / `TenantEntity` / 建表模板提取租户字段、审计字段、逻辑删除字段，写入 profile 的 `db_conventions`。
+
+#### 4. 规范文档发现（W4）
+
+若项目已有 `docs/agents/project-standards.md`，只登记**指针 + 摘要**：
+
+```json
+{
+  "path": "docs/agents/project-standards.md",
+  "status": "present",
+  "consumption_rule": "下游阶段 MUST 完整阅读该文件后逐条对照执行；冲突时以原文为准",
+  "sections": ["coding_standards", "db_conventions"]
+}
+```
+
+#### 5. AGENTS.md 处置（W5）
+
+- 目标项目无 `AGENTS.md` → 按 `templates/AGENTS.md.tmpl` 渲染后写入。
+- 已有 `AGENTS.md` → 展示摘要 + 三选一（覆盖 / 合并 / 跳过），未确认不写入。
+
+#### 6. profile 生成（W6）与 `.pax/` 创建（W7）
+
+```text
+<项目根>/AGENTS.md
+<项目根>/.pax/project-profile.json
+<项目根>/.pax/{plan,execute,review,docs}/
+```
+
+#### 7. 交付确认（W8）
+
+```text
+本次模式=多项目，目标路径=D:/workspaces/ops-pilot + ops-pilot-web，已扫描，
+技术栈=Spring Boot/RuoYi + Vue3/Vite/TS，AGENTS.md=新建，.pax=已创建
+```
+
+### 产物与消费方
+
+| 产物 | 消费方 |
+|---|---|
+| `.pax/project-profile.json` 的 `build_commands` | L1 执行层跑构建 / 测试 |
+| `.pax/project-profile.json` 的 `coding_standards` / `db_conventions` | L1 执行层写代码与建表 |
+| `.pax/project-profile.json` 的 `standards_doc` 指针 | L1 规划 / 评审层逐条对照项目自有规范 |
+
+---
+
 ## 运行示例
 
 ```bash

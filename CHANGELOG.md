@@ -6,6 +6,8 @@
 ## [Unreleased]
 
 ### Added
+- `pax-init`（L4，可选，`requires_snapshot: false`）：项目接入 Skill，由用户直接调用而非编排路由（家族成员 18 → 19）。扫描目标项目技术栈（Java/Maven、Spring Boot、RuoYi、TS/Vite/Vue/React、Go、Python、Docker、CI/CD 等），发现项目自有规范文档并只登记指针，生成 `AGENTS.md`（人可读）与 `.pax/project-profile.json`（机器可读），并幂等创建 `.pax/` 产物目录。附带 `references/tech-stack-detection.md`（检测规则单一事实源）、`references/project-profile-spec.md`（profile 字段规格）、`templates/AGENTS.md.tmpl`、`templates/project-profile.json.tmpl` 与确定性扫描器 `scripts/scan_project.py`。
+- `tests/test_pax_init_scan.py`：7 项测试覆盖扫描器诚实性契约——命中即带证据文件、未命中一律「未检测到」、包管理器优先级（pnpm > yarn > npm > 未检测到）、多项目前后端合并与构建命令回退、规范文档只登记指针不复制原文、扫描幂等且只读、路径不存在时拒绝执行。
 - `pax-monitor` / `pax-rollback` / `pax-test` / `pax-deploy` / `pax-learn`：将家族从 13 个扩展到 18 个（`pax-ops/versions.json` 已同步）。
 - `evals/skillopt/train_pax_offline.py`：SkillOpt 闭环训练脚本，修复了之前三个致命 bug（奖励不依赖 `expected_action`、永不更新 skill、奖励已接近天花板），引入 `Action Cue Registry`，实现 rollout → reflect → aggregate → select → update → evaluate 完整循环。
 - SkillOpt 训练集 v2：`pax_clarify_train_v2.jsonl` / `pax_clarify_eval_v2.jsonl`（14 + 7 例）+ `pax_diagnose_train_v2.jsonl` / `pax_diagnose_eval_v2.jsonl`（10 + 5 例）。

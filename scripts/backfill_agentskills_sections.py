@@ -270,6 +270,25 @@ SECTIONS_DATA: dict[str, dict[str, str]] = {
         "chk2": "知识图谱条目去重",
         "chk3": "沉淀结果与文档沉淀索引一致",
     },
+    "pax-init": {
+        "overview": (
+            "项目接入 Skill。扫描目标项目技术栈与既有规范文档，生成 AGENTS.md 与 "
+            ".pax/project-profile.json，并创建 .pax/ 产物目录，供规划 / 执行 / 评审层消费。"
+        ),
+        "when_to_use": (
+            "用户要求初始化项目 / 接入家族，或目标项目缺少 AGENTS.md 或 project-profile 时。"
+            "直接调用型内部工具，不走编排路由。"
+        ),
+        "common_pitfalls": (
+            "- 未确认项目路径就开始扫描，甚至为不存在的路径创建目录。\n"
+            "- 技术栈靠猜而不看特征文件。\n"
+            "- 直接覆盖目标项目已有的 AGENTS.md。\n"
+            "- 把项目自有规范文档全文复制进 profile，造成双源漂移。"
+        ),
+        "chk1": "已声明模式、目标路径、扫描结果、AGENTS.md 处置与 .pax/ 状态",
+        "chk2": "每项技术栈结论都能指向具体特征文件，未命中标「未检测到」",
+        "chk3": "profile 与 AGENTS.md 摘要字段一致，且重复运行幂等",
+    },
 }
 
 SKILLS_WITH_SHARED_REFERENCES = ("pax-clarify", "pax-orchestrate")

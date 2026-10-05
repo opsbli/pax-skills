@@ -33,6 +33,7 @@
 | L4 | `pax-verify` | 是 | 运行中验证 |
 | L4 | `pax-evolve` | 是 | 自进化 |
 | L4 | `pax-docs` | 是 | 文档沉淀 |
+| L4 | `pax-init` | 是 | 项目接入与初始化（扫描技术栈 → 生成 AGENTS.md + `.pax/project-profile.json` → 创建 `.pax/`） |
 
 ## 快速开始
 
@@ -49,6 +50,15 @@ pax-forge test
 
 # 列出所有注册 skill
 pax-forge list
+```
+
+## 项目接入
+
+把一个已有项目接进家族（由用户直接调用，不经编排路由）：
+
+```text
+用户：把这个项目接入 pax-family → pax-init 扫描技术栈 →
+      生成 AGENTS.md + .pax/project-profile.json → 创建 .pax/
 ```
 
 ## 设计文档
