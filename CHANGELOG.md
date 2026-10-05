@@ -5,6 +5,14 @@
 
 ## [Unreleased]
 
+### Removed
+- `pax-forge test --skill`：自引入起就是**死选项**（`cli.py` 的 test 分支只调
+  `run_all_contracts(root)`，从不读 `args.skill`；带与不带输出完全相同）。
+  它的语义对 11 条契约中的 4 条家族级契约（`layer-membership` /
+  `compatibility-matrix-consistency` / `declared-checks-coverage` / `no-cycles`）
+  无法定义——保留一个半生效的过滤器只会给出「我查过某个 skill 了」的假信心。
+  需要按 skill 排查时，直接看 `pax-forge test` 输出里带 skill 名的那一行。
+
 ### Added
 - （待填）
 

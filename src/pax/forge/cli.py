@@ -47,7 +47,6 @@ def build_parser() -> argparse.ArgumentParser:
 
     # test
     test_p = sub.add_parser("test", help="Run cross-skill contract tests")
-    test_p.add_argument("--skill", help="Only test this skill (default: all)")
 
     # agentskills-ci wrapper
     ci_p = sub.add_parser(
