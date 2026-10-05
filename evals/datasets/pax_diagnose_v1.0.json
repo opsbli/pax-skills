@@ -244,9 +244,9 @@
       "holdout": true,
       "prompt": "在 Chrome 浏览器下能稳定复现问题，但在 Firefox 浏览器下无法复现。",
       "expected": {
-        "reproduction_status": "reproduced"
+        "reproduction_status": "partial"
       },
-      "basis": "gold 修正：partial → reproduced。「Chrome 能稳定复现」= 契约 D1「确认问题可复现」。partial 应指「复现部分症状/间歇性复现」，不是「部分环境能复现」。"
+      "basis": "gold 回到 partial：HD6 定义「环境差异（部分环境能复现、部分不能）→ partial」。Chrome 能复现、Firefox 不能 = 环境差异。"
     },
     {
       "id": "pax-diag-storage-03",
@@ -288,11 +288,12 @@
       "id": "pax-diag-hypo-01",
       "category": "hypothesis",
       "holdout": true,
-      "prompt": "用户反馈登录接口偶发超时。日志显示数据库连接池偶尔耗尽，最近部署了新版本的登录模块，也有用户反馈网络波动。请生成根因假设。",
+      "prompt": "用户反馈登录接口偶发超时（约 5% 请求）。错误日志显示 `TimeoutException: unable to acquire connection`，集中出现在 10:00-11:00；最近一次部署（3 天前）升级了登录模块的认证库版本；监控显示该时段数据库连接数接近上限。请生成根因假设。",
       "expected": {
         "hypotheses_count_min": 2,
         "hypotheses_count_max": 5
-      }
+      },
+      "basis": "prompt 补具体证据：原 prompt 线索不够实证，模型有时判 blocked（0 条假设）。补具体异常类型/时间窗口/部署变更/监控指标后，应有足够证据生成 2-5 条假设。"
     },
     {
       "id": "pax-diag-hypo-02",

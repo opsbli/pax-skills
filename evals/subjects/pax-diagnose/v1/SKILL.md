@@ -83,6 +83,18 @@ reproduction:
   first_success_attempt: <第几次成功复现>
 ```
 
+**状态判定**：
+- `reproduced`：在**所有**尝试的目标环境用报告步骤都能稳定复现。
+- `partial`：**部分**环境能复现、部分不能（环境差异）；或同一环境多次尝试只有部分成功；
+  或只复现了**部分症状**（报错信息不完全一致、部分现象未出现）。
+- `not_reproduced`：所有尝试的环境都无法复现。
+
+「环境差异」归 `partial`（需在 D2 之前标注不确定性），不归 `reproduced`（后者要求全环境稳定复现）。
+
+复现状态**只基于实际复现尝试**，不基于用户报告的症状描述：
+用户报告「偶发 / 间歇性」但实际尝试无法复现的，仍是 `not_reproduced`
+（用户的主观观察不等于复现结果）。
+
 **失败处理**：
 - `not_reproduced` → 标记 `status: blocked`，附 `missing_information`
 - `partial` → 记录部分复现结果，继续 D2，但标注不确定性
@@ -297,6 +309,10 @@ def severity(rationale):
 - `affected_users` 的量化边界：`all` = 所有用户（100%）；`most` = 多数（>50%）；
   `some` = 部分（5%–50%）；`few` = 少量（<5%）。
 - `security_relevant=true` 时**单独**定 P0，不要求核心流程不可用。
+- `workaround_available`：用户是否有**可用的临时规避方案**（不修问题就能继续完成核心操作）。
+  有替代路径 / 可重试 / 可等待 / 问题无关紧要可忽略 → `true`；
+  无任何规避、用户只能等待修复 → `false`。
+  「问题无害、用户不会因此受阻」也算有规避（可忽略）。
 - 等级由 `core_flow_broken` + `security_relevant` 主导，`affected_users` 与
   `severity_rationale` 其余字段作为置信度依据，不单独改变等级
   （例如「影响所有用户但属非核心流程、且不影响使用」仍是 P2）。

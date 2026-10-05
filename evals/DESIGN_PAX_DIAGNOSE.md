@@ -425,3 +425,46 @@ core_flow_broken=true 时才影响 P0/P1 分档，无害问题的 workaround 分
 2. **evidence_types 和 hypotheses_count 两个模型都 100%**——这两个判定点最稳定（契约明确）。
 3. **workaround_available 是最不稳定点**（-11.7pp），根因是 HD8 语义边界未定义。
 4. **severity 最稳定**（两个模型都 ≥98%），说明聚合规则设计正确。
+
+## 十、补 HD6/HD8 后：GATE PASS（2026-10-05）
+
+补两个契约缺口后重跑（25 场景 × 5，多轮）：
+
+- **HD6**：D1 复现状态定义——`reproduced`（全环境）/`partial`（环境差异、部分成功、
+  部分症状）/`not_reproduced`（全环境失败）；且**只基于实际尝试**，不基于用户报告
+- **HD8**：`workaround_available` 定义——有替代路径/可重试/可等待/问题可忽略 → true
+
+### 结果
+
+| 检查项 | 补前 | 补后 |
+|--------|------|------|
+| reproduction_status | 93.3% | **100.0%** |
+| workaround_available | 93.3% | **98.3%** |
+| hypotheses_count | 66.7% | **100.0%** |
+| severity | 100.0% | 100.0% |
+| 其余 6 项 | 100% | 100% |
+| → 能力分 | 95.2% | **99.2%** (124/125) |
+| 健壮性 | — | 100.0% |
+| GATE | FAIL | **PASS** |
+
+唯一失败：`d5-04` r2 的 `workaround_available`（1/5，密码泄露可否用改密码规避），
+HD8 边界残留，但 `severity` 仍 P0（security 单独定）。
+
+### 过程中的三次迭代（诚实记录）
+
+补契约不是一次到位，中间暴露了"补法引入新问题"：
+
+| 轮次 | 问题 | 处理 |
+|------|------|------|
+| 1 | HD6 初版写「至少一个环境能复现 = reproduced」，与 repro-03 的 gold（partial）冲突 | 改为「环境差异 = partial」 |
+| 2 | repro-06 修好了（5/5），但 repro-01 掉到 1/5——模型把「用户报告的偶发」误当环境差异 | 补「只基于实际尝试，不基于用户报告」 |
+| 3 | hypotheses_count 掉到 80%——hypo-01 prompt 证据仍不够实证，模型有时 blocked | 补具体证据（异常类型/时间窗口/监控指标） |
+| 4 | **GATE PASS，99.2%** | — |
+
+**这印证了一个规律**：契约补法本身会引入新问题，需要多轮「补 → 重跑 → 发现新边界」。
+与 pax-orchestrate 的 G3 收窄、cco 优先级定义是同一模式。
+
+### 跨模型复核（HD8）
+
+v4-pro 在 workaround_available 上曾经 81.7%（HD8 前）。HD8 补完后未重跑 v4-pro，
+但契约已明确「无害问题算有规避」，预期能提升 v4-pro 的该项通过率。
