@@ -2,7 +2,7 @@
 name: pax-init
 description: >
     Use when: 把一个新项目或既有项目接入 pax-family 开发流程。L4 层内部工具，由用户直接调用，不认领编排路由落点：扫描项目目录检测技术栈（Java/Maven、RuoYi、TS/Vite/Vue、Go、Python 等），发现项目既有规范文档，生成 AGENTS.md（AI 协作编码规范）与 .pax/project-profile.json（机器可读项目元数据），并创建 .pax/ 产物目录。检测到代码生成器时严格提取其租户字段 / 审计字段 / 逻辑删除字段规范。已有 AGENTS.md 时必须先请用户确认覆盖 / 合并 / 跳过。
-version: 0.2.0
+version: 1.0.0
 family: pax
 layer: L4
 optional: true
@@ -46,7 +46,7 @@ requires_snapshot: false
 
 > 本节定义「被激活后必须做什么」，优先级高于 Agent 的通用默认行为。用户给出项目路径即视为激活，MUST NOT 仅把本文件当参考文档。
 
-0. **版本门（第零步）**：执行入口启动后、核心步骤前，MUST 先读取 `pax-ops/versions.json`，确认家族版本与本 Skill 版本一致（本 Skill 当前 `0.2.0`）。版本门自身故障时放行并标注口径，NEVER 因版本门故障阻断本 Skill 启动。
+0. **版本门（第零步）**：执行入口启动后、核心步骤前，MUST 先读取 `pax-ops/versions.json`，确认家族版本与本 Skill 版本一致（本 Skill 当前 `1.0.0`）。版本门自身故障时放行并标注口径，NEVER 因版本门故障阻断本 Skill 启动。
 1. **模式强制**：激活后 MUST 先判定**单项目模式**还是**多项目模式**（前后端分离），再读取路径。NEVER 在未确认项目路径的情况下开始扫描。
 2. **扫描诚实铁律**：技术栈结论 MUST 基于特征文件的**实际存在**，NEVER 猜测。检测不到标「未检测到」并请用户手动指定，NEVER 编造。
 3. **AGENTS.md 保护铁律**：目标项目已有 `AGENTS.md` 时，MUST 展示现有内容摘要并请用户在「覆盖重新生成 / 保留合并 / 跳过」中明确选择，NEVER 静默覆盖。
@@ -54,6 +54,9 @@ requires_snapshot: false
 5. **双格式一致铁律**：MUST 同时产出 `.pax/project-profile.json`（机器可读）与 `AGENTS.md` 内嵌的 profile 摘要（人可读），两者字段 MUST 一致。
 6. **代码生成器规范铁律**：检测到代码生成器模块（如 RuoYi generator）时，MUST 从项目基类/建表模板提取实际的**租户字段**与**审计字段**与**逻辑删除字段**，NEVER 套用外部默认字段名。
 7. **幂等性**：重复运行 MUST 产生相同结果，NEVER 重复创建已存在的目录或重复插入已存在的段落。
+8. **无变化不落盘**：渲染结果与目标文件现有内容**逐字节相同**时必须跳过写入（不 touch mtime、不产生 diff）。
+    比较前 MUST 先归一化易变占位符——`{{generated_at}}` 这类时间戳在比较时替换为占位符本身；
+    否则定时重跑会产生与任务无关的纯时间戳 diff，规则 7 的幂等声明永远无法成立。
 8. **自检声明**：作答前 MUST 声明「本次模式=＜单项目/多项目＞，目标路径=＜路径＞，已扫描，技术栈=＜检测结果＞，AGENTS.md=＜新建/覆盖/合并/跳过＞，.pax=＜已创建/已存在＞」。
 
 - 前置门禁：① 目标项目路径已确认且**实际存在**（用户明确提供或已在上下文中确认）；② 已判定单项目 / 多项目模式；③ `pax-ops/versions.json` 可读。
@@ -187,12 +190,15 @@ def discover_standards_docs(root):
 | 已有 `AGENTS.md` | 展示现有内容摘要 + 三选一：**覆盖重新生成 / 保留合并 / 跳过**；未获用户确认前 NEVER 写入 |
 | 用户选择「保留合并」 | 只追加 `pax-family 强制规则` 与 `project-profile 摘要` 两个区块，保留用户手写内容 |
 | 用户选择「跳过」 | 不写 `AGENTS.md`，记录 `skip_reason`，profile 照常生成 |
+| 渲染结果与现有内容相同（归一化后） | **跳过写入**，记录 `skip_reason: no_change`；不 touch mtime、不产生 diff |
 
 `AGENTS.md` 生成前 MUST 把技术栈扫描结果呈现给用户确认，未获确认 NEVER 继续。
 
 ### W6 project-profile 生成（Profile Generation）
 
 按 `templates/project-profile.json.tmpl` 与 `references/project-profile-spec.md` 渲染 `.pax/project-profile.json`，并把同一份数据的**人可读摘要**嵌入 `AGENTS.md`。
+
+与 W5 同一门槛：渲染结果与现有内容归一化后相同时 **跳过写入**，记录 `skip_reason: no_change`。
 
 ```python
 def build_profile(scan, generator, standards, meta):

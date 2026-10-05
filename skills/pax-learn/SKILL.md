@@ -2,7 +2,7 @@
 name: pax-learn
 description: >
     Use when: 经验沉淀和知识图谱。此 skill 由 pax-orchestrate 在编排路由中调用，用于从任务执行中沉淀经验并构建知识图谱。
-version: 0.2.0
+version: 1.0.0
 family: pax
 layer: L1
 optional: true
@@ -32,7 +32,7 @@ requires_snapshot: true
 - [ ] 知识图谱条目去重
 - [ ] 沉淀结果与文档沉淀索引一致
 ## Execution Contract
-- 前置门禁：`snapshot.review.status == completed`
+- 前置门禁：`snapshot.review.verdict in (pass, partial)`
 - 未通过门禁：拒绝启动，返回评审阶段
 - 版本检查：`pax-ops/versions.json`
 - skip_reason：当风险等级为 low 且任务类型为 doc_consult 时可跳过

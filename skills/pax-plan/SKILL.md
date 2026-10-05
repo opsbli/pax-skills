@@ -2,7 +2,7 @@
 name: pax-plan
 description: >
     Use when: 将已澄清/诊断的目标转化为机器可冻结的任务计划。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。
-version: 0.2.0
+version: 1.0.0
 family: pax
 layer: L1
 optional: false
@@ -285,6 +285,27 @@ steps:
 ### P7 计划冻结（Plan Freeze）
 
 ```python
+def derive_rollback_strategy(steps):
+    """把各步骤的回滚方案汇总为「按触发原因分档」的策略。
+
+    这是 pax-rollback 前置门禁要求的 plan.rollback_strategy：
+    - on_failure: 步骤执行失败时的回滚（取 step.rollback）
+    - on_alert:   监控告警触发时的回滚（仅收 alert_trigger 命中的步骤）
+    - on_request: 用户主动要求回滚（无步骤级数据，由 pax-rollback 按 changes 逆序执行）
+    - default:    未命中以上任何一档时的兜底（全部含 rollback 的步骤）
+    """
+    strategy = {"on_failure": [], "on_alert": [], "on_request": [], "default": []}
+    for step in steps:
+        if not step.rollback:
+            continue
+        entry = {"step": step.id, "rollback": step.rollback}
+        strategy["on_failure"].append(entry)
+        strategy["default"].append(entry)
+        if getattr(step, "alert_trigger", None):
+            strategy["on_alert"].append(entry)
+    return strategy
+
+
 def freeze_plan(steps, verification_strategy):
     """冻结计划"""
     
@@ -306,10 +327,12 @@ def freeze_plan(steps, verification_strategy):
     
     # 写入快照
     plan = {
+        "id": "<plan-id>",
         "steps": steps,
         "dependencies": calculate_dependencies(steps),
         "evidence": collect_evidence(steps),
         "verification_strategy": verification_strategy,
+        "rollback_strategy": derive_rollback_strategy(steps),
         "status": "frozen",
         "frozen_at": "<ISO8601>",
         "frozen_by": "pax-plan"
@@ -320,6 +343,7 @@ def freeze_plan(steps, verification_strategy):
 
 ## 输出契约
 - `snapshot.plan`（`status: frozen`）与 `plan_summary.md`，格式由 `schemas/snapshot.schema.json` 约束
+- `snapshot.plan.rollback_strategy`：按 `on_failure` / `on_alert` / `on_request` / `default` 分档的回滚策略，是 `pax-rollback` 的前置门禁输入
 
 ## 失败模式
 - 快照缺失 → 降级为独立模式，自行初始化最小快照

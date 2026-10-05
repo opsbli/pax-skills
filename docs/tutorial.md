@@ -147,18 +147,22 @@ def test_skill_execution():
 pax-forge test
 ```
 
-### 方法 3: 端到端测试
+### 方法 3: 契约与数据集校验（不调模型、不花钱）
 
 ```bash
-# 运行端到端测试
-python opx-test/scenarios/<scenario>/run.py
+# 11 条家族契约（含快照字段一致性、层成员一致性）
+pax-forge test
+
+# 内部路由数据集结构校验
+python scripts/validate_internal_routing.py
 ```
 
-### 方法 4: 集成测试
+### 方法 4: 能力评估（真实调用模型，会产生费用）
 
 ```bash
-# 运行集成测试
-python opx-test/scenarios/feature-dev-test/run.py
+# 完整门槛说明与可信度边界见 evals/README.md
+PYTHONUTF8=1 python evals/run_internal_routing_eval.py --dry-run    # 先看将发送的系统提示
+PYTHONUTF8=1 python evals/run_internal_routing_eval.py --repeats 5  # 真实运行
 ```
 
 ---
@@ -235,11 +239,15 @@ with open("snapshot.yaml", "w") as f:
 ### 查看快照文件
 
 ```bash
-# 查看快照列表
-ls opx-test/snapshots/
+# 快照（pax-snapshot.yaml）是每次任务的运行时产物，不随仓库提交。
+# 权威结构定义：
+schemas/snapshot.schema.json
 
-# 查看具体快照
-cat opx-test/snapshots/snapshot_feature_dev_test.yaml
+# 带注释的结构示例与不变式：
+docs/pax-family-design.md 第 5.1 / 5.2 节
+
+# 已归档的评估产物列表：
+ls evals/results/
 ```
 
 ### 查看 Skill 调用链

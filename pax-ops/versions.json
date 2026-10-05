@@ -1,32 +1,35 @@
 {
   "family": "pax",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "skills": {
-    "pax-orchestrate":      {"layer": "L0", "optional": false, "version": "0.2.0", "status": "active"},
-    "pax-clarify":          {"layer": "L1", "optional": false, "version": "0.2.0", "status": "active"},
-    "pax-diagnose":         {"layer": "L1", "optional": true,  "version": "0.2.0", "status": "active"},
-    "pax-plan":             {"layer": "L1", "optional": false, "version": "0.2.0", "status": "active"},
-    "pax-execute":          {"layer": "L1", "optional": false, "version": "0.2.0", "status": "active"},
-    "pax-review":           {"layer": "L1", "optional": false, "version": "0.2.0", "status": "active"},
-    "pax-advisor":          {"layer": "L2", "optional": true,  "version": "0.2.0", "status": "active"},
-    "pax-council":          {"layer": "L2", "optional": true,  "version": "0.2.0", "status": "active"},
-    "pax-worker-research":  {"layer": "L3", "optional": true,  "version": "0.2.0", "status": "active"},
-    "pax-worker-implement": {"layer": "L3", "optional": true,  "version": "0.2.0", "status": "active"},
-    "pax-verify":           {"layer": "L4", "optional": true,  "version": "0.2.0", "status": "active"},
-    "pax-evolve":           {"layer": "L4", "optional": true,  "version": "0.2.0", "status": "active"},
-    "pax-docs":             {"layer": "L4", "optional": true,  "version": "0.2.0", "status": "active"},
-    "pax-monitor":          {"layer": "L1", "optional": true,  "version": "0.2.0", "status": "active"},
-    "pax-rollback":         {"layer": "L1", "optional": true,  "version": "0.2.0", "status": "active"},
-    "pax-test":             {"layer": "L1", "optional": true,  "version": "0.2.0", "status": "active"},
-    "pax-deploy":           {"layer": "L1", "optional": true,  "version": "0.2.0", "status": "active"},
-    "pax-learn":            {"layer": "L1", "optional": true,  "version": "0.2.0", "status": "active"},
-    "pax-init":             {"layer": "L4", "optional": true,  "version": "0.2.0", "status": "active"}
+    "pax-orchestrate":      {"layer": "L0", "optional": false, "version": "1.0.0", "status": "active"},
+    "pax-clarify":          {"layer": "L1", "optional": false, "version": "1.0.0", "status": "active"},
+    "pax-diagnose":         {"layer": "L1", "optional": true,  "version": "1.0.0", "status": "active"},
+    "pax-plan":             {"layer": "L1", "optional": false, "version": "1.0.0", "status": "active"},
+    "pax-execute":          {"layer": "L1", "optional": false, "version": "1.0.0", "status": "active"},
+    "pax-review":           {"layer": "L1", "optional": false, "version": "1.0.0", "status": "active"},
+    "pax-advisor":          {"layer": "L2", "optional": true,  "version": "1.0.0", "status": "active"},
+    "pax-council":          {"layer": "L2", "optional": true,  "version": "1.0.0", "status": "active"},
+    "pax-worker-research":  {"layer": "L3", "optional": true,  "version": "1.0.0", "status": "active"},
+    "pax-worker-implement": {"layer": "L3", "optional": true,  "version": "1.0.0", "status": "active"},
+    "pax-verify":           {"layer": "L4", "optional": true,  "version": "1.0.0", "status": "active"},
+    "pax-evolve":           {"layer": "L4", "optional": true,  "version": "1.0.0", "status": "active"},
+    "pax-docs":             {"layer": "L4", "optional": true,  "version": "1.0.0", "status": "active"},
+    "pax-monitor":          {"layer": "L1", "optional": true,  "version": "1.0.0", "status": "active"},
+    "pax-rollback":         {"layer": "L1", "optional": true,  "version": "1.0.0", "status": "active"},
+    "pax-test":             {"layer": "L1", "optional": true,  "version": "1.0.0", "status": "active"},
+    "pax-deploy":           {"layer": "L1", "optional": true,  "version": "1.0.0", "status": "active"},
+    "pax-learn":            {"layer": "L1", "optional": true,  "version": "1.0.0", "status": "active"},
+    "pax-init":             {"layer": "L4", "optional": true,  "version": "1.0.0", "status": "active"}
   },
   "compatibility_matrix": {
-    "pax-orchestrate@0.2": ["pax-clarify@0.2"],
-    "pax-clarify@0.2":     ["pax-diagnose@0.2", "pax-plan@0.2"],
-    "pax-diagnose@0.2":    ["pax-plan@0.2"],
-    "pax-plan@0.2":        ["pax-execute@0.2"],
-    "pax-execute@0.2":     ["pax-review@0.2"]
+    "_comment": "层间允许的调用方向。这是 family 的权威边集：contracts.py 的 _allowed_calls() 由此读取，contracts 里的 layer-call-legality 据此判定。要与 schemas/pax-family.schema.yaml 的 layers 保持一致。",
+    "L0": ["L1", "L4"],
+    "L1": ["L1", "L2", "L3", "L4"],
+    "L2": ["L3", "L4"]
+  },
+  "main_flow": {
+    "_comment": "主干 happy path，供文档与阅读者理解典型执行链；不构成额外约束。",
+    "path": ["pax-orchestrate", "pax-clarify", "pax-diagnose", "pax-plan", "pax-execute", "pax-review"]
   }
 }

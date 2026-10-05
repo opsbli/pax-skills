@@ -12,7 +12,7 @@
       "required": ["version", "created_at", "updated_at", "skill_lineage"],
       "additionalProperties": false,
       "properties": {
-        "version": {"type": "number", "const": 1.0},
+        "version": {"type": "number", "const": 2.0},
         "created_at": {"type": "string", "format": "date-time"},
         "updated_at": {"type": "string", "format": "date-time"},
         "skill_lineage": {
@@ -38,13 +38,15 @@
         "required_precision": {"type": "string", "enum": ["low", "medium", "high"]},
         "dimensions": {"type": "object"},
         "design_tree": {"type": "array"},
-        "gaps_remaining": {"type": "array"}
+        "gaps_remaining": {"type": "array"},
+        "settled_at": {"type": ["string", "null"], "format": "date-time"}
       }
     },
     "orchestration": {
       "type": "object",
       "required": ["diagnose_required", "rationale", "skip_reason",
-                   "route", "question_strategy"],
+                   "route", "question_strategy",
+                   "intent", "risk", "annotations"],
       "additionalProperties": false,
       "properties": {
         "diagnose_required": {"type": "boolean"},
@@ -52,7 +54,61 @@
         "skip_reason": {"type": ["string", "null"]},
         "route": {"type": "array", "items": {"type": "string"}},
         "question_strategy": {"type": "string",
-                                "enum": ["batch", "one-by-one"]}
+                                "enum": ["batch", "one-by-one"]},
+        "intent": {
+          "type": "object",
+          "required": ["primary", "secondary", "classification_rationale"],
+          "additionalProperties": false,
+          "properties": {
+            "primary": {
+              "type": "string",
+              "enum": ["diagnose_fix", "feature_dev", "refactor",
+                       "data_ops", "doc_consult", "tool_build"]
+            },
+            "secondary": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["performance", "security", "data_integrity",
+                         "ux_error", "integration", "deployment"]
+              }
+            },
+            "classification_rationale": {"type": "string"}
+          }
+        },
+        "risk": {
+          "type": "object",
+          "required": ["irreversibility", "impact_scope", "uncertainty",
+                       "coordination_cost", "total", "level",
+                       "forced_escalation"],
+          "additionalProperties": false,
+          "properties": {
+            "irreversibility": {"type": "integer", "minimum": 1, "maximum": 3},
+            "impact_scope": {"type": "integer", "minimum": 1, "maximum": 3},
+            "uncertainty": {"type": "integer", "minimum": 1, "maximum": 3},
+            "coordination_cost": {"type": "integer", "minimum": 1, "maximum": 3},
+            "total": {"type": "integer", "minimum": 4, "maximum": 12},
+            "level": {"type": "string", "enum": ["low", "medium", "high"]},
+            "forced_escalation": {"type": "boolean"}
+          }
+        },
+        "annotations": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "escalate_to_council": {"type": "boolean"},
+            "council_trigger": {"type": ["string", "null"]},
+            "storage_backend_required": {"type": "boolean"},
+            "script_language_required": {"type": "boolean"},
+            "cross_repo": {"type": "boolean"},
+            "execution_strategy_required": {"type": "boolean"},
+            "involved_repos": {"type": "array", "items": {"type": "string"}},
+            "frontend_involved": {"type": "boolean"},
+            "performance_metrics_required": {"type": "boolean"},
+            "integration_contract_required": {"type": "boolean"},
+            "deployment_env_required": {"type": "boolean"}
+          }
+        }
       }
     },
     "symptom": {
@@ -68,16 +124,41 @@
       }
     },
     "diagnosis": {"type": "object"},
+    "infrastructure": {
+      "type": "object",
+      "description": "环境事实（非需求、非决策）。storage_backend 为数据类任务的强制确认项。",
+      "additionalProperties": true,
+      "properties": {
+        "storage_backend": {"type": ["string", "null"]},
+        "script_language": {"type": ["string", "null"]},
+        "target_environment": {"type": ["string", "null"]}
+      }
+    },
     "plan": {
       "type": "object",
       "required": ["steps", "status"],
       "additionalProperties": false,
       "properties": {
+        "id": {"type": ["string", "null"],
+               "description": "本计划的唯一标识，供 pax-rollback 等下游定位被回滚的对象。"},
         "steps": {"type": "array"},
         "dependencies": {"type": "array"},
         "evidence": {"type": "array"},
         "verification_strategy": {"type": "array"},
-        "status": {"type": "string", "enum": ["draft", "frozen"]}
+        "status": {"type": "string", "enum": ["draft", "frozen"]},
+        "frozen_at": {"type": ["string", "null"], "format": "date-time"},
+        "frozen_by": {"type": ["string", "null"]},
+        "rollback_strategy": {
+          "type": "object",
+          "description": "按触发原因分档的回滚策略；pax-rollback 的门禁输入。",
+          "additionalProperties": false,
+          "properties": {
+            "on_failure": {"type": ["string", "array", "null"]},
+            "on_alert": {"type": ["string", "array", "null"]},
+            "on_request": {"type": ["string", "array", "null"]},
+            "default": {"type": ["string", "array", "null"]}
+          }
+        }
       }
     },
     "contract": {
@@ -95,13 +176,19 @@
     },
     "execution": {
       "type": "object",
-      "required": ["mode", "log", "deviations", "changes"],
+      "required": ["mode", "log", "deviations", "changes", "status"],
       "additionalProperties": false,
       "properties": {
+        "id": {"type": ["string", "null"],
+               "description": "本次执行的唯一标识，供 pax-rollback 等下游定位被回滚的对象。"},
         "mode": {"type": "string", "enum": ["normal", "fix"]},
+        "status": {"type": "string",
+                   "enum": ["completed", "failed", "paused"]},
+        "completed_at": {"type": ["string", "null"], "format": "date-time"},
         "log": {"type": "array"},
         "deviations": {"type": "array"},
-        "changes": {"type": "array"}
+        "changes": {"type": "array"},
+        "commits": {"type": "array"}
       }
     },
     "review": {
@@ -111,9 +198,17 @@
       "properties": {
         "verdict": {"type": "string",
                     "enum": ["pass", "fail", "partial", "blocked", "escalated"]},
-        "stamp": {"type": "string"},
+        "stamp": {
+          "type": ["string", "null"],
+          "description": "评审所依据的 verify 印章引用（对应 quality.verification_seals 中的 seal id）。"
+        },
         "rationale": {"type": "string"},
-        "findings": {"type": "array"}
+        "findings": {"type": "array"},
+        "verification_results": {"type": "array"},
+        "deviations_check": {"type": "object"},
+        "stamp_check": {"type": "object"},
+        "reviewed_at": {"type": ["string", "null"], "format": "date-time"},
+        "reviewed_by": {"type": ["string", "null"]}
       }
     },
     "quality": {
@@ -121,8 +216,82 @@
       "required": ["verification_seals", "evolution_entries"],
       "additionalProperties": false,
       "properties": {
-        "verification_seals": {"type": "array"},
+        "verification_seals": {
+          "type": "array",
+          "description": "pax-verify 追加的印章序列；pax-review 读取最后一条作为门禁输入。",
+          "items": {
+            "type": "object",
+            "required": ["result"],
+            "additionalProperties": true,
+            "properties": {
+              "result": {"type": "string",
+                         "enum": ["pass", "fail", "partial", "blocked", "escalated"]},
+              "confidence": {"type": "string", "enum": ["high", "medium", "low"]},
+              "attempts": {"type": "integer"},
+              "duration": {"type": "string"},
+              "evidence": {"type": "array"},
+              "summary": {"type": "string"}
+            }
+          }
+        },
         "evolution_entries": {"type": "array"}
+      }
+    },
+    "monitoring": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "status": {"type": ["string", "null"]},
+        "config": {"type": "object"},
+        "thresholds": {"type": "object"},
+        "alerts_triggered": {"type": "array"},
+        "logs": {"type": "array"},
+        "summary": {"type": ["string", "null"]}
+      }
+    },
+    "rollback": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "status": {"type": ["string", "null"]},
+        "trigger_reason": {"type": ["string", "null"]},
+        "strategy": {"type": ["string", "null"]},
+        "steps": {"type": "array"},
+        "verification": {"type": "object"},
+        "summary": {"type": ["string", "null"]}
+      }
+    },
+    "tests": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "status": {"type": ["string", "null"]},
+        "summary": {"type": ["string", "null"]},
+        "coverage": {"type": "object"},
+        "failed_tests": {"type": "array"},
+        "recommendations": {"type": "array"}
+      }
+    },
+    "deployment": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "status": {"type": ["string", "null"]},
+        "strategy": {"type": ["string", "null"]},
+        "environment": {"type": ["string", "null"]},
+        "steps": {"type": "array"},
+        "pre_checks": {"type": "array"},
+        "health_checks": {"type": "array"},
+        "summary": {"type": ["string", "null"]}
+      }
+    },
+    "learning": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "experiences": {"type": "array"},
+        "knowledge_graph": {"type": "object"},
+        "recommendations": {"type": "array"}
       }
     }
   }

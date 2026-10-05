@@ -28,6 +28,10 @@ def build_parser() -> argparse.ArgumentParser:
     new_p.add_argument("--layer", required=True,
                        choices=["meta", "L0", "L1", "L2", "L3", "L4"])
     new_p.add_argument("--description", default="TODO: describe capability")
+    new_p.add_argument(
+        "--use-case", default=None,
+        help="One-line 'when to use this skill' phrase for the description body",
+    )
     new_p.add_argument("--optional", action="store_true")
 
     # validate
@@ -198,6 +202,7 @@ def main(argv: list[str] | None = None) -> int:
                 name=args.name, layer=args.layer,
                 description=args.description,
                 target_root=Path.cwd(), optional=args.optional,
+                use_case=args.use_case,
             )
         except GenerationError as exc:
             print(f"error: {exc}", file=sys.stderr)

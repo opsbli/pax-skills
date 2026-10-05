@@ -2,7 +2,7 @@
 name: pax-review
 description: >
     Use when: 独立评审门禁，对照成功标准决定通过/拒绝。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。
-version: 0.2.0
+version: 1.0.0
 family: pax
 layer: L1
 optional: false
@@ -46,7 +46,7 @@ requires_snapshot: true
 
 ## 输入
 - 必需：`snapshot.execution`、`snapshot.plan`、`snapshot.contract`
-- 可选：`snapshot.verify_stamp`
+- 可选：`snapshot.quality.verification_seals`（pax-verify 的印章序列，取最后一条）
 
 ## 工作流
 
@@ -160,16 +160,18 @@ def check_deviations(execution):
 
 ```python
 def check_stamp(snapshot):
-    """检查 pax-verify 印章"""
+    """检查 pax-verify 印章（quality.verification_seals 的最后一条）"""
     
-    if not snapshot.verify_stamp:
+    seals = snapshot.quality.verification_seals if snapshot.quality else []
+    if not seals:
         return False, "缺少 pax-verify 印章"
     
-    if snapshot.verify_stamp.result not in ("pass", "partial"):
-        return False, f"印章结果为 {snapshot.verify_stamp.result}，需要 pass 或 partial"
+    seal = seals[-1]
+    if seal.result not in ("pass", "partial"):
+        return False, f"印章结果为 {seal.result}，需要 pass 或 partial"
     
     # 检查印章证据
-    if not snapshot.verify_stamp.evidence:
+    if not seal.evidence:
         return False, "印章缺少证据"
     
     return True, None
@@ -179,11 +181,12 @@ def check_stamp(snapshot):
 
 ```python
 def determine_verdict(verification_results, deviations, stamp):
-    """综合判定 verdict"""
+    """综合判定 verdict（stamp 为 check_stamp 的返回 `(ok, reason)`）"""
     
     # 条件 1: 印章缺失
-    if not stamp.valid:
-        return "blocked", "缺少 pax-verify 印章"
+    stamp_ok, stamp_reason = stamp
+    if not stamp_ok:
+        return "blocked", stamp_reason
     
     # 条件 2: high 偏差未解决
     unresolved_high = [

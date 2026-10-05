@@ -2,7 +2,7 @@
 name: pax-rollback
 description: >
     Use when: 自动化回滚。此 skill 由 pax-orchestrate 在编排路由中调用，用于在任务执行失败或出现严重问题时自动回滚到安全状态。
-version: 0.2.0
+version: 1.0.0
 family: pax
 layer: L1
 optional: true

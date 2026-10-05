@@ -2,7 +2,7 @@
 name: pax-deploy
 description: >
     Use when: 部署流程编排。此 skill 由 pax-orchestrate 在编排路由中调用，用于自动化部署流程。
-version: 0.2.0
+version: 1.0.0
 family: pax
 layer: L1
 optional: true

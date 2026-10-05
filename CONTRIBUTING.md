@@ -236,7 +236,13 @@ Closes #123
 
 ## CI 门禁与外部工具
 
-`pax-ci` 工作流包含 7 个 job，其中 5 个是**硬门禁**（失败会阻断合并），2 个是**建议性**（失败不阻断，但会在 PR 里告警）：
+`pax-ci` 工作流包含 7 个 job，按**实际是否执行**分三类：
+
+- **无条件执行的硬门禁**（3 个）：`contracts-and-tests`、`agentskills-ci-check`、`quality-summary`
+- **硬门禁但默认跳过**（2 个）：`routing-eval`、`quality-gate` —— 它们依赖 `tools/` 下的外部工具，
+  而 `tools/` 被 `.gitignore` 忽略、不在版本库中，因此未置 `PAX_TOOLS_AVAILABLE=true` 时永远记为 `skipped`。
+  **不要把这两个当成正在生效的质量闸门**。
+- **建议性**（2 个）：`internal-routing-check`、`skilldiff-regression`（失败不阻断，但会在 PR 里告警）
 
 | Job | 类型 | 触发条件 | 说明 |
 |-----|------|----------|------|
@@ -400,9 +406,8 @@ meta:
 | 类型 | 位置 | 用途 |
 |------|------|------|
 | 单元测试 | `tests/test_*.py` | 测试单个模块 |
-| 契约测试 | `pax-forge test` | 测试家族契约 |
-| 集成测试 | `opx-test/scenarios/` | 测试完整流程 |
-| 端到端测试 | `opx-test/scenarios/` | 测试真实场景 |
+| 契约测试 | `pax-forge test` | 测试 11 条家族契约（含快照字段一致性、层成员一致性） |
+| 能力评估 | `evals/` | 真实模型调用（外部路由 / 内部路由 / pax-diagnose）；运行方式见 `evals/README.md` |
 
 ### 测试命名
 
@@ -525,7 +530,7 @@ git push origin v0.3.0
 如果遇到困难，可以通过以下方式获得帮助：
 
 1. **查看文档**: [docs/](./docs/)
-2. **查看示例**: [opx-test/scenarios/](../opx-test/scenarios/)
+2. **查看评估与用法示例**: [evals/](./evals/) 与 [docs/usage-examples.md](./docs/usage-examples.md)
 3. **创建 Issue**: 在 GitHub 创建 Issue
 4. **提交 PR**: 提交 Pull Request
 

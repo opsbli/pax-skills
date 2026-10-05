@@ -1,8 +1,8 @@
 ---
 name: pax-advisor
 description: >
-    Use when: 只读顾问，针对特定假设、权衡、架构问题提供咨询。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。
-version: 0.2.0
+    Use when: 只读顾问，针对特定假设、权衡、架构问题提供咨询。当前未接线：家族内无任何 skill 调用本 skill，description 不再声称由 pax-orchestrate 编排调用；如需启用，先在调用方（如 pax-review 或 L1 阶段）显式登记触发条件。
+version: 1.0.0
 family: pax
 layer: L2
 optional: true

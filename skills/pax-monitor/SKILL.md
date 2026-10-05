@@ -2,7 +2,7 @@
 name: pax-monitor
 description: >
     Use when: 运行中监控和告警。此 skill 由 pax-orchestrate 在编排路由中调用，用于监控任务执行过程中的异常情况并触发告警。
-version: 0.2.0
+version: 1.0.0
 family: pax
 layer: L1
 optional: true

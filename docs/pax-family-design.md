@@ -181,6 +181,7 @@ consensus:
       children: [D<K>]
       skip_reason: null
   gaps_remaining: [...]
+  settled_at: "<ISO8601>" | null
 
 orchestration:
   diagnose_required: true | false
@@ -188,6 +189,31 @@ orchestration:
   skip_reason: null
   route: [pax-clarify, pax-diagnose, pax-plan, pax-execute, pax-review]
   question_strategy: batch | one-by-one
+  intent:                                 # W1 意图分类结果
+    primary: diagnose_fix | feature_dev | refactor | data_ops | doc_consult | tool_build
+    secondary: [performance | security | data_integrity
+                | ux_error | integration | deployment, ...]
+    classification_rationale: "<分类理由>"
+  risk:                                   # W2 四维风险评分
+    irreversibility: 1 | 2 | 3
+    impact_scope: 1 | 2 | 3
+    uncertainty: 1 | 2 | 3
+    coordination_cost: 1 | 2 | 3
+    total: 4..12
+    level: low | medium | high
+    forced_escalation: true | false
+  annotations:                            # W4 路由标注（按命中项出现）
+    escalate_to_council: true | false
+    council_trigger: null | high_risk_task | security_relevant
+    storage_backend_required: true | false
+    script_language_required: true | false
+    cross_repo: true | false
+    execution_strategy_required: true | false
+    involved_repos: []
+    frontend_involved: true | false
+    performance_metrics_required: true | false
+    integration_contract_required: true | false
+    deployment_env_required: true | false
 
 symptom:                                # 仅诊断类任务
   description: "..."
@@ -233,11 +259,19 @@ diagnosis:                              # 仅诊断类任务
   diagnosed_at: "<ISO8601>"
 
 plan:
+  id: "<plan-id>"
   steps: [...]
   dependencies: [...]
   evidence: [...]
   verification_strategy: [...]
+  rollback_strategy:                       # pax-rollback 的门禁输入
+    on_failure: [...sh: <步骤级回滚> ...]
+    on_alert: [...]
+    on_request: [...]
+    default: [...]
   status: draft | frozen
+  frozen_at: "<ISO8601>" | null
+  frozen_by: "pax-plan" | null
 
 contract:
   authorization: {...}
@@ -247,19 +281,72 @@ contract:
   withdraw: [...]
 
 execution:
+  id: "<execution-id>"
   mode: normal | fix
+  status: completed | failed | paused
+  completed_at: "<ISO8601>" | null
   log: [...]
   deviations: [...]
   changes: [...]
+  commits: [...]                          # 供回滚阶段逆序回退
 
 review:
   verdict: pass | fail | partial | blocked | escalated
-  stamp: "..."
+  stamp: "<引用 quality.verification_seals 中某条 seal 的标识>"
   rationale: "..."
+  findings: [...]
+  verification_results: [...]
+  deviations_check: {...}
+  stamp_check: {...}
+  reviewed_at: "<ISO8601>" | null
+  reviewed_by: "pax-review" | null
 
 quality:
-  verification_seals: [...]
+  verification_seals: [...]                # pax-verify 追加；pax-review 取末位
   evolution_entries: [...]
+
+# 扩展 skill 的快照段
+monitoring:
+  status: ...
+  config: {...}
+  thresholds: {...}
+  alerts_triggered: [...]
+  logs: [...]
+  summary: "..."
+
+rollback:
+  status: ...
+  trigger_reason: "..."
+  strategy: "..."
+  steps: [...]
+  verification: {...}
+  summary: "..."
+
+tests:
+  status: ...
+  summary: "..."
+  coverage: {...}
+  failed_tests: [...]
+  recommendations: [...]
+
+deployment:
+  status: ...
+  strategy: "..."
+  environment: "..."
+  steps: [...]
+  pre_checks: [...]
+  health_checks: [...]
+  summary: "..."
+
+learning:
+  experiences: [...]
+  knowledge_graph: {...}
+  recommendations: [...]
+
+infrastructure:                            # 环境事实（非需求、非决策）
+  storage_backend: "..." | null
+  script_language: "..." | null
+  target_environment: "..." | null
 ```
 
 ### 5.2 快照不变式
@@ -269,6 +356,14 @@ quality:
 - `diagnosis.root_cause` 只能在 D5 settled 后出现
 - `contract` 必须在 `pax-execute` 前生成并经用户确认
 - `review.verdict` 必须附带 `rationale`
+- `execution.status == completed` 是评审与部署阶段的前置门禁
+- `plan.rollback_strategy` 是回滚阶段的前置门禁
+- `quality.verification_seals` 由 `pax-verify` 追加，评审阶段读取末位作为门禁输入
+
+> **格式版本**：`meta.version = 2.0`（家族 v1.0.0）。1.x 只声明 `meta/goal/consensus/orchestration`
+> 四个必填段，2.0 起 `orchestration` 追加 `intent`/`risk`/`annotations`，`execution` 追加 `status`，
+> 并新增 `monitoring`/`rollback`/`tests`/`deployment`/`learning`/`infrastructure` 六个段。
+> 权威定义始终是 `schemas/snapshot.schema.json`。
 
 ---
 

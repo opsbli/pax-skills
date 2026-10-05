@@ -2,7 +2,7 @@
 name: pax-orchestrate
 description: >
     Use when: 所有 pax-family 任务的统一入口。当用户目标涉及诊断修复、功能开发、重构优化、数据操作、文档咨询或工具构建时，必须先经过 pax-orchestrate 进行意图分类、风险分级、路由构建与快照初始化。不要直接选择 pax-diagnose、pax-plan、pax-execute 等具体 skill，而是让 pax-orchestrate 决定完整的执行路由。
-version: 0.2.0
+version: 1.0.0
 family: pax
 layer: L0
 optional: false
@@ -226,6 +226,9 @@ def classify_intent(user_goal, context):
 | 7–9 | 中 | `medium` | `batch` |
 | 10–12 | 高 | `high` | `one-by-one` |
 
+实现时用 `precision_from_total(risk.total)` 取 `required_precision`，
+**不要**在 `risk` 对象上另造 `precision` 字段（该名字不存在）。
+
 #### 强制升级规则
 
 以下情况无论总分多少，均强制升级：
@@ -233,6 +236,10 @@ def classify_intent(user_goal, context):
 - 二级意图包含 `security` → 强制 `risk: high`，标记 `escalate_to_council: true`
 - 二级意图包含 `data_integrity` 且影响范围为 3 → 强制 `risk: high`
 - 不可逆性为 3 且影响范围为 3 → 强制 `risk: high`
+
+命中任一条时，MUST 在 `risk.forced_escalation` 写 `true`（未命中写 `false`），
+并把 `level` 覆盖为 `high`，同时写入 `annotations.escalate_to_council: true`。
+`forced_escalation` 与 `level` 都会被 `init_snapshot` 原样写入快照，是审计依据。
 
 ### W3 诊断必要性决策（Diagnose Required Decision）
 
@@ -327,10 +334,21 @@ def build_route(intent, diagnose_required, risk, context):
     if "ux_error" in intent.secondary:
         annotations["frontend_involved"] = True
     
+    # 标注：其余二级意图各自要求的验证前置
+    if "performance" in intent.secondary:
+        annotations["performance_metrics_required"] = True
+    if "integration" in intent.secondary:
+        annotations["integration_contract_required"] = True
+    if "deployment" in intent.secondary:
+        annotations["deployment_env_required"] = True
+    
     return route, annotations
 ```
 
-#### 完整路由表
+#### 代表路由组合
+
+下表列举常见组合；完整逻辑由 `build_route` 派生（6 个一级意图 × 6 个二级意图的笛卡尔积），
+不逐一列举——与上表冲突时以 `build_route` 为准。
 
 | 一级意图 | 二级意图 | diagnose_required | 路由 | 标注 |
 |---|---|---|---|---|
@@ -351,21 +369,25 @@ def build_route(intent, diagnose_required, risk, context):
 
 ```python
 def is_cross_repo(context):
-    """检测是否涉及跨仓库操作"""
-    # 信号：前后端分离、多仓库、微服务
-    signals = [
-        "前端", "后端", "web", "api", "server", "client",
-        "ops-monitor", "ops-pilot-web",  # 已知仓库名
-        "另一个仓库", "另一个服务", "另一个项目"
+    """检测是否涉及跨仓库操作
+
+    按词边界匹配，不做裸子串匹配：裸子串会让 "web" 命中 webhook、
+    "api" 命中 rapid/capital，造成系统性误判。
+    项目自有的仓库名不在此硬编码——写进 references/domain-dependencies.md。
+    """
+    patterns = [
+        r"前端", r"后端", r"跨仓库", r"多仓库", r"微服务",
+        r"另一个仓库", r"另一个服务", r"另一个项目",
+        r"\bweb\b", r"\brepo\b",
     ]
-    return any(s in context for s in signals)
+    return any(re.search(p, context, re.IGNORECASE) for p in patterns)
 
 def detect_involved_repos(context):
-    """检测涉及的仓库列表"""
+    """检测涉及的仓库列表（与 is_cross_repo 的信号保持一致）"""
     repos = []
-    if "前端" in context or "web" in context:
+    if re.search(r"前端|\bfrontend\b", context, re.IGNORECASE):
         repos.append("frontend")
-    if "后端" in context or "api" in context or "server" in context:
+    if re.search(r"后端|\bbackend\b|\bserver\b|\bapi\b", context, re.IGNORECASE):
         repos.append("backend")
     return repos
 ```
@@ -373,6 +395,15 @@ def detect_involved_repos(context):
 ### W5 快照初始化（Snapshot Initialization）
 
 ```python
+def precision_from_total(total):
+    """W2 总分映射：4–6 low / 7–9 medium / 10–12 high"""
+    if total <= 6:
+        return "low"
+    if total <= 9:
+        return "medium"
+    return "high"
+
+
 def init_snapshot(intent, risk, diagnose_required, strategy, route, annotations):
     """初始化 pax-snapshot.yaml"""
     
@@ -388,7 +419,7 @@ def init_snapshot(intent, risk, diagnose_required, strategy, route, annotations)
             "success_criteria": []  # 由 pax-clarify 填充
         },
         "consensus": {
-            "required_precision": risk.precision,  # low | medium | high
+            "required_precision": precision_from_total(risk.total),  # low | medium | high
             "dimensions": {
                 "goal": "unknown",
                 "success_criteria": "unknown",
@@ -504,12 +535,21 @@ def init_snapshot(intent, risk, diagnose_required, strategy, route, annotations)
 
 ### 完整工作流示例
 
+主干（顺序固定）：
+
 ```
 [clarify] → [diagnose] → [plan] → [execute] → [review] → [learn]
-                ↓              ↓         ↓
-          [monitor]      [rollback]  [test]
-                                ↓
-                            [deploy]
+```
+
+按条件挂载的 skill（触发条件见上表，不改变主干顺序）：
+
+```
+[execute] ── 执行期间 ──────────→ [monitor]
+[execute] ── 完成后 ────────────→ [test]
+[execute] ── 失败 / 告警 / 用户要求 ─→ [rollback]
+[review]  ── 通过后 ────────────→ [deploy]
+[review]  ── 评审后 ────────────→ [learn]
+任意阶段  ── annotations.escalate_to_council ─→ [council]
 ```
 
 ## 何时升级

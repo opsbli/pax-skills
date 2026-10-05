@@ -1,8 +1,8 @@
 ---
 name: pax-evolve
 description: >
-    Use when: OODA 闭环 + 经验条目库 + A/B 验证门 + 回滚。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。
-version: 0.2.0
+    Use when: OODA 闭环 + 经验条目库 + A/B 验证门 + 回滚。当前未接线：家族内无任何 skill 调用本 skill，description 不再声称由 pax-orchestrate 编排调用；如需启用，先在调用方显式登记触发条件。
+version: 1.0.0
 family: pax
 layer: L4
 optional: true

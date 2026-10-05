@@ -1,8 +1,8 @@
 ---
 name: pax-worker-implement
 description: >
-    Use when: 有界实现任务执行。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。L3 层工具适配，接口由上层定义。
-version: 0.2.0
+    Use when: 有界实现任务执行。当前未接线：家族内无任何 skill 调用本 skill（与 pax-execute 职责重叠，待二选一后接线），description 不再声称由 pax-orchestrate 编排调用。L3 层工具适配，接口由上层定义。
+version: 1.0.0
 family: pax
 layer: L3
 optional: true

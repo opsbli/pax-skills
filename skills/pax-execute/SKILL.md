@@ -2,7 +2,7 @@
 name: pax-execute
 description: >
     Use when: 在契约约束下执行，带审计和回滚。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。
-version: 0.2.0
+version: 1.0.0
 family: pax
 layer: L1
 optional: false
@@ -65,6 +65,17 @@ def check_gate(snapshot):
     if snapshot.plan.frozen_at is None:
         return False, "计划未冻结"
     
+    # fix 模式必须基于已收敛的根因（与 E2 的模式判定同一条件）
+    if snapshot.orchestration.intent.primary == "diagnose_fix":
+        diagnosis = snapshot.diagnosis
+        if diagnosis is None:
+            return False, "fix 模式缺少 diagnosis 阶段产物"
+        if diagnosis.status != "settled":
+            return False, f"诊断状态为 {diagnosis.status}，fix 模式需要 settled"
+        if not getattr(diagnosis, "root_cause", None) \
+                or not diagnosis.root_cause.statement:
+            return False, "fix 模式缺少已确认的 root_cause"
+    
     return True, "门禁通过"
 ```
 
@@ -90,6 +101,7 @@ def execute_steps(plan):
     
     log = []
     changes = []
+    commits = []
     deviations = []
     
     for step in sorted(plan.steps, key=lambda s: topological_sort(s, plan.dependencies)):
@@ -126,6 +138,10 @@ def execute_steps(plan):
         if result.changes:
             changes.extend(result.changes)
         
+        # 记录提交（供回滚阶段逆序回退）
+        if getattr(result, "commits", None):
+            commits.extend(result.commits)
+        
         # 检测偏差
         if result.deviations:
             deviations.extend(result.deviations)
@@ -135,6 +151,7 @@ def execute_steps(plan):
     return True, {
         "log": log,
         "changes": changes,
+        "commits": commits,
         "deviations": deviations
     }
 ```
@@ -202,6 +219,16 @@ changes:
     lines_added: <行数>
     lines_deleted: <行数>
     diff_hash: "<diff 哈希>"
+    timestamp: "<ISO8601>"
+```
+
+提交记录（供回滚阶段逆序回退）：
+
+```yaml
+commits:
+  - sha: "<commit sha>"
+    step: S1
+    message: "<提交信息>"
     timestamp: "<ISO8601>"
 ```
 
@@ -325,7 +352,9 @@ def check_completion(execution, plan):
 ```
 
 ## 输出契约
-- `snapshot.execution`，格式由 `schemas/snapshot.schema.json` 约束
+- `snapshot.execution`（`id` / `mode` / `status` / `completed_at` / `log` / `deviations` / `changes` / `commits`），格式由 `schemas/snapshot.schema.json` 约束
+- `snapshot.execution.status` 是评审阶段与部署阶段的前置门禁字段（需 `completed`）
+- `snapshot.execution.commits` 供回滚阶段逆序回退
 
 ## 失败模式
 - 契约未确认 → 返回上游阶段

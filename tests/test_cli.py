@@ -21,9 +21,11 @@ def test_cli_empty_command_exits_nonzero():
 
 
 def test_cli_version_flag():
+    import re
     result = run_cli("--version")
     assert result.returncode == 0
-    assert "pax-forge 0.1.0" in result.stdout
+    # 只校验形式，不写死工具包版本字面量（那是独立发版的维度）
+    assert re.search(r"pax-forge \d+\.\d+\.\d+", result.stdout)
 
 
 def test_cli_init_creates_skeleton(tmp_path):

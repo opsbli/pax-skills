@@ -2,7 +2,7 @@
 name: pax-council
 description: >
     Use when: 对重大系统开发计划做盲审、显式反驳、有界修订轮次、证据加权决策。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。
-version: 0.2.0
+version: 1.0.0
 family: pax
 layer: L2
 optional: true

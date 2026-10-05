@@ -2,7 +2,7 @@
 name: pax-verify
 description: >
     Use when: 运行中验证，有界循环 + 五态印章。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。
-version: 0.2.0
+version: 1.0.0
 family: pax
 layer: L4
 optional: true
@@ -171,9 +171,9 @@ evidence:
 | `blocked` | 证据不足或依赖不可用 | 无法执行验证 |
 | `escalated` | 超出验证权限 | 需要人工介入 |
 
-**印章结构**：
+**印章结构**（作为一条 seal **追加**到 `snapshot.quality.verification_seals` 数组末位）：
 ```yaml
-verify_stamp:
+seal:  # 追加到 snapshot.quality.verification_seals
   result: pass | fail | partial | blocked | escalated
   confidence: high | medium | low
   attempts: <验证次数>
@@ -252,7 +252,7 @@ def handle_failure(result):
 ```
 
 ## 输出契约
-- 五态印章（含证据与置信度），格式由 `schemas/snapshot.schema.json` 约束
+- `snapshot.quality.verification_seals`：追加一条五态印章（含证据与置信度），格式由 `schemas/snapshot.schema.json` 约束
 
 ## 失败模式
 - 验证标准缺失 → 返回 `blocked`

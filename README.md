@@ -14,7 +14,7 @@
 
 | 层 | Skill | 可选 | 职责 |
 |---|---|---|---|
-| meta | `pax-forge` | 否 | 生成、校验、注册 |
+| meta | `pax-forge` | 否 | 生成、校验、注册（**是 CLI，不是可注册 skill**，不参与编排） |
 | L0 | `pax-orchestrate` | 否 | 路由、风险分级 |
 | L1 | `pax-clarify` | 否 | 共识状态机 |
 | L1 | `pax-diagnose` | 是 | 根因诊断 |
@@ -67,20 +67,30 @@ pax-forge list
 
 ## 路由评估
 
-pax-orchestrate 路由评估结果（2026-09-30）：
+**当前有效结论以 `evals/README.md` 为准**：那里有完整方法、门槛性质说明与可信度边界。
+本节只给入口，不复制任何未经归档校对的数字。
 
-| 指标 | 结果 | 目标 |
-|------|------|------|
-| Exact match | 81.1% | ≥80% |
-| Top-1 accuracy | 97.2% | ≥85% |
-| No-Skill rejection | 100% | ≥90% |
-| False activation | 0% | ≤10% |
+| 层 | 测什么 | 基线（含归档日期） |
+|---|---|---|
+| 外部路由 | 模型面对用户请求时选不选 `pax-orchestrate` | 基线 100%；对照组（剥离 description 禁令）71.1%；28.9pp 差距已归档为「设计代价」（2026-10-03） |
+| 内部路由 | `pax-orchestrate` 内部四步决策（意图 / 风险 / 诊断必要性 / 路由） | 44 题 × 5 repeats，能力分 90.8%，GATE PASS（2026-10-05） |
+| pax-diagnose | 严重度分级 / 复现状态 / 存储后端确认 | 25 场景 × 5 repeats，能力分 99.2%，GATE PASS（2026-10-05） |
 
-评估数据集：`evals/datasets/pax_routing_v1.0.jsonl`（30 案例）
-评估套件：`tools/skillEval/evals/suites/pax_routing.yaml`
+评估数据集：`evals/datasets/`（外部 30 案例；内部 44 案例，dataset version 1.7）
+评估套件：`evals/suites/pax_routing.yaml`（依赖的 skillEval 克隆在本仓库**同级目录**，不在 `tools/`）
+运行方式：见 `evals/README.md` 第 2、3 节
 
-内部路由测试：`tests/test_orchestrate_routing.py`（5 个测试）
-真实场景试跑：`evals/records/real_scenario_trial.md`
+⚠️ 两处极易误读，务必注意：
+
+- `tests/test_orchestrate_routing.py` 的 5 个 pytest **不是**能力评估：里面是手写关键词桩，
+  从未读过 `SKILL.md`，仅作为「意图 → 路由映射」的回归基线。
+- `evals/records/real_scenario_trial.md` **没有调用过模型**，其「测试结果」与人工预期完全相同，
+  只能当作「这些场景应该输出什么」的人工基准，**不可引用为验证结论**。
+
+> 历史：本文件曾记录 2026-09-30 的 81.1% / 97.2% / 100% / 0% 一组数字。
+> `evals/README.md` 已确认其**无法复现**并删除（当时 catalog 只含 1 个 skill、数据集实际 19 条而非 30 条、
+> 且无任何运行归档），详细原因见该文件第 1 节「修正说明（历史）」。
+> 本节自此不再复制未存档的数字——要引用指标，请引 `evals/README.md` 的对应小节。
 
 ## 贡献
 
@@ -88,4 +98,10 @@ pax-orchestrate 路由评估结果（2026-09-30）：
 
 ## 版本
 
-家族版本见 `pax-ops/versions.json`（当前 v0.2.0）。
+本项目有**两个独立版本维度**，不要互相推导：
+
+| 维度 | 权威源 | 含义 |
+|---|---|---|
+| 家族版本 | `pax-ops/versions.json` 的 `version`（当前 `1.0.0`） | 19 个 skill 的整体版本，也是各 skill frontmatter `version` 的来源 |
+| 工具包版本 | `pyproject.toml` / `src/pax/__init__.py`（`pax-forge --version`） | `pax-forge` CLI 自身的版本，独立发版 |
+| 快照格式版本 | `schemas/snapshot.schema.json` 的 `meta.version`（当前 `2.0`） | 快照结构版本；改必填字段即 bump |

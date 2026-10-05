@@ -306,9 +306,9 @@ def test_contract_gate_behavior_passes_with_precondition(tmp_path):
     assert check_gate_behavior(tmp_path) == []
 
 
-# ----- 汇总：7 个契约全部注册 -----
+# ----- 汇总：契约注册集合 -----
 
-def test_all_seven_contracts_registered():
+def test_all_contracts_registered():
     from pax.forge.contracts import list_contracts
     # 强制 import contracts 以注册
     import pax.forge.contracts  # noqa
@@ -316,10 +316,110 @@ def test_all_seven_contracts_registered():
     expected = {
         "frontmatter-completeness",
         "snapshot-schema-validity",
+        "snapshot-field-conformance",
         "layer-call-legality",
+        "layer-membership",
+        "compatibility-matrix-consistency",
         "version-consistency",
         "no-cycles",
         "skip-audit",
         "gate-behavior",
+        "declared-checks-coverage",
     }
-    assert expected.issubset(names)
+    assert names == expected
+
+
+def test_declared_checks_match_family_schema():
+    """schema.contracts.declared_checks 必须与实现一致（双向）。"""
+    from pax.forge import loader
+    from pax.forge.contracts import list_contracts
+    import pax.forge.contracts  # noqa
+    declared = set(loader.load_family_schema()["contracts"]["declared_checks"])
+    implemented = set(list_contracts()) - {"declared-checks-coverage"}
+    assert declared == implemented
+
+
+# ----- 新增契约的负向用例：确实能抓到漂移 -----
+
+def _fake_family(tmp_path):
+    """构造一个被当作 family root 的临时家族（含 schema + versions + registry）。"""
+    import json
+    import shutil
+    from pax.forge import loader
+    (tmp_path / "schemas").mkdir(parents=True, exist_ok=True)
+    shutil.copy(loader.FAMILY_SCHEMA_PATH,
+                tmp_path / "schemas" / "pax-family.schema.yaml")
+    shutil.copy(loader.SNAPSHOT_SCHEMA_PATH,
+                tmp_path / "schemas" / "snapshot.schema.json")
+    (tmp_path / "pax-ops").mkdir(exist_ok=True)
+    (tmp_path / "pax-ops" / "versions.json").write_text(
+        json.dumps({"family": "pax", "version": "1.0.0", "skills": {}}),
+        encoding="utf-8",
+    )
+    (tmp_path / "pax-ops" / "registry.json").write_text(
+        json.dumps({"family": "pax", "updated_at": "x", "skills": [
+            {"name": "pax-ghost", "layer": "L1", "optional": False,
+             "version": "1.0.0", "path": "skills/pax-ghost/SKILL.md",
+             "registered_at": "x"}
+        ]}),
+        encoding="utf-8",
+    )
+    d = tmp_path / "skills" / "pax-ghost"
+    d.mkdir(parents=True, exist_ok=True)
+    (d / "SKILL.md").write_text(
+        "---\nname: pax-ghost\ndescription: >\n  x\nversion: 1.0.0\n"
+        "family: pax\nlayer: L1\noptional: false\nrequires_snapshot: true\n---\n\n"
+        "# pax-ghost\n\n"
+        "写入 `snapshot.bogus_section` 与 `snapshot.execution.nope`\n\n"
+        "## Execution Contract\n- 前置门禁：x\n## 职责边界\n- x\n## 输入\n- x\n"
+        "## 工作流\n1. x\n## 输出契约\n- x\n## 失败模式\n- x\n## 何时升级\n- x\n",
+        encoding="utf-8",
+    )
+
+
+def test_snapshot_field_conformance_catches_unknown_section(tmp_path):
+    from pax.forge.contracts import check_snapshot_field_conformance
+    _fake_family(tmp_path)
+    v = check_snapshot_field_conformance(tmp_path)
+    assert any("bogus_section" in x for x in v)
+
+
+def test_snapshot_field_conformance_catches_unknown_subfield(tmp_path):
+    from pax.forge.contracts import check_snapshot_field_conformance
+    _fake_family(tmp_path)
+    v = check_snapshot_field_conformance(tmp_path)
+    assert any("execution.nope" in x for x in v)
+
+
+def test_layer_membership_catches_undeclared_skill(tmp_path):
+    from pax.forge.contracts import check_layer_membership
+    _fake_family(tmp_path)
+    v = check_layer_membership(tmp_path)
+    assert any("pax-ghost" in x for x in v)
+
+
+def test_compatibility_matrix_consistency_catches_unknown_layer(tmp_path):
+    import json
+    from pax.forge.contracts import check_compatibility_matrix_consistency
+    _fake_family(tmp_path)
+    reg = json.loads((tmp_path / "pax-ops" / "registry.json").read_text(encoding="utf-8"))
+    reg["skills"] = []
+    (tmp_path / "pax-ops" / "registry.json").write_text(
+        json.dumps(reg), encoding="utf-8")
+    (tmp_path / "pax-ops" / "versions.json").write_text(
+        json.dumps({"family": "pax", "version": "1.0.0", "skills": {},
+                    "compatibility_matrix": {"L9": ["L1"]}}),
+        encoding="utf-8",
+    )
+    v = check_compatibility_matrix_consistency(tmp_path)
+    assert any("L9" in x for x in v)
+
+
+def test_allowed_calls_reads_versions_matrix():
+    """_allowed_calls 必须从 versions.json 读，而不是代码里硬编码。"""
+    from pax.forge import loader
+    from pax.forge.contracts import _allowed_calls
+    matrix = loader.load_versions()["compatibility_matrix"]
+    expected = {(src, tgt) for src, targets in matrix.items()
+                if not src.startswith("_") for tgt in targets}
+    assert _allowed_calls() == expected

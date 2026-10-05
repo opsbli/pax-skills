@@ -2,7 +2,7 @@
 name: pax-worker-research
 description: >
     Use when: 有界研究任务执行。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。L3 层工具适配，接口由上层定义。
-version: 0.2.0
+version: 1.0.0
 family: pax
 layer: L3
 optional: true

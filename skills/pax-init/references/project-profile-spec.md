@@ -23,7 +23,7 @@
 | 字段 | 类型 | 必填 | 说明 | 主要消费方 |
 |---|---|---|---|---|
 | `profile_version` | string | ✅ | 本规格的版本，当前 `"1.0"` | 全部 |
-| `generated_by` | string | ✅ | 形如 `pax-init@0.2.0` | 审计 |
+| `generated_by` | string | ✅ | 形如 `pax-init@1.0.0` | 审计 |
 | `generated_at` | string | ✅ | ISO 8601 时间戳 | 审计 |
 | `family` | object | ✅ | `{name: "pax", version: "<家族版本>"}`，家族版本取自 `pax-ops/versions.json` | 全部 |
 | `mode` | string | ✅ | `single_project` / `multi_project` | 全部 |

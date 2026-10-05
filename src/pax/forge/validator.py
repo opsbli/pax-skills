@@ -37,12 +37,22 @@ def _split_frontmatter(text: str) -> tuple[dict | None, str]:
     return fm, parts[2]
 
 
-def validate_skill(skill_dir: Path) -> ValidationReport:
+def _family_root_for(skill_dir: Path) -> Path | None:
+    """A skill at ``<root>/skills/<name>`` belongs to family root ``<root>``."""
+    if skill_dir.parent.name == "skills":
+        return loader.resolve_family_root(skill_dir.parent.parent)
+    return None
+
+
+def validate_skill(skill_dir: Path,
+                   family_root: Path | None = None) -> ValidationReport:
     skill_md = skill_dir / "SKILL.md"
     if not skill_md.exists():
         return ValidationReport(skill_md, False, ["SKILL.md missing"])
+    if family_root is None:
+        family_root = _family_root_for(skill_dir)
     text = skill_md.read_text(encoding="utf-8")
-    family = loader.load_family_schema()
+    family = loader.load_family_schema(family_root=family_root)
     contracts = family["contracts"]
 
     fm, body = _split_frontmatter(text)
@@ -59,4 +69,21 @@ def validate_skill(skill_dir: Path) -> ValidationReport:
     for section in contracts["required_sections"]:
         if f"## {section}" not in body:
             report.add(f"missing required section: {section}")
+
+    # layer must name a layer declared in the family schema
+    known_layers = set(family.get("layers", {}).keys())
+    layer = fm.get("layer")
+    if layer is not None and layer not in known_layers:
+        report.add(
+            f"frontmatter.layer {layer!r} is not a declared layer "
+            f"(expected one of {sorted(known_layers)})"
+        )
+
+    # boolean-typed frontmatter fields must actually be booleans
+    for bool_key in ("optional", "requires_snapshot"):
+        if bool_key in fm and not isinstance(fm[bool_key], bool):
+            report.add(
+                f"frontmatter.{bool_key} must be a boolean, "
+                f"got {type(fm[bool_key]).__name__}"
+            )
     return report

@@ -1,13 +1,22 @@
 family: pax
 family_expansion: "Pact-based Agreement eXecution"
-version: 1.0
+version: 1.1
+
+# 运行时层级。每个值是该层 skill 去掉 `pax-` 前缀后的名字；
+# `"worker-*"` 为前缀通配。新增 skill 必须同时登记在此处、registry.json 与 versions.json，
+# 否则 layer-membership 契约会失败。
 layers:
   meta: [forge]
   L0: [orchestrate]
-  L1: [clarify, diagnose, plan, execute, review]
+  L1: [clarify, diagnose, plan, execute, review, monitor, rollback, test, deploy, learn]
   L2: [advisor, council]
   L3: ["worker-*"]
-  L4: [verify, evolve, docs]
+  L4: [verify, evolve, docs, init]
+
+# 不参与注册与编排的层。这些层不做「成员必须存在为 skill」的校验：
+# meta 只承载工具层身份（pax-forge 是 src/pax/forge/ 下的 CLI，不是可注册 skill）。
+non_runtime_layers: [meta]
+
 contracts:
   naming: "^pax-[a-z][a-z0-9-]*$"
   required_frontmatter:
@@ -17,6 +26,7 @@ contracts:
     - family
     - layer
     - requires_snapshot
+    - optional
   required_sections:
     - Execution Contract
     - 职责边界
@@ -25,5 +35,19 @@ contracts:
     - 输出契约
     - 失败模式
     - 何时升级
+  # 由 pax-forge test / contracts.py 实际执行的强制检查。
+  # 此清单必须与 contracts.py 里 @register_contract 的名字集合一致。
+  declared_checks:
+    - frontmatter-completeness
+    - snapshot-schema-validity
+    - snapshot-field-conformance
+    - layer-call-legality
+    - layer-membership
+    - version-consistency
+    - compatibility-matrix-consistency
+    - no-cycles
+    - skip-audit
+    - gate-behavior
   snapshot_schema: "./schemas/snapshot.schema.json"
   version_source: "./pax-ops/versions.json"
+  compatibility_matrix_source: "./pax-ops/versions.json#compatibility_matrix"

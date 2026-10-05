@@ -2,7 +2,7 @@
 name: pax-docs
 description: >
     Use when: 把已确认硬决策沉淀为 CONTEXT.md 与 ADR。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。
-version: 0.2.0
+version: 1.0.0
 family: pax
 layer: L4
 optional: true

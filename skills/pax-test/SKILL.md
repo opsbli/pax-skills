@@ -2,7 +2,7 @@
 name: pax-test
 description: >
     Use when: 自动化测试生成。此 skill 由 pax-orchestrate 在编排路由中调用，用于自动生成测试用例并执行测试。
-version: 0.2.0
+version: 1.0.0
 family: pax
 layer: L1
 optional: true

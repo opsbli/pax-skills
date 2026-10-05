@@ -600,15 +600,16 @@ pax-init（直接调用，不经过编排路由）
 ## 运行示例
 
 ```bash
-# 查看可用场景
-ls opx-test/scenarios/
+# 家族契约体检
+pax-forge test
 
-# 运行 CMDB 数据订正场景
-python opx-test/scenarios/cmdb-fix/run.py
+# 内部路由数据集结构校验（不调 API）
+python scripts/validate_internal_routing.py
 
-# 运行 feature_dev + pax-test 场景
-python opx-test/scenarios/feature-dev-test/run.py
+# 能力评估（真实调用模型，产生费用）——完整说明见 evals/README.md
+PYTHONUTF8=1 python evals/run_internal_routing_eval.py --dry-run
+PYTHONUTF8=1 python evals/run_internal_routing_eval.py --repeats 5
 
-# 查看快照文件
-ls opx-test/snapshots/
+# 已归档的评估产物
+ls evals/results/
 ```

@@ -2,7 +2,7 @@
 name: pax-clarify
 description: >
     Use when: 当用户目标模糊、需求不完整、或存在多种可能的理解时，需要澄清需求并收敛共识。包括功能开发、数据操作、工具构建等需要明确范围的场景。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。
-version: 0.2.0
+version: 1.0.0
 family: pax
 layer: L1
 optional: false
