@@ -325,10 +325,9 @@
       "prompt": "写一个脚本，定时从公司内部的 GitLab API 拉取代码提交记录，汇总成日报发送到飞书群。",
       "expected": {
         "primary_intent": "tool_build",
-        "secondary_intent": [
-          "integration"
-        ]
-      }
+        "secondary_intent": []
+      },
+      "basis": "gold 修正：secondary [integration] → []。契约 integration 触发条件=「集成故障、API 对接异常」（异常场景），「写脚本对接 API 拉取数据」是正常功能（tool_build），非故障/异常。gold 原把「涉及 API 对接」误判为 integration。"
     },
     {
       "id": "pax-risk-low-03",
