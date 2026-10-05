@@ -5,6 +5,7 @@ on:
     branches: [main, feat/**]
     paths:
       - 'skills/**'
+      - 'scripts/**'
       - 'src/**'
       - 'tests/**'
       - 'pax-ops/**'
@@ -17,6 +18,7 @@ on:
     branches: [main]
     paths:
       - 'skills/**'
+      - 'scripts/**'
       - 'src/**'
       - 'tests/**'
       - 'pax-ops/**'
@@ -194,34 +196,8 @@ jobs:
       - name: Validate internal routing test cases
         run: |
           echo "=== Validating internal routing test cases ==="
-          python -c "
-          import json
-          from pathlib import Path
-          
-          data = json.loads(Path('evals/datasets/pax_internal_routing_v1.0.json').read_text())
-          categories = data['categories']
-          
-          total = 0
-          for cat_name, cat_data in categories.items():
-              cases = cat_data['cases']
-              total += len(cases)
-              print(f'  {cat_name}: {len(cases)} cases')
-              
-              for case in cases:
-                  # Validate required fields
-                  if 'id' not in case:
-                      print(f'    ERROR: {cat_name} missing id in case')
-                      exit(1)
-                  if 'input' not in case:
-                      print(f'    ERROR: {case[\"id\"]} missing input')
-                      exit(1)
-                  if 'expected_primary' not in case and cat_name == 'intent_classification':
-                      print(f'    ERROR: {case[\"id\"]} missing expected_primary')
-                      exit(1)
-              
-          print(f'  Total: {total} cases')
-          print('=== All test cases valid ===')
-          "
+          python scripts/validate_internal_routing.py
+          echo "=== All test cases valid ==="
 
   # ============================================================
   # 4. Skill 质量门禁
