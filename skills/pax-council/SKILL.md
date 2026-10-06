@@ -52,7 +52,7 @@ requires_snapshot: true
 - 诊断类任务 `severity: P0`
 - 根因涉及架构级问题
 - 疑似安全漏洞
-- 评审阶段标记 `escalated`
+- 评审阶段标记 `needs_review`
 - 澄清阶段无法收敛
 
 ## 工作流

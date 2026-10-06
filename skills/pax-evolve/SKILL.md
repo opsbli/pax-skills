@@ -59,9 +59,19 @@ status: skeleton
 
 ## 何时升级
 
-- 高风险变更 → 升级 `pax-council`
-- 需要独立评审 → `pax-review`
+- 高风险变更 → 升级到多层盲审阶段
+- 需要独立评审 → 转独立评审阶段
 
-## 正文
+## Execution Contract
 
-完整工作流（E1–E6）见 `references/full-body.md`。
+- 前置门禁：**无**——本 skill 为 `status: skeleton`，未接线，不参与运行时路由，因此没有门禁。
+- 未通过门禁：不适用。
+- 启用前 MUST 先恢复正文（`references/full-body.md`）并把 frontmatter 的 `status` 改为 `active`。
+
+## 工作流
+
+骨架状态下不执行工作流。完整工作流（E1–E6）见 `references/full-body.md`。
+
+## 输出契约
+
+骨架状态下不产出任何产物。完整的输出契约见 `references/full-body.md`。

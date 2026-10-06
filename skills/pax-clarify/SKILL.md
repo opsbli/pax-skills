@@ -64,7 +64,7 @@ requires_snapshot: true
 | `constraints` | `snapshot.contract.constraints` | 全部 |
 | `authorization` | `snapshot.contract.authorization` | 全部 |
 | `exceptions` | `snapshot.contract.exceptions` | feature_dev / refactor / data_ops / diagnose_fix |
-| `terminology` | `snapshot.goal.terminology` | feature_dev / refactor |
+| `terminology` | `consensus.dimensions.terminology` | feature_dev / refactor |
 
 诊断/数据类设计树中的 `symptom.*` 与 `infrastructure.storage_backend` 节点**不**属于上述 6 个澄清维度——
 它们写入 `snapshot.symptom` / `snapshot.infrastructure`（由 `pax-diagnose` 或 `pax-worker-*` 消费），
@@ -169,7 +169,7 @@ design_tree:
     children: [D6]
     
   - id: D6
-    question: "当前状态和边界条件是什么？——对应 snapshot.goal.terminology"
+    question: "当前状态和边界条件是什么？（术语定义与边界）"
     status: frontier
     dimension: terminology
     depends_on: [D5]

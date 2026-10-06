@@ -291,7 +291,7 @@ execution:
   commits: [...]                          # 供回滚阶段逆序回退
 
 review:
-  verdict: pass | fail | partial | blocked | escalated
+  verdict: verified | needs_fix | partial | blocked | needs_review
   stamp: "<引用 quality.verification_seals 中某条 seal 的标识>"
   rationale: "..."
   findings: [...]
@@ -744,7 +744,7 @@ execution:
 
 ```yaml
 review:
-  verdict: pass | fail | partial | blocked | escalated
+  verdict: verified | needs_fix | partial | blocked | needs_review
   stamp: "<唯一标识>"
   rationale: "..."
   findings: [...]
@@ -752,9 +752,9 @@ review:
 
 **门禁**：
 
-- `verdict: pass` 才能进入 `pax-docs`
-- `verdict: fail` 返回 `pax-execute`
-- `verdict: escalated` 升级 `pax-council`
+- `verdict: verified` 才能进入 `pax-docs`
+- `verdict: needs_fix` 返回 `pax-execute`
+- `verdict: needs_review` 升级 `pax-council`
 
 ### 6.7 `pax-advisor`（L2）
 

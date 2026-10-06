@@ -35,10 +35,10 @@ requires_snapshot: true
 - 前置门禁：`snapshot.execution` 已产出，`plan.verification_strategy[]` 存在
 - 未通过门禁：拒绝启动，返回执行阶段补齐日志
 - 版本检查：`pax-ops/versions.json`
-- 门禁：`verdict: pass` 才能进入文档沉淀阶段
-- 门禁：`verdict: fail` 返回执行阶段
-- 门禁：`verdict: escalated` 升级 `pax-council`
-- 禁止在缺乏 `pax-verify` 印章时给出 `verdict: pass`
+- 门禁：`verdict: verified` 才能进入文档沉淀阶段
+- 门禁：`verdict: needs_fix` 返回执行阶段
+- 门禁：`verdict: needs_review` 升级 `pax-council`
+- 禁止在缺乏 `pax-verify` 印章时给出 `verdict: verified`
 
 ## 职责边界
 - 做什么：独立评审门禁，对照成功标准决定通过/拒绝
@@ -168,7 +168,7 @@ def check_stamp(snapshot):
     
     seal = seals[-1]
     if seal.result not in ("verified", "partial"):
-        return False, f"印章结果为 {seal.result}，需要 pass 或 partial"
+        return False, f"印章结果为 {seal.result}，需要 verified 或 partial"
     
     # 检查印章证据
     if not seal.evidence:
@@ -237,7 +237,7 @@ def determine_verdict(verification_results, deviations, stamp):
 
 | 严重度 | 条件 | 处理 |
 |--------|------|------|
-| `blocker` | 阻塞发布 | 必须修复，`verdict: fail` |
+| `blocker` | 阻塞发布 | 必须修复，`verdict: needs_fix` |
 | `major` | 影响功能 | 建议修复，可 `partial` |
 | `minor` | 不影响功能 | 记录待办 |
 | `info` | 信息性 | 仅记录 |
@@ -245,7 +245,7 @@ def determine_verdict(verification_results, deviations, stamp):
 **输出格式**：
 ```yaml
 review:
-  verdict: pass | fail | partial | blocked | escalated
+  verdict: verified | needs_fix | partial | blocked | needs_review
   stamp: "<唯一标识>"
   rationale: "<判定理由>"
   findings:
@@ -290,11 +290,11 @@ review:
 
 ## 失败模式
 - `pax-verify` 印章缺失 → `verdict: blocked`
-- 与契约偏差未处理 → `verdict: fail`
-- 超出评审权限 → `verdict: escalated`
+- 与契约偏差未处理 → `verdict: needs_fix`
+- 超出评审权限 → `verdict: needs_review`
 
 ## 何时升级
-- `verdict: pass` → 进入文档沉淀阶段
-- `verdict: fail` → 返回执行阶段
-- `verdict: escalated` → `pax-council`
+- `verdict: verified` → 进入文档沉淀阶段
+- `verdict: needs_fix` → 返回执行阶段
+- `verdict: needs_review` → `pax-council`
 - 需要独立验证 → `pax-verify`

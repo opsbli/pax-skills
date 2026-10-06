@@ -32,7 +32,7 @@ requires_snapshot: true
 - [ ] 知识图谱条目去重
 - [ ] 沉淀结果与文档沉淀索引一致
 ## Execution Contract
-- 前置门禁：`snapshot.review.verdict in (pass, partial)`
+- 前置门禁：`snapshot.review.verdict in (verified, partial)`
 - 未通过门禁：拒绝启动，返回评审阶段
 - 版本检查：`pax-ops/versions.json`
 - skip_reason：当风险等级为 low 且任务类型为 doc_consult 时可跳过

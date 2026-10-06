@@ -61,6 +61,16 @@ status: skeleton
 - 高风险或跨系统决策 → 转多层盲审机制处理
 - 需要独立验证 → `pax-verify`
 
-## 正文
+## Execution Contract
 
-完整工作流（A1–A6）见 `references/full-body.md`。
+- 前置门禁：**无**——本 skill 为 `status: skeleton`，未接线，不参与运行时路由，因此没有门禁。
+- 未通过门禁：不适用。
+- 启用前 MUST 先恢复正文（`references/full-body.md`）并把 frontmatter 的 `status` 改为 `active`。
+
+## 工作流
+
+骨架状态下不执行工作流。完整工作流（A1–A6）见 `references/full-body.md`。
+
+## 输出契约
+
+骨架状态下不产出任何产物。完整的输出契约见 `references/full-body.md`。
