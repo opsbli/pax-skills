@@ -2,7 +2,7 @@
 name: pax-init
 description: >
     Use when: 把一个新项目或既有项目接入 pax-family 开发流程。L4 层内部工具，由用户直接调用，不认领编排路由落点：扫描项目目录检测技术栈（Java/Maven、RuoYi、TS/Vite/Vue、Go、Python 等），发现项目既有规范文档，生成 AGENTS.md（AI 协作编码规范）与 .pax/project-profile.json（机器可读项目元数据），并创建 .pax/ 产物目录。检测到代码生成器时严格提取其租户字段 / 审计字段 / 逻辑删除字段规范。已有 AGENTS.md 时必须先请用户确认覆盖 / 合并 / 跳过。
-version: 1.0.0
+version: 1.0.1
 family: pax
 layer: L4
 optional: true

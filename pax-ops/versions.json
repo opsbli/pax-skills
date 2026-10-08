@@ -20,7 +20,7 @@
     "pax-test":             {"layer": "L1", "optional": true,  "version": "1.0.0", "status": "active"},
     "pax-deploy":           {"layer": "L1", "optional": true,  "version": "1.0.0", "status": "active"},
     "pax-learn":            {"layer": "L1", "optional": true,  "version": "1.0.0", "status": "active"},
-    "pax-init":             {"layer": "L4", "optional": true,  "version": "1.0.0", "status": "active"}
+    "pax-init":             {"layer": "L4", "optional": true,  "version": "1.0.1", "status": "active"}
   },
   "compatibility_matrix": {
     "_comment": "层间允许的调用方向。这是 family 的权威边集：contracts.py 的 _allowed_calls() 由此读取，contracts 里的 layer-call-legality 据此判定。要与 schemas/pax-family.schema.yaml 的 layers 保持一致。",

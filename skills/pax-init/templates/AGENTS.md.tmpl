@@ -17,7 +17,7 @@
 > 本节是 pax-family 的入口守门规则。没有这一节，AI 容易绕过编排入口直接执行，导致风险分级缺失、产物散落。
 
 - **对任何用户请求，MUST 先经过 pax-family 的 L0 编排入口做意图分类与风险分级，NEVER 直接执行。**
-- 编排入口位置：`{{pax_orchestrate_path}}/SKILL.md`
+- 编排入口：`pax-orchestrate`（Proma skills 索引加载，无需本地文件路径）
 - 编排入口产出任务快照后，按快照的路由建议调度对应阶段；NEVER 跳过编排入口直接调用 L1 阶段。
 - 下游阶段检测到快照缺失时，MUST 引导用户先走编排入口；NEVER 在无快照的情况下按空上下文静默执行。
 - **高风险动作（部署 / 数据订正 / 破坏性命令）MUST 先取得用户显式 approval / confirm**，NEVER 自行下发。
