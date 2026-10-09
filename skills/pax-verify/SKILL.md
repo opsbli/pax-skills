@@ -137,6 +137,24 @@ def bounded_loop_verify(subject, criteria, max_attempts=3):
 | `manual_review` | 代码审查 | 人工检查 | ❌ |
 | `performance_test` | 性能验证 | 压测工具 | ✅ |
 
+### V4.1 断言有效性检查（Assertion Validity Check）
+
+对 `test_execution` 类验证对象，除"测试是否通过"外，还需检查断言的**观察深度**——只检查 HTTP 200 或 `success: true` 的断言视为无效，不产生 `verified` 印章。
+
+| 断言深度 | 示例 | 印章允许值 |
+|---|---|---|
+| D0 调用型 | 仅调用函数，无断言 | 仅 `partial`，`confidence: low` |
+| D1 结果型 | 仅断言返回值 / HTTP status | `partial`，`confidence: low` |
+| D2 业务字段型 | 断言关键业务字段（金额、状态、计数） | `verified` 或 `partial` |
+| D3 副作用型 | 断言 DB 写入 / 缓存 / 日志 / 消息 / 下游接口 | `verified` |
+
+**规则**：
+- 单条验证若最高只到 D1，印章上限为 `partial`；
+- 全部验证均为 D0/D1 时，禁止给出 `verified`；
+- 印章结构里追加 `assertion_depth` 字段，记录本次验证达到的最高断言深度。
+
+> 本检查关心“证据本身能否被采信”；测试有效性的 PIE 三问关心“测试能否发现缺陷”，两者互补而非重复。
+
 ### V5 证据收集（Evidence Collection）
 
 每条验证结果必须收集证据：

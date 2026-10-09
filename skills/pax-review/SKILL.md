@@ -126,6 +126,57 @@ def verify_items(plan, execution):
 | `integration_test` | 集成测试结果 | 测试报告 |
 | `manual_check` | 手动检查 | 检查记录 |
 
+### R2.5 PIE 完整性检查（PIE Completeness Check）
+
+读取 `snapshot.tests.pie_check[]`，按下列规则判定 PIE 完整性，作为 `verdict` 计算前的独立门禁。
+
+```python
+def check_pie_completeness(snapshot):
+    """PIE 完整性检查，返回 (ok, reason, findings)"""
+
+    findings = []
+    pie_checks = snapshot.tests.pie_check if snapshot.tests else []
+
+    if not pie_checks:
+        return False, "缺少 PIE 自检结果", [
+            {"severity": "major", "description": "T1.5 未运行，无法评估测试有效性"}
+        ]
+
+    # 检查是否存在 execution=fail 的用例
+    exec_fails = [c for c in pie_checks if c.execution == "fail"]
+    if exec_fails:
+        findings.append({
+            "severity": "major",
+            "description": f"{len(exec_fails)} 条用例未覆盖目标路径",
+            "test_ids": [c.test_id for c in exec_fails],
+        })
+
+    # 检查是否存在 propagation=fail 的用例
+    prop_fails = [c for c in pie_checks if c.propagation == "fail"]
+    if prop_fails:
+        findings.append({
+            "severity": "major",
+            "description": f"{len(prop_fails)} 条用例断言不足以观察到错误",
+            "test_ids": [c.test_id for c in prop_fails],
+        })
+
+    # 检查 n/a 比例
+    na_ratio = sum(1 for c in pie_checks if c.execution == "n/a") / len(pie_checks)
+    if na_ratio > 0.5:
+        findings.append({
+            "severity": "minor",
+            "description": f"{na_ratio:.0%} 用例被标记为 n/a，超过 50% 上限，需说明理由"
+        })
+
+    has_major = any(f.severity == "major" for f in findings)
+    return (not has_major), None, findings
+```
+
+**门禁规则**：
+- 存在 `severity == "major"` 的 PIE 发现 → `verdict` 不得为 `verified`，最低为 `needs_fix`；
+- 只有 `severity == "minor"` 的发现 → `verdict` 可给 `partial`，但需在 `rationale` 里显式引用；
+- `pie_check[]` 缺失 → `verdict: blocked`，回到测试生成阶段补跑 T1.5。
+
 ### R3 偏差检查（Deviation Check）
 
 检查 `execution.deviations[]` 是否已处理：

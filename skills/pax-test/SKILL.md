@@ -31,6 +31,8 @@ requires_snapshot: true
 - [ ] 测试覆盖正向 / 反向 / 边界三类路径
 - [ ] 测试可在 CI 中稳定执行
 - [ ] 覆盖率与验收标准对齐
+- [ ] 每条测试用例通过 PIE 三问自检（T1.5），或显式声明 `pie_check.rationale` 说明为何允许部分为 `n/a`
+- [ ] 关键业务字段与副作用（DB / 缓存 / 日志 / 消息 / 下游接口）已纳入断言（对应 PIE 的 Propagation）
 ## Execution Contract
 - 前置门禁：`snapshot.plan.status == frozen` 且 `snapshot.plan.steps` 存在
 - 未通过门禁：拒绝启动，返回规划阶段
@@ -68,10 +70,43 @@ def generate_tests(snapshot):
     
     # 生成回归测试（诊断类任务）
     if snapshot.orchestration.diagnose_required:
-        regression_tests = generate_regression_tests(snapshot.diagnosis)
+        regression_tests = generate_regression_tests(
+            snapshot.diagnosis,
+            strategy=snapshot.diagnosis.root_cause.regression_scope_strategy,
+        )
         tests.extend(regression_tests)
     
     return tests
+```
+
+**按策略分档生成回归用例**（由 `diagnosis.root_cause.regression_scope_strategy` 驱动）：
+
+```python
+def generate_regression_tests(diagnosis, strategy):
+    """按策略分档生成回归用例。strategy 取自 diagnosis.root_cause.regression_scope_strategy。"""
+    scope_items = diagnosis.root_cause.regression_scope   # 数组结构保持不变
+
+    if strategy == "full":
+        # 全量：生成所有模块的回归用例，无过滤
+        return _generate_for_all_modules(scope_items)
+
+    if strategy == "selective":
+        # 选择性：只生成 must_test + should_test
+        return _generate_for_modules(
+            [m for m in scope_items if m.priority in ("must_test", "should_test")]
+        )
+
+    if strategy == "priority":
+        # 优先级：只生成 must_test，加最多 20% 的 should_test
+        must = [m for m in scope_items if m.priority == "must_test"]
+        should = [m for m in scope_items if m.priority == "should_test"]
+        sampled_should = should[: max(1, len(should) // 5)]
+        return _generate_for_modules(must + sampled_should)
+
+    # 未声明策略时回退为 priority 行为（宁可少测，不可多测无用功）
+    return _generate_for_modules(
+        [m for m in scope_items if m.priority == "must_test"]
+    )
 ```
 
 **步骤测试生成**：
@@ -111,6 +146,53 @@ def generate_tests_for_step(step):
     
     return tests
 ```
+
+### T1.5 PIE 自检（PIE Self-Check）
+
+每条测试用例在进入 T2 执行前，必须回答三问，并把结论写入 `snapshot.tests.pie_check[]`。
+
+| 问 | 关键判据 | `fail` 信号 |
+|---|---|---|
+| **E**（Execution）：是否执行到可能出错的代码路径？ | 覆盖目标分支、异常分支或修改点 | 覆盖率报告显示未触达修改 diff 中的路径 |
+| **I**（Infection）：输入是否会让错误状态在内部产生？ | 使用边界值 / 等价类外值 / 敏感输入组合 | 输入全是"正常值"，未包含边界、非法、极端值 |
+| **P**（Propagation）：断言是否能观察到错误？ | 检查关键业务字段 + 副作用（DB / 缓存 / 日志 / 消息 / 下游接口） | 只调用函数无断言；只检查 `success: true`；不查数据库写入 |
+
+```python
+def check_pie(test_case):
+    """对单条测试用例做 PIE 自检"""
+
+    # E：目标路径被执行
+    execution = "pass" if test_case.touched_target_path else "fail"
+
+    # I：输入能触发错误状态
+    infection = "pass" if has_sensitive_input(test_case.inputs) else "fail"
+
+    # P：断言能观察到错误
+    propagation = (
+        "pass"
+        if test_case.assertions
+        and checks_key_business_fields(test_case.assertions)
+        and checks_side_effects(test_case.assertions)
+        else "fail"
+    )
+
+    return {
+        "test_id": test_case.id,
+        "execution": execution,
+        "infection": infection,
+        "propagation": propagation,
+        "rationale": summarize_pie(test_case),
+    }
+```
+
+**跳过留痕**：用例若声明 `pie_check.rationale` 说明该用例是纯回归 smoke（只求"没崩"），可将 `execution / infection / propagation` 全部置 `n/a`；但同一 step 内 `n/a` 比例不得高于 50%。
+
+**门禁**：
+- 任何 `execution == fail` 的用例必须补测后才能进入 T2；
+- `propagation == fail` 的用例必须在 T2 前补断言；
+- `infection == fail` 的用例需在 T4 报告的 `recommendations` 中标注"用例敏感度不足"。
+
+**T4 报告追加**：`generate_test_report` 输出的 `report` 增加 `pie_summary` 段，统计本次执行中 `E / I / P` 三项的通过率，与覆盖率并列展示。
 
 ### T2 测试执行（Test Execution）
 

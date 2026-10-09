@@ -40,6 +40,7 @@ requires_snapshot: true
 - 环境事实不得询问用户，必须调度 `pax-worker-*` 自动获取
 - 每次提问必须对应设计树节点或共识维度缺口
 - 禁止在用户未确认契约草稿时标记 `contract.confirmed == true`
+- 需求文本必须先过 W0「需求坑识别」，`missing / ambiguous / conflicting` 三类坑全部记录到 `snapshot.consensus.requirements_gaps`；未处理不得进入 W1
 
 ## 职责边界
 - 做什么：共识状态机、设计树维护、缺口检测、契约草稿
@@ -70,6 +71,48 @@ requires_snapshot: true
 它们写入 `snapshot.symptom` / `snapshot.infrastructure`（由 `pax-diagnose` 或 `pax-worker-*` 消费），
 不更新 `consensus.dimensions`。这类节点的 `dimension:` 字段使用对应的完整路径（如 `symptom.description`），
 并在 `update_dimension` 前判断：若短键不在 6 个澄清键中，则走 `snapshot.<section>.<field>` 直写路径，不写入 `consensus.dimensions`。
+
+### W0 需求坑识别（Requirements Gap Detection）
+
+在设计树初始化之前，先诊断需求文本本身的三类坑。这一步只做**问题识别**，不做解决方案生成——解决方案留给 W1 的设计树。
+
+**识别目标**：把需求文本（`goal.statement` + 上游 PRD / 描述性上下文）扫描一遍，产出结构化清单：
+
+```yaml
+requirements_gaps:
+  - id: RG1
+    kind: missing | ambiguous | conflicting
+    excerpt: "<需求原文中的相关句子>"
+    location: "<段落或字段引用>"
+    evidence: "<为什么判定为该类坑，附原文佐证>"
+    suggested_question: "<要问用户的问题>"
+    suggested_owner: user | pm | tech_lead
+    status: open | resolved
+```
+
+**三类坑的判定标准**：
+
+| 类型 | 判定信号 | 典型问句 |
+|---|---|---|
+| `missing` | 需求只说"能做 X"，未说"失败时怎么办""重复时怎么办""越权时怎么办" | "如果 X 失败，应该回滚还是标记失败？" |
+| `ambiguous` | 出现"快速""大量""合理""及时""尽量"等无量词描述 | "『快速』的具体阈值是多少？1 秒还是 3 秒？" |
+| `conflicting` | 同一需求文本中，两处描述相互矛盾或不可同时满足 | "需求 A 说必须匿名，需求 B 说要能追溯用户，请裁决优先级" |
+
+**门禁**：
+- `requirements_gaps[]` 为空 → 直接进入 W1；
+- 存在 `conflicting` → 必须先向用户澄清并记录裁决，不得跳过；
+- 存在 `ambiguous` 且 `question_strategy == "one-by-one"` → 按优先级逐个提问；`batch` → 一次性打包；
+- 存在 `missing` → 转入 W1 设计树，作为 `goal` / `success_criteria` / `exceptions` 维度的初始缺口。
+
+**与 W1 的交接**：
+- `conflicting` 已裁决 → 裁决结论写入 `snapshot.consensus.resolutions[]`，不再进 W1；
+- `missing / ambiguous` 已回答 → 结果写入对应 `consensus.dimensions.<dim>` 状态，不再重复提问；
+- 未回答的 `missing / ambiguous` → 转为 W1 设计树的初始 `frontier` 节点。
+
+**禁止**：
+- 禁止用"可能""大概""似乎"填 gap 证据，证据必须引原文；
+- 禁止把 `missing` 直接升级为"新增功能需求"——那是产品决策，不是澄清职责；
+- 禁止在 `requirements_gaps` 非空且包含 `conflicting` 时冻结契约。
 
 ### W1 设计树初始化（Design Tree Initialization）
 

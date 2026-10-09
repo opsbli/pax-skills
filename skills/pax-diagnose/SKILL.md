@@ -277,7 +277,42 @@ root_cause:
       reason: "<为什么受影响>"
       priority: must_test | should_test | nice_to_test
       source: domain_map | inferred
+      changed_by: "<触发变更的文件/提交/配置项>"    # 可选，用于 selective / priority 打分
+  regression_scope_strategy: full | selective | priority          # 三策略之一，与 regression_scope 同级
+  regression_scope_rationale: "<为何选此策略>"                    # 用户可读的一句说明
 ```
+
+**回归三策略（回归范围必须显式声明其中之一）**：
+
+| strategy | 何时用 | 触发条件 | 风险等级下限 |
+|---|---|---|---|
+| `full` | 大版本发布、跨仓库架构改动、数据库迁移、涉及资金/权限/敏感数据 | `risk.total >= 10` 或 `annotations.frontend_involved && frontend_framework_change` | high |
+| `selective` | 局部功能改动，可通过依赖图推导影响面 | 有明确 `changed_by`，且依赖图可枚举 | medium 及以上 |
+| `priority` | 时间窗口紧、变更面大但业务价值差异明显 | 时间预算 < 2 天，或变更模块 >= 5 | 任意（须记录为何不用全量） |
+
+**优先级打分**（用于 `selective` 与 `priority`）：
+
+```
+priority_score = 3 * business_criticality + 2 * change_adjacency + 1 * historical_defect_density
+
+  business_criticality ∈ {0, 1, 2}    # 主流程阻断 / 关键业务 / 边缘功能
+  change_adjacency ∈ {0, 1, 2}         # 直接依赖 / 二级依赖 / 无依赖
+  historical_defect_density ∈ {0, 1, 2}  # 该模块历史 90 天 P0-P1 缺陷数分档
+
+最终映射：
+  score >= 6   -> must_test
+  score == 4..5 -> should_test
+  score <= 3   -> nice_to_test
+```
+
+**门禁**：
+- `regression_scope_strategy` 字段缺失 → `review_checklist.RC5` 不通过；
+- `strategy == full` 但无 `risk.total >= 10` 支撑 → 需要 `regression_scope_rationale` 说明为何升级；
+- `strategy == priority` 但 `changed_by` 缺失 → 拒绝冻结诊断，回到 D3/D4 补证据。
+
+**与下游的交接**：
+- 下游规划阶段应显式引用 `diagnosis.root_cause.regression_scope_strategy`，作为回滚预案的输入；
+- 测试生成阶段应基于 `diagnosis.root_cause.regression_scope_strategy` 分档决定用例数量：`full` 全量生成、`selective` 只生成 `must_test + should_test`、`priority` 只生成 `must_test` 加最多 20% 的 `should_test`。
 
 **严重度量化标准**：
 

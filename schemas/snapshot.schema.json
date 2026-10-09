@@ -39,6 +39,8 @@
         "dimensions": {"type": "object"},
         "design_tree": {"type": "array"},
         "gaps_remaining": {"type": "array"},
+        "requirements_gaps": {"type": "array"},
+        "resolutions": {"type": "array"},
         "settled_at": {"type": ["string", "null"], "format": "date-time"}
       }
     },
@@ -269,7 +271,8 @@
         "summary": {"type": ["string", "null"]},
         "coverage": {"type": "object"},
         "failed_tests": {"type": "array"},
-        "recommendations": {"type": "array"}
+        "recommendations": {"type": "array"},
+        "pie_check": {"type": "array"}
       }
     },
     "deployment": {

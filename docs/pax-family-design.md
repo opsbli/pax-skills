@@ -30,6 +30,16 @@
 - **可版本化**：家族统一版本线，兼容矩阵显式管理。
 - **可演化**：通过 `pax-forge` 工程化扩展，通过 `pax-evolve` 自我优化。
 
+### 1.2.1 AI 使用边界（AI as Candidate, Not Fact）
+
+AI 是家族的能力放大器，不是决策者。以下规则贯穿整个家族，任何 Skill 违反即视为契约破坏：
+
+1. **候选性原则**：AI 从需求、日志、代码或历史案例中抽取出的**模型、需求点、测试点、根因假设、评审意见**，在快照中一律以候选形式存储（推荐字段名 `*_candidates` 或带 `confidence` + `status: pending`），不得直接写成 `confirmed` / `settled` / `locked`。
+2. **人工确认门槛**：进入下游 Skill 消费前，候选必须经过用户确认（`pax-clarify`）、独立评审（`pax-review` / `pax-council`）或有界实验验证（`pax-verify`）至少其一。
+3. **可追溯性**：候选的 `provenance` 必须记录来源（模型 ID、提示词 hash、输入快照版本），供事后审计。
+4. **反 AI 幻觉**：禁止用"可能""大概""通常""似乎"填充证据字段；证据不足必须输出 `blocked` 并附 `missing_information`。
+5. **候选可回滚**：把候选误当事实造成的下游决策，必须能通过快照的 `skill_lineage` 定位并回滚到该候选之前的状态。
+
 ### 1.3 非目标
 
 - 不追求通用 Agent 框架。
@@ -53,6 +63,8 @@
 | **跳过留痕** | 任何跳过必须有 `skip_reason`，且可被审计。 |
 | **增量沉淀** | 文档只写已确认硬决策，待定项留在草稿区。 |
 | **保留上游同步** | 借鉴外部 Skill 时保留 `upstream` 映射，避免彻底分叉。 |
+| **AI 输出为候选** | AI 抽取的需求点、模型、测试点、根因假设一律视为候选，未经用户确认不视为事实；下游 Skill 消费候选前必须走对应门禁。 |
+| **测试有效性看 PIE** | 判定一个测试用例是否有效，须依次回答 Execution / Infection / Propagation 三问；覆盖率只覆盖 E，不视为充分证据。 |
 
 ### 2.2 从 tri-stack 借鉴的经验
 
@@ -181,6 +193,22 @@ consensus:
       children: [D<K>]
       skip_reason: null
   gaps_remaining: [...]
+  requirements_gaps:                              # 由 pax-clarify W0 产出，包含三类坑：missing / ambiguous / conflicting
+    - id: RG<N>
+      kind: missing | ambiguous | conflicting
+      excerpt: "<需求原文中的相关句子>"
+      location: "<段落或字段引用>"
+      evidence: "<判定依据，必须引原文>"
+      suggested_question: "<待问用户的问题>"
+      suggested_owner: user | pm | tech_lead
+      status: open | resolved
+  resolutions:                                   # 由 W0 写入；存储 `conflicting` 类型的裁决结论，不再进 W1
+    - id: R<N>
+      resolution: "<裁决结果>"
+      rationale: "<为何这样裁决>"
+      source: user | pm | tech_lead | council
+      timestamp: "<ISO8601>"
+      supersedes: [RG<N>, ...]                  # 被本裁决关闭的 requirements_gaps ID
   settled_at: "<ISO8601>" | null
 
 orchestration:
@@ -251,7 +279,9 @@ diagnosis:                              # 仅诊断类任务
     minimal_repro: "..."
     contributing_factors: [...]
     regression_scope:
-      - { module: ..., reason: ..., priority: must_test|should_test|nice_to_test, source: domain_map|inferred }
+      - { module: ..., reason: ..., priority: must_test|should_test|nice_to_test, source: domain_map|inferred, changed_by: null }
+    regression_scope_strategy: full | selective | priority        # 与 regression_scope 同级；三策略之一
+    regression_scope_rationale: "<为何选此策略>"                  # 用户可读的一句说明
   blocked_history:
     - { step: ..., blocked_at: ..., missing_information: [...], suggested_sources: [...], resolved_at: ..., resolution: ... }
   review_checklist:
@@ -328,6 +358,12 @@ tests:
   coverage: {...}
   failed_tests: [...]
   recommendations: [...]
+  pie_check:                                 # 由 pax-test T1.5 写入；pax-review R2.5 消费
+    - test_id: "..."
+      execution: pass | fail | n/a          # E：是否执行到目标路径
+      infection: pass | fail | n/a          # I：输入能否触发错误状态
+      propagation: pass | fail | n/a        # P：断言能否观察到错误
+      rationale: "<一句话解释>"
 
 deployment:
   status: ...
