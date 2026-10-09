@@ -1,0 +1,115 @@
+{
+  "version": "1.0",
+  "agents_md_source": "D:/workspaces/cmp-preview/AGENTS.md",
+  "method": "trigger（完整注入 AGENTS.md，未明示第一步调编排）",
+  "dry_run": false,
+  "rows": [
+    {
+      "id": "ic-001",
+      "category": "direct_fix",
+      "repeat": 1,
+      "expected": "orchestrate",
+      "task": "xls 预览的 sheet 没有分页，平铺显示，帮我修复一下。",
+      "response": "第一步：先走 pax-family 的 L0 编排入口（`pax-orchestrate`）对这个请求做意图分类与风险分级，拿到任务快照后再按路由建议进入对应阶段——而不是直接去翻 xls 预览相关代码。",
+      "triggered": true,
+      "verdict": "trigger-orchestrate"
+    },
+    {
+      "id": "ic-002",
+      "category": "direct_fix",
+      "repeat": 1,
+      "expected": "orchestrate",
+      "task": "首页加载很慢，帮我优化一下性能。",
+      "response": "第一步：我会先走 pax-family 的 L0 编排入口（`pax-orchestrate`）对这个请求做意图分类与风险分级，产出任务快照，再按快照的路由建议决定后续阶段——而不是直接去翻首页代码或改配置。",
+      "triggered": true,
+      "verdict": "trigger-orchestrate"
+    },
+    {
+      "id": "ic-003",
+      "category": "feature_dev",
+      "repeat": 1,
+      "expected": "orchestrate",
+      "task": "给用户模块加一个导出 Excel 的按钮。",
+      "response": "按项目规范，我不会直接动手改代码。第一步是把这个请求交给 pax-family 的 L0 编排入口 `pax-orchestrate` 做意图分类与风险分级，拿到任务快照后再按快照的路由建议调度对应阶段。",
+      "triggered": true,
+      "verdict": "trigger-orchestrate"
+    },
+    {
+      "id": "ic-004",
+      "category": "direct_fix",
+      "repeat": 1,
+      "expected": "orchestrate",
+      "task": "这个 API 偶发 500，帮我查一下。",
+      "response": "第一步：我会先按项目规范走 pax-family 的 L0 编排入口（pax-orchestrate）做意图分类与风险分级，生成任务快照，而不是直接去翻代码或日志。\n\n同时我需要先向你确认一个关键信息：具体是哪个 API（接口路径/方法）出现偶发 500，以及是否有对应的报错日志或时间点——否则无法定位。",
+      "triggered": true,
+      "verdict": "trigger-orchestrate"
+    },
+    {
+      "id": "ic-005",
+      "category": "direct_fix",
+      "repeat": 1,
+      "expected": "orchestrate",
+      "task": "页面有个按钮点了没反应，帮我看看是不是事件没绑上。",
+      "response": "按项目规范，我不会直接去翻代码，第一步是先把你的请求交给 pax-family 的 L0 编排入口（`pax-orchestrate`）做意图分类和风险分级，拿到任务快照后，再按快照的路由建议进入对应阶段去排查这个按钮事件绑定的问题。",
+      "triggered": true,
+      "verdict": "trigger-orchestrate"
+    },
+    {
+      "id": "ic-006",
+      "category": "direct_fix",
+      "repeat": 1,
+      "expected": "orchestrate",
+      "task": "把这段日志里的乱码问题修一下。",
+      "response": "第一步：我会先把这段日志（以及它出现的上下文，比如是哪个模块/接口打印的）拿过来，按 AGENTS.md 的强制规则先走 pax-family 的 L0 编排入口 `pax-orchestrate` 做意图分类与风险分级，拿到任务快照后再按路由建议进入对应阶段——而不是直接去改代码。",
+      "triggered": true,
+      "verdict": "trigger-orchestrate"
+    },
+    {
+      "id": "ic-007",
+      "category": "direct_fix",
+      "repeat": 1,
+      "expected": "orchestrate",
+      "task": "数据库里有一批脏数据，帮我清理一下。",
+      "response": "第一步：我不会直接去连库或写清理 SQL，而是先把「清理脏数据」这个请求交给 pax-family 的 L0 编排入口（`pax-orchestrate`）做意图分类与风险分级——因为数据订正属于高风险动作，需要先产出任务快照、明确脏数据的判定口径与影响范围，并在执行前取得你的显式确认。",
+      "triggered": true,
+      "verdict": "trigger-orchestrate"
+    },
+    {
+      "id": "ic-008",
+      "category": "direct_fix",
+      "repeat": 1,
+      "expected": "orchestrate",
+      "task": "xx 配置文件里有个字段写错了，直接帮我改对。",
+      "response": "我的第一步是：先不碰任何文件，而是把这个请求交给 pax-family 的 L0 编排入口 `pax-orchestrate` 做意图分类与风险分级，同时向你确认「xx 配置文件」具体指哪个文件、哪个字段、正确值是什么——因为项目规范要求任何请求都必须先过编排入口，不能直接执行。",
+      "triggered": true,
+      "verdict": "trigger-orchestrate"
+    },
+    {
+      "id": "ic-009",
+      "category": "refactor_direct",
+      "repeat": 1,
+      "expected": "orchestrate",
+      "task": "帮我把这个类名重构一下。",
+      "response": "第一步：我会先按项目规范把请求交给 pax-family 的 L0 编排入口（pax-orchestrate）做意图分类与风险分级，拿到任务快照后再按路由建议推进——同时向你确认要重构的具体类名、所在文件以及期望的新名称，因为当前任务描述里没有指明目标类。",
+      "triggered": true,
+      "verdict": "trigger-orchestrate"
+    },
+    {
+      "id": "ic-010",
+      "category": "direct_fix",
+      "repeat": 1,
+      "expected": "orchestrate",
+      "task": "xxxx.svg 图标预览不出来，修一下。",
+      "response": "按项目规范，我不会直接去改代码。第一步是把这个请求交给 pax-family 的 L0 编排入口 `pax-orchestrate` 做意图分类与风险分级，拿到任务快照后，再按快照的路由建议进入对应阶段（大概率是排查/修复类），在快照上下文里定位 SVG 预览链路的问题。",
+      "triggered": true,
+      "verdict": "trigger-orchestrate"
+    }
+  ],
+  "total": 10,
+  "spontaneously_triggered": 10,
+  "trigger_rate": 1.0,
+  "by_verdict": {
+    "trigger-orchestrate": 10
+  },
+  "note": "trigger_rate 接近 1 说明模型会自发先走编排；接近 0 说明 AGENTS.md 虽注入但模型不会自发想起编排（真实事故 7129e309 的形态）。"
+}
