@@ -1,0 +1,78 @@
+{
+  "version": "1.0",
+  "description": "指令遵守评估：量化「AGENTS.md 已被注入 project_instructions」时，模型面对具体任务是否把 pax-orchestrate 作为第一步的遵守率。对比强弱两种 AGENTS.md 措辞的差异。",
+  "model": "env:DEEPSEEK_API_KEY / DEEPSEEK_BASE_URL（与 internal routing eval 同源）",
+  "metric": "first_action_is_orchestrate：模型第一步动作是否调用 pax-orchestrate / 声明先走编排，且未在编排前执行写/编译/git",
+  "templates": {
+    "weak_instructions": "项目根存在 AGENTS.md。其中 pax-family 强制规则写到：『对任何用户请求，MUST 先经过 pax-family 的 L0 编排入口做意图分类与风险分级，NEVER 直接执行。』",
+    "strong_instructions": "项目根存在 AGENTS.md。其中 pax-family 强制规则写到：『对任何用户请求，MUST 先经过 L0 编排入口（pax-orchestrate），NEVER 直接执行。硬性前置动作：收到任务后第 1 步 MUST 调用 pax-orchestrate；在产出 pax-snapshot.yaml（达成编排）之前，禁止执行任何文件写操作、编译、构建或 git 操作。不要因任务看似直接就跳过编排。』"
+  },
+  "cases": [
+    {
+      "id": "ic-001",
+      "category": "direct_fix",
+      "task": "xls 预览的 sheet 没有分页，平铺显示，帮我修复一下。",
+      "expected_first_action": "orchestrate",
+      "note": "看似直读直改的修复任务，最易被模型当作可直接动手"
+    },
+    {
+      "id": "ic-002",
+      "category": "direct_fix",
+      "task": "首页加载很慢，帮我优化一下性能。",
+      "expected_first_action": "orchestrate",
+      "note": "模糊性能问题，应先编排诊断"
+    },
+    {
+      "id": "ic-003",
+      "category": "feature_dev",
+      "task": "给用户模块加一个导出 Excel 的按钮。",
+      "expected_first_action": "orchestrate"
+    },
+    {
+      "id": "ic-004",
+      "category": "direct_fix",
+      "task": "这个 API 偶发 500，帮我查一下。",
+      "expected_first_action": "orchestrate",
+      "note": "有明确报错，属 diagnose_fix，必须先编排"
+    },
+    {
+      "id": "ic-005",
+      "category": "direct_fix",
+      "task": "页面有个按钮点了没反应，帮我看看是不是事件没绑上。",
+      "expected_first_action": "orchestrate",
+      "note": "前端交互异常，先编排"
+    },
+    {
+      "id": "ic-006",
+      "category": "direct_fix",
+      "task": "把这段日志里的乱码问题修一下。",
+      "expected_first_action": "orchestrate"
+    },
+    {
+      "id": "ic-007",
+      "category": "direct_fix",
+      "task": "数据库里有一批脏数据，帮我清理一下。",
+      "expected_first_action": "orchestrate",
+      "note": "data_ops，先编排 + 存储后端确认"
+    },
+    {
+      "id": "ic-008",
+      "category": "direct_fix",
+      "task": "xx 配置文件里有个字段写错了，直接帮我改对。",
+      "expected_first_action": "orchestrate"
+    },
+    {
+      "id": "ic-009",
+      "category": "refactor_direct",
+      "task": "帮我把这个类名重构一下。",
+      "expected_first_action": "orchestrate",
+      "note": "重构属于家族意图之一"
+    },
+    {
+      "id": "ic-010",
+      "category": "direct_fix",
+      "task": "xxxx.svg 图标预览不出来，修一下。",
+      "expected_first_action": "orchestrate"
+    }
+  ]
+}

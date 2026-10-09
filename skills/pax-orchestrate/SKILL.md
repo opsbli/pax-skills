@@ -1,7 +1,7 @@
 ---
 name: pax-orchestrate
 description: >
-    Use when: 所有 pax-family 任务的统一入口。当用户目标涉及诊断修复、功能开发、重构优化、数据操作、文档咨询或工具构建时，必须先经过 pax-orchestrate 进行意图分类、风险分级、路由构建与快照初始化。不要直接选择 pax-diagnose、pax-plan、pax-execute 等具体 skill，而是让 pax-orchestrate 决定完整的执行路由。
+    Use when: 所有 pax-family 任务的统一入口。当用户目标涉及诊断修复、功能开发、重构优化、数据操作、文档咨询或工具构建时，必须先经过 pax-orchestrate 进行意图分类、风险分级、路由构建与快照初始化。不要直接选择 pax-diagnose、pax-plan、pax-execute 等具体 skill，而是让 pax-orchestrate 决定完整的执行路由。**触发优先：这是任务的第 1 步**。无论任务看起来多直接（哪怕是一次性加一段内联脚本题），收到任务后首先选择本 skill，在产出快照（达成编排）之前不得跳到任何写文件/编译/git 动作；这是 pax-family 对触发层纪律的最后一道防线（AGENTS.md 的 MUST 条款依赖本入口被优先触发才能生效）。
 version: 1.0.0
 family: pax
 layer: L0
