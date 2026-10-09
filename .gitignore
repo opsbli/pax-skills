@@ -21,3 +21,6 @@ tools/
 
 # Proma / session context (not versioned)
 .context/
+
+# Proma skill 导入元数据（本地环境状态，不入库）
+skills/**/.source.json
