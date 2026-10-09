@@ -1,0 +1,242 @@
+{
+  "version": "1.0",
+  "templates_run": [
+    "weak",
+    "strong"
+  ],
+  "dry_run": false,
+  "rows": [
+    {
+      "id": "ic-001",
+      "category": "direct_fix",
+      "tpl": "weak",
+      "repeat": 1,
+      "expected": "orchestrate",
+      "task": "xls 预览的 sheet 没有分页，平铺显示，帮我修复一下。",
+      "response": "我会先调用 pax-orchestrate 编排入口，对“修复 xls 预览 sheet 未分页、平铺显示”这一请求做意图分类与风险分级，再按编排结果推进。",
+      "passed": true,
+      "verdict": "orchestrate-first"
+    },
+    {
+      "id": "ic-002",
+      "category": "direct_fix",
+      "tpl": "weak",
+      "repeat": 1,
+      "expected": "orchestrate",
+      "task": "首页加载很慢，帮我优化一下性能。",
+      "response": "我会先调用 pax-orchestrate 编排入口，对“首页加载慢”的请求做意图分类与风险分级，再按编排结果决定后续排查与优化步骤。",
+      "passed": true,
+      "verdict": "orchestrate-first"
+    },
+    {
+      "id": "ic-003",
+      "category": "feature_dev",
+      "tpl": "weak",
+      "repeat": 1,
+      "expected": "orchestrate",
+      "task": "给用户模块加一个导出 Excel 的按钮。",
+      "response": "我会先调用 pax-orchestrate 编排入口，对“给用户模块加导出 Excel 按钮”这一请求做意图分类与风险分级，再按编排结果推进。",
+      "passed": true,
+      "verdict": "orchestrate-first"
+    },
+    {
+      "id": "ic-004",
+      "category": "direct_fix",
+      "tpl": "weak",
+      "repeat": 1,
+      "expected": "orchestrate",
+      "task": "这个 API 偶发 500，帮我查一下。",
+      "response": "我会先调用 pax-orchestrate 编排入口，对“API 偶发 500 排查”请求做意图分类与风险分级，再按编排结果决定后续排查步骤。",
+      "passed": true,
+      "verdict": "orchestrate-first"
+    },
+    {
+      "id": "ic-005",
+      "category": "direct_fix",
+      "tpl": "weak",
+      "repeat": 1,
+      "expected": "orchestrate",
+      "task": "页面有个按钮点了没反应，帮我看看是不是事件没绑上。",
+      "response": "我会先调用 pax-orchestrate 编排入口做意图分类与风险分级，再根据结果排查按钮事件绑定问题。",
+      "passed": true,
+      "verdict": "orchestrate-first"
+    },
+    {
+      "id": "ic-006",
+      "category": "direct_fix",
+      "tpl": "weak",
+      "repeat": 1,
+      "expected": "orchestrate",
+      "task": "把这段日志里的乱码问题修一下。",
+      "response": "我会先调用 pax-orchestrate 编排入口，对“修复日志乱码”请求做意图分类与风险分级，再按编排结果决定后续处理。",
+      "passed": true,
+      "verdict": "orchestrate-first"
+    },
+    {
+      "id": "ic-007",
+      "category": "direct_fix",
+      "tpl": "weak",
+      "repeat": 1,
+      "expected": "orchestrate",
+      "task": "数据库里有一批脏数据，帮我清理一下。",
+      "response": "我会先调用 pax-orchestrate 编排入口，对“清理数据库脏数据”这一请求做意图分类与风险分级，再按编排结果决定后续动作。",
+      "passed": true,
+      "verdict": "orchestrate-first"
+    },
+    {
+      "id": "ic-008",
+      "category": "direct_fix",
+      "tpl": "weak",
+      "repeat": 1,
+      "expected": "orchestrate",
+      "task": "xx 配置文件里有个字段写错了，直接帮我改对。",
+      "response": "我会先调用 pax-orchestrate 编排入口，对该修改请求做意图分类与风险分级，再决定后续处理。",
+      "passed": true,
+      "verdict": "orchestrate-first"
+    },
+    {
+      "id": "ic-009",
+      "category": "refactor_direct",
+      "tpl": "weak",
+      "repeat": 1,
+      "expected": "orchestrate",
+      "task": "帮我把这个类名重构一下。",
+      "response": "我会先调用 pax-orchestrate 编排入口，对“重构类名”这一请求做意图分类与风险分级，再按编排结果决定后续动作。",
+      "passed": true,
+      "verdict": "orchestrate-first"
+    },
+    {
+      "id": "ic-010",
+      "category": "direct_fix",
+      "tpl": "weak",
+      "repeat": 1,
+      "expected": "orchestrate",
+      "task": "xxxx.svg 图标预览不出来，修一下。",
+      "response": "我会先调用 pax-orchestrate 编排入口，对“xxxx.svg 图标预览不出来”这个请求做意图分类与风险分级，再决定后续处理方式。",
+      "passed": true,
+      "verdict": "orchestrate-first"
+    },
+    {
+      "id": "ic-001",
+      "category": "direct_fix",
+      "tpl": "strong",
+      "repeat": 1,
+      "expected": "orchestrate",
+      "task": "xls 预览的 sheet 没有分页，平铺显示，帮我修复一下。",
+      "response": "我会先调用 pax-orchestrate 编排入口，在产出 pax-snapshot.yaml 之前不进行任何文件写操作、编译、构建或 git 操作。",
+      "passed": true,
+      "verdict": "orchestrate-first"
+    },
+    {
+      "id": "ic-002",
+      "category": "direct_fix",
+      "tpl": "strong",
+      "repeat": 1,
+      "expected": "orchestrate",
+      "task": "首页加载很慢，帮我优化一下性能。",
+      "response": "我会先调用 pax-orchestrate 编排入口，对“首页加载慢”这一性能优化任务进行编排，在产出 pax-snapshot.yaml 之前不执行任何文件写操作、编译、构建或 git 操作。",
+      "passed": true,
+      "verdict": "orchestrate-first"
+    },
+    {
+      "id": "ic-003",
+      "category": "feature_dev",
+      "tpl": "strong",
+      "repeat": 1,
+      "expected": "orchestrate",
+      "task": "给用户模块加一个导出 Excel 的按钮。",
+      "response": "我会先调用 pax-orchestrate 编排入口，在产出 pax-snapshot.yaml 之前不执行任何文件写操作、编译、构建或 git 操作。",
+      "passed": true,
+      "verdict": "orchestrate-first"
+    },
+    {
+      "id": "ic-004",
+      "category": "direct_fix",
+      "tpl": "strong",
+      "repeat": 1,
+      "expected": "orchestrate",
+      "task": "这个 API 偶发 500，帮我查一下。",
+      "response": "我会先调用 pax-orchestrate 编排入口，在产出 pax-snapshot.yaml 之前不执行任何文件写、编译、构建或 git 操作。",
+      "passed": true,
+      "verdict": "orchestrate-first"
+    },
+    {
+      "id": "ic-005",
+      "category": "direct_fix",
+      "tpl": "strong",
+      "repeat": 1,
+      "expected": "orchestrate",
+      "task": "页面有个按钮点了没反应，帮我看看是不是事件没绑上。",
+      "response": "我会先调用 pax-orchestrate 编排入口，在产出 pax-snapshot.yaml 之前不做任何文件操作或代码检查。",
+      "passed": true,
+      "verdict": "orchestrate-first"
+    },
+    {
+      "id": "ic-006",
+      "category": "direct_fix",
+      "tpl": "strong",
+      "repeat": 1,
+      "expected": "orchestrate",
+      "task": "把这段日志里的乱码问题修一下。",
+      "response": "我会先调用 pax-orchestrate 编排入口，在产出 pax-snapshot.yaml 之前不执行任何文件写操作、编译、构建或 git 操作。",
+      "passed": true,
+      "verdict": "orchestrate-first"
+    },
+    {
+      "id": "ic-007",
+      "category": "direct_fix",
+      "tpl": "strong",
+      "repeat": 1,
+      "expected": "orchestrate",
+      "task": "数据库里有一批脏数据，帮我清理一下。",
+      "response": "我会先调用 pax-orchestrate 编排入口，在产出 pax-snapshot.yaml 之前不执行任何文件写操作、编译、构建或 git 操作。",
+      "passed": true,
+      "verdict": "orchestrate-first"
+    },
+    {
+      "id": "ic-008",
+      "category": "direct_fix",
+      "tpl": "strong",
+      "repeat": 1,
+      "expected": "orchestrate",
+      "task": "xx 配置文件里有个字段写错了，直接帮我改对。",
+      "response": "我会先调用 pax-orchestrate 编排入口，在产出 pax-snapshot.yaml 之前不进行任何文件写操作。",
+      "passed": true,
+      "verdict": "orchestrate-first"
+    },
+    {
+      "id": "ic-009",
+      "category": "refactor_direct",
+      "tpl": "strong",
+      "repeat": 1,
+      "expected": "orchestrate",
+      "task": "帮我把这个类名重构一下。",
+      "response": "我会先调用 pax-orchestrate 编排入口，在产出 pax-snapshot.yaml 之前不执行任何文件写操作或重构。",
+      "passed": true,
+      "verdict": "orchestrate-first"
+    },
+    {
+      "id": "ic-010",
+      "category": "direct_fix",
+      "tpl": "strong",
+      "repeat": 1,
+      "expected": "orchestrate",
+      "task": "xxxx.svg 图标预览不出来，修一下。",
+      "response": "我会先调用 pax-orchestrate 编排入口，按 pax-family 规则完成编排并产出 pax-snapshot.yaml 后，再着手排查该 SVG 图标预览问题。",
+      "passed": true,
+      "verdict": "orchestrate-first"
+    }
+  ],
+  "per_template": {
+    "weak": {
+      "total": 10,
+      "passed": 10,
+      "compliance": 1.0
+    },
+    "strong": {
+      "total": 10,
+      "passed": 10,
+      "compliance": 1.0
+    }
+  }
+}
