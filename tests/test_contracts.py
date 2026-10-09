@@ -306,6 +306,79 @@ def test_contract_gate_behavior_passes_with_precondition(tmp_path):
     assert check_gate_behavior(tmp_path) == []
 
 
+def test_contract_gate_refusal_l0_forced_missing_refuse(tmp_path):
+    """L0 强制入口（orchestrate）门禁段落没有拒绝语义，仅「降级继续」→ 违规。"""
+    from pax.forge.contracts import check_gate_refusal
+    d = tmp_path / "skills" / "pax-orchestrate"
+    d.mkdir(parents=True)
+    (d / "SKILL.md").write_text(
+        "---\nname: pax-orchestrate\ndescription: >\n  x\nversion: 0.1.0\n"
+        "family: pax\nlayer: L0\noptional: false\nrequires_snapshot: true\n"
+        "---\n\n# pax-orchestrate\n## Execution Contract\n"
+        "- 前置门禁：能读取 pax-family.schema.yaml 与 pax-ops/versions.json\n"
+        "- 门禁失败：降级后继续执行，不阻塞任务\n"
+        "## 职责边界\n- ...\n## 输入\n- ...\n## 工作流\n1. ...\n"
+        "## 输出契约\n- ...\n## 失败模式\n- ...\n## 何时升级\n- ...\n",
+        encoding="utf-8",
+    )
+    violations = check_gate_refusal(tmp_path)
+    assert any("pax-orchestrate" in v for v in violations)
+
+
+def test_contract_gate_refusal_l0_forced_passes_with_refuse(tmp_path):
+    """L0 强制入口门禁段落含「拒绝启动/返回 blocked」→ 通过。"""
+    from pax.forge.contracts import check_gate_refusal
+    d = tmp_path / "skills" / "pax-orchestrate"
+    d.mkdir(parents=True)
+    (d / "SKILL.md").write_text(
+        "---\nname: pax-orchestrate\ndescription: >\n  x\nversion: 0.1.0\n"
+        "family: pax\nlayer: L0\noptional: false\nrequires_snapshot: true\n"
+        "---\n\n# pax-orchestrate\n## Execution Contract\n"
+        "- 前置门禁：能读取 pax-family.schema.yaml 与 pax-ops/versions.json\n"
+        "- 未通过门禁：拒绝启动，返回用户错误\n"
+        "## 职责边界\n- ...\n## 输入\n- ...\n## 工作流\n1. ...\n"
+        "## 输出契约\n- ...\n## 失败模式\n- ...\n## 何时升级\n- ...\n",
+        encoding="utf-8",
+    )
+    assert check_gate_refusal(tmp_path) == []
+
+
+def test_contract_gate_refusal_degrade_without_refuse(tmp_path):
+    """非 L0 skill 声明门禁但只写降级继续、无拒绝语义 → 违规。"""
+    from pax.forge.contracts import check_gate_refusal
+    d = tmp_path / "skills" / "pax-plan"
+    d.mkdir(parents=True)
+    (d / "SKILL.md").write_text(
+        "---\nname: pax-plan\ndescription: >\n  x\nversion: 0.1.0\n"
+        "family: pax\nlayer: L1\noptional: false\nrequires_snapshot: true\n"
+        "---\n\n# pax-plan\n## Execution Contract\n"
+        "- 前置门禁：consensus.gaps_remaining == []\n"
+        "- 门禁失败：降级继续执行，不阻塞\n"
+        "## 职责边界\n- ...\n## 输入\n- ...\n## 工作流\n1. ...\n"
+        "## 输出契约\n- ...\n## 失败模式\n- ...\n## 何时升级\n- ...\n",
+        encoding="utf-8",
+    )
+    violations = check_gate_refusal(tmp_path)
+    assert any("pax-plan" in v for v in violations)
+
+
+def test_contract_gate_refusal_ignores_skill_without_gate_decl(tmp_path):
+    """段落未声明门禁但含拒绝/降级词时，不触发本契约（由 gate-behavior 管）。"""
+    from pax.forge.contracts import check_gate_refusal
+    d = tmp_path / "skills" / "pax-plan"
+    d.mkdir(parents=True)
+    (d / "SKILL.md").write_text(
+        "---\nname: pax-plan\ndescription: >\n  x\nversion: 0.1.0\n"
+        "family: pax\nlayer: L1\noptional: false\nrequires_snapshot: true\n"
+        "---\n\n# pax-plan\n## Execution Contract\n"
+        "- 步骤一：先做 X\n"
+        "## 职责边界\n- ...\n## 输入\n- ...\n## 工作流\n1. ...\n"
+        "## 输出契约\n- ...\n## 失败模式\n- ...\n## 何时升级\n- ...\n",
+        encoding="utf-8",
+    )
+    assert check_gate_refusal(tmp_path) == []
+
+
 # ----- 汇总：契约注册集合 -----
 
 def test_all_contracts_registered():
@@ -324,6 +397,7 @@ def test_all_contracts_registered():
         "no-cycles",
         "skip-audit",
         "gate-behavior",
+        "gate-refusal",
         "declared-checks-coverage",
     }
     assert names == expected

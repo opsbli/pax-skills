@@ -25,6 +25,8 @@ pax-family 统一入口。对每个任务先做意图分类（6 类 MECE 意图�
 - 直接调用 L1 具体 Skill 绕过路由，导致风险分级缺失。
 - 高风险动作（部署 / 数据订正 / 破坏性命令）未获得用户明确 approval / confirm 就下发。
 - 未初始化快照，下游 Skill 拿不到跨阶段状态。
+- 把「门禁文件缺失（schema/versions 不可读）」当成「环境降级」继续执行——门禁失败是硬性拒绝启动，
+  不是可降级项；这是本项目曾踩过的实际坑（Agent 在门禁缺失时选择降级继续，绕过编排纪律）。
 
 ## Verification Checklist
 
@@ -33,7 +35,12 @@ pax-family 统一入口。对每个任务先做意图分类（6 类 MECE 意图�
 - [ ] 已初始化快照并把路由表写入快照，可以交给 L1 Skill
 ## Execution Contract
 - 前置门禁：能读取 `pax-family.schema.yaml` 与 `pax-ops/versions.json`
-- 未通过门禁：拒绝启动，返回用户错误
+- 未通过门禁：拒绝启动，返回用户错误（`blocked`）
+- **门禁失败不是「环境降级」**：为了满足快照与版本门，`pax-family.schema.yaml` / `pax-ops/versions.json`
+  缺失时是**硬性拒绝启动**，MUST 返回 `blocked` 并列出缺失项、引导用户先补建 pax-ops 运行时，
+  NEVER 以「环境降级」「保证任务不阻塞」等名义继续执行或照常产出编排结论。
+- 可降级项（唯一）：版本门自身故障（`pax-ops/versions.json` 无法解析）→ 放行并标注口径；
+  这不等于门禁文件缺失可以降级继续。
 - 版本检查：`pax-ops/versions.json`
 - 记录义务：`diagnose_required` 决策必须附 `rationale`（若跳过诊断则附 `skip_reason`）
 - 记录义务：风险评分必须写入四维原始分数与总分
@@ -493,6 +500,8 @@ def init_snapshot(intent, risk, diagnose_required, strategy, route, annotations)
 - 用户目标过于模糊 → 进入澄清阶段后再路由（先走 `clarify`，`diagnose_required` 设为 `null` 待后续决定）
 - 意图分类不确定（多意图重叠）→ 取最高风险意图，并在 `classification_rationale` 中记录歧义
 - 检测到安全相关信号但未确认 → 保守标记 `security` 二级意图，强制 `diagnose_required: true`
+- **门禁文件缺失（`pax-family.schema.yaml` / `pax-ops/versions.json` 不可读）→ 返回 `blocked`，
+  列出缺失项并引导用户先补建 pax-ops 运行时；NEVER 以降级继续顶替。**
 
 ## 可选扩展 Skill
 

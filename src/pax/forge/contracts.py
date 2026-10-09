@@ -457,6 +457,75 @@ def check_gate_behavior(family_root: Path) -> list[str]:
     return violations
 
 
+# ----- 契约⑩b：门禁失败必须拒绝启动（不得以降级继续偷换） -----
+# 背景：pax-orchestrate 是 L0 强制编排入口，其 Execution Contract 要求「未通过门禁：
+# 拒绝启动，返回用户错误」。但旧实现里契约⑩只是「段落里存在门禁关键词」就通过，
+# 不校验「门禁失败处置」到底是拒绝启动还是降级继续。AGENTS.md 模板又把
+# 「环境降级 MUST 随交付提示」写成泛化规则，Agent 于是在 schema/versions 缺失时选择
+# 「降级继续」而非「拒绝启动」——两处契约互相矛盾。本契约做语义级兜底：
+#   - 凡声明了门禁/前置条件的 skill，其未通过处置若只写「降级/继续执行」而不含
+#     「拒绝/blocked/禁止启动」，判违规；
+#   - L0 强制入口（orchestrate）必须显式含「拒绝启动 / 返回 blocked / 返回错误 /
+#     禁止/不得开始/不可继续」之一，且不得把门禁失败包装为「可降级继续」。
+
+GATE_REFUSE_TOKENS = (
+    "拒绝启动", "拒绝", "返回 blocked", "返回错误", "返回用户错误",
+    "禁止", "不得开始", "不可继续", "不得继续", "must not", "MUST NOT",
+)
+GATE_DEGRADE_TOKENS = (
+    "降级后继续", "降级继续", "继续执行", "不阻塞", "仍执行", "仍继续",
+    "放行并继续", "静默降级", "继续流程",
+)
+
+
+def _exec_contract_section(body: str) -> str | None:
+    marker = "## Execution Contract"
+    if marker not in body:
+        return None
+    section = body.split(marker, 1)[1]
+    if "\n## " in section:
+        section = section.split("\n## ", 1)[0]
+    return section
+
+
+@register_contract("gate-refusal")
+def check_gate_refusal(family_root: Path) -> list[str]:
+    violations: list[str] = []
+    for name, fm, body in _skill_docs(family_root):
+        if fm is None:
+            continue
+        section = _exec_contract_section(body)
+        if section is None:
+            continue  # missing Execution Contract 由 gate-behavior 覆盖
+        is_l0_forced = (
+            fm.get("layer") == "L0"
+            and str(fm.get("optional", "true")).strip().lower() != "true"
+        )
+        # 只有声明了门禁/前置条件的段落才做语义校验
+        has_gate_decl = any(k in section for k in GATE_KEYWORDS)
+        if not has_gate_decl:
+            continue
+        has_refuse = any(k in section for k in GATE_REFUSE_TOKENS)
+        has_degrade = any(k in section for k in GATE_DEGRADE_TOKENS)
+        # 规则1：声明门禁却只有「降级继续」、无任何拒绝语义 → 违规（可能被 Agent 当成可降级继续）
+        if has_degrade and not has_refuse:
+            violations.append(
+                f"{name}: 门禁/前置条件段落声明了降级继续但不含拒绝语义"
+                f"（拒绝启动/blocked/返回错误/禁止），会被 Agent 当成可降级继续而绕过门禁"
+            )
+        # 规则2：L0 强制入口必须显式拒绝启动，且不得用降级偷换
+        if is_l0_forced and not has_refuse:
+            violations.append(
+                f"{name}: L0 强制入口的门禁段落必须显式声明拒绝启动/返回 blocked/返回错误，"
+                f"不得把门禁失败包装为降级继续"
+            )
+        if is_l0_forced and has_degrade and not has_refuse:
+            violations.append(
+                f"{name}: L0 强制入口不得以降级继续的方式处置门禁失败，必须拒绝启动"
+            )
+    return violations
+
+
 # ----- 契约⑪：schema 声明的检查项与实现一致 -----
 
 @register_contract("declared-checks-coverage")

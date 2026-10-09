@@ -48,6 +48,7 @@ contracts:
     - no-cycles
     - skip-audit
     - gate-behavior
+    - gate-refusal
   snapshot_schema: "./schemas/snapshot.schema.json"
   version_source: "./pax-ops/versions.json"
   compatibility_matrix_source: "./pax-ops/versions.json#compatibility_matrix"
