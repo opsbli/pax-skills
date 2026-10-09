@@ -61,6 +61,22 @@ pax-forge list
       生成 AGENTS.md + .pax/project-profile.json → 创建 .pax/
 ```
 
+## 运行时目录（single-source-of-truth）
+
+家族的身份与纪律由两套**运行时契约**支撑，分散在家族根的两个顶层目录，但同属一份 single-source-of-truth：
+
+- `schemas/pax-family.schema.yaml` —— 家族契约（层级、命名、必填 frontmatter/章节、声明的检查项）
+- `schemas/snapshot.schema.json` —— 快照结构的权威定义
+- `pax-ops/versions.json` —— 家族版本线（版本唯一来源）
+- `pax-ops/registry.json` —— 已注册 skill 登记
+- `pax-ops/patches/` —— 版本补丁
+
+设计要点：
+
+- 这些文件属于**家族运行时**，不是单个目标项目的产物。`pax-forge` 用它们判定“家族根”并加载契约；`pax-init` 引导新 family 副本时把整套复制进骨架（仅限空目录）。
+- 业务项目接入时**无需、也不应复制**它们（避免家族版本漂移），门禁从运行时时读取（见 `pax-orchestrate`）。
+- 它们**刻意独立于 `.pax/`**：`.pax/` 是产物/快照目录（`pax-snapshot.yaml`、`project-profile.json`），承载任务与项目产物。契约与产物分层存放，不要混入 `.pax/`。
+
 ## 设计文档
 
 见 `docs/pax-family-design.md`。

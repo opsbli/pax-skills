@@ -2,7 +2,7 @@
   "family": "pax",
   "version": "1.0.0",
   "skills": {
-    "pax-orchestrate":      {"layer": "L0", "optional": false, "version": "1.0.0", "status": "active"},
+    "pax-orchestrate":      {"layer": "L0", "optional": false, "version": "1.0.1", "status": "active"},
     "pax-clarify":          {"layer": "L1", "optional": false, "version": "1.0.0", "status": "active"},
     "pax-diagnose":         {"layer": "L1", "optional": true,  "version": "1.0.0", "status": "active"},
     "pax-plan":             {"layer": "L1", "optional": false, "version": "1.0.0", "status": "active"},
