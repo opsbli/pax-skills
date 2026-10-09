@@ -47,11 +47,28 @@ AGENTS.md **已被 Proma 正常注入 system prompt**，但 Agent 面对"看似�
 - [ ] 非家族意图 / 只读 / doc_consult 不触发
 - [ ] 门禁异常时 fail-open（放行 + 告警），不中断开发
 
+## 评估结论与定位（2026-10-09 更新）
+
+受控评估（deepseek-chat，注入真实 cmp-preview AGENTS.md）四版结果：
+
+| 版本 | 测什么 | 结果 |
+|---|---|---|
+| v1 服从性 | 明示第一步调编排 | 10/10 |
+| v2 表态触发 | 注入 AGENTS.md，说明第一步 | 10/10 |
+| v3 执行触发 | 注入 AGENTS.md + 工具集，选第一步工具 | 10/10 首选编排 |
+| v4 注意力稀释 | 噪声稀释 + 位置差异（middle/back） | 10/10 仍首选编排 |
+
+**定位结论**：当 AGENTS.md 被模型真正、完整地看到时，其遵守/触发意愿较高，受控条件下可达 100%。
+因此本提案的硬门禁**定位为“防漏 / 兑底”，而非“唯一依赖”**：它解决的是真实自由执行长上下文里
+（多轮实际工具调用、系统提示冗长）模型“偶尔不自发先走编排”的残余风险，而不是应对“模型得知规则
+却拒不遵守”的情况。受控评估无法完全覆盖真实多轮执行条件，故仍建议以运行时门禁作为保险。
+
 ## 补充信息
 
 - 详细契约：`docs/runtime-gate-requirement.md`（触发/放行/边界/验收完整版）
 - 评估工具：`evals/datasets/instruction-compliance/ic_v1.0.json` + `evals/run_ic_eval.py`
-  （用于量化强弱措辞的遵守率；需真实模型 API 运行）
+  （v1）、`evals/run_ic_trigger_eval.py`（v2）、`evals/run_ic_exec_eval.py`（v3）、
+  `evals/run_ic_distract_eval.py`（v4，--agents-position middle/back）；需真实模型 API 运行。
 - 说明：pax-skills 是纯 CLI（pax-forge），无运行时拦截能力，本体需 Proma 运行时接入本契约。
 
 ---
