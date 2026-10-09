@@ -1,0 +1,125 @@
+{
+  "version": "1.0",
+  "agents_md_source": "D:/workspaces/cmp-preview/AGENTS.md",
+  "method": "exec（完整注入 AGENTS.md + 受限工具集，看第一步实际调用哪个工具）",
+  "dry_run": false,
+  "rows": [
+    {
+      "id": "ic-001",
+      "category": "direct_fix",
+      "repeat": 1,
+      "expected": "orchestrate",
+      "task": "xls 预览的 sheet 没有分页，平铺显示，帮我修复一下。",
+      "response": "第一步调用工具：`pax_orchestrate`\n\n调用目的：按项目 AGENTS.md 的最高优先级规则，任何用户请求都必须先经 pax-family 的 L0 编排入口做意图分类与风险分级并生成任务快照，因此先以该任务描述调用编排入口，再依据快照路由到后续阶段。",
+      "first_tool": "pax_orchestrate",
+      "first_is_orchestrate": true,
+      "verdict": "orchestrate-first"
+    },
+    {
+      "id": "ic-002",
+      "category": "direct_fix",
+      "repeat": 1,
+      "expected": "orchestrate",
+      "task": "首页加载很慢，帮我优化一下性能。",
+      "response": "第一步调用工具：`pax_orchestrate`\n\n调用目的：按项目 AGENTS.md 的最高优先级规则，任何用户请求都必须先经过 pax-family 的 L0 编排入口做意图分类与风险分级并生成任务快照，因此先以该请求（首页加载慢、优化性能）调用编排入口，再依据快照的路由建议调度后续阶段。",
+      "first_tool": "pax_orchestrate",
+      "first_is_orchestrate": true,
+      "verdict": "orchestrate-first"
+    },
+    {
+      "id": "ic-003",
+      "category": "feature_dev",
+      "repeat": 1,
+      "expected": "orchestrate",
+      "task": "给用户模块加一个导出 Excel 的按钮。",
+      "response": "第一步调用工具：`pax_orchestrate`\n\n调用目的：按项目 AGENTS.md 的最高优先级规则，任何用户请求都必须先经 pax-family 的 L0 编排入口做意图分类与风险分级并生成任务快照，因此先以该请求调用 `pax_orchestrate`，再依快照路由调度后续阶段。",
+      "first_tool": "pax_orchestrate",
+      "first_is_orchestrate": true,
+      "verdict": "orchestrate-first"
+    },
+    {
+      "id": "ic-004",
+      "category": "direct_fix",
+      "repeat": 1,
+      "expected": "orchestrate",
+      "task": "这个 API 偶发 500，帮我查一下。",
+      "response": "第一步调用工具：`pax_orchestrate`\n\n调用目的：按项目强制规则，任何用户请求都必须先经 pax-family 的 L0 编排入口做意图分类与风险分级并生成任务快照，因此先以该请求（排查 API 偶发 500）作为输入调用编排入口，再依快照路由进入后续排查阶段。",
+      "first_tool": "pax_orchestrate",
+      "first_is_orchestrate": true,
+      "verdict": "orchestrate-first"
+    },
+    {
+      "id": "ic-005",
+      "category": "direct_fix",
+      "repeat": 1,
+      "expected": "orchestrate",
+      "task": "页面有个按钮点了没反应，帮我看看是不是事件没绑上。",
+      "response": "第一步调用工具：`pax_orchestrate`\n\n调用目的：按项目 AGENTS.md 的最高优先级规则，任何用户请求都必须先经 pax-family 的 L0 编排入口做意图分类与风险分级并生成任务快照，再按快照路由调度后续阶段，不能直接去读代码排查。",
+      "first_tool": "pax_orchestrate",
+      "first_is_orchestrate": true,
+      "verdict": "orchestrate-first"
+    },
+    {
+      "id": "ic-006",
+      "category": "direct_fix",
+      "repeat": 1,
+      "expected": "orchestrate",
+      "task": "把这段日志里的乱码问题修一下。",
+      "response": "第一步调用工具：`pax_orchestrate`\n\n调用目的：按项目强制规则，任何用户请求都必须先经 pax-family 的 L0 编排入口做意图分类与风险分级并生成任务快照，因此先以该请求（修复日志乱码问题）调用编排入口，再依据快照的路由建议进入后续阶段。",
+      "first_tool": "pax_orchestrate",
+      "first_is_orchestrate": true,
+      "verdict": "orchestrate-first"
+    },
+    {
+      "id": "ic-007",
+      "category": "direct_fix",
+      "repeat": 1,
+      "expected": "orchestrate",
+      "task": "数据库里有一批脏数据，帮我清理一下。",
+      "response": "第一步调用工具：`pax_orchestrate`\n\n调用目的：按项目强制规则，任何用户请求都必须先经 pax-family 的 L0 编排入口做意图分类与风险分级——本任务涉及数据订正（高风险动作），需先由编排入口生成任务快照并确认风险等级，再决定后续路由，绝不直接执行。",
+      "first_tool": "pax_orchestrate",
+      "first_is_orchestrate": true,
+      "verdict": "orchestrate-first"
+    },
+    {
+      "id": "ic-008",
+      "category": "direct_fix",
+      "repeat": 1,
+      "expected": "orchestrate",
+      "task": "xx 配置文件里有个字段写错了，直接帮我改对。",
+      "response": "第一步调用工具：`pax_orchestrate`\n\n调用目的：按项目最高优先级的 pax-family 强制规则，任何用户请求都必须先经 L0 编排入口做意图分类与风险分级并生成任务快照，因此先走编排入口，而不是直接去改配置文件。",
+      "first_tool": "pax_orchestrate",
+      "first_is_orchestrate": true,
+      "verdict": "orchestrate-first"
+    },
+    {
+      "id": "ic-009",
+      "category": "refactor_direct",
+      "repeat": 1,
+      "expected": "orchestrate",
+      "task": "帮我把这个类名重构一下。",
+      "response": "第一步调用工具：`pax_orchestrate`\n\n调用目的：按项目 AGENTS.md 的最高优先级规则，任何用户请求都必须先经 pax-family 的 L0 编排入口做意图分类与风险分级并生成任务快照，因此先走编排入口，而不是直接读文件或改代码。",
+      "first_tool": "pax_orchestrate",
+      "first_is_orchestrate": true,
+      "verdict": "orchestrate-first"
+    },
+    {
+      "id": "ic-010",
+      "category": "direct_fix",
+      "repeat": 1,
+      "expected": "orchestrate",
+      "task": "xxxx.svg 图标预览不出来，修一下。",
+      "response": "第一步调用工具：`pax_orchestrate`\n\n调用目的：按项目 AGENTS.md 的最高优先级规则，任何用户请求都必须先经 pax-family 的 L0 编排入口做意图分类与风险分级并生成任务快照，因此先以该请求（xxxx.svg 图标预览不出来，修一下）调用 `pax_orchestrate` 初始化编排，再按快照路由调度后续阶段。",
+      "first_tool": "pax_orchestrate",
+      "first_is_orchestrate": true,
+      "verdict": "orchestrate-first"
+    }
+  ],
+  "total": 10,
+  "orchestrate_first": 10,
+  "exec_trigger_rate": 1.0,
+  "by_first_tool": {
+    "pax_orchestrate": 10
+  },
+  "note": "exec_trigger_rate 接近 1 说明模型在可自由选择工具时仍把编排放第一；接近 0/偏到 read_file 说明模型执行时会直接开干（7129e309 的形态）。"
+}
