@@ -557,6 +557,34 @@ def init_snapshot(intent, risk, diagnose_required, strategy, route, annotations)
 - **输出**：`snapshot.prd`（含 EARS 验收标准 + 质量门禁 verdict + 变更管理 status）
 - **依赖方向**：生成阶段可并入研究阶段候选（数据流）；质量门禁 FAIL 阻断进入下游（fail-closed）；变更未批准不传播
 
+#### pax-evolve（周期性自审，self-audit 融合）
+
+周期性自审（时间驱动，如每 N 任务 / 每 N 小时）**不新增 skill**，作为 `pax-evolve` 的触发方式：
+由编排层（L0，L0→L4 合法）在满足「已积累足够执行留痕」的周期节点登记触发 `pax-evolve`，
+其 OODA 闭环同时承担自审（方向 / 技术债 / 经验升级），产出改进建议供回路由。
+事件驱动触发（高风险任务完成 / 复盘后）同样登记到 `pax-evolve`。
+
+### 下游领域包扩展注册机制（domain-pack，非 skill）
+
+移动端 / K8s / MLOps 等平台特定能力**不进家族主干分层**，通过**配置注册**作为外部领域包接入
+（本家族不内建其实现，仅定义接口契约）：
+
+```yaml
+domain_pack:
+  name: string              # 如 domain-mobile / domain-k8s / domain-mlops
+  version: string
+  skills:
+    - name: string          # 外部 skill 名
+      intents: [string]     # 触发意图标签
+      input_snapshots: [string]
+      output_snapshots: [string]
+      risk_tags: [string]   # 可触发对应门禁
+  integration_points: [pax-deploy, pax-monitor, pax-test]  # 与核心的集成点
+```
+
+- 外部 skill 产出的快照必须符合家族版本化 schema，可被 `pax-orchestrate` 序列化 / 传递。
+- 以配置文件驱动注册，**不改 `pax-orchestrate` 核心代码**（对齐“框架先行”）。
+
 ### 扩展路由调用规则
 
 #### pax-monitor（监控）

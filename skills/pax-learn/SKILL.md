@@ -342,6 +342,12 @@ def generate_recommendations(snapshot, experiences):
 - `snapshot.learning`（`experiences` / `knowledge_graph` / `recommendations`）
 - 学习报告文件，格式由 `schemas/snapshot.schema.json` 约束
 
+## 持久化接线（pax-docs，L1→L4）
+
+有价值的经验 / 复盘 / 自审结论，需跨任务留档时（非单次任务内）→ 数据流交 `pax-docs` D7
+写入持久记忆文件（`memory/THINKING.md` 等）。`pax-learn` 负责提取 / 建图，`pax-docs` 负责
+持久化——两者按「快照为契约、记忆为派生视图」分工，不重复建库，也不反向推翻快照。
+
 ## 失败模式
 - 经验提取失败 → 降级为手动提取，标注 `manual: true`
 - 知识图谱构建失败 → 跳过图谱，仅记录经验

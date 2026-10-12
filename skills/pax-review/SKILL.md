@@ -394,6 +394,15 @@ review:
   reviewed_by: "pax-review"
 ```
 
+### R6.5 发布门禁联动（pax-gate，L1→L1）
+
+涉及发布 / 新增依赖 / 数据采集 / 安全敏感的改动，评审在给出 `verified` 前应调用 `pax-gate`
+（发布前质量门禁：SAST / 密钥 / 依赖漏洞 / 合规 / 可访问性 / 许可证）作为前置门禁：
+
+- `pax-gate` 产出 `snapshot.quality.verification_seals`（五态 + 证据 + 置信度，fail-closed）。
+- 任一 `critical` / `high` 封印 → 阻断 `verified`，`verdict` 最低 `needs_fix`。
+- 纯文档 / 无发布面改动可跳过（记 `skip_reason`）。
+
 ## 输出契约
 - `snapshot.review`，格式由 `schemas/snapshot.schema.json` 约束
 

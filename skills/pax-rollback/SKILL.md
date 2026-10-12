@@ -250,6 +250,18 @@ def generate_rollback_report(rollback, verification):
     return report
 ```
 
+### R5.5 迁移可逆性前置检查（Migration Reversibility，db-migration 融合）
+
+回滚涉及数据库迁移（`plan.rollback_strategy` 含迁移，或变更含 schema / 迁移脚本）时，回滚前必须
+校验迁移**可逆性**——这是回滚能否真正回到基线的前置条件：
+
+- **down 脚本存在**：每个 migration 必须有可执行 `down`；缺失 → 阻断回滚（fail-closed）。
+- **up→down 可回到基线**：`down` 执行后 schema 与数据须回到迁移前基线（与测试阶段的
+  up/down 实跑校验联动，数据流，不跨阶段调用）。
+- **破坏性迁移**：不可逆的破坏性迁移（如 `DROP COLUMN` 无 down）必须提前标记，回滚走数据补偿而非 schema 回退。
+
+任一项不满足 → 回滚不得直接执行 schema 回退，需转人工/数据补偿路径（记原因）。
+
 ## 输出契约
 - `snapshot.rollback`（`status` / `trigger_reason` / `strategy` / `steps` / `verification` / `summary`）
 - 回滚报告文件，格式由 `schemas/snapshot.schema.json` 约束

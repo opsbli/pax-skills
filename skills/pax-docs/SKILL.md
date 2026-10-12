@@ -300,9 +300,26 @@ docs_change_list:
         source: trial_feedback
 ```
 
+### D7 持久记忆文件（Persistent Memory，pax-memory 融合）
+
+在 CONTEXT/ADR 之外，维护**跨任务持久记忆文件**（对应需求文档的 `pax-memory`，不新增 L0 skill）：
+
+| 文件 | 职责 | 对应 |
+|---|---|---|
+| `memory/THINKING.md` | 架构决策、踩坑、复盘、自审 | 决策记录持久视图 |
+| `memory/PRODUCT.md` | 产品/项目上下文、目标 | 需求持久视图 |
+| `memory/PRD.md` | 结构化 PRD（来自原型转 PRD 阶段） | 需求契约持久视图 |
+
+**一致性原则**：
+- **快照是契约，记忆是派生视图**——记忆文件由各阶段产出写回，但冲突时**以快照为准**，记忆不得反向推翻已冻结快照。
+- 记忆文件变更可版本化 / diff 追踪，写入当前任务的 `snapshot.learning` 变更清单追溯。
+- `pax-docs`（L4）是记忆文件的写入落点；研究 / 设计 / 原型转 PRD 等阶段把
+  候选（确认后）与 PRD 经数据流交文档/记忆阶段持久化，不跨阶段调用。
+
 ## 输出契约
 - `CONTEXT.md` 增量块
 - `ADR-<N>.md` 草稿或正式版
+- 持久记忆文件 `memory/THINKING.md` / `PRODUCT.md` / `PRD.md`
 - 变更清单，格式由 `schemas/snapshot.schema.json` 约束
 
 ## 失败模式

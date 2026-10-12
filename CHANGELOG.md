@@ -36,6 +36,14 @@
   删除而非补齐，避免承载误导性占位；后续如需评估这些环节，按 `pax-design`/`pax-research` 的真实数据集模式补齐。
 
 ### Added
+- **补齐 v3 §1.2–1.4 剩余 5 项**：
+  - `pax-gate` 接线进 `pax-review` R6.5 与 `pax-deploy` D2.5（发布前门禁，fail-closed）。
+  - `pax-rollback` R5.5 迁移可逆性前置检查（down 脚本存在 / 回到基线 / 破坏性迁移走数据补偿）。
+  - `pax-docs` D7 持久记忆文件（THINKING/PRODUCT/PRD，快照为契约、记忆为派生视图）；
+    `pax-learn` 补经 `pax-docs` 持久化数据流。
+  - `pax-orchestrate` 下游领域包扩展注册机制（domain-pack 配置驱动，非 skill）。
+  - `pax-orchestrate` 周期性自审→`pax-evolve` 触发（时间/事件驱动，L0→L4）。
+  家族版本 1.5.2 → 1.5.3（skill 正文增强 → patch）。已同步安装运行时。
 - **融合接线（v3 §1.2 收尾）**：
   - `pax-design` D7：`medium` 风险、无需全量盲审时的方案权衡，委托 `pax-advisor`
     （证据加权，L1→L2 合法）；盲审仍由 `pax-council` 承担，两者不互替。

@@ -145,6 +145,8 @@ def run_pre_checks(snapshot, config):
 - **CI/CD 配置检测**：若任务含流水线（GitHub Actions / GitLab CI 等），校验流水线脚本与部署步骤
   一致（构建→测试→部署→回滚链路），并在部署报告标注流水线是否就绪。
 - **回滚联动**：与 `pax-rollback` 联动——环境差异导致的部署失败应进入回滚阶段（数据流）。
+- **发布门禁联动**：部署前调用 `pax-gate`（L1→L1）做安全/合规/a11y/许可证静态检查，产出
+  `snapshot.quality.verification_seals`；任一 `critical` / `high` 封印 **fail-closed 阻断部署**。
 - 不在本期实现 CI/CD 平台全量适配，仅定义检测契约（对齐家族“框架先行”）
 
 ### D3 部署执行（Deployment Execution）
