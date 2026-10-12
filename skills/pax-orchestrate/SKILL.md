@@ -532,6 +532,7 @@ def init_snapshot(intent, risk, diagnose_required, strategy, route, annotations)
 | `pax-deploy` | L1 | 任务完成后 | 自动化部署流程 |
 | `pax-learn` | L1 | 任务评审完成后 | 经验沉淀和知识图谱构建 |
 | `pax-design` | L1 | 需求已澄清但方案未定 | 产出可冻结设计契约（ADR/接口/数据模型/服务边界/可观测性），供 plan 消费 |
+| `pax-research` | L1 | 需求模糊/需调研竞品/技术选型/判断值不值得做（不确定性 ≥ 2） | 开发前只读采集→候选集（snapshot.research），选型评估交 advisor、高风险交 council |
 | `pax-evolve` | L4 | 任务评审/学习后积累留痕，或周期性自审 | OODA 闭环：沉淀经验条目、经 A/B 验证门与回滚机制提出 Skill/契约改进建议 |
 
 #### pax-design（设计门禁）
@@ -542,6 +543,12 @@ def init_snapshot(intent, risk, diagnose_required, strategy, route, annotations)
 - **输出**：`snapshot.design`
 - **依赖方向**：`design` 在 `plan` 上游；plan 可消费已冻结的 `snapshot.design` 作为约束。
   `consensus` 段由 clarify 独占，design 只读不写
+
+#### pax-research（开发前研究）
+- **触发条件**：`feature_dev` / `tool_build` 且 `uncertainty >= 2`；或用户显式表达「调研 / 看竞品 / 选哪个技术 / 值不值得做 / 市场背景」
+- **调用时机**：`pax-clarify` 之前或并行（`annotations.research_required = true` 时挂载）；低风险目标明确任务不挂载
+- **输出**：`snapshot.research`（候选集）
+- **依赖方向**：只读采集→候选，不裁决；选型评估与高风险盲审由研究阶段按家族协作约定委托（L1→L2 合法，数据流，不跨阶段调用）。方案定稿交设计/规划阶段消费候选
 
 ### 扩展路由调用规则
 

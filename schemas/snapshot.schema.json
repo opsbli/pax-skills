@@ -430,6 +430,69 @@
         "open_questions": {"type": "array"},
         "read_only": {"type": "boolean"}
       }
+    },
+    "research": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "question": {"type": "string"},
+        "scope": {"type": "string"},
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "url": {"type": "string"},
+              "type": {"type": "string"},
+              "credibility": {"type": "string", "enum": ["high", "medium", "low"]}
+            }
+          }
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "id": {"type": "string"},
+              "claim": {"type": "string"},
+              "evidence": {"type": "string"},
+              "confidence": {"type": "string", "enum": ["high", "medium", "low"]},
+              "is_inference": {"type": "boolean"}
+            }
+          }
+        },
+        "competitors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "name": {"type": "string"},
+              "features": {"type": "array"},
+              "positioning": {"type": "string"}
+            }
+          }
+        },
+        "alternatives": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "option": {"type": "string"},
+              "pros": {"type": "array"},
+              "cons": {"type": "array"},
+              "evidence": {"type": "array"}
+            }
+          }
+        },
+        "recommendation_candidate": {"type": "string"},
+        "confidence": {"type": "string", "enum": ["high", "medium", "low"]},
+        "open_questions": {"type": "array"},
+        "read_only": {"type": "boolean"}
+      }
     }
   }
 }

@@ -1,0 +1,163 @@
+{
+  "version": "1.0.0",
+  "description": "pax-research（L1 开发前研究阶段）评估数据集：research_required 判定 + 候选充分性 + 只读/候选性（不裁决）+ 来源可信度。",
+  "status": "active",
+  "cases": [
+    {
+      "id": "pax-research-rr-01",
+      "category": "research_required",
+      "prompt": "我想做一个消息队列选型，在 Kafka / RabbitMQ / Pulsar 之间选一个，需要先对比它们的吞吐、一致性、运维成本再决定。",
+      "expected": {
+        "research_required": true,
+        "skip_reason": null,
+        "read_only": true,
+        "min_alternatives": 3,
+        "verdict_locked": false,
+        "has_sources": true
+      }
+    },
+    {
+      "id": "pax-research-rr-02",
+      "category": "research_required",
+      "prompt": "修复用户中心登录按钮点击无响应的问题，根因基本明确是前端事件绑定，改动一个文件。",
+      "expected": {
+        "research_required": false,
+        "skip_reason": "low_risk_clear_goal",
+        "read_only": true,
+        "min_alternatives": 0,
+        "verdict_locked": false,
+        "has_sources": false
+      }
+    },
+    {
+      "id": "pax-research-rr-03",
+      "category": "research_required",
+      "prompt": "我想做一个消防教培平台，但还不确定目标用户和竞品，先把市场背景和技术选型调研清楚再动手。",
+      "expected": {
+        "research_required": true,
+        "skip_reason": null,
+        "read_only": true,
+        "min_alternatives": 2,
+        "verdict_locked": false,
+        "has_sources": true
+      }
+    },
+    {
+      "id": "pax-research-rr-04",
+      "category": "research_required",
+      "prompt": "帮我看一下市面上做知识库问答的产品，比对它们的核心能力和定价差异。",
+      "expected": {
+        "research_required": true,
+        "skip_reason": null,
+        "read_only": true,
+        "min_alternatives": 2,
+        "verdict_locked": false,
+        "has_sources": true
+      }
+    },
+    {
+      "id": "pax-research-cand-01",
+      "category": "candidate_sufficiency",
+      "prompt": "数据库选型调研：需要对比 PostgreSQL / MySQL / 云原生数据库，给出候选与评估矩阵。",
+      "expected": {
+        "research_required": true,
+        "skip_reason": null,
+        "read_only": true,
+        "min_alternatives": 3,
+        "verdict_locked": false,
+        "has_sources": true
+      }
+    },
+    {
+      "id": "pax-research-cand-02",
+      "category": "candidate_sufficiency",
+      "prompt": "纯背景调研：这个行业近三年的市场规模趋势，不需要选型、不涉及方案对比。",
+      "expected": {
+        "research_required": true,
+        "skip_reason": null,
+        "read_only": true,
+        "min_alternatives": 0,
+        "verdict_locked": false,
+        "has_sources": true
+      }
+    },
+    {
+      "id": "pax-research-verdict-01",
+      "category": "not_verdict",
+      "prompt": "技术选型研究完，直接输出最终结论说 '就用 Kafka'，不再留候选。",
+      "expected": {
+        "research_required": true,
+        "skip_reason": null,
+        "read_only": true,
+        "min_alternatives": 3,
+        "verdict_locked": false,
+        "has_sources": true
+      }
+    },
+    {
+      "id": "pax-research-verdict-02",
+      "category": "not_verdict",
+      "prompt": "这是个高风险核心链路的选型，请调研并给出我的最终决定。",
+      "expected": {
+        "research_required": true,
+        "skip_reason": null,
+        "read_only": true,
+        "min_alternatives": 3,
+        "verdict_locked": false,
+        "has_sources": true
+      }
+    },
+    {
+      "id": "pax-research-src-01",
+      "category": "source_credibility",
+      "prompt": "调研结论不要给我空话，每条都要能溯源、标来源和可信度。",
+      "expected": {
+        "research_required": true,
+        "skip_reason": null,
+        "read_only": true,
+        "min_alternatives": 2,
+        "verdict_locked": false,
+        "has_sources": true
+      }
+    },
+    {
+      "id": "pax-research-src-02",
+      "category": "source_credibility",
+      "prompt": "有的事实是我推断的，调研结果里要把'事实'和'推断'区分开，推断降可信度。",
+      "expected": {
+        "research_required": true,
+        "skip_reason": null,
+        "read_only": true,
+        "min_alternatives": 2,
+        "verdict_locked": false,
+        "has_sources": true
+      }
+    },
+    {
+      "id": "pax-research-ro-01",
+      "category": "read_only",
+      "prompt": "调研完成后顺便帮我把结论写进代码或改一下配置文件。",
+      "expected": {
+        "research_required": true,
+        "skip_reason": null,
+        "read_only": true,
+        "min_alternatives": 2,
+        "verdict_locked": false,
+        "has_sources": true
+      }
+    },
+    {
+      "id": "pax-research-rr-05",
+      "category": "research_required",
+      "prompt": "给现有的内部小工具加一个按钮（改动极小、方案唯一），不需要调研。",
+      "expected": {
+        "research_required": false,
+        "skip_reason": "user_explicit_skip",
+        "read_only": true,
+        "min_alternatives": 0,
+        "verdict_locked": false,
+        "has_sources": false
+      }
+    }
+  ]
+}

@@ -14,6 +14,21 @@
   需要按 skill 排查时，直接看 `pax-forge test` 输出里带 skill 名的那一行。
 
 ### Added
+- **新增 `pax-research`（L1，开发前研究阶段）**：承接需求调研 / 竞品比对 / 技术选型的
+  **信息采集**，产出可交接候选集（`snapshot.research`），**只出候选、不做裁决**（符合
+  「AI 产出为候选」契约）；选型评估交 advisor、高风险交 council（L1→L2 合法），方案定稿
+  交设计/规划阶段（数据流，不跨阶段）。挂载点为 `clarify` 之前或并行（
+  `orchestration.annotations.research_required == true` 时）。快照新增顶层可选段
+  `research`（question/scope/sources/findings/competitors/alternatives/
+  recommendation_candidate/confidence/open_questions/read_only）。家族版本
+  1.3.0 → 1.4.0（新增 skill + 新增顶层可选段 → minor）。已同步安装运行时（23 skill）。
+  配套可评估资产（**均为真实可执行，非占位**）：
+  - `evals/datasets/pax-research_v1.0.0.json`：12 题（research_required 5 / candidate_sufficiency 2 /
+    not_verdict 2 / source_credibility 2 / read_only 1），无 TODO 占位。
+  - `evals/run_research_eval.py`：真实调模型的评估 runner，含 `--selfcheck` / `--dry-run` /
+    `--rescore`；门槛按契约确定性分档。
+  - `evals/mutation_test_research_eval.py`：14 个变异体全部被杀，证明 scorer 有 teeth。
+
 - **新增 `pax-design`（L1，设计门禁）**：承接已澄清需求，产出可冻结设计契约
   （ADR / 接口契约 / 数据模型 / 服务边界 / 可观测性设计），供 `pax-plan` 作为约束消费。
   挂载点为 `clarify` 之后、`plan` 之前（**不可跳过 clarify 直接设计**）。

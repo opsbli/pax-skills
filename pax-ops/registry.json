@@ -177,6 +177,14 @@
       "version": "1.0.0",
       "path": "skills/pax-gate/SKILL.md",
       "registered_at": "2026-10-12T08:00:00Z"
+    },
+    {
+      "name": "pax-research",
+      "layer": "L1",
+      "optional": true,
+      "version": "1.0.0",
+      "path": "skills/pax-research/SKILL.md",
+      "registered_at": "2026-10-12T09:05:00Z"
     }
   ]
 }
