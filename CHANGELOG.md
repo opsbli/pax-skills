@@ -36,6 +36,13 @@
   删除而非补齐，避免承载误导性占位；后续如需评估这些环节，按 `pax-design`/`pax-research` 的真实数据集模式补齐。
 
 ### Added
+- **融合接线（v3 §1.2 收尾）**：
+  - `pax-design` D7：`medium` 风险、无需全量盲审时的方案权衡，委托 `pax-advisor`
+    （证据加权，L1→L2 合法）；盲审仍由 `pax-council` 承担，两者不互替。
+  - `pax-deploy` D2.5：环境差异检测（目标 vs 部署源，对应 `deployment` 意图）+ CI/CD
+    流水线一致性校验 + 回滚联动（与 `pax-rollback` 数据流）；不新增独立 skill。
+  - 注：`pax-monitor` 事故沉淀链（incident→学习阶段）已在既有提交落地，无需重复。
+  家族版本 1.5.1 → 1.5.2（skill 正文增强 → patch）。已同步安装运行时。
 - **`pax-design` 前端产出阶段（D9，并入设计，不新增 skill）**：承接前端视觉产出——F1 设计系统检测
   （内部步骤）/ F2 风格一致性 / F3 反 AI 套路规避 / F4 0-1 视觉方向 / F5 视觉验证。
   `snapshot.design` 段新增可选 `frontend` 子对象

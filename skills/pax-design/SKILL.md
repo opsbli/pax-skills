@@ -263,6 +263,10 @@ observability_plan:
 
 未获多数认可的 ADR 不得进入 `accepted`，也不得作为计划约束。
 
+依赖 `pax-advisor`（L1→L2 合法）：当风险为 `medium`、无需全量盲审、但存在方案权衡/选型取舍
+需要证据加权参考时，可委托 `pax-advisor`（A2 候选生成 + A3 证据加权，只读）补充决策依据，
+再决定是否进入盲审或冻结。盲审仍由 `pax-council` 承担（高风险必备），两者不互替。
+
 ### D8 契约冻结（Design Freeze）
 
 ```python

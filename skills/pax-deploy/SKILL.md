@@ -136,6 +136,17 @@ def run_pre_checks(snapshot, config):
     }
 ```
 
+### D2.5 环境差异与 CI/CD 配置检测（Env Diff & CI/CD，B7/cicd 融合）
+
+发布前把「环境差异检测」并入部署，并覆盖 CI/CD 流水线的生成/校验（不新建独立 skill）：
+
+- **环境差异检测**：对比 目标环境（prod/staging/test）与部署源环境 的差异——配置项、依赖版本、
+  环境变量、外部依赖连通性；差异未确认不得放行（对应二级意图 `deployment`）。
+- **CI/CD 配置检测**：若任务含流水线（GitHub Actions / GitLab CI 等），校验流水线脚本与部署步骤
+  一致（构建→测试→部署→回滚链路），并在部署报告标注流水线是否就绪。
+- **回滚联动**：与 `pax-rollback` 联动——环境差异导致的部署失败应进入回滚阶段（数据流）。
+- 不在本期实现 CI/CD 平台全量适配，仅定义检测契约（对齐家族“框架先行”）
+
 ### D3 部署执行（Deployment Execution）
 
 ```python
