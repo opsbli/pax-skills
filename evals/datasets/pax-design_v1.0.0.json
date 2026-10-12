@@ -1,0 +1,109 @@
+{
+  "version": "1.0.0",
+  "description": "pax-design 单 skill 评估数据集。测 D1 设计必要性判定与 D2 设计深度判定——这是 pax-design 最上游、最可证伪的两个决策点。gold 取值必须能仅凭 prompt + SKILL.md 契约文字推导出来。",
+  "status": "active",
+  "cases": [
+    {
+      "id": "pax-design-dr-01",
+      "category": "design_required",
+      "prompt": "给支付服务加一个退款接口，需要和订单服务交互，第三方支付回调不保证一定到",
+      "expected": {"design_required": true, "skip_reason": null}
+    },
+    {
+      "id": "pax-design-dr-02",
+      "category": "design_required",
+      "prompt": "页面上的按钮颜色改成蓝色",
+      "expected": {"design_required": false, "skip_reason": "no_new_contract_no_boundary_change"}
+    },
+    {
+      "id": "pax-design-dr-03",
+      "category": "design_required",
+      "prompt": "登录接口报错了，堆栈是 NullPointerException，根因已经定位到第 42 行的空指针，改一下就行",
+      "expected": {"design_required": false, "skip_reason": "root_cause_known_single_solution"}
+    },
+    {
+      "id": "pax-design-dr-04",
+      "category": "design_required",
+      "prompt": "解释一下这个项目的限流是怎么实现的",
+      "expected": {"design_required": false, "skip_reason": "doc_consult_only"}
+    },
+    {
+      "id": "pax-design-dr-05",
+      "category": "design_required",
+      "prompt": "用户表加一个字段记录用户偏好设置，会影响登录后的查询逻辑，要上生产",
+      "expected": {"design_required": true, "skip_reason": null}
+    },
+    {
+      "id": "pax-design-dr-06",
+      "category": "design_required",
+      "prompt": "重构一下 utils.py 里的工具函数，拆分得清楚点，外部行为不要变",
+      "expected": {"design_required": false, "skip_reason": "no_new_contract_no_boundary_change"}
+    },
+    {
+      "id": "pax-design-dr-07",
+      "category": "design_required",
+      "prompt": "把订单导出功能拆成一个独立服务，订单服务和报表服务都要调它，涉及两个团队",
+      "expected": {"design_required": true, "skip_reason": null}
+    },
+    {
+      "id": "pax-design-dr-08",
+      "category": "design_required",
+      "prompt": "对接第三方短信接口，对方要求把用户手机号加密传输，密钥由我们保管",
+      "expected": {"design_required": true, "skip_reason": null}
+    },
+    {
+      "id": "pax-design-depth-01",
+      "category": "design_depth",
+      "prompt": "内部脚本加一个命令行参数解析，注意跟现有脚本风格保持一致",
+      "expected": {"depth": "minimal"}
+    },
+    {
+      "id": "pax-design-depth-02",
+      "category": "design_depth",
+      "prompt": "新增一个 GET /orders/{id} 查询接口，要定义请求和响应字段",
+      "expected": {"depth": "standard"}
+    },
+    {
+      "id": "pax-design-depth-03",
+      "category": "design_depth",
+      "prompt": "我们要在消息队列上选型：Kafka 还是 RabbitMQ，需要定架构，服务边界和监控都要设计",
+      "expected": {"depth": "full"}
+    },
+    {
+      "id": "pax-design-depth-04",
+      "category": "design_depth",
+      "prompt": "订单表新增一个 status_reason 字段来记录状态变更原因",
+      "expected": {"depth": "standard"}
+    },
+    {
+      "id": "pax-design-cand-01",
+      "category": "candidate_sufficiency",
+      "prompt": "我们要做灰度发布机制，评估一下直接全量发布、基于用户分桶灰度、基于时间窗口灰度这几种方案，定一个",
+      "expected": {"min_candidates": 3}
+    },
+    {
+      "id": "pax-design-cand-02",
+      "category": "candidate_sufficiency",
+      "prompt": "日志打印语句里有一处变量名拼错了，把它改对",
+      "expected": {"min_candidates": 0}
+    },
+    {
+      "id": "pax-design-freeze-01",
+      "category": "freeze_gate",
+      "prompt": "新增一个跨服务接口，架构方案已经定了，但接口的错误码还没想好清楚",
+      "expected": {"status": "blocked"}
+    }
+  ],
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-10-12",
+      "summary": "初始数据集，15 题（design_required 8 / design_depth 4 / candidate_sufficiency 2 / freeze_gate 1）",
+      "changes": [
+        "15 条真实用例，无 TODO 占位",
+        "gold 取值均可由 prompt + SKILL.md D1/D2/D3/D8 契约文字唯一推导",
+        "覆盖正例与反例：跳过设计（低风险/纯文档/根因已知）与强制设计（新接口/schema/跨服务/涉敏感字段）"
+      ]
+    }
+  ]
+}

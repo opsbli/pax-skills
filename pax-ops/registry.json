@@ -1,6 +1,6 @@
 {
   "family": "pax",
-  "updated_at": "2026-10-12T03:38:02Z",
+  "updated_at": "2026-10-12T07:20:00Z",
   "skills": [
     {
       "name": "pax-orchestrate",
@@ -161,6 +161,14 @@
       "version": "1.0.0",
       "path": "skills/pax-analyze/SKILL.md",
       "registered_at": "2026-10-12T03:38:02Z"
+    },
+    {
+      "name": "pax-design",
+      "layer": "L1",
+      "optional": true,
+      "version": "1.0.0",
+      "path": "skills/pax-design/SKILL.md",
+      "registered_at": "2026-10-12T07:20:00Z"
     }
   ]
 }

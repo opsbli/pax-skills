@@ -298,6 +298,128 @@
         "recommendations": {"type": "array"}
       }
     },
+    "design": {
+      "type": "object",
+      "description": "pax-design 写入的设计契约段。consensus 由澄清阶段独占，本段承载 clarify 之后、plan 之前的设计决策。",
+      "additionalProperties": false,
+      "properties": {
+        "design_required": {"type": "boolean"},
+        "skip_reason": {"type": ["string", "null"]},
+        "depth": {"type": "string", "enum": ["minimal", "standard", "full"]},
+        "candidates": {
+          "type": "array",
+          "description": "方案候选；full 深度的高风险决策至少 2 个。",
+          "items": {
+            "type": "object",
+            "required": ["id", "name"],
+            "additionalProperties": true,
+            "properties": {
+              "id": {"type": "string"},
+              "name": {"type": "string"},
+              "approach": {"type": "string"},
+              "pros": {"type": "array"},
+              "cons": {"type": "array"},
+              "evidence": {"type": "array"},
+              "costs": {"type": "array"}
+            }
+          }
+        },
+        "adrs": {
+          "type": "array",
+          "description": "架构决策记录；不可逆或跨边界决策必须留痕，含代价与后果。",
+          "items": {
+            "type": "object",
+            "required": ["id", "title", "status"],
+            "additionalProperties": true,
+            "properties": {
+              "id": {"type": "string"},
+              "title": {"type": "string"},
+              "status": {"type": "string",
+                         "enum": ["proposed", "accepted", "superseded"]},
+              "context": {"type": "string"},
+              "decision": {"type": "string"},
+              "alternatives": {"type": "array"},
+              "consequences": {"type": "object"},
+              "supersedes": {"type": ["string", "null"]},
+              "decided_at": {"type": ["string", "null"], "format": "date-time"}
+            }
+          }
+        },
+        "api_contracts": {
+          "type": "array",
+          "description": "可被计划阶段直接消费的接口契约；错误码与触发条件成对出现。",
+          "items": {
+            "type": "object",
+            "required": ["name"],
+            "additionalProperties": true,
+            "properties": {
+              "name": {"type": "string"},
+              "method": {"type": "string",
+                         "enum": ["GET", "POST", "PUT", "DELETE", "PATCH"]},
+              "path": {"type": "string"},
+              "request": {"type": "string"},
+              "response": {"type": "string"},
+              "error_codes": {"type": "array"},
+              "auth": {"type": "string"},
+              "version": {"type": "string"}
+            }
+          }
+        },
+        "data_models": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name"],
+            "additionalProperties": true,
+            "properties": {
+              "name": {"type": "string"},
+              "fields": {"type": "array"},
+              "relationships": {"type": "array"},
+              "indexes": {"type": "array"}
+            }
+          }
+        },
+        "service_boundaries": {
+          "type": "array",
+          "description": "depends_on 必须构成有向无环图。",
+          "items": {
+            "type": "object",
+            "required": ["name"],
+            "additionalProperties": true,
+            "properties": {
+              "name": {"type": "string"},
+              "responsibility": {"type": "string"},
+              "depends_on": {"type": "array"},
+              "exposes": {"type": "array"}
+            }
+          }
+        },
+        "observability_plan": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "logs": {"type": "array"},
+            "metrics": {"type": "array"},
+            "traces": {"type": "array"},
+            "slo": {"type": "array"}
+          }
+        },
+        "security_considerations": {"type": "array"},
+        "review": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "required": {"type": "boolean"},
+            "verdict": {"type": ["string", "null"],
+                        "enum": ["accepted", "needs_revision", "blocked", null]},
+            "round": {"type": "integer"}
+          }
+        },
+        "open_questions": {"type": "array"},
+        "status": {"type": "string", "enum": ["draft", "frozen", "blocked"]},
+        "frozen_at": {"type": ["string", "null"], "format": "date-time"}
+      }
+    },
     "analysis": {
       "type": "object",
       "additionalProperties": false,

@@ -531,6 +531,16 @@ def init_snapshot(intent, risk, diagnose_required, strategy, route, annotations)
 | `pax-test` | L1 | 任务执行完成后 | 自动生成测试用例并执行 |
 | `pax-deploy` | L1 | 任务完成后 | 自动化部署流程 |
 | `pax-learn` | L1 | 任务评审完成后 | 经验沉淀和知识图谱构建 |
+| `pax-design` | L1 | 需求已澄清但方案未定 | 产出可冻结设计契约（ADR/接口/数据模型/服务边界/可观测性），供 plan 消费 |
+
+#### pax-design（设计门禁）
+- **触发条件**：引入新接口 / schema 变更 / 跨服务边界改动；或 `risk.level == "high"`
+  且 `intent.primary` 为 `feature_dev` / `tool_build`；或二级意图含 `security` / `integration`
+- **调用时机**：`pax-clarify` 收敛之后、`pax-plan` 之前（**不可跳过 clarify 直接设计**）
+- **不挂载**：低风险且无新增契约的改动（由 design 自判并记 `skip_reason`）、纯文档咨询、根因已确定的低风险修复
+- **输出**：`snapshot.design`
+- **依赖方向**：`design` 在 `plan` 上游；plan 可消费已冻结的 `snapshot.design` 作为约束。
+  `consensus` 段由 clarify 独占，design 只读不写
 
 ### 扩展路由调用规则
 

@@ -14,6 +14,21 @@
   需要按 skill 排查时，直接看 `pax-forge test` 输出里带 skill 名的那一行。
 
 ### Added
+- **新增 `pax-design`（L1，设计门禁）**：承接已澄清需求，产出可冻结设计契约
+  （ADR / 接口契约 / 数据模型 / 服务边界 / 可观测性设计），供 `pax-plan` 作为约束消费。
+  挂载点为 `clarify` 之后、`plan` 之前（**不可跳过 clarify 直接设计**）。
+  快照新增顶层可选段 `design`（design_required/skip_reason/depth/candidates/adrs/
+  api_contracts/data_models/service_boundaries/observability_plan/security_considerations/
+  review/open_questions/status/frozen_at）。
+  家族版本 1.1.0 → 1.2.0（新增 skill + 新增顶层可选字段 → minor）。
+  配套可评估资产（**均为真实可执行，非占位**）：
+  - `evals/datasets/pax-design_v1.0.0.json`：15 题（design_required 8 / design_depth 4 /
+    candidate_sufficiency 2 / freeze_gate 1），无 TODO 占位。
+  - `evals/run_design_eval.py`：真实调模型的评估 runner，含 `--selfcheck` / `--dry-run` /
+    `--rescore`；门槛按契约确定性分档而非从测量分布反推。
+  - `evals/mutation_test_design_eval.py`：13 个变异体全部被杀，证明 scorer 有 teeth。
+  - `evals/validate_design_snapshot.py`：6 条正反用例验证 `design` 段 schema 约束有效。
+  - `evals/probe_requirements_feasibility.py`：需求文档设计的契约可行性探针（见下）。
 - **新增 `pax-analyze`（L1，只读分析/调研执行落点）**：doc_consult 路由的正式执行阶段，
   承接代码/数据链路溯源、事实调研、行为解释，产出带证据链的分析结论。
   `doc_consult` 路由从 `[clarify, docs]` 改为 `[clarify, analyze]`，沉淀可选（`analysis_optional_docs`）。
@@ -21,6 +36,18 @@
   家族版本 1.0.0 → 1.1.0（新增 skill + 新增顶层可选字段 → minor）。
 
 ### Changed
+- **需求文档的 18 个新 skill 设计经探针验证与既有契约冲突**，本轮只落地其中
+  契约可行且杠杆最高的一个（`pax-design`），其余待口径裁定后再增补。实测结论：
+  - **14 个 `*_snapshot` 顶层段全部被 `snapshot.schema.json` 拒绝**（`additionalProperties: false`）。
+    新增能力必须复用既有段或显式扩 schema，不能另起顶层命名。
+  - **L4 是「只被调用、不主动下探」的横切层**（`compatibility_matrix` 未声明 L4 出边）。
+    需求文档把 `pax-security` / `pax-db-migration` / `pax-a11y-i18n` / `pax-incident` /
+    `pax-compliance` / `pax-self-audit` 放在 L4 并要求它们回调 L1，会产生 **21 条非法调用边**。
+    横切检查的正确形态是**由 L1 在指定阶段调用**，而非 L4 向下回调。
+  - 文档声明的依赖图含 **8 个环**（design↔frontend-design、security↔compliance 等），
+    会直接触发 `no-cycles` 契约失败。
+  - `pax-memory` 声明为 L0，但 L0 是 `optional: false` 的强制单一入口
+    （`gate-refusal` 契约对 L0 有额外语义要求），不宜承载可选的记忆层能力。
 - `doc_consult` 不再默认走 `pax-docs` 强制沉淀；仅当用户需要留档时才追加。
 - `pax-advisor` 由 `skeleton` 恢复为 `active`，并接线到 `pax-analyze` 升级路径
   （分析中遇决策/权衡/架构型追问时委托其提供只读建议）；version 仍 1.0.0，不新增快照字段。
