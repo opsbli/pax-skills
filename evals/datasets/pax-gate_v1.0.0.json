@@ -1,0 +1,100 @@
+{
+  "version": "1.0.0",
+  "description": "pax-gate 门禁段评估数据集：检查范围判定(G1)、严重度判定(G2)、可部署判定(G3/fail-closed)。涵盖 security/compliance/a11y_i18n/license 四类。gold 由契约查表可推导。",
+  "status": "active",
+  "cases": [
+    {
+      "id": "pax-gate-security-01",
+      "category": "security",
+      "prompt": "代码仓库变更中，config.py 里发现硬编码的 AWS 访问密钥字符串 AKIA...。该变更还新增了一个第三方依赖包。请判定此检查项的严重度。",
+      "expected": {"scope": {"security": true, "license": true}, "severity": "critical", "deployable": false, "verdict": "blocked"}
+    },
+    {
+      "id": "pax-gate-security-02",
+      "category": "security",
+      "prompt": "变更引入的依赖包 libSSL 存在公开 CVE-2024-1234（远程代码执行）。除此之外无其他检查问题。请判定严重度与是否可部署。",
+      "expected": {"severity": "high", "deployable": false, "verdict": "blocked"}
+    },
+    {
+      "id": "pax-gate-security-03",
+      "category": "security",
+      "prompt": "代码中一个登录接口未对输入长度做校验，可能造成资源耗尽，属于中等缺陷。无其他问题。请判定可部署性。",
+      "expected": {"severity": "medium", "deployable": true, "verdict": "needs_review"}
+    },
+    {
+      "id": "pax-gate-security-04",
+      "category": "security",
+      "prompt": "本次变更是纯文档内容（README 更新），不涉及代码、依赖或数据采集。请判定本门禁段的检查范围。",
+      "expected": {"scope": {"security": false, "compliance": false, "a11y_i18n": false, "license": false}, "skip_reason": "doc_only"}
+    },
+    {
+      "id": "pax-gate-compliance-01",
+      "category": "compliance",
+      "prompt": "新功能会在未获取用户同意的情况下采集并跨境传输个人数据（PII）。请判定严重度与可部署性。",
+      "expected": {"severity": "high", "deployable": false, "verdict": "blocked"}
+    },
+    {
+      "id": "pax-gate-compliance-02",
+      "category": "compliance",
+      "prompt": "应用缺少用户隐私声明，但未实际采集个人数据，属于低/中影响。请判定可部署性。",
+      "expected": {"severity": "medium", "deployable": true, "verdict": "needs_review"}
+    },
+    {
+      "id": "pax-gate-a11y-01",
+      "category": "a11y_i18n",
+      "prompt": "新增的登录表单没有为输入框提供可访问性标签（label），且前景/背景对比度不达标，影响屏幕阅读器用户。请判定严重度。",
+      "expected": {"severity": "high", "deployable": false, "verdict": "blocked"}
+    },
+    {
+      "id": "pax-gate-a11y-02",
+      "category": "a11y_i18n",
+      "prompt": "前端某组件缺少动态状态的 ARIA 描述，且部分文案未做国际化，属于中等可访问性缺陷。请判定可部署性。",
+      "expected": {"severity": "medium", "deployable": true, "verdict": "needs_review"}
+    },
+    {
+      "id": "pax-gate-license-01",
+      "category": "license",
+      "prompt": "变更引入的依赖包使用了 AGPL 许可，与当前专有代码共存，存在许可证冲突风险。请判定严重度。",
+      "expected": {"severity": "high", "deployable": false, "verdict": "blocked"}
+    },
+    {
+      "id": "pax-gate-license-02",
+      "category": "license",
+      "prompt": "新依赖包的许可证信息缺失，无法确认其合规性，暂时无明显冲突。请判定可部署性。",
+      "expected": {"severity": "medium", "deployable": true, "verdict": "needs_review"}
+    },
+    {
+      "id": "pax-gate-mixed-01",
+      "category": "mixed",
+      "prompt": "本次变更同时包含：①一个硬编码密钥（critical），②合规的许可证（verified），③一个缺 ARIA 标签的中等 a11y 问题。请综合判定可部署性与整体 verdict。",
+      "expected": {"deployable": false, "verdict": "blocked", "blocking": ["security"]}
+    },
+    {
+      "id": "pax-gate-mixed-02",
+      "category": "mixed",
+      "prompt": "本次变更存在两个中等缺陷（一个 medium 安全、一个 medium 合规），无 critical/high。请综合判定可部署性与 verdict。",
+      "expected": {"deployable": true, "verdict": "needs_review", "blocking": []}
+    },
+    {
+      "id": "pax-gate-mixed-03",
+      "category": "mixed",
+      "prompt": "本次变更的所有检查项均通过（无 critical/high/medium，仅 low 或无需检查）。请判定整体 verdict。",
+      "expected": {"deployable": true, "verdict": "verified", "blocking": []}
+    },
+    {
+      "id": "pax-gate-scope-01",
+      "category": "scope",
+      "prompt": "变更新增了一个带 UI 的前端页面，并采集用户邮箱用于登录，同时引入一个新的 npm 依赖。请判定门禁段检查范围。",
+      "expected": {"scope": {"security": true, "compliance": true, "a11y_i18n": true, "license": true}}
+    },
+    {
+      "id": "pax-gate-scope-02",
+      "category": "scope",
+      "prompt": "变更只改了后端一个纯计算函数（无 IO、无依赖、无 UI、无数据采集）。请判定门禁段检查范围。",
+      "expected": {"scope": {"security": true, "compliance": false, "a11y_i18n": false, "license": false}}
+    }
+  ],
+  "changelog": [
+    {"version": "1.0.0", "date": "2026-10-12", "note": "初版：15 题，覆盖四类检查 + 范围与混合判定"}
+  ]
+}

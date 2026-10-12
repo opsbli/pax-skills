@@ -1,6 +1,6 @@
 {
   "family": "pax",
-  "updated_at": "2026-10-12T07:20:00Z",
+  "updated_at": "2026-10-12T08:30:02Z",
   "skills": [
     {
       "name": "pax-orchestrate",
@@ -169,6 +169,14 @@
       "version": "1.0.0",
       "path": "skills/pax-design/SKILL.md",
       "registered_at": "2026-10-12T07:20:00Z"
+    },
+    {
+      "name": "pax-gate",
+      "layer": "L1",
+      "optional": true,
+      "version": "1.0.0",
+      "path": "skills/pax-gate/SKILL.md",
+      "registered_at": "2026-10-12T08:00:00Z"
     }
   ]
 }

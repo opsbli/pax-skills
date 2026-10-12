@@ -361,9 +361,11 @@ cd <repo> && python -m pax.forge test    # 或直接跑 contracts.run_all_contra
 | `snapshot.design` 段 | 顶层可选段，承接 ADR / 接口 / 数据模型 / 服务边界 / 可观测性 | 6 条正反用例 |
 | 挂载点 | `clarify` 之后、`plan` 之前（**不可跳过 clarify**） | `layer-call-legality` |
 | 评估资产 | 15 题数据集 + runner + 13/13 变异测试 + schema 校验 | `--selfcheck` / 变异测试全绿 |
+| `pax-gate`（L1，M1） | 门禁段 skill，承载 A1–A4：SAST/密钥/依赖漏洞 + GDPR/SOC2 + WCAG/a11y/i18n + 许可证；输出复用 `quality.verification_seals`；fail-closed（critical/high 阻断部署） | 12/12 契约 |
+| gate 评估资产 | 15 题数据集 + runner + 11/11 变异测试 + 5 结构用例（含 fail-closed 自相矛盾） | `--selfcheck` / 变异测试全杀 |
 
-**未完成**：`pax-design` 真实准确率**未测量**（需 `DEEPSEEK_API_KEY` + `openai`）。
-本轮仅验证数据集自洽性、提示构造、scorer 有效性三项。
+**未完成**：`pax-design` 与 `pax-gate` 真实准确率**未测量**（需 `DEEPSEEK_API_KEY` + `openai`）。
+本轮验证数据集自洽性、提示构造、scorer 有效性四项；真跑评估见 M3。
 
 ---
 

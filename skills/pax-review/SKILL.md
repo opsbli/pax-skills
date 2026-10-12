@@ -46,7 +46,8 @@ requires_snapshot: true
 
 ## 输入
 - 必需：`snapshot.execution`、`snapshot.plan`、`snapshot.contract`
-- 可选：`snapshot.quality.verification_seals`（pax-verify 的印章序列，取最后一条）
+- 可选：`snapshot.quality.verification_seals`（pax-verify 与门禁段的印章序列，取最后一条；
+  若末条来自门禁段且 `result: blocked`，则评审应判拒绝）
 
 ## 工作流
 

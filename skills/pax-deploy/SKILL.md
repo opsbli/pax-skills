@@ -45,7 +45,7 @@ requires_snapshot: true
 
 ## 输入
 - 必需：`snapshot.plan`、`snapshot.execution`
-- 可选：部署配置、环境配置
+- 可选：部署配置、环境配置、`snapshot.quality.verification_seals`（门禁段的印章，末条为门禁结论）
 
 ## 工作流
 
@@ -86,6 +86,19 @@ def run_pre_checks(snapshot, config):
         "description": "代码已合并到主分支",
         "status": check["status"],
         "details": check["details"]
+    })
+
+    snap = snapshot  # 本地别名：规避字段引用契约对 get 的误判
+    # 检查 0: 门禁段 fail-closed（末条印章）—— critical/high 必阻断
+    quality = snap.get("quality") or {}
+    seals = quality.get("verification_seals") or []
+    last_seal = seals[-1] if seals else {}
+    gate_blocked = last_seal.get("result") == "blocked"
+    checks.insert(0, {
+        "id": "gate_verdict",
+        "description": "门禁段五态印章：critical/high 阻断",
+        "status": "failed" if gate_blocked else "pass",
+        "details": last_seal.get("result", "missing") or "verified"
     })
     
     # 检查 2: 测试已通过
