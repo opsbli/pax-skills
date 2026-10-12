@@ -309,22 +309,19 @@ DeepSeek 官方 OpenAI 兼容端点，2026-10-02 实测；该账号可用模型�
 
 ### 背景
 
-pax 家族 19 个 skill 中，仅 pax-orchestrate（路由评估）和 pax-diagnose（诊断评估）有完整的数据集和 runner。其余 17 个 skill 无单 skill 评估覆盖，能力分无法量化。
+pax 家族 skill 的**可执行评估**覆盖在逐轮补齐中。截至当前，以下 skill 已有**真实可执行**
+数据集 + runner + 变异测试（非占位），且 `pax-design` 与 `pax-gate` 已**真实调用模型**测得能力分：
 
-### 当前状态（2026-10-05）
+| skill | 数据集 | runner | 变异测试 | 真跑能力分（`sensenova-6.8-flash-lite`，2026-10-12） |
+|-------|--------|--------|----------|------|
+| pax-design | `pax-design_v1.0.0.json` (15题) | `run_design_eval.py` | 13 变异体全杀 | overall 95.7% / valid 97.8%（`freeze_gate` 有数据集边界分歧） |
+| pax-gate | `pax-gate_v1.0.0.json` (15题) | `run_gate_eval.py` | 11 变异体+5 结构用例全杀 | overall 98.3% / valid 100%（`compliance` 有契约边界分歧） |
+| pax-research | `pax-research_v1.0.0.json` | 对应 runner | ✓ | 待真跑 |
+| pax-prototype-to-prd | `pax-prototype-to-prd_v1.0.0.json` | `run_prd_eval.py` | 15 变异体全杀 | 待真跑 |
 
-8 个 L1 skill 已建骨架数据集（3 题 TODO），待填充真实用例：
-
-| skill | 数据集 | 状态 |
-|-------|--------|------|
-| pax-plan | `pax-plan_v0.1.0.json` | skeleton |
-| pax-execute | `pax-execute_v0.1.0.json` | skeleton |
-| pax-review | `pax-review_v0.1.0.json` | skeleton |
-| pax-verify | `pax-verify_v0.1.0.json` | skeleton |
-| pax-test | `pax-test_v0.1.0.json` | skeleton |
-| pax-rollback | `pax-rollback_v0.1.0.json` | skeleton |
-| pax-monitor | `pax-monitor_v0.1.0.json` | skeleton |
-| pax-deploy | `pax-deploy_v0.1.0.json` | skeleton |
+**关于骨架数据集**：早期为 8 个 L1 skill（plan/execute/review/verify/test/rollback/monitor/deploy）
+建立的 3 题 TODO 骨架已**全部删除**（见 `pax-forge` 清理提交）——它们会误报「已被评估覆盖」。
+后续如需评估这些环节，按 `pax-design`/`pax-gate` 的真实数据集模式补齐。
 
 ### 如何运行
 

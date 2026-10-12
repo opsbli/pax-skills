@@ -103,8 +103,8 @@ check_item:
 严重度判定（查表）：
 | 类别 | 严重度 | 示例 |
 |---|---|---|
-| security | critical | 硬编码密钥 / 已知 RCE 漏洞 / SAST 高危缺陷 |
-| security | high | 依赖存在公开 CVE / 越权数据访问 |
+| security | critical | 硬编码密钥 / 已知可远程利用的 RCE 漏洞 / SAST 高危缺陷 |
+| security | high | 依赖存在公开 CVE（不可直接远程利用） / 越权数据访问 |
 | security | medium | 弱加密 / 缺输入校验 |
 | compliance | high | 未获同意采集 PII / 数据留存超期 |
 | compliance | medium | 缺少隐私声明 / 日志含冗余 PII |
@@ -112,6 +112,9 @@ check_item:
 | a11y_i18n | medium | 缺 ARIA 状态 / 文案未国际化 |
 | license | high | 引入 copyleft（GPL/AGPL）与专有代码冲突 |
 | license | medium | 许可证缺失 / 兼容性存疑 |
+
+**判定要点**：同名示例若同时命中 critical 与 high（如「依赖存在公开 **且可远程利用** 的 RCE CVE」），
+按**更严重**一档归 critical；「公开 CVE」若**不可直接远程利用**才归 high。
 
 ### G3 门禁判定（Gate Verdict）
 
@@ -121,7 +124,7 @@ check_item:
 gate_verdict:
   deployable: false
   verdict: blocked
-  blocking: ["SEC-01", "DEP-02"]   # critical/high 的检查项 id
+  blocking: ["security", "license"]   # critical/high 的检查项所属类别（类别名，去重）
   seal_results:
     - category: security
       result: blocked

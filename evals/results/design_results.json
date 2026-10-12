@@ -1,0 +1,885 @@
+{
+  "meta": {
+    "model": "sensenova-6.8-flash-lite",
+    "base_url": "https://token.sensenova.cn/v1",
+    "temperature": 0,
+    "repeats": 3,
+    "dataset_version": "1.0.0",
+    "contract_chars": 4572,
+    "ran_at": "2026-10-12T17:10:36.331631+08:00"
+  },
+  "results": [
+    {
+      "id": "pax-design-dr-01",
+      "category": "design_required",
+      "rep": 1,
+      "parsed": {
+        "design_required": true,
+        "skip_reason": null,
+        "depth": "full",
+        "min_candidates": 2,
+        "status": "draft",
+        "reasoning": "支付退款涉及跨服务边界（支付↔订单）、高风险金融操作、第三方支付回调不确定性，需 full 深度设计含 ≥2 候选方案与 ADR"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "design_required": true,
+        "skip_reason": true
+      }
+    },
+    {
+      "id": "pax-design-dr-01",
+      "category": "design_required",
+      "rep": 2,
+      "parsed": {
+        "design_required": true,
+        "skip_reason": null,
+        "depth": "full",
+        "min_candidates": 2,
+        "status": "draft",
+        "reasoning": "支付退款属 feature_dev + high risk，且 intent.secondary 含 integration（支付↔订单跨服务、第三方支付回调不可靠），触发强制设计；跨服务边界 + 资金安全 + 回调可靠性选型定稿，必须 full 深度，至少 2 个候选方案（如同步退款 vs 异步补偿、回调重试 vs 主动查询对账），并需 ADR、接口契约、数据模型、服务边界、可观测性设计与盲审后方可冻结"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "design_required": true,
+        "skip_reason": true
+      }
+    },
+    {
+      "id": "pax-design-dr-01",
+      "category": "design_required",
+      "rep": 3,
+      "parsed": {
+        "design_required": true,
+        "skip_reason": null,
+        "depth": "full",
+        "min_candidates": 2,
+        "status": "draft",
+        "reasoning": "支付退款涉及资金操作（高风险）、跨服务边界（支付↔订单）、第三方支付回调不可靠（集成风险），触发强制设计且需 full 深度，高风险决策至少 2 个候选方案。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "design_required": true,
+        "skip_reason": true
+      }
+    },
+    {
+      "id": "pax-design-dr-02",
+      "category": "design_required",
+      "rep": 1,
+      "parsed": {
+        "design_required": false,
+        "skip_reason": "no_new_contract_no_boundary_change",
+        "depth": "minimal",
+        "min_candidates": 0,
+        "status": "draft",
+        "reasoning": "纯按钮颜色样式修改，无新增接口、无 schema 变更、无跨服务边界改动，风险低，无需设计阶段"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "design_required": true,
+        "skip_reason": true
+      }
+    },
+    {
+      "id": "pax-design-dr-02",
+      "category": "design_required",
+      "rep": 2,
+      "parsed": {
+        "design_required": false,
+        "skip_reason": "no_new_contract_no_boundary_change",
+        "depth": "minimal",
+        "min_candidates": 0,
+        "status": "draft",
+        "reasoning": "仅修改按钮颜色样式，无新增接口、无 schema 变更、无跨服务边界改动，风险低，无需设计阶段。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "design_required": true,
+        "skip_reason": true
+      }
+    },
+    {
+      "id": "pax-design-dr-02",
+      "category": "design_required",
+      "rep": 3,
+      "parsed": {
+        "design_required": false,
+        "skip_reason": "no_new_contract_no_boundary_change",
+        "depth": "minimal",
+        "min_candidates": 0,
+        "status": "draft",
+        "reasoning": "纯样式颜色修改，无新增接口、无 schema 变更、无跨服务边界改动，风险低，无需设计阶段"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "design_required": true,
+        "skip_reason": true
+      }
+    },
+    {
+      "id": "pax-design-dr-03",
+      "category": "design_required",
+      "rep": 1,
+      "parsed": {
+        "design_required": false,
+        "skip_reason": "root_cause_known_single_solution",
+        "depth": "minimal",
+        "min_candidates": 0,
+        "status": "frozen",
+        "reasoning": "根因已定位到第42行空指针，修复方案唯一且风险低，无新增接口/schema变更/跨边界改动，无需设计阶段"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "design_required": true,
+        "skip_reason": true
+      }
+    },
+    {
+      "id": "pax-design-dr-03",
+      "category": "design_required",
+      "rep": 2,
+      "parsed": {
+        "design_required": false,
+        "skip_reason": "root_cause_known_single_solution",
+        "depth": "minimal",
+        "min_candidates": 0,
+        "status": "frozen",
+        "reasoning": "根因已定位到第42行空指针，修复方案唯一且风险低，无需进入设计阶段"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "design_required": true,
+        "skip_reason": true
+      }
+    },
+    {
+      "id": "pax-design-dr-03",
+      "category": "design_required",
+      "rep": 3,
+      "parsed": {
+        "design_required": false,
+        "skip_reason": "root_cause_known_single_solution",
+        "depth": "minimal",
+        "min_candidates": 0,
+        "status": "frozen",
+        "reasoning": "根因已定位到第42行空指针，修复方案唯一且风险低，无新增接口、无schema变更、无跨边界改动，无需进入设计阶段"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "design_required": true,
+        "skip_reason": true
+      }
+    },
+    {
+      "id": "pax-design-dr-04",
+      "category": "design_required",
+      "rep": 1,
+      "parsed": {
+        "design_required": false,
+        "skip_reason": "doc_consult_only",
+        "depth": "minimal",
+        "min_candidates": 0,
+        "status": "frozen",
+        "reasoning": "用户仅要求解释现有限流实现，属于纯文档/咨询类意图，无需进入设计阶段。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "design_required": true,
+        "skip_reason": true
+      }
+    },
+    {
+      "id": "pax-design-dr-04",
+      "category": "design_required",
+      "rep": 2,
+      "parsed": {
+        "design_required": false,
+        "skip_reason": "doc_consult_only",
+        "depth": "minimal",
+        "min_candidates": 0,
+        "status": "draft",
+        "reasoning": "用户请求解释现有项目的限流实现方式，属于纯文档/咨询类意图，无新增接口、无 schema 变更、无跨服务边界改动，无需进入设计阶段。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "design_required": true,
+        "skip_reason": true
+      }
+    },
+    {
+      "id": "pax-design-dr-04",
+      "category": "design_required",
+      "rep": 3,
+      "parsed": {
+        "design_required": false,
+        "skip_reason": "doc_consult_only",
+        "depth": "minimal",
+        "min_candidates": 0,
+        "status": "draft",
+        "reasoning": "用户仅要求解释现有限流实现，属于纯文档/咨询类请求，无新增接口、无 schema 变更、无跨边界改动，无需进入设计阶段。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "design_required": true,
+        "skip_reason": true
+      }
+    },
+    {
+      "id": "pax-design-dr-05",
+      "category": "design_required",
+      "rep": 1,
+      "parsed": {
+        "design_required": true,
+        "skip_reason": null,
+        "depth": "full",
+        "min_candidates": 2,
+        "status": "draft",
+        "reasoning": "用户表新增字段属于 schema 变更，且影响登录查询逻辑涉及跨服务边界改动，加上要上生产属于高风险 feature_dev，三重条件均触发强制设计，需 full 深度并至少 2 个候选方案。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "design_required": true,
+        "skip_reason": true
+      }
+    },
+    {
+      "id": "pax-design-dr-05",
+      "category": "design_required",
+      "rep": 2,
+      "parsed": {
+        "design_required": true,
+        "skip_reason": null,
+        "depth": "full",
+        "min_candidates": 2,
+        "status": "draft",
+        "reasoning": "用户表新增字段属于 schema 变更，且影响登录查询逻辑涉及跨服务边界改动，加上要上生产属于高风险 feature_dev，三重条件均触发强制设计，需 full 深度并至少 2 个候选方案。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "design_required": true,
+        "skip_reason": true
+      }
+    },
+    {
+      "id": "pax-design-dr-05",
+      "category": "design_required",
+      "rep": 3,
+      "parsed": {
+        "design_required": true,
+        "skip_reason": null,
+        "depth": "full",
+        "min_candidates": 2,
+        "status": "draft",
+        "reasoning": "用户表新增字段属 schema 变更，且影响登录查询逻辑（跨服务边界），上生产属高风险，必须 full 深度设计并至少 2 个候选方案。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "design_required": true,
+        "skip_reason": true
+      }
+    },
+    {
+      "id": "pax-design-dr-06",
+      "category": "design_required",
+      "rep": 1,
+      "parsed": {
+        "design_required": false,
+        "skip_reason": "no_new_contract_no_boundary_change",
+        "depth": "minimal",
+        "min_candidates": 0,
+        "status": "frozen",
+        "reasoning": "纯内部重构，不引入新接口、不变更 schema、不跨服务边界，外部行为不变，无需设计阶段"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "design_required": true,
+        "skip_reason": true
+      }
+    },
+    {
+      "id": "pax-design-dr-06",
+      "category": "design_required",
+      "rep": 2,
+      "parsed": {
+        "design_required": false,
+        "skip_reason": "no_new_contract_no_boundary_change",
+        "depth": "minimal",
+        "min_candidates": 0,
+        "status": "frozen",
+        "reasoning": "纯内部重构，不引入新接口、无 schema 变更、无跨服务边界改动，用户明确要求外部行为不变，无需进入设计阶段"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "design_required": true,
+        "skip_reason": true
+      }
+    },
+    {
+      "id": "pax-design-dr-06",
+      "category": "design_required",
+      "rep": 3,
+      "parsed": {
+        "design_required": false,
+        "skip_reason": "no_new_contract_no_boundary_change",
+        "depth": "minimal",
+        "min_candidates": 0,
+        "status": "frozen",
+        "reasoning": "纯内部重构，无新增接口、无 schema 变更、无跨边界改动，外部行为不变，无需设计阶段"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "design_required": true,
+        "skip_reason": true
+      }
+    },
+    {
+      "id": "pax-design-dr-07",
+      "category": "design_required",
+      "rep": 1,
+      "parsed": {
+        "design_required": true,
+        "skip_reason": null,
+        "depth": "full",
+        "min_candidates": 2,
+        "status": "draft",
+        "reasoning": "拆分订单导出为独立服务涉及跨服务边界、新增接口契约、两个团队协作，属于高风险架构变更，需 full 深度设计并至少 2 个候选方案"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "design_required": true,
+        "skip_reason": true
+      }
+    },
+    {
+      "id": "pax-design-dr-07",
+      "category": "design_required",
+      "rep": 2,
+      "parsed": {
+        "design_required": true,
+        "skip_reason": null,
+        "depth": "full",
+        "min_candidates": 2,
+        "status": "draft",
+        "reasoning": "将订单导出拆为独立服务涉及跨服务边界、新接口契约、两个团队集成，属于高风险 feature_dev，必须 full 深度设计并产出 ADR、接口契约、数据模型、服务边界与可观测性方案，且高风险决策需 ≥2 候选对比。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "design_required": true,
+        "skip_reason": true
+      }
+    },
+    {
+      "id": "pax-design-dr-07",
+      "category": "design_required",
+      "rep": 3,
+      "parsed": {
+        "design_required": true,
+        "skip_reason": null,
+        "depth": "full",
+        "min_candidates": 2,
+        "status": "draft",
+        "reasoning": "将订单导出拆为独立服务属于跨服务边界改动，涉及订单服务与报表服务两个调用方及两个团队，风险高，必须 full 深度设计：≥2 候选方案、ADR、接口契约、数据模型、服务边界 DAG、可观测性与 SLO，并送 pax-council 盲审后方可冻结。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "design_required": true,
+        "skip_reason": true
+      }
+    },
+    {
+      "id": "pax-design-dr-08",
+      "category": "design_required",
+      "rep": 1,
+      "parsed": {
+        "design_required": true,
+        "skip_reason": null,
+        "depth": "full",
+        "min_candidates": 2,
+        "status": "draft",
+        "reasoning": "涉及第三方集成（integration）与手机号加密及密钥管理（security），属高风险跨服务边界改动，必须 full 深度设计并给出≥2候选方案"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "design_required": true,
+        "skip_reason": true
+      }
+    },
+    {
+      "id": "pax-design-dr-08",
+      "category": "design_required",
+      "rep": 2,
+      "parsed": null,
+      "error": "json_decode: Expecting value: line 1 column 1 (char 0)",
+      "structure_failures": [],
+      "valid": false,
+      "checks": {
+        "design_required": false,
+        "skip_reason": true
+      }
+    },
+    {
+      "id": "pax-design-dr-08",
+      "category": "design_required",
+      "rep": 3,
+      "parsed": {
+        "design_required": true,
+        "skip_reason": null,
+        "depth": "full",
+        "min_candidates": 2,
+        "status": "draft",
+        "reasoning": "涉及第三方集成与PII加密传输，含security和integration双重高风险意图，需full深度设计"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "design_required": true,
+        "skip_reason": true
+      }
+    },
+    {
+      "id": "pax-design-depth-01",
+      "category": "design_depth",
+      "rep": 1,
+      "parsed": {
+        "design_required": false,
+        "skip_reason": "no_new_contract_no_boundary_change",
+        "depth": "minimal",
+        "min_candidates": 0,
+        "status": "frozen",
+        "reasoning": "内部脚本添加命令行参数解析，低风险、无新接口、无schema变更、无跨服务边界改动，无需设计阶段"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "depth": true
+      }
+    },
+    {
+      "id": "pax-design-depth-01",
+      "category": "design_depth",
+      "rep": 2,
+      "parsed": {
+        "design_required": false,
+        "skip_reason": "no_new_contract_no_boundary_change",
+        "depth": "minimal",
+        "min_candidates": 0,
+        "status": "draft",
+        "reasoning": "内部脚本新增命令行参数解析，无新增接口、无 schema 变更、无跨服务边界改动，风险低，无需进入设计阶段。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "depth": true
+      }
+    },
+    {
+      "id": "pax-design-depth-01",
+      "category": "design_depth",
+      "rep": 3,
+      "parsed": {
+        "design_required": false,
+        "skip_reason": "no_new_contract_no_boundary_change",
+        "depth": "minimal",
+        "min_candidates": 0,
+        "status": "draft",
+        "reasoning": "内部脚本添加CLI参数解析，低风险、无新接口、无schema变更、无跨服务边界改动，无需设计阶段"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "depth": true
+      }
+    },
+    {
+      "id": "pax-design-depth-02",
+      "category": "design_depth",
+      "rep": 1,
+      "parsed": {
+        "design_required": true,
+        "skip_reason": null,
+        "depth": "standard",
+        "min_candidates": 0,
+        "status": "draft",
+        "reasoning": "新增 GET /orders/{id} 属于引入新接口契约，触发 standard 深度设计，需产出接口契约与数据模型；该查询接口风险不高，无需多候选对比"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "depth": true
+      }
+    },
+    {
+      "id": "pax-design-depth-02",
+      "category": "design_depth",
+      "rep": 2,
+      "parsed": {
+        "design_required": true,
+        "skip_reason": null,
+        "depth": "standard",
+        "min_candidates": 0,
+        "status": "draft",
+        "reasoning": "新增 GET /orders/{id} 接口属于引入新接口契约，需进入 standard 深度设计，产出接口契约与数据模型。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "depth": true
+      }
+    },
+    {
+      "id": "pax-design-depth-02",
+      "category": "design_depth",
+      "rep": 3,
+      "parsed": {
+        "design_required": true,
+        "skip_reason": null,
+        "depth": "standard",
+        "min_candidates": 0,
+        "status": "draft",
+        "reasoning": "新增 GET /orders/{id} 接口属于新增接口契约，需 standard 深度设计（ADR + 接口契约 + 数据模型），但非高风险决策无需多候选对比"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "depth": true
+      }
+    },
+    {
+      "id": "pax-design-depth-03",
+      "category": "design_depth",
+      "rep": 1,
+      "parsed": {
+        "design_required": true,
+        "skip_reason": null,
+        "depth": "full",
+        "min_candidates": 2,
+        "status": "draft",
+        "reasoning": "消息队列选型属跨服务高风险技术决策，且用户明确要求架构、服务边界与监控设计，需 full 深度并至少 2 个候选方案"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "depth": true
+      }
+    },
+    {
+      "id": "pax-design-depth-03",
+      "category": "design_depth",
+      "rep": 2,
+      "parsed": {
+        "design_required": true,
+        "skip_reason": null,
+        "depth": "full",
+        "min_candidates": 2,
+        "status": "draft",
+        "reasoning": "消息队列选型属于高风险技术选型，涉及跨服务边界与集成，需 full 深度设计并给出 ≥2 候选方案"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "depth": true
+      }
+    },
+    {
+      "id": "pax-design-depth-03",
+      "category": "design_depth",
+      "rep": 3,
+      "parsed": {
+        "design_required": true,
+        "skip_reason": null,
+        "depth": "full",
+        "min_candidates": 2,
+        "status": "draft",
+        "reasoning": "消息队列选型属跨服务边界的高风险技术决策，需 full 深度设计：≥2 候选对比、ADR、接口契约、服务边界与可观测性设计"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "depth": true
+      }
+    },
+    {
+      "id": "pax-design-depth-04",
+      "category": "design_depth",
+      "rep": 1,
+      "parsed": {
+        "design_required": true,
+        "skip_reason": null,
+        "depth": "standard",
+        "min_candidates": 0,
+        "status": "draft",
+        "reasoning": "订单表新增 status_reason 字段属于 schema 变更，触发设计门禁；变更为低风险可逆的增量操作，深度定为 standard，无需多候选对比。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "depth": true
+      }
+    },
+    {
+      "id": "pax-design-depth-04",
+      "category": "design_depth",
+      "rep": 2,
+      "parsed": {
+        "design_required": true,
+        "skip_reason": null,
+        "depth": "standard",
+        "min_candidates": 0,
+        "status": "draft",
+        "reasoning": "订单表新增 status_reason 字段属于 schema 变更，触发设计门禁；变更为低风险可逆的增量操作，深度定为 standard，无需多候选对比。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "depth": true
+      }
+    },
+    {
+      "id": "pax-design-depth-04",
+      "category": "design_depth",
+      "rep": 3,
+      "parsed": {
+        "design_required": true,
+        "skip_reason": null,
+        "depth": "standard",
+        "min_candidates": 0,
+        "status": "draft",
+        "reasoning": "订单表新增 status_reason 字段属于 schema 变更，需进入设计阶段；变更为可逆的加列操作，风险低，深度定为 standard。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "depth": true
+      }
+    },
+    {
+      "id": "pax-design-cand-01",
+      "category": "candidate_sufficiency",
+      "rep": 1,
+      "parsed": {
+        "design_required": true,
+        "skip_reason": null,
+        "depth": "full",
+        "min_candidates": 3,
+        "status": "draft",
+        "reasoning": "灰度发布机制属高风险基础设施决策，涉及技术选型定稿、跨服务边界（部署流水线/用户路由/监控告警）及新接口引入，需 full 深度设计并产出 ≥2 候选对比与 ADR。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "min_candidates": true
+      }
+    },
+    {
+      "id": "pax-design-cand-01",
+      "category": "candidate_sufficiency",
+      "rep": 2,
+      "parsed": {
+        "design_required": true,
+        "skip_reason": null,
+        "depth": "full",
+        "min_candidates": 3,
+        "status": "draft",
+        "reasoning": "灰度发布机制属于 feature_dev + 高风险 + 涉及 integration（部署管线集成），且需做技术选型定稿，必须 full 深度设计并给出 ≥2 候选对比与 ADR。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "min_candidates": true
+      }
+    },
+    {
+      "id": "pax-design-cand-01",
+      "category": "candidate_sufficiency",
+      "rep": 3,
+      "parsed": {
+        "design_required": true,
+        "skip_reason": null,
+        "depth": "full",
+        "min_candidates": 3,
+        "status": "draft",
+        "reasoning": "灰度发布机制属于高风险 feature_dev，涉及技术选型定稿、新增发布控制接口、跨服务边界（部署流水线/用户路由/监控），且三种方案各有取舍，必须 full 深度设计并给出 ≥3 候选对比与 ADR。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "min_candidates": true
+      }
+    },
+    {
+      "id": "pax-design-cand-02",
+      "category": "candidate_sufficiency",
+      "rep": 1,
+      "parsed": {
+        "design_required": false,
+        "skip_reason": "root_cause_known_single_solution",
+        "depth": "minimal",
+        "min_candidates": 0,
+        "status": "frozen",
+        "reasoning": "日志打印语句变量名拼写错误，根因明确、方案唯一、风险低，无需设计阶段"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "min_candidates": true
+      }
+    },
+    {
+      "id": "pax-design-cand-02",
+      "category": "candidate_sufficiency",
+      "rep": 2,
+      "parsed": {
+        "design_required": false,
+        "skip_reason": "root_cause_known_single_solution",
+        "depth": "minimal",
+        "min_candidates": 0,
+        "status": "frozen",
+        "reasoning": "日志打印语句变量名拼写错误，根因明确、方案唯一、风险低，无需设计阶段"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "min_candidates": true
+      }
+    },
+    {
+      "id": "pax-design-cand-02",
+      "category": "candidate_sufficiency",
+      "rep": 3,
+      "parsed": {
+        "design_required": false,
+        "skip_reason": "root_cause_known_single_solution",
+        "depth": "minimal",
+        "min_candidates": 0,
+        "status": "frozen",
+        "reasoning": "日志打印语句中变量名拼写错误，根因明确、方案唯一、风险极低，无需设计阶段"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "min_candidates": true
+      }
+    },
+    {
+      "id": "pax-design-freeze-01",
+      "category": "freeze_gate",
+      "rep": 1,
+      "parsed": {
+        "design_required": true,
+        "skip_reason": null,
+        "depth": "full",
+        "min_candidates": 2,
+        "status": "draft",
+        "reasoning": "跨服务接口涉及 integration 且跨服务边界，必须设计；架构已定但错误码未定，接口契约不完整，需补充错误码方案候选"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "status": false
+      }
+    },
+    {
+      "id": "pax-design-freeze-01",
+      "category": "freeze_gate",
+      "rep": 2,
+      "parsed": {
+        "design_required": true,
+        "skip_reason": null,
+        "depth": "full",
+        "min_candidates": 2,
+        "status": "blocked",
+        "reasoning": "跨服务接口触发强制设计且需 full 深度；错误码未定导致接口契约不完整，按 D5 无错误码视为契约不完整、D8 冻结自检将返回 blocked"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "status": true
+      }
+    },
+    {
+      "id": "pax-design-freeze-01",
+      "category": "freeze_gate",
+      "rep": 3,
+      "parsed": {
+        "design_required": true,
+        "skip_reason": null,
+        "depth": "full",
+        "min_candidates": 0,
+        "status": "draft",
+        "reasoning": "跨服务新增接口触发 full 深度设计；架构已定但错误码缺失导致接口契约不完整，需补全错误码与触发条件后方可冻结"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "status": false
+      }
+    }
+  ]
+}

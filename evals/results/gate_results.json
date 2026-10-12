@@ -1,0 +1,1267 @@
+{
+  "meta": {
+    "model": "sensenova-6.8-flash-lite",
+    "base_url": "https://token.sensenova.cn/v1",
+    "temperature": 0,
+    "repeats": 3,
+    "dataset_version": "1.0.0",
+    "run_at": "2026-10-12T17:32:26.386968+08:00",
+    "summary": {
+      "n_judgements": 45,
+      "valid_rate": 1.0,
+      "checks": {
+        "blocking": {
+          "pass": 9,
+          "n": 9,
+          "rate": 1.0
+        },
+        "deployable": {
+          "pass": 36,
+          "n": 36,
+          "rate": 1.0
+        },
+        "scope": {
+          "pass": 12,
+          "n": 12,
+          "rate": 1.0
+        },
+        "severity": {
+          "pass": 26,
+          "n": 27,
+          "rate": 0.963
+        },
+        "verdict": {
+          "pass": 35,
+          "n": 36,
+          "rate": 0.9722
+        }
+      },
+      "categories": {
+        "a11y_i18n": {
+          "pass": 6,
+          "n": 6,
+          "rate": 1.0
+        },
+        "compliance": {
+          "pass": 5,
+          "n": 6,
+          "rate": 0.8333
+        },
+        "license": {
+          "pass": 6,
+          "n": 6,
+          "rate": 1.0
+        },
+        "mixed": {
+          "pass": 9,
+          "n": 9,
+          "rate": 1.0
+        },
+        "scope": {
+          "pass": 6,
+          "n": 6,
+          "rate": 1.0
+        },
+        "security": {
+          "pass": 12,
+          "n": 12,
+          "rate": 1.0
+        }
+      },
+      "overall": 0.9833
+    }
+  },
+  "results": [
+    {
+      "id": "pax-gate-security-01",
+      "category": "security",
+      "rep": 1,
+      "parsed": {
+        "scope": {
+          "security": true,
+          "compliance": false,
+          "a11y_i18n": false,
+          "license": true
+        },
+        "severity": "critical",
+        "deployable": false,
+        "verdict": "blocked",
+        "blocking": [
+          "security"
+        ],
+        "reasoning": "config.py 中硬编码 AWS 访问密钥命中 security 类 critical 示例（硬编码密钥），按 fail-closed 规则阻断部署；新增第三方依赖触发 license 检查但无具体许可证冲突信息，不单独构成阻断项"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "severity": true,
+        "deployable": true,
+        "verdict": true,
+        "scope": true
+      }
+    },
+    {
+      "id": "pax-gate-security-01",
+      "category": "security",
+      "rep": 2,
+      "parsed": {
+        "scope": {
+          "security": true,
+          "compliance": false,
+          "a11y_i18n": false,
+          "license": true
+        },
+        "severity": "critical",
+        "deployable": false,
+        "verdict": "blocked",
+        "blocking": [
+          "security"
+        ],
+        "reasoning": "config.py 中硬编码 AWS 访问密钥（AKIA...）命中 security 类别 critical 级（硬编码密钥），按 fail-closed 规则阻断部署；新增第三方依赖触发 license 范围检查，但无具体许可证冲突证据，不产生独立阻断项。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "severity": true,
+        "deployable": true,
+        "verdict": true,
+        "scope": true
+      }
+    },
+    {
+      "id": "pax-gate-security-01",
+      "category": "security",
+      "rep": 3,
+      "parsed": {
+        "scope": {
+          "security": true,
+          "compliance": false,
+          "a11y_i18n": false,
+          "license": true
+        },
+        "severity": "critical",
+        "deployable": false,
+        "verdict": "blocked",
+        "blocking": [
+          "security"
+        ],
+        "reasoning": "config.py 中硬编码 AWS 访问密钥（AKIA...）属于 critical 级安全缺陷，按查表直接归 critical，阻断部署；新增第三方依赖触发 license 检查但许可证类型未知，不影响当前最高严重度判定"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "severity": true,
+        "deployable": true,
+        "verdict": true,
+        "scope": true
+      }
+    },
+    {
+      "id": "pax-gate-security-02",
+      "category": "security",
+      "rep": 1,
+      "parsed": {
+        "scope": {
+          "security": true,
+          "compliance": false,
+          "a11y_i18n": false,
+          "license": true
+        },
+        "severity": "critical",
+        "deployable": false,
+        "verdict": "blocked",
+        "blocking": [
+          "security"
+        ],
+        "reasoning": "依赖 libSSL 存在公开且可远程利用的 RCE CVE-2024-1234，按查表归为 critical，阻断部署"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "severity": true,
+        "deployable": true,
+        "verdict": true
+      }
+    },
+    {
+      "id": "pax-gate-security-02",
+      "category": "security",
+      "rep": 2,
+      "parsed": {
+        "scope": {
+          "security": true,
+          "compliance": false,
+          "a11y_i18n": false,
+          "license": true
+        },
+        "severity": "critical",
+        "deployable": false,
+        "verdict": "blocked",
+        "blocking": [
+          "security"
+        ],
+        "reasoning": "依赖 libSSL 存在公开且可远程利用的 RCE CVE-2024-1234，按契约判定为 critical，阻断部署"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "severity": true,
+        "deployable": true,
+        "verdict": true
+      }
+    },
+    {
+      "id": "pax-gate-security-02",
+      "category": "security",
+      "rep": 3,
+      "parsed": {
+        "scope": {
+          "security": true,
+          "compliance": false,
+          "a11y_i18n": false,
+          "license": true
+        },
+        "severity": "critical",
+        "deployable": false,
+        "verdict": "blocked",
+        "blocking": [
+          "security"
+        ],
+        "reasoning": "依赖 libSSL 存在公开且可远程利用的 RCE 漏洞（CVE-2024-1234），按契约判定为 critical，阻断部署"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "severity": true,
+        "deployable": true,
+        "verdict": true
+      }
+    },
+    {
+      "id": "pax-gate-security-03",
+      "category": "security",
+      "rep": 1,
+      "parsed": {
+        "scope": {
+          "security": true,
+          "compliance": false,
+          "a11y_i18n": false,
+          "license": false
+        },
+        "severity": "medium",
+        "deployable": true,
+        "verdict": "needs_review",
+        "blocking": [],
+        "reasoning": "登录接口缺少输入长度校验，属 security 类 medium 缺陷，无 critical/high 项，可部署但需人工复核"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "severity": true,
+        "deployable": true,
+        "verdict": true
+      }
+    },
+    {
+      "id": "pax-gate-security-03",
+      "category": "security",
+      "rep": 2,
+      "parsed": {
+        "scope": {
+          "security": true,
+          "compliance": false,
+          "a11y_i18n": false,
+          "license": false
+        },
+        "severity": "medium",
+        "deployable": true,
+        "verdict": "needs_review",
+        "blocking": [],
+        "reasoning": "登录接口缺少输入长度校验，属中等安全缺陷，可部署但需人工复核"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "severity": true,
+        "deployable": true,
+        "verdict": true
+      }
+    },
+    {
+      "id": "pax-gate-security-03",
+      "category": "security",
+      "rep": 3,
+      "parsed": {
+        "scope": {
+          "security": true,
+          "compliance": false,
+          "a11y_i18n": false,
+          "license": false
+        },
+        "severity": "medium",
+        "deployable": true,
+        "verdict": "needs_review",
+        "blocking": [],
+        "reasoning": "仅存在 1 个 medium 级缺陷（登录接口缺输入长度校验，可能造成资源耗尽），无 critical/high 项，按 fail-closed 判表可部署但需评审"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "severity": true,
+        "deployable": true,
+        "verdict": true
+      }
+    },
+    {
+      "id": "pax-gate-security-04",
+      "category": "security",
+      "rep": 1,
+      "parsed": {
+        "scope": {
+          "security": false,
+          "compliance": false,
+          "a11y_i18n": false,
+          "license": false
+        },
+        "severity": "low",
+        "deployable": true,
+        "verdict": "verified",
+        "blocking": [],
+        "reasoning": "纯文档变更（README 更新）不含代码、依赖、UI 或数据采集，四类检查均不触发，无缺陷，门禁通过。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "scope": true
+      }
+    },
+    {
+      "id": "pax-gate-security-04",
+      "category": "security",
+      "rep": 2,
+      "parsed": {
+        "scope": {
+          "security": false,
+          "compliance": false,
+          "a11y_i18n": false,
+          "license": false
+        },
+        "severity": "low",
+        "deployable": true,
+        "verdict": "verified",
+        "blocking": [],
+        "reasoning": "纯文档变更（README 更新）不含代码、依赖、UI 或数据采集，四类检查均不触发，无缺陷，门禁通过。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "scope": true
+      }
+    },
+    {
+      "id": "pax-gate-security-04",
+      "category": "security",
+      "rep": 3,
+      "parsed": {
+        "scope": {
+          "security": false,
+          "compliance": false,
+          "a11y_i18n": false,
+          "license": false
+        },
+        "severity": "low",
+        "deployable": true,
+        "verdict": "verified",
+        "blocking": [],
+        "reasoning": "纯文档变更（README 更新），不涉及代码、依赖、数据采集或 UI，无需执行任何检查类别，无缺陷，门禁通过"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "scope": true
+      }
+    },
+    {
+      "id": "pax-gate-compliance-01",
+      "category": "compliance",
+      "rep": 1,
+      "parsed": {
+        "scope": {
+          "security": false,
+          "compliance": true,
+          "a11y_i18n": false,
+          "license": false
+        },
+        "severity": "high",
+        "deployable": false,
+        "verdict": "blocked",
+        "blocking": [
+          "compliance"
+        ],
+        "reasoning": "未获用户同意采集并跨境传输 PII，命中合规类 high 严重度（未获同意采集 PII），按 fail-closed 规则阻断部署"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "severity": true,
+        "deployable": true,
+        "verdict": true
+      }
+    },
+    {
+      "id": "pax-gate-compliance-01",
+      "category": "compliance",
+      "rep": 2,
+      "parsed": {
+        "scope": {
+          "security": false,
+          "compliance": true,
+          "a11y_i18n": false,
+          "license": false
+        },
+        "severity": "high",
+        "deployable": false,
+        "verdict": "blocked",
+        "blocking": [
+          "compliance"
+        ],
+        "reasoning": "未获用户同意即采集并跨境传输 PII，命中 compliance 类 high 严重度（未获同意采集 PII），按 fail-closed 规则阻断部署"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "severity": true,
+        "deployable": true,
+        "verdict": true
+      }
+    },
+    {
+      "id": "pax-gate-compliance-01",
+      "category": "compliance",
+      "rep": 3,
+      "parsed": {
+        "scope": {
+          "security": false,
+          "compliance": true,
+          "a11y_i18n": false,
+          "license": false
+        },
+        "severity": "high",
+        "deployable": false,
+        "verdict": "blocked",
+        "blocking": [
+          "compliance"
+        ],
+        "reasoning": "未获用户同意即采集并跨境传输 PII，命中 compliance 类别 high 级缺陷（未获同意采集 PII），按 fail-closed 规则阻断部署"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "severity": true,
+        "deployable": true,
+        "verdict": true
+      }
+    },
+    {
+      "id": "pax-gate-compliance-02",
+      "category": "compliance",
+      "rep": 1,
+      "parsed": {
+        "scope": {
+          "security": false,
+          "compliance": true,
+          "a11y_i18n": false,
+          "license": false
+        },
+        "severity": "medium",
+        "deployable": true,
+        "verdict": "needs_review",
+        "blocking": [],
+        "reasoning": "缺少隐私声明但未实际采集个人数据，按契约归为 compliance/medium，无 critical/high 项，可部署但需评审"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "severity": true,
+        "deployable": true,
+        "verdict": true
+      }
+    },
+    {
+      "id": "pax-gate-compliance-02",
+      "category": "compliance",
+      "rep": 2,
+      "parsed": {
+        "scope": {
+          "security": false,
+          "compliance": false,
+          "a11y_i18n": false,
+          "license": false
+        },
+        "severity": "low",
+        "deployable": true,
+        "verdict": "verified",
+        "blocking": [],
+        "reasoning": "未采集个人数据，compliance 不在检查范围内，无阻断项"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "severity": false,
+        "deployable": true,
+        "verdict": false
+      }
+    },
+    {
+      "id": "pax-gate-compliance-02",
+      "category": "compliance",
+      "rep": 3,
+      "parsed": {
+        "scope": {
+          "security": false,
+          "compliance": true,
+          "a11y_i18n": false,
+          "license": false
+        },
+        "severity": "medium",
+        "deployable": true,
+        "verdict": "needs_review",
+        "blocking": [],
+        "reasoning": "缺少隐私声明但未实际采集个人数据，属 compliance 类 medium 缺陷，无 critical/high 项，可部署但需评审"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "severity": true,
+        "deployable": true,
+        "verdict": true
+      }
+    },
+    {
+      "id": "pax-gate-a11y-01",
+      "category": "a11y_i18n",
+      "rep": 1,
+      "parsed": {
+        "scope": {
+          "security": false,
+          "compliance": false,
+          "a11y_i18n": true,
+          "license": false
+        },
+        "severity": "high",
+        "deployable": false,
+        "verdict": "blocked",
+        "blocking": [
+          "a11y_i18n"
+        ],
+        "reasoning": "登录表单输入框缺少可访问性标签且前景/背景对比度不达标，两项均命中 a11y_i18n 类别 high 严重度，按 fail-closed 规则阻断部署。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "severity": true,
+        "deployable": true,
+        "verdict": true
+      }
+    },
+    {
+      "id": "pax-gate-a11y-01",
+      "category": "a11y_i18n",
+      "rep": 2,
+      "parsed": {
+        "scope": {
+          "security": true,
+          "compliance": true,
+          "a11y_i18n": true,
+          "license": false
+        },
+        "severity": "high",
+        "deployable": false,
+        "verdict": "blocked",
+        "blocking": [
+          "a11y_i18n"
+        ],
+        "reasoning": "登录表单缺少可访问性标签且前景/背景对比度不达标，命中 a11y_i18n 类别 high 级缺陷，阻断部署"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "severity": true,
+        "deployable": true,
+        "verdict": true
+      }
+    },
+    {
+      "id": "pax-gate-a11y-01",
+      "category": "a11y_i18n",
+      "rep": 3,
+      "parsed": {
+        "scope": {
+          "security": true,
+          "compliance": true,
+          "a11y_i18n": true,
+          "license": false
+        },
+        "severity": "high",
+        "deployable": false,
+        "verdict": "blocked",
+        "blocking": [
+          "a11y_i18n"
+        ],
+        "reasoning": "登录表单缺少可访问性标签且对比度不达标，命中 a11y_i18n 类别 high 严重度示例（表单无可访问性标签/对比度不达标），按 fail-closed 规则阻断部署。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "severity": true,
+        "deployable": true,
+        "verdict": true
+      }
+    },
+    {
+      "id": "pax-gate-a11y-02",
+      "category": "a11y_i18n",
+      "rep": 1,
+      "parsed": {
+        "scope": {
+          "security": false,
+          "compliance": false,
+          "a11y_i18n": true,
+          "license": false
+        },
+        "severity": "medium",
+        "deployable": true,
+        "verdict": "needs_review",
+        "blocking": [],
+        "reasoning": "仅存在两项 medium 级 a11y_i18n 缺陷（缺 ARIA 动态状态描述、文案未国际化），无 critical/high 项，按 fail-closed 判表可部署但需评审。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "severity": true,
+        "deployable": true,
+        "verdict": true
+      }
+    },
+    {
+      "id": "pax-gate-a11y-02",
+      "category": "a11y_i18n",
+      "rep": 2,
+      "parsed": {
+        "scope": {
+          "security": false,
+          "compliance": false,
+          "a11y_i18n": true,
+          "license": false
+        },
+        "severity": "medium",
+        "deployable": true,
+        "verdict": "needs_review",
+        "blocking": [],
+        "reasoning": "仅存在 a11y_i18n 类别的 medium 缺陷（缺 ARIA 动态状态描述、文案未国际化），无 critical/high 项，按判表可部署但需评审。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "severity": true,
+        "deployable": true,
+        "verdict": true
+      }
+    },
+    {
+      "id": "pax-gate-a11y-02",
+      "category": "a11y_i18n",
+      "rep": 3,
+      "parsed": {
+        "scope": {
+          "security": false,
+          "compliance": false,
+          "a11y_i18n": true,
+          "license": false
+        },
+        "severity": "medium",
+        "deployable": true,
+        "verdict": "needs_review",
+        "blocking": [],
+        "reasoning": "仅存在两项 a11y_i18n 中等缺陷（缺 ARIA 动态状态描述、文案未国际化），无 critical/high 项，按 fail-closed 判表可部署但需评审。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "severity": true,
+        "deployable": true,
+        "verdict": true
+      }
+    },
+    {
+      "id": "pax-gate-license-01",
+      "category": "license",
+      "rep": 1,
+      "parsed": {
+        "scope": {
+          "security": true,
+          "compliance": false,
+          "a11y_i18n": false,
+          "license": true
+        },
+        "severity": "high",
+        "deployable": false,
+        "verdict": "blocked",
+        "blocking": [
+          "license"
+        ],
+        "reasoning": "AGPL 属 copyleft 许可，与专有代码共存构成许可证冲突，按契约查表归 high 严重度，触发 fail-closed 阻断部署"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "severity": true,
+        "deployable": true,
+        "verdict": true
+      }
+    },
+    {
+      "id": "pax-gate-license-01",
+      "category": "license",
+      "rep": 2,
+      "parsed": {
+        "scope": {
+          "security": false,
+          "compliance": false,
+          "a11y_i18n": false,
+          "license": true
+        },
+        "severity": "high",
+        "deployable": false,
+        "verdict": "blocked",
+        "blocking": [
+          "license"
+        ],
+        "reasoning": "AGPL 属 copyleft 许可，与专有代码共存构成许可证冲突，按契约查表归 high，触发 fail-closed 阻断部署"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "severity": true,
+        "deployable": true,
+        "verdict": true
+      }
+    },
+    {
+      "id": "pax-gate-license-01",
+      "category": "license",
+      "rep": 3,
+      "parsed": {
+        "scope": {
+          "security": false,
+          "compliance": false,
+          "a11y_i18n": false,
+          "license": true
+        },
+        "severity": "high",
+        "deployable": false,
+        "verdict": "blocked",
+        "blocking": [
+          "license"
+        ],
+        "reasoning": "AGPL 属 copyleft 许可，与专有代码共存构成许可证冲突，按契约查表归 high，触发 fail-closed 阻断部署"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "severity": true,
+        "deployable": true,
+        "verdict": true
+      }
+    },
+    {
+      "id": "pax-gate-license-02",
+      "category": "license",
+      "rep": 1,
+      "parsed": {
+        "scope": {
+          "security": true,
+          "compliance": false,
+          "a11y_i18n": false,
+          "license": true
+        },
+        "severity": "medium",
+        "deployable": true,
+        "verdict": "needs_review",
+        "blocking": [],
+        "reasoning": "新依赖许可证信息缺失属 medium 级问题，无 critical/high 缺陷，可部署但需人工复核许可证合规性"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "severity": true,
+        "deployable": true,
+        "verdict": true
+      }
+    },
+    {
+      "id": "pax-gate-license-02",
+      "category": "license",
+      "rep": 2,
+      "parsed": {
+        "scope": {
+          "security": true,
+          "compliance": false,
+          "a11y_i18n": false,
+          "license": true
+        },
+        "severity": "medium",
+        "deployable": true,
+        "verdict": "needs_review",
+        "blocking": [],
+        "reasoning": "新依赖许可证信息缺失属 medium 级别（查表：许可证缺失/兼容性存疑），无 critical/high 缺陷，可部署但需人工复核确认合规性"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "severity": true,
+        "deployable": true,
+        "verdict": true
+      }
+    },
+    {
+      "id": "pax-gate-license-02",
+      "category": "license",
+      "rep": 3,
+      "parsed": {
+        "scope": {
+          "security": true,
+          "compliance": false,
+          "a11y_i18n": false,
+          "license": true
+        },
+        "severity": "medium",
+        "deployable": true,
+        "verdict": "needs_review",
+        "blocking": [],
+        "reasoning": "新依赖许可证信息缺失属 medium 级别，无 critical/high 缺陷，可部署但需人工复核"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "severity": true,
+        "deployable": true,
+        "verdict": true
+      }
+    },
+    {
+      "id": "pax-gate-mixed-01",
+      "category": "mixed",
+      "rep": 1,
+      "parsed": {
+        "scope": {
+          "security": true,
+          "compliance": false,
+          "a11y_i18n": true,
+          "license": true
+        },
+        "severity": "critical",
+        "deployable": false,
+        "verdict": "blocked",
+        "blocking": [
+          "security"
+        ],
+        "reasoning": "存在硬编码密钥（critical），按 fail-closed 规则阻断部署；许可证合规无缺陷，ARIA 缺失为 medium 不阻断但需后续修复。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "deployable": true,
+        "verdict": true,
+        "blocking": true
+      }
+    },
+    {
+      "id": "pax-gate-mixed-01",
+      "category": "mixed",
+      "rep": 2,
+      "parsed": {
+        "scope": {
+          "security": true,
+          "compliance": false,
+          "a11y_i18n": true,
+          "license": true
+        },
+        "severity": "critical",
+        "deployable": false,
+        "verdict": "blocked",
+        "blocking": [
+          "security"
+        ],
+        "reasoning": "存在硬编码密钥（critical），按 fail-closed 规则阻断部署；许可证合规无缺陷，a11y 缺 ARIA 标签为 medium 不阻断但需后续修复"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "deployable": true,
+        "verdict": true,
+        "blocking": true
+      }
+    },
+    {
+      "id": "pax-gate-mixed-01",
+      "category": "mixed",
+      "rep": 3,
+      "parsed": {
+        "scope": {
+          "security": true,
+          "compliance": false,
+          "a11y_i18n": true,
+          "license": true
+        },
+        "severity": "critical",
+        "deployable": false,
+        "verdict": "blocked",
+        "blocking": [
+          "security"
+        ],
+        "reasoning": "存在硬编码密钥（critical），按 fail-closed 规则阻断部署；许可证合规无缺陷，ARIA 缺失为 medium 不阻断但需后续修复。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "deployable": true,
+        "verdict": true,
+        "blocking": true
+      }
+    },
+    {
+      "id": "pax-gate-mixed-02",
+      "category": "mixed",
+      "rep": 1,
+      "parsed": {
+        "scope": {
+          "security": true,
+          "compliance": true,
+          "a11y_i18n": false,
+          "license": false
+        },
+        "severity": "medium",
+        "deployable": true,
+        "verdict": "needs_review",
+        "blocking": [],
+        "reasoning": "仅存在 medium 级别缺陷（安全与合规各一项），无 critical/high，按 fail-closed 判表可部署但需人工复核"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "deployable": true,
+        "verdict": true,
+        "blocking": true
+      }
+    },
+    {
+      "id": "pax-gate-mixed-02",
+      "category": "mixed",
+      "rep": 2,
+      "parsed": {
+        "scope": {
+          "security": true,
+          "compliance": true,
+          "a11y_i18n": false,
+          "license": false
+        },
+        "severity": "medium",
+        "deployable": true,
+        "verdict": "needs_review",
+        "blocking": [],
+        "reasoning": "仅存在 medium 级别缺陷（安全与合规各一项），无 critical/high，按 fail-closed 判表可部署但需人工复核"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "deployable": true,
+        "verdict": true,
+        "blocking": true
+      }
+    },
+    {
+      "id": "pax-gate-mixed-02",
+      "category": "mixed",
+      "rep": 3,
+      "parsed": {
+        "scope": {
+          "security": true,
+          "compliance": true,
+          "a11y_i18n": false,
+          "license": false
+        },
+        "severity": "medium",
+        "deployable": true,
+        "verdict": "needs_review",
+        "blocking": [],
+        "reasoning": "仅存在 medium 级别缺陷（安全与合规各一项），无 critical/high，按 fail-closed 判表可部署但需人工复核"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "deployable": true,
+        "verdict": true,
+        "blocking": true
+      }
+    },
+    {
+      "id": "pax-gate-mixed-03",
+      "category": "mixed",
+      "rep": 1,
+      "parsed": {
+        "scope": {
+          "security": false,
+          "compliance": false,
+          "a11y_i18n": false,
+          "license": false
+        },
+        "severity": "low",
+        "deployable": true,
+        "verdict": "verified",
+        "blocking": [],
+        "reasoning": "所有检查项均通过，无 critical/high/medium 缺陷，仅 low 或无需检查，符合 verified 判定条件"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "deployable": true,
+        "verdict": true,
+        "blocking": true
+      }
+    },
+    {
+      "id": "pax-gate-mixed-03",
+      "category": "mixed",
+      "rep": 2,
+      "parsed": {
+        "scope": {
+          "security": false,
+          "compliance": false,
+          "a11y_i18n": false,
+          "license": false
+        },
+        "severity": "low",
+        "deployable": true,
+        "verdict": "verified",
+        "blocking": [],
+        "reasoning": "所有检查项均通过，无 critical/high/medium 缺陷，仅 low 或无需检查，符合 verified 判定条件"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "deployable": true,
+        "verdict": true,
+        "blocking": true
+      }
+    },
+    {
+      "id": "pax-gate-mixed-03",
+      "category": "mixed",
+      "rep": 3,
+      "parsed": {
+        "scope": {
+          "security": false,
+          "compliance": false,
+          "a11y_i18n": false,
+          "license": false
+        },
+        "severity": "low",
+        "deployable": true,
+        "verdict": "verified",
+        "blocking": [],
+        "reasoning": "所有检查项均通过，无 critical/high/medium 缺陷，仅 low 或无需检查，符合 verified 判定条件"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "deployable": true,
+        "verdict": true,
+        "blocking": true
+      }
+    },
+    {
+      "id": "pax-gate-scope-01",
+      "category": "scope",
+      "rep": 1,
+      "parsed": {
+        "scope": {
+          "security": true,
+          "compliance": true,
+          "a11y_i18n": true,
+          "license": true
+        },
+        "severity": "low",
+        "deployable": true,
+        "verdict": "verified",
+        "blocking": [],
+        "reasoning": "变更含代码与依赖→security；采集用户邮箱→compliance；新增前端UI页面→a11y_i18n；引入新npm依赖→license，四类检查全部命中，当前仅完成范围判定，无实际检查项产出，故无阻断项。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "scope": true
+      }
+    },
+    {
+      "id": "pax-gate-scope-01",
+      "category": "scope",
+      "rep": 2,
+      "parsed": {
+        "scope": {
+          "security": true,
+          "compliance": true,
+          "a11y_i18n": true,
+          "license": true
+        },
+        "severity": "low",
+        "deployable": true,
+        "verdict": "verified",
+        "blocking": [],
+        "reasoning": "变更含代码与依赖→security；采集用户邮箱用于登录→compliance；新增带UI前端页面→a11y_i18n；引入新npm依赖→license；四类检查范围均命中，当前仅完成G1范围判定，尚未执行G2检查项，无缺陷产出"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "scope": true
+      }
+    },
+    {
+      "id": "pax-gate-scope-01",
+      "category": "scope",
+      "rep": 3,
+      "parsed": {
+        "scope": {
+          "security": true,
+          "compliance": true,
+          "a11y_i18n": true,
+          "license": true
+        },
+        "severity": "low",
+        "deployable": true,
+        "verdict": "verified",
+        "blocking": [],
+        "reasoning": "变更含代码与依赖触发 security，采集用户邮箱触发 compliance，含 UI 前端触发 a11y_i18n，引入新 npm 依赖触发 license，四类检查均需执行；当前仅完成范围判定，未执行实际检查，无缺陷发现"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "scope": true
+      }
+    },
+    {
+      "id": "pax-gate-scope-02",
+      "category": "scope",
+      "rep": 1,
+      "parsed": {
+        "scope": {
+          "security": true,
+          "compliance": false,
+          "a11y_i18n": false,
+          "license": false
+        },
+        "severity": "low",
+        "deployable": true,
+        "verdict": "verified",
+        "blocking": [],
+        "reasoning": "纯计算函数无IO、无依赖、无UI、无数据采集，仅触发security检查；无硬编码密钥、无已知漏洞、无SAST高危缺陷，无检查项命中，判定verified可部署"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "scope": true
+      }
+    },
+    {
+      "id": "pax-gate-scope-02",
+      "category": "scope",
+      "rep": 2,
+      "parsed": {
+        "scope": {
+          "security": true,
+          "compliance": false,
+          "a11y_i18n": false,
+          "license": false
+        },
+        "severity": "low",
+        "deployable": true,
+        "verdict": "verified",
+        "blocking": [],
+        "reasoning": "纯计算函数无IO、无依赖、无UI、无数据采集，仅触发security检查；无硬编码密钥、无依赖漏洞、无SAST高危缺陷，无检查项命中，门禁通过。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "scope": true
+      }
+    },
+    {
+      "id": "pax-gate-scope-02",
+      "category": "scope",
+      "rep": 3,
+      "parsed": {
+        "scope": {
+          "security": true,
+          "compliance": false,
+          "a11y_i18n": false,
+          "license": false
+        },
+        "severity": "low",
+        "deployable": true,
+        "verdict": "verified",
+        "blocking": [],
+        "reasoning": "纯计算函数无IO、无依赖、无UI、无数据采集，仅触发security检查；无硬编码密钥、无已知漏洞、无SAST高危缺陷，未发现任何缺陷，门禁通过。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "scope": true
+      }
+    }
+  ]
+}

@@ -5,6 +5,25 @@
 
 ## [Unreleased]
 
+### Added（M0–M3 工作流补齐，基于 `docs/requirements-full-sdlc.md`）
+- **`pax-gate`（L1，门禁段 skill，M1）**：承载 A1–A4 四类发布前静态检查——安全（SAST/密钥/依赖漏洞）、
+  合规（GDPR/SOC2/数据留存/同意管理）、可访问性与国际化（WCAG/ARIA/a11y/i18n）、许可证（GPL/AGPL）。
+  输出复用 `snapshot.quality.verification_seals`（不新增顶层段）；**fail-closed**：critical/high 必阻断部署。
+  由评审/部署阶段通过五态印章消费（不放 L4）。配套真实可执行评估资产：15 题数据集 + `run_gate_eval.py`
+  + 11 变异体 + 5 结构用例全杀。
+- **接线 `pax-evolve`（L4，M0）**：恢复 `references/full-body.md` 正文至 `SKILL.md`、`status` active，
+  由 orchestrate 在学习阶段之后登记触发（OODA 闭环：经验条目 + A/B 验证门 + 回滚）。
+- **清理影子文档（G-4/D-1，M0）**：剥离 `pax-advisor` 与 `pax-evolve` 的 `references/full-body.md` 的
+  frontmatter，避免目录扫描加载器误认成本体。
+- **断言补强（M2，不新建 skill）**：`pax-review` R2.6 重构行为等价性断言；`pax-diagnose` D2.6
+  代码级性能诊断（N+1/慢查询/重复计算）；`pax-test` T1.6 迁移 up/down 实跑校验；`pax-monitor`
+  事故沉淀链（critical/回滚信号 → 学习阶段）。
+
+### Changed（M3 评估）
+- `pax-design` 与 `pax-gate` 能力分**真实测得**（`sensenova-6.8-flash-lite`，45 次/项）：
+  design overall 95.7%、gate overall 98.3%；两处契约/数据集边界（design `freeze_gate`、gate `compliance`）
+  如实记录待裁定。
+
 ### Removed
 - `pax-forge test --skill`：自引入起就是**死选项**（`cli.py` 的 test 分支只调
   `run_all_contracts(root)`，从不读 `args.skill`；带与不带输出完全相同）。

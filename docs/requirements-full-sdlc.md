@@ -59,9 +59,9 @@ L2 提供 `advisor / council`（只读顾问与盲审），L3 提供两个 worke
 ### 2.1 快照顶层段封闭
 
 `schemas/snapshot.schema.json` 顶层为 `additionalProperties: false`，
-当前 19 个合法段名：`meta / goal / consensus / orchestration / symptom / diagnosis /
+当前 21 个合法段名：`meta / goal / consensus / orchestration / symptom / diagnosis /
 infrastructure / plan / contract / execution / review / quality / monitoring /
-rollback / tests / deployment / learning / analysis / design`。
+rollback / tests / deployment / learning / analysis / design / research / prd`。
 
 新增能力**必须复用既有段**，或走 minor bump 显式扩 schema。
 `contracts.py` 的 `snapshot-field-conformance` 会扫描每个 skill 正文的
@@ -307,7 +307,7 @@ v1.0 §5.21 建议新增对抗性与多标签路由评估。**现状已做过且
 |---|---|---|---|
 | D-1 | **影子 skill**：`skills/pax-advisor/references/full-body.md` 带**完整 frontmatter**（含 `name: pax-advisor`），且其 description 曾写「当前未接线」——而主 `SKILL.md` 已更新为「由 pax-analyze 委托调用」。`contracts.py:_iter_skill_dirs` 只扫 `skills/*/SKILL.md`，故契约层查不到它；但任何按目录递归扫描的 skill 加载器都可能把它误认成 `pax-advisor` 本体 | 双 description 冲突；可能被重复加载；契约盲区 | ~~M0 的 G-4~~ **已治**：剥离两个 `references/full-body.md` 的 frontmatter 与「未接线」旧文案 |
 | D-2 | `scripts/run_skill_eval.py` 是**空桩**（`evaluate_skill` 全 TODO，不调模型） | 8 个「skeleton」数据集给人已可用的错觉 | 标注为 stub 或替换为真 runner |
-| D-3 | 8 个单 skill 数据集全是 3 题 TODO 占位 | 「已建骨架」被误读为「已覆盖」 | 参照 `pax-design` 的 15 题真实数据集补齐 |
+| D-3 | 8 个单 skill 数据集曾全是 3 题 TODO 占位 | 「已建骨架」被误读为「已覆盖」 | ~~参照 `pax-design` 补齐~~ **已治**（并行） ：删除全部 skeleton 占位；真实数据集统一为 `pax-design`/`pax-gate`/`pax-research`/`pax-prototype-to-prd` 模式 |
 | D-4 | `pax-evolve` 曾是**骨架未接线**（SKILL.md:15 明写「无生产路由，正文已移至 references/full-body.md」） | OODA 闭环能力曾闲置 | ~~M0 的 G-2~~ **已治**：恢复正文至 SKILL.md、`status: active`，并由 `pax-orchestrate` 在 learn 之后登记触发 |
 
 ---
@@ -364,8 +364,15 @@ cd <repo> && python -m pax.forge test    # 或直接跑 contracts.run_all_contra
 | `pax-gate`（L1，M1） | 门禁段 skill，承载 A1–A4：SAST/密钥/依赖漏洞 + GDPR/SOC2 + WCAG/a11y/i18n + 许可证；输出复用 `quality.verification_seals`；fail-closed（critical/high 阻断部署） | 12/12 契约 |
 | gate 评估资产 | 15 题数据集 + runner + 11/11 变异测试 + 5 结构用例（含 fail-closed 自相矛盾） | `--selfcheck` / 变异测试全杀 |
 
-**未完成**：`pax-design` 与 `pax-gate` 真实准确率**未测量**（需 `DEEPSEEK_API_KEY` + `openai`）。
-本轮验证数据集自洽性、提示构造、scorer 有效性四项；真跑评估见 M3。
+**M3 真跑评估（`sensenova-6.8-flash-lite`，2026-10-12）**：
+
+| 能力 | 结果 | 说明 |
+|---|---|---|
+| `pax-design` | overall **95.7%** / valid **97.8%** | `freeze_gate` 单类 33.3%（数据集边界：`freeze-01` 未表达「请求冻结」却设 gold=blocked，模型判 draft 合理） |
+| `pax-gate` | overall **98.3%** / valid **100%** | 修正 A6 契约严重度歧义后 security/scope/mixed 全 100%；`compliance` 83.3%（`compliance-02` 缺隐私声明但无数据采集，契约归 medium vs 模型判 low 的边界分歧） |
+
+**结论**：除两处已明确的**契约/数据集边界**待后续裁定外（未能力缺陷），两能力真跑均 ≥90%。
+诚实纪律：未跑不报数，边界分歧如实记录，不作粉饰。
 
 ---
 
@@ -377,7 +384,7 @@ cd <repo> && python -m pax.forge test    # 或直接跑 contracts.run_all_contra
 | 落地评估（裁定依据） | `docs/requirements-landing-review.md` | v1.1 实测裁定 |
 | 家族设计 | `docs/pax-family-design.md` | 分层与契约设计 |
 | 契约执行器 | `src/pax/forge/contracts.py` | 12 条契约 |
-| 快照 schema | `schemas/snapshot.schema.json` | 19 个合法顶层段 |
+| 快照 schema | `schemas/snapshot.schema.json` | 21 个合法顶层段 |
 | 层矩阵（权威） | `pax-ops/versions.json#compatibility_matrix` | 合法调用方向 |
 | 兼容性镜像 | `references/compatibility-matrix.md` | 人类可读（以 JSON 为准） |
 | 评估总纲 | `evals/README.md` | 基线数字与可信度边界 |

@@ -100,15 +100,24 @@ def build_messages(contract: str, prompt: str) -> list[dict[str, str]]:
 
 
 def call_model(client, messages) -> tuple[dict | None, str | None]:
-    resp = client.chat.completions.create(
-        model=MODEL, messages=messages, temperature=0,
-        response_format={"type": "json_object"},
-    )
-    raw = resp.choices[0].message.content or ""
-    try:
-        return json.loads(raw), None
-    except json.JSONDecodeError as exc:
-        return None, f"json_decode: {exc}"
+    import time
+    for attempt in range(6):
+        try:
+            resp = client.chat.completions.create(
+                model=MODEL, messages=messages, temperature=0,
+                response_format={"type": "json_object"},
+            )
+            raw = resp.choices[0].message.content or ""
+            try:
+                return json.loads(raw), None
+            except json.JSONDecodeError as exc:
+                return None, f"json_decode: {exc}"
+        except Exception as exc:  # noqa: BLE001
+            name = type(exc).__name__
+            if "429" not in str(exc) and name != "RateLimitError":
+                return None, f"{name}: {exc}"
+            time.sleep(2 ** attempt * 2)  # 2,4,8,16,32s backoff
+    return None, "rate_limit: retries exhausted"
 
 
 def structure_failures(obj: dict) -> list[str]:

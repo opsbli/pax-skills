@@ -124,15 +124,15 @@ def main() -> int:
     check("§7-D-2 债项成立：run_skill_eval 仍含 TODO 桩",
           "TODO" in rse and "骨架" in rse)
 
-    # ---- 9. §7 D-3 债项：8 个数据集仍是 TODO 占位 ----
+    # ---- 9. §7 D-3 债项：8 个 skeleton 数据集 —— 并行提交已删除（已治）----
     ds_dir = ROOT / "evals" / "datasets"
     todo_files = []
     for f in sorted(ds_dir.glob("pax-*.json")):
         txt = f.read_text(encoding="utf-8")
         if '"status": "skeleton"' in txt:
             todo_files.append(f.name)
-    check("§7-D-3 债项成立：仍有 ≥8 个 skeleton 数据集",
-          len(todo_files) >= 8, f"{len(todo_files)} 个: {', '.join(todo_files[:3])}…")
+    check("§7-D-3 债项已治：不再存在 skeleton 占位数据集",
+          len(todo_files) == 0, f"{len(todo_files)} 个残留: {', '.join(todo_files) or '无'}")
 
     # ---- 10. §7 D-4 债项：pax-evolve 现应已接线（M0 已治理）----
     evolve_refs = [
