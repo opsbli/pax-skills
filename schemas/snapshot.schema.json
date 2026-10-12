@@ -417,7 +417,19 @@
         },
         "open_questions": {"type": "array"},
         "status": {"type": "string", "enum": ["draft", "frozen", "blocked"]},
-        "frozen_at": {"type": ["string", "null"], "format": "date-time"}
+        "frozen_at": {"type": ["string", "null"], "format": "date-time"},
+        "frontend": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "design_system_ref": {"type": ["string", "null"]},
+            "visual_direction": {"type": "object", "additionalProperties": true},
+            "components": {"type": "array"},
+            "pages": {"type": "array"},
+            "anti_ai": {"type": "object", "additionalProperties": true},
+            "visual_verification": {"type": "object", "additionalProperties": true}
+          }
+        }
       }
     },
     "analysis": {

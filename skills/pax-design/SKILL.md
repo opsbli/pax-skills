@@ -282,6 +282,21 @@ def freeze_design(design):
 
 自检通过才写 `status: frozen` 并记 `frozen_at`。**冻结失败返回 `blocked`，不得部分冻结。**
 
+### D9 前端产出阶段（Frontend Output，并入设计）
+
+仅当任务涉及前端视觉产出时进入：0-1 项目需视觉方向、或新页面/模块/组件需与既有风格一致。
+纯后端/服务端设计可跳过（记 `skip_reason`）。本阶段不新增 skill，作为 `pax-design` 的内在阶段
+（数据流，不跨阶段调用外部前端 skill）。
+
+- **F1 设计系统检测（内部步骤）**：识别框架与样式方案（React/Vue + Tailwind/CSS Modules/styled 等）→
+  提取设计令牌（颜色/字体/间距/圆角/阴影）→ 识别组件库 → 输出设计上下文写 `frontend.design_system_ref`。
+- **F2 风格一致性**：消费/复用现有令牌与组件，确保新页面与既有项目一致；无既有设计系统时给 0-1 视觉方向。
+- **F3 反 AI 套路规避**：内置「生成式设计特征」规避清单——避免 Inter 字体、紫色渐变、千篇一律居中布局等。
+- **F4 0-1 视觉方向**：基于产品类型与受众产出 2-3 个视觉方向（rationale + 令牌）供用户选择（候选，不默认锁定）。
+- **F5 视觉验证**：生成后通过浏览器截图自评，记录 `visual_verification.issues` 供修复。
+
+产出写 `snapshot.design.frontend`。
+
 ## 输出契约
 
 写入 `snapshot.design`（格式由 `schemas/snapshot.schema.json` 约束）并追加
@@ -306,6 +321,13 @@ design:
   open_questions: []
   status: draft | frozen | blocked
   frozen_at: "<ISO8601 或 null>"
+  frontend:
+    design_system_ref: "<现有设计系统引用或 null>"
+    visual_direction: {name: "", rationale: "", tokens: {}}
+    components: []
+    pages: []
+    anti_ai: {enabled: true}
+    visual_verification: {screenshot_ref: "", issues: []}
 ```
 
 不改 `consensus` / `plan` / `execution` / `review`。

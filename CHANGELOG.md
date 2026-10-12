@@ -12,8 +12,17 @@
   `compatibility-matrix-consistency` / `declared-checks-coverage` / `no-cycles`）
   无法定义——保留一个半生效的过滤器只会给出「我查过某个 skill 了」的假信心。
   需要按 skill 排查时，直接看 `pax-forge test` 输出里带 skill 名的那一行。
+- **删除 8 个骨架评估数据集**（`pax-deploy/execute/monitor/plan/review/rollback/test/verify` 的
+  `_v0.1.0.json`，各 3 题 + TODO 占位）：它们会误报「这 8 个主线环节已被评估覆盖」。
+  删除而非补齐，避免承载误导性占位；后续如需评估这些环节，按 `pax-design`/`pax-research` 的真实数据集模式补齐。
 
 ### Added
+- **`pax-design` 前端产出阶段（D9，并入设计，不新增 skill）**：承接前端视觉产出——F1 设计系统检测
+  （内部步骤）/ F2 风格一致性 / F3 反 AI 套路规避 / F4 0-1 视觉方向 / F5 视觉验证。
+  `snapshot.design` 段新增可选 `frontend` 子对象
+  （design_system_ref/visual_direction/components/pages/anti_ai/visual_verification）。
+  纯后端设计可跳过（记 skip_reason）。家族版本 1.5.0 → 1.5.1（可选字段扩展 → patch）。
+  已同步安装运行时。
 - **新增 `pax-prototype-to-prd`（L1，需求工程上游）**：从原型（HTML/截图/Figma/Axure 导出）
   生成结构化 PRD，四阶段串一个 skill：原型解析 → PRD 生成（每条功能配 **EARS** 验收标准）→
   质量门禁（缺必备章节 / 验收标准非 EARS → `FAIL` 并 **fail-closed** 阻断进入下游）→ 变更管理
