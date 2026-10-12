@@ -14,7 +14,17 @@
   需要按 skill 排查时，直接看 `pax-forge test` 输出里带 skill 名的那一行。
 
 ### Added
-- （待填）
+- **新增 `pax-analyze`（L1，只读分析/调研执行落点）**：doc_consult 路由的正式执行阶段，
+  承接代码/数据链路溯源、事实调研、行为解释，产出带证据链的分析结论。
+  `doc_consult` 路由从 `[clarify, docs]` 改为 `[clarify, analyze]`，沉淀可选（`analysis_optional_docs`）。
+  快照新增顶层可选段 `analysis`（findings/conclusion/confidence/open_questions/read_only）。
+  家族版本 1.0.0 → 1.1.0（新增 skill + 新增顶层可选字段 → minor）。
+
+### Changed
+- `doc_consult` 不再默认走 `pax-docs` 强制沉淀；仅当用户需要留档时才追加。
+- `pax-advisor` 由 `skeleton` 恢复为 `active`，并接线到 `pax-analyze` 升级路径
+  （分析中遇决策/权衡/架构型追问时委托其提供只读建议）；version 仍 1.0.0，不新增快照字段。
+  （待填）
 
 ## [1.0.0] - 2026-10-05
 

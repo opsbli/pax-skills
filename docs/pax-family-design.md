@@ -379,6 +379,13 @@ learning:
   knowledge_graph: {...}
   recommendations: [...]
 
+analysis:                                # 只读分析/调研结论（doc_consult 分支，pax-analyze 产出）
+  findings: [{ id, sub_question, statement, evidence: [...] }]
+  conclusion: "..."
+  confidence: high | medium | low
+  open_questions: [...]
+  read_only: true
+
 infrastructure:                            # 环境事实（非需求、非决策）
   storage_backend: "..." | null
   script_language: "..." | null
@@ -399,6 +406,8 @@ infrastructure:                            # 环境事实（非需求、非决�
 > **格式版本**：`meta.version = 2.0`（家族 v1.0.0）。1.x 只声明 `meta/goal/consensus/orchestration`
 > 四个必填段，2.0 起 `orchestration` 追加 `intent`/`risk`/`annotations`，`execution` 追加 `status`，
 > 并新增 `monitoring`/`rollback`/`tests`/`deployment`/`learning`/`infrastructure` 六个段。
+> 家族 v1.1.0 起，doc_consult 路由为 `[pax-clarify, pax-analyze]`（沉淀可选），并新增可选段 `analysis`。
+> pax-advisor 已由 skeleton 恢复为 active，接线到 pax-analyze 升级路径（分析中遇决策/权衡/架构型追问时委托）。
 > 权威定义始终是 `schemas/snapshot.schema.json`。
 
 ---

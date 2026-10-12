@@ -1,12 +1,12 @@
 {
   "family": "pax",
-  "updated_at": "2026-10-05T14:44:00Z",
+  "updated_at": "2026-10-12T03:38:02Z",
   "skills": [
     {
       "name": "pax-orchestrate",
       "layer": "L0",
       "optional": false,
-      "version": "1.0.0",
+      "version": "1.0.2",
       "path": "skills/pax-orchestrate/SKILL.md",
       "registered_at": "2026-09-29T05:31:14Z"
     },
@@ -150,9 +150,17 @@
       "name": "pax-init",
       "layer": "L4",
       "optional": true,
-      "version": "1.0.0",
+      "version": "1.0.1",
       "path": "skills/pax-init/SKILL.md",
       "registered_at": "2026-10-05T02:56:14Z"
+    },
+    {
+      "name": "pax-analyze",
+      "layer": "L1",
+      "optional": true,
+      "version": "1.0.0",
+      "path": "skills/pax-analyze/SKILL.md",
+      "registered_at": "2026-10-12T03:38:02Z"
     }
   ]
 }

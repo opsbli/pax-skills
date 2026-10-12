@@ -2,7 +2,7 @@
 name: pax-orchestrate
 description: >
     Use when: 所有 pax-family 任务的统一入口。当用户目标涉及诊断修复、功能开发、重构优化、数据操作、文档咨询或工具构建时，必须先经过 pax-orchestrate 进行意图分类、风险分级、路由构建与快照初始化。不要直接选择 pax-diagnose、pax-plan、pax-execute 等具体 skill，而是让 pax-orchestrate 决定完整的执行路由。**触发优先：这是任务的第 1 步**。无论任务看起来多直接（哪怕是一次性加一段内联脚本题），收到任务后首先选择本 skill，在产出快照（达成编排）之前不得跳到任何写文件/编译/git 动作；这是 pax-family 对触发层纪律的最后一道防线（AGENTS.md 的 MUST 条款依赖本入口被优先触发才能生效）。
-version: 1.0.1
+version: 1.0.2
 family: pax
 layer: L0
 optional: false
@@ -36,10 +36,14 @@ pax-family 统一入口。对每个任务先做意图分类（6 类 MECE 意图�
 - [ ] 已从 pax-family 运行时读到 schema/versions 且门禁通过（未要求项目自带门禁文件）
 ## Execution Contract
 - **门禁文件来源（运行时）**：`pax-family.schema.yaml` 与 `pax-ops/versions.json` 属于 **pax-family 运行时**，
-  不是每个目标项目的产物。定位：本 skill 目录（含 SKILL.md 的目录，穿透符号链接）**向上两级**
-  = 家族仓库根（skill 统一位于 `<家族仓库根>/skills/<skill名>/`），再读
-  `<家族仓库根>/schemas/pax-family.schema.yaml` 与 `<家族仓库根>/pax-ops/versions.json`；
-  符号链接不可解析或结构不在家族仓库时，回退到用户可用的家族仓库显式位置。
+  不是每个目标项目的产物。定位家族仓库根（按优先级，直到命中一份 `pax-ops/versions.json`）：
+  1) **穿透符号链接解析**：用 `readlink -f` / `realpath` 解析本 skill 目录（含 `SKILL.md` 的目录）的
+     真实路径，然后向上两级 = 家族仓库根（skill 统一位于 `<家族根>/skills/<skill名>/`），
+     再读 `<家族根>/schemas/pax-family.schema.yaml` 与 `<家族根>/pax-ops/versions.json`；
+  2) 若第 1) 项不可用，直接在本机搜索 `pax-ops/versions.json` 的所在目录作为家族根
+     （例如在 `Documents/skills`、`~/.proma`、worktree 等常见位置 `find` 到家族仓库根）；
+  3) 仍不可用时，向用户/上下文索取家族仓库根路径，得到后用它定位。
+  定位到的 `pax-ops/versions.json` 即版本门唯一来源，`pax-family.schema.yaml` 与之同根。
   MUST NOT 要求每个项目自带或复制这两份文件（避免家族版本漂移）。
 - 前置门禁：能从 pax-family 运行时读取 `pax-family.schema.yaml` 与 `pax-ops/versions.json`
 - 未通过门禁：拒绝启动，返回用户错误（`blocked`）
@@ -77,7 +81,7 @@ pax-family 统一入口。对每个任务先做意图分类（6 类 MECE 意图�
 | **功能开发** | `feature_dev` | 新建功能、修改功能行为，无既有缺陷 | `[clarify, plan, execute, review]` |
 | **重构优化** | `refactor` | 不改变外部行为，改善内部结构/性能 | `[clarify, plan, execute, review]` |
 | **数据操作** | `data_ops` | 数据订正、迁移、批量修改 | `[clarify, diagnose, plan, execute, review]` |
-| **文档咨询** | `doc_consult` | 纯文档、纯咨询、纯规划、纯解释 | `[clarify, docs]` |
+| **文档咨询** | `doc_consult` | 纯文档、纯咨询、纯规划、纯解释、分析调研 | `[clarify, analyze]` |
 | **工具构建** | `tool_build` | 构建工具、脚本、自动化 | `[clarify, plan, execute, review]` |
 
 #### 二级意图（Secondary Intent）
@@ -315,7 +319,8 @@ def build_route(intent, diagnose_required, risk, context):
     
     # 主干路由
     if intent.primary == "doc_consult":
-        route = ["clarify", "docs"]
+        route = ["clarify", "analyze"]
+        annotations = {"analysis_optional_docs": True}  # 沉淀可选：需留档时追加 pax-docs
     elif diagnose_required:
         route = ["clarify", "diagnose", "plan", "execute", "review"]
     else:
@@ -344,6 +349,10 @@ def build_route(intent, diagnose_required, risk, context):
         annotations["execution_strategy_required"] = True
         # 标注涉及的仓库
         annotations["involved_repos"] = detect_involved_repos(context)
+    
+    # 标注：doc_consult 沉淀可选
+    if intent.primary == "doc_consult":
+        annotations["analysis_optional_docs"] = True
     
     # 标注：需要前端参与
     if "ux_error" in intent.secondary:
@@ -376,7 +385,7 @@ def build_route(intent, diagnose_required, risk, context):
 | `feature_dev` | — | false | `[clarify, plan, execute, review]` | — |
 | `feature_dev` | `security` | true | `[clarify, diagnose, plan, execute, review]` | `escalate_to_council` |
 | `refactor` | — | false | `[clarify, plan, execute, review]` | — |
-| `doc_consult` | — | false | `[clarify, docs]` | — |
+| `doc_consult` | — | false | `[clarify, analyze]` | `analysis_optional_docs` |
 | `tool_build` | — | false | `[clarify, plan, execute, review]` | — |
 | 任意 | 跨仓库 | 继承 | 继承 | `cross_repo, execution_strategy_required` |
 

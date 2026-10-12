@@ -108,7 +108,8 @@
             "frontend_involved": {"type": "boolean"},
             "performance_metrics_required": {"type": "boolean"},
             "integration_contract_required": {"type": "boolean"},
-            "deployment_env_required": {"type": "boolean"}
+            "deployment_env_required": {"type": "boolean"},
+            "analysis_optional_docs": {"type": "boolean"}
           }
         }
       }
@@ -295,6 +296,17 @@
         "experiences": {"type": "array"},
         "knowledge_graph": {"type": "object"},
         "recommendations": {"type": "array"}
+      }
+    },
+    "analysis": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "findings": {"type": "array"},
+        "conclusion": {"type": "string"},
+        "confidence": {"type": "string", "enum": ["high", "medium", "low"]},
+        "open_questions": {"type": "array"},
+        "read_only": {"type": "boolean"}
       }
     }
   }

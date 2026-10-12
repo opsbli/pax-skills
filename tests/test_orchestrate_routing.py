@@ -152,7 +152,17 @@ TEST_CASES = [
         "category": "route_building",
         "prompt": "解释一下什么是微服务架构，有什么优缺点",
         "expected": {
-            "route": ["pax-clarify"],
+            "route": ["pax-clarify", "pax-analyze"],
+            "diagnose_required": False,
+            "storage_backend_required": False
+        }
+    },
+    {
+        "id": "pax-route-dc-02",
+        "category": "route_building",
+        "prompt": "帮我分析这个接口返回的数据为什么全是 0，数据是什么时候写入 ES 的",
+        "expected": {
+            "route": ["pax-clarify", "pax-analyze"],
             "diagnose_required": False,
             "storage_backend_required": False
         }
@@ -257,7 +267,7 @@ class TestOrchestrateRouting:
             "feature_dev": ["pax-clarify", "pax-plan", "pax-execute", "pax-review"],
             "refactor": ["pax-clarify", "pax-plan", "pax-execute", "pax-review"],
             "data_ops": ["pax-clarify", "pax-diagnose", "pax-plan", "pax-execute", "pax-review"],
-            "doc_consult": ["pax-clarify"],
+            "doc_consult": ["pax-clarify", "pax-analyze"],
             "tool_build": ["pax-clarify", "pax-plan", "pax-execute", "pax-review"]
         }
         
@@ -287,7 +297,8 @@ def test_l1_skills_mention_orchestrate():
         "pax-diagnose",
         "pax-plan",
         "pax-execute",
-        "pax-review"
+        "pax-review",
+        "pax-analyze"
     ]
     
     for skill_name in l1_skills:

@@ -34,6 +34,18 @@ pax-orchestrate → pax-clarify → pax-diagnose → pax-plan → pax-execute �
 
 `compatibility-matrix-consistency` 契约会校验这条链上每一步都落在矩阵允许的方向内。
 
+## doc_consult 分支（轻量分析）
+
+纯咨询/分析类任务由 `pax-orchestrate` 路由到 `[pax-clarify, pax-analyze]`，沉淀可选：
+
+```
+pax-orchestrate → pax-clarify → pax-analyze →（可选）pax-docs
+```
+
+- `pax-analyze` 为 L1：只读分析/调研，可调用 L2 `pax-advisor`、L3 `pax-worker-research`、L4 `pax-docs`（方向均在矩阵内）。
+- `pax-docs` 仅当用户需要留档时才追加，不再作为 doc_consult 的默认强制阶段。
+- `pax-advisor`（L2）已接线：pax-analyze 分析中遇决策/权衡/架构型追问时委托其提供只读建议。
+
 ## 为什么是「层」而不是「skill 对」
 
 skill 级全量配对在 19 个 skill 下是 190+ 条，且每加一个 skill 都要重算，必然腐化。
