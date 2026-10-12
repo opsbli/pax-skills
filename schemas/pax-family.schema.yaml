@@ -1,6 +1,6 @@
 family: pax
 family_expansion: "Pact-based Agreement eXecution"
-version: 1.2
+version: 1.3
 
 # 运行时层级。每个值是该层 skill 去掉 `pax-` 前缀后的名字；
 # `"worker-*"` 为前缀通配。新增 skill 必须同时登记在此处、registry.json 与 versions.json，
@@ -8,7 +8,7 @@ version: 1.2
 layers:
   meta: [forge]
   L0: [orchestrate]
-  L1: [clarify, diagnose, plan, execute, review, monitor, rollback, test, deploy, learn, analyze, design, gate, research]
+  L1: [clarify, diagnose, plan, execute, review, monitor, rollback, test, deploy, learn, analyze, design, gate, research, prototype-to-prd]
   L2: [advisor, council]
   L3: ["worker-*"]
   L4: [verify, evolve, docs, init]

@@ -185,6 +185,14 @@
       "version": "1.0.0",
       "path": "skills/pax-research/SKILL.md",
       "registered_at": "2026-10-12T09:05:00Z"
+    },
+    {
+      "name": "pax-prototype-to-prd",
+      "layer": "L1",
+      "optional": true,
+      "version": "1.0.0",
+      "path": "skills/pax-prototype-to-prd/SKILL.md",
+      "registered_at": "2026-10-12T09:20:00Z"
     }
   ]
 }

@@ -533,6 +533,7 @@ def init_snapshot(intent, risk, diagnose_required, strategy, route, annotations)
 | `pax-learn` | L1 | 任务评审完成后 | 经验沉淀和知识图谱构建 |
 | `pax-design` | L1 | 需求已澄清但方案未定 | 产出可冻结设计契约（ADR/接口/数据模型/服务边界/可观测性），供 plan 消费 |
 | `pax-research` | L1 | 需求模糊/需调研竞品/技术选型/判断值不值得做（不确定性 ≥ 2） | 开发前只读采集→候选集（snapshot.research），选型评估交 advisor、高风险交 council |
+| `pax-prototype-to-prd` | L1 | 提供原型并要求生成/校验 PRD，或 PRD 更新需变更管理 | 原型→结构化 PRD（含 EARS + 质量门禁 + 变更管理），产出 snapshot.prd |
 | `pax-evolve` | L4 | 任务评审/学习后积累留痕，或周期性自审 | OODA 闭环：沉淀经验条目、经 A/B 验证门与回滚机制提出 Skill/契约改进建议 |
 
 #### pax-design（设计门禁）
@@ -549,6 +550,12 @@ def init_snapshot(intent, risk, diagnose_required, strategy, route, annotations)
 - **调用时机**：`pax-clarify` 之前或并行（`annotations.research_required = true` 时挂载）；低风险目标明确任务不挂载
 - **输出**：`snapshot.research`（候选集）
 - **依赖方向**：只读采集→候选，不裁决；选型评估与高风险盲审由研究阶段按家族协作约定委托（L1→L2 合法，数据流，不跨阶段调用）。方案定稿交设计/规划阶段消费候选
+
+#### pax-prototype-to-prd（需求工程上游）
+- **触发条件**：用户提供原型（HTML / 截图 / Figma / Axure 导出）并要求生成 / 校验 PRD；或 PRD 更新需变更管理
+- **调用时机**：`pax-clarify` 阶段内或之前（`annotations.prototype_to_prd = true`）；产出 PRD 后按需交设计/规划阶段消费
+- **输出**：`snapshot.prd`（含 EARS 验收标准 + 质量门禁 verdict + 变更管理 status）
+- **依赖方向**：生成阶段可并入研究阶段候选（数据流）；质量门禁 FAIL 阻断进入下游（fail-closed）；变更未批准不传播
 
 ### 扩展路由调用规则
 

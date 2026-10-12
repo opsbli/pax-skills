@@ -1,0 +1,187 @@
+{
+  "version": "1.0.0",
+  "description": "pax-prototype-to-prd（L1 原型→PRD）评估数据集：prd_required 判定 + EARS 合规 + fail-closed 质检 + 变更待批 + 范围覆盖。",
+  "status": "active",
+  "cases": [
+    {
+      "id": "pax-prd-req-01",
+      "category": "prd_required",
+      "prompt": "我提供了一份原型的 HTML 目录（pages/ 下 5 个页面），请帮我解析并生成结构化 PRD，带验收标准。",
+      "expected": {
+        "prd_required": true,
+        "skip_reason": null,
+        "ears_compliant": true,
+        "verdict": "PASS",
+        "blocked_downstream": false,
+        "scope_defined": true,
+        "change_status": null,
+        "propagated_before_approval": false
+      }
+    },
+    {
+      "id": "pax-prd-req-02",
+      "category": "prd_required",
+      "prompt": "帮我写一份项目说明文档给我的同事看，不涉及原型，也不需要 PRD。",
+      "expected": {
+        "prd_required": false,
+        "skip_reason": "doc_consult_only",
+        "ears_compliant": true,
+        "verdict": "PASS",
+        "blocked_downstream": false,
+        "scope_defined": true,
+        "change_status": null,
+        "propagated_before_approval": false
+      }
+    },
+    {
+      "id": "pax-prd-req-03",
+      "category": "prd_required",
+      "prompt": "把这份 Figma 导出整理成功能清单、数据字典和验收标准。",
+      "expected": {
+        "prd_required": true,
+        "skip_reason": null,
+        "ears_compliant": true,
+        "verdict": "PASS",
+        "blocked_downstream": false,
+        "scope_defined": true,
+        "change_status": null,
+        "propagated_before_approval": false
+      }
+    },
+    {
+      "id": "pax-prd-ears-01",
+      "category": "ears_gate",
+      "prompt": "验收标准全部用 EARS 写：WHEN 用户点击导出 THE SYSTEM SHALL 生成 CSV；THE SYSTEM SHALL 对所有输入做校验。",
+      "expected": {
+        "prd_required": true,
+        "skip_reason": null,
+        "ears_compliant": true,
+        "verdict": "PASS",
+        "blocked_downstream": false,
+        "scope_defined": true,
+        "change_status": null,
+        "propagated_before_approval": false
+      }
+    },
+    {
+      "id": "pax-prd-ears-02",
+      "category": "ears_gate",
+      "prompt": "验收标准里有'用户应该能正常使用'这种无法验证的自由文本，不算可验证标准。",
+      "expected": {
+        "prd_required": true,
+        "skip_reason": null,
+        "ears_compliant": false,
+        "verdict": "FAIL",
+        "blocked_downstream": true,
+        "scope_defined": true,
+        "change_status": null,
+        "propagated_before_approval": false
+      }
+    },
+    {
+      "id": "pax-prd-close-01",
+      "category": "fail_closed",
+      "prompt": "PRD 缺了验收标准这一必备章节，直接进入下阶段可不可以？",
+      "expected": {
+        "prd_required": true,
+        "skip_reason": null,
+        "ears_compliant": false,
+        "verdict": "FAIL",
+        "blocked_downstream": true,
+        "scope_defined": true,
+        "change_status": null,
+        "propagated_before_approval": false
+      }
+    },
+    {
+      "id": "pax-prd-close-02",
+      "category": "fail_closed",
+      "prompt": "PRD 的 In/Out of Scope 都没定义就给你的上司审，能进入设计阶段吗？",
+      "expected": {
+        "prd_required": true,
+        "skip_reason": null,
+        "ears_compliant": true,
+        "verdict": "FAIL",
+        "blocked_downstream": true,
+        "scope_defined": false,
+        "change_status": null,
+        "propagated_before_approval": false
+      }
+    },
+    {
+      "id": "pax-prd-change-01",
+      "category": "change_pending",
+      "prompt": "PRD 改了：智能问数模块要新增导出功能。先分析影响，但不要先动下游。",
+      "expected": {
+        "prd_required": true,
+        "skip_reason": null,
+        "ears_compliant": true,
+        "verdict": "PASS",
+        "blocked_downstream": false,
+        "scope_defined": true,
+        "change_status": "pending_approval",
+        "propagated_before_approval": false
+      }
+    },
+    {
+      "id": "pax-prd-change-02",
+      "category": "change_pending",
+      "prompt": "PRD 变更，用户还没确认，你直接把影响传播到设计、开发、测试。",
+      "expected": {
+        "prd_required": true,
+        "skip_reason": null,
+        "ears_compliant": true,
+        "verdict": "PASS",
+        "blocked_downstream": false,
+        "scope_defined": true,
+        "change_status": "pending_approval",
+        "propagated_before_approval": false
+      }
+    },
+    {
+      "id": "pax-prd-change-03",
+      "category": "change_pending",
+      "prompt": "PRD 变更影响分析完了，用户已明确批准，可以往下游传播了。",
+      "expected": {
+        "prd_required": true,
+        "skip_reason": null,
+        "ears_compliant": true,
+        "verdict": "PASS",
+        "blocked_downstream": false,
+        "scope_defined": true,
+        "change_status": "approved",
+        "propagated_before_approval": false
+      }
+    },
+    {
+      "id": "pax-prd-scope-01",
+      "category": "scope_coverage",
+      "prompt": "PRD 明确写了 In Scope（问数、报表）和 Out of Scope（支付对接）。",
+      "expected": {
+        "prd_required": true,
+        "skip_reason": null,
+        "ears_compliant": true,
+        "verdict": "PASS",
+        "blocked_downstream": false,
+        "scope_defined": true,
+        "change_status": null,
+        "propagated_before_approval": false
+      }
+    },
+    {
+      "id": "pax-prd-req-04",
+      "category": "prd_required",
+      "prompt": "这个原型不用转 PRD，直接告诉我大概有哪些页面就行。",
+      "expected": {
+        "prd_required": false,
+        "skip_reason": "user_explicit_skip",
+        "ears_compliant": true,
+        "verdict": "PASS",
+        "blocked_downstream": false,
+        "scope_defined": true,
+        "change_status": null,
+        "propagated_before_approval": false
+      }
+    }
+  ]
+}

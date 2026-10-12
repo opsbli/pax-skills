@@ -14,6 +14,19 @@
   需要按 skill 排查时，直接看 `pax-forge test` 输出里带 skill 名的那一行。
 
 ### Added
+- **新增 `pax-prototype-to-prd`（L1，需求工程上游）**：从原型（HTML/截图/Figma/Axure 导出）
+  生成结构化 PRD，四阶段串一个 skill：原型解析 → PRD 生成（每条功能配 **EARS** 验收标准）→
+  质量门禁（缺必备章节 / 验收标准非 EARS → `FAIL` 并 **fail-closed** 阻断进入下游）→ 变更管理
+  （影响分析 → 提案 → 用户批准 → 传播，**未批准不传播**）。挂载点为 `clarify` 阶段内或之前
+  （`orchestration.annotations.prototype_to_prd == true`）。快照新增顶层可选段 `prd`
+  （source/pages/features/functional_requirements/acceptance_criteria/data_dictionary/scope/
+  verification/change）。家族版本 1.4.0 → 1.5.0（新增 skill + 新增顶层可选段 → minor）。
+  已同步安装运行时（24 skill）。配套可评估资产（**均为真实可执行，非占位**）：
+  - `evals/datasets/pax-prototype-to-prd_v1.0.0.json`：12 题（prd_required 4 / ears_gate 2 /
+    fail_closed 2 / change_pending 3 / scope_coverage 1），无 TODO 占位。
+  - `evals/run_prd_eval.py`：真实调模型 runner，含 `--selfcheck` / `--dry-run` / `--rescore`。
+  - `evals/mutation_test_prd_eval.py`：15 个变异体全部被杀，证明 scorer 有 teeth。
+
 - **新增 `pax-research`（L1，开发前研究阶段）**：承接需求调研 / 竞品比对 / 技术选型的
   **信息采集**，产出可交接候选集（`snapshot.research`），**只出候选、不做裁决**（符合
   「AI 产出为候选」契约）；选型评估交 advisor、高风险交 council（L1→L2 合法），方案定稿

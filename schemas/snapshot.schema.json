@@ -493,6 +493,62 @@
         "open_questions": {"type": "array"},
         "read_only": {"type": "boolean"}
       }
+    },
+    "prd": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "type": {"type": "string"},
+            "path": {"type": "string"}
+          }
+        },
+        "pages": {"type": "array"},
+        "features": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "id": {"type": "string"},
+              "module": {"type": "string"},
+              "priority": {"type": "string", "enum": ["must", "should", "could"]}
+            }
+          }
+        },
+        "functional_requirements": {"type": "array"},
+        "acceptance_criteria": {"type": "array"},
+        "data_dictionary": {"type": "array"},
+        "scope": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "in": {"type": "array"},
+            "out": {"type": "array"}
+          }
+        },
+        "verification": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "verdict": {"type": "string", "enum": ["PASS", "NEEDS_WORK", "FAIL"]},
+            "findings": {"type": "array"}
+          }
+        },
+        "change": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "change_id": {"type": "string"},
+            "change_type": {"type": "string", "enum": ["create", "update", "no_action"]},
+            "impact_analysis": {"type": "array"},
+            "status": {"type": "string", "enum": ["pending_approval", "approved", "applied"]}
+          }
+        }
+      }
     }
   }
 }
