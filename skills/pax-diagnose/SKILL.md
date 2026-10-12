@@ -173,8 +173,40 @@ historical_diagnoses:
     relevance_note: "<本次与历史的异同>"
 ```
 
-### D3 假设生成（Hypothesis Generation）
+### D2.6 代码级性能诊断（Performance Diagnosis，A6）
 
+当症状含**性能退化 / 慢请求 / 高延迟 / 数据库压力**时，首个怀疑面优先落到代码级
+性能问题。在 D3 假设生成前，先对三类高发根因做定向检查（并入诊断工作流，不建独立 skill）：
+
+**高发根因检查项（查表）**：
+| 检查项 | 症状信号 | 证据来源 | 建议验证 |
+|---|---|---|---|
+| N+1 查询 | 列表接口随行数线性变慢；同批数据多次 DB 往返 | ORM 日志 / 慢查询日志 | 统计同请求 DB 调用次数；开启懒加载追踪 |
+| 慢查询 / 全表扫描 | 单接口延迟高；数据库 CPU/IO 打满 | `EXPLAIN` 计划 / 慢查询日志 | 检查关键查询是否命中索引；`key` 是否为 NULL |
+| 重复计算 / 无缓存 | 高并发下 CPU 高但 DB 空闲 | 火焰图 / profiling | 检查热点函数是否有缓存、是否在循环内重复计算 |
+
+```yaml
+performance_checks:
+  - id: P1
+    check: n_plus_one
+    signal: "列表接口随行数线性变慢，日志显示同批多轮 DB 往返"
+    evidence: ["<ORM 日志摘要>", "<慢查询日志行>"]
+    verdict: confirmed | rejected | inconclusive
+    confidence: high | medium | low
+  - id: P2
+    check: slow_query_full_scan
+    signal: "EXPLAIN 显示 key=NULL（全表扫描），单接口延迟高"
+    evidence: ["<EXPLAIN 计划摘要>"]
+    verdict: confirmed | rejected | inconclusive
+    confidence: high
+```
+
+**门禁规则**：
+- 性能类症状若 `P1`/`P2` 任一 `confirmed` → 必须作为 `diagnosis.root_cause` 的首要候选
+  进入 D4 验证，并在回归范围中标注「性能回归」；
+- 证据不足时 `verdict: inconclusive`，不得臆断根因。
+
+### D3 假设生成（Hypothesis Generation）
 **目标**：基于证据生成可证伪的假设。
 
 **生成规则**：

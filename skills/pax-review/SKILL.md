@@ -178,6 +178,63 @@ def check_pie_completeness(snapshot):
 - 只有 `severity == "minor"` 的发现 → `verdict` 可给 `partial`，但需在 `rationale` 里显式引用；
 - `pie_check[]` 缺失 → `verdict: blocked`，回到测试生成阶段补跑 T1.5。
 
+### R2.6 行为等价性断言（Behavior Equivalence Assertion，支撑重构类任务）
+
+当 `intent.primary == "refactor"`（或路由标注重构）时，除结构正确性外，评审还必须断言
+**重构前后行为等价**——这是重构类任务通过评审的必要条件。
+
+```python
+def check_behavior_equivalence(snapshot):
+    """重构类任务的行为等价性断言。
+
+    判据：重构前后对外可观察行为保持一致。以下任一项缺失/不满足 → 存在
+    major 等价性风险，verdict 不得为 verified。
+    """
+    findings = []
+    goals = snapshot.goal or {}
+    plans = snapshot.plan or {}
+    tests = snapshot.tests or {}
+    ctrs = snapshot.contract or {}
+    if not goals or not plans:
+        return False, "缺少 goal/plan，无法界定行为面", []
+
+    # 1) 行为面覆盖：重构必须明确覆盖到哪些对外行为（接口、输入输出、错误码、边界）
+    behavior_surface = (goals.get("success_criteria")
+                        or plans.get("verification_strategy")
+                        or [])
+    if not behavior_surface:
+        findings.append({
+            "severity": "major",
+            "description": "重构未声明行为面（接口/输入输出/错误码/边界），无法证明等价"
+        })
+
+    # 2) 回归证据：必须存在重构后对新行为面的自动化回归（测试或契约校验）
+    pie = tests.get("pie_check") if isinstance(tests, dict) else []
+    pie = pie or []
+    has_regression = any(
+        t.get("behavior_equivalent") is True for t in pie
+    ) if isinstance(pie, list) else False
+    if not has_regression:
+        findings.append({
+            "severity": "major",
+            "description": "缺少重构后行为等价回归证据（behavior_equivalent=true 未出现）"
+        })
+
+    # 3) 外部契约不变：快照 contract 段在重构前后不应被破坏性变更（除非显式声明）
+    if ctrs and ctrs.get("breaking") is True:
+        findings.append({
+            "severity": "major",
+            "description": "重构引入破坏性契约变更，需用户显式确认"
+        })
+
+    has_major = any(f["severity"] == "major" for f in findings)
+    return (not has_major), None, findings
+```
+
+**门禁规则**：
+- 重构类任务：存在 `major` 行为等价性发现 → `verdict` 不得为 `verified`，最低 `needs_fix`；
+- 行为面未声明 或 缺等价回归 或 破坏性契约未确认 → 均判 `major`。
+
 ### R3 偏差检查（Deviation Check）
 
 检查 `execution.deviations[]` 是否已处理：

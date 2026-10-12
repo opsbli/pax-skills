@@ -185,7 +185,49 @@ def check_pie(test_case):
     }
 ```
 
-**跳过留痕**：用例若声明 `pie_check.rationale` 说明该用例是纯回归 smoke（只求"没崩"），可将 `execution / infection / propagation` 全部置 `n/a`；但同一 step 内 `n/a` 比例不得高于 50%。
+**跳过留痕**：用例若声明 `pie_check.rationale` 说明该用例是纯回归 smoke（只求“没崩”），可将 `execution / infection / propagation` 全部置 `n/a`；但同一 step 内 `n/a` 比例不得高于 50%。
+
+### T1.6 数据库迁移 up/down 实跑校验（Migration Up/Down Real-Run，T-1）
+
+当 `plan.rollback_strategy` 中含数据库迁移（或变更含 schema / 迁移脚本）时，测试阶段必须对
+迁移脚本做 **up 与 down 双向实跑校验**，不能只生成不执行。这一校验补齐 B3（数据库迁移安全）
+的验证缺口，与 `pax-plan.rollback_strategy` 四档（on_failure/on_alert/on_request/default）联动。
+
+```python
+def check_migration_up_down(snapshot):
+    """数据库迁移 up/down 实跑校验。
+
+    返回 (ok, reason, findings)；ok=False 表示迁移校验失败，不得视为测试通过。
+    """
+    plans = snapshot.plan or {}
+    migration = (plans.get("rollback_strategy") if isinstance(plans, dict) else None)
+    if not migration or migration == "none":
+        return True, "无数据库迁移，跳过 up/down 实跑", []
+
+    findings = []
+    # 1) up 实跑：迁移脚本必须在干净 schema 上成功执行到目标版本
+    up_ok = run_migration_up()
+    if not up_ok:
+        findings.append({"severity": "major", "description": "迁移 up 实跑失败"})
+
+    # 2) down 实跑：up → down 必须回到基线，且数据/副作用可回滚
+    down_ok = run_migration_down()
+    if not down_ok:
+        findings.append({"severity": "major", "description": "迁移 down 实跑失败或未回到基线"})
+
+    # 3) 幂等/校验：down 后 schema 必须与基线一致（可对比迁移前后 schema 快照）
+    schema_ok = compare_schema_after_rollback()
+    if not schema_ok:
+        findings.append({"severity": "major", "description": "回滚后 schema 与基线不一致"})
+
+    has_major = any(f["severity"] == "major" for f in findings)
+    return (not has_major), None, findings
+```
+
+**门禁规则**：
+- 存在迁移且任一 up / down / 回滚一致性失败 → `tests.status` 不得为 `passed`，最低 `failed`，
+  需回到执行/回滚阶段处理；
+- 校验项写入 `snapshot.tests.pie_check[]`（`execution` 置 `pass` / `fail`），供 `pax-review` R2.5 消费。
 
 **门禁**：
 - 任何 `execution == fail` 的用例必须补测后才能进入 T2；

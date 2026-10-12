@@ -198,6 +198,26 @@ def terminate_monitoring(monitoring):
 - `snapshot.monitoring`（`status` / `config` / `thresholds` / `alerts_triggered` / `logs` / `summary`）
 - 监控日志文件，格式由 `schemas/snapshot.schema.json` 约束
 
+## 事故沉淀链（V-2 / B5）
+监控告警（尤其 critical / warning 且已触发 `stop_execution` / 回滚）结束后，应把事故信号
+**数据流**交给学习阶段沉淀经验条目（写阶段名而非技能名，避免形成调用环）：
+
+```yaml
+incident_handoff:
+  source: monitoring
+  target: learning          # 学习阶段（经验沉淀）
+  payload:
+    - alert_id
+    - alert_type
+    - severity
+    - root_cause_hint
+    - rollback_used
+```
+
+- **触发条件**：存在 `critical` 告警，或 `warning` 告警但伴随回滚 / 停止执行。
+- **不在触发范围**：纯 `log_only` 的 `warning` 不强制沉淀，按需记录。
+- 该链路复用既有学习阶段的经验沉淀能力，不新建事故响应 skill（§3-B5）。
+
 ## 失败模式
 - 指标采集失败 → 降级为日志监控，标注 `degraded: true`
 - 告警触发失败 → 记录日志，继续监控
@@ -207,3 +227,4 @@ def terminate_monitoring(monitoring):
 - 检测到严重异常 → `pax-council`
 - 需要停止执行 → `pax-execute`
 - 需要回滚 → `pax-rollback`
+- 事故沉淀 → 提交给学习阶段（见「事故沉淀链」）
