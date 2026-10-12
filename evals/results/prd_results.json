@@ -1,0 +1,873 @@
+{
+  "meta": {
+    "model": "sensenova-6.8-flash-lite",
+    "base_url": "https://token.sensenova.cn/v1",
+    "temperature": 0,
+    "repeats": 3,
+    "dataset_version": "1.1.0",
+    "contract_chars": 1442,
+    "ran_at": "2026-10-12T20:12:05.446499+08:00"
+  },
+  "results": [
+    {
+      "id": "pax-prd-req-01",
+      "category": "prd_required",
+      "rep": 1,
+      "parsed": {
+        "prd_required": true,
+        "skip_reason": "输入中未包含实际的 HTML 原型内容（pages/ 目录下的 5 个页面文件），无法执行 P1 原型解析，因此无法生成 PRD。",
+        "ears_compliant": false,
+        "verdict": "FAIL",
+        "blocked_downstream": true,
+        "scope_defined": false,
+        "change_status": null,
+        "propagated_before_approval": false,
+        "reasoning": "用户声称提供了 HTML 原型目录但未附带实际页面内容，P1 原型解析无法执行，缺少必备输入导致无法生成 PRD，按 fail-closed 原则阻断下游。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "prd_required": true,
+        "ears_compliant": false
+      }
+    },
+    {
+      "id": "pax-prd-req-01",
+      "category": "prd_required",
+      "rep": 2,
+      "parsed": {
+        "prd_required": true,
+        "skip_reason": "用户声称提供了 HTML 目录原型，但实际输入中未包含任何页面内容、路由、控件、数据字段或页面流转信息，P1 原型解析无法执行，P2 PRD 生成缺少必要输入。",
+        "ears_compliant": false,
+        "verdict": "FAIL",
+        "blocked_downstream": true,
+        "scope_defined": false,
+        "change_status": null,
+        "propagated_before_approval": false,
+        "reasoning": "输入缺少原型实际内容，无法完成 P1 解析与 P2 生成，必备章节（Executive Summary / Problem / Goals / 功能需求 / 验收标准 / 验证计划）均无法产出，验收标准非 EARS，按 fail-closed 原则阻断下游。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "prd_required": true,
+        "ears_compliant": false
+      }
+    },
+    {
+      "id": "pax-prd-req-01",
+      "category": "prd_required",
+      "rep": 3,
+      "parsed": {
+        "prd_required": true,
+        "skip_reason": null,
+        "ears_compliant": false,
+        "verdict": "FAIL",
+        "blocked_downstream": true,
+        "scope_defined": false,
+        "change_status": null,
+        "propagated_before_approval": false,
+        "reasoning": "输入未包含实际原型 HTML 内容，无法执行 P1 解析与 P2 生成，PRD 缺失全部必备章节且无 EARS 验收标准，质量门禁 fail-closed 阻断下游。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "prd_required": true,
+        "ears_compliant": false
+      }
+    },
+    {
+      "id": "pax-prd-req-02",
+      "category": "prd_required",
+      "rep": 1,
+      "parsed": {
+        "prd_required": false,
+        "skip_reason": "用户明确表示不涉及原型且不需要 PRD，请求的是项目说明文档，超出本 Skill 的 prototype-to-PRD 转换范围",
+        "ears_compliant": true,
+        "verdict": "PASS",
+        "blocked_downstream": false,
+        "scope_defined": false,
+        "change_status": null,
+        "propagated_before_approval": false,
+        "reasoning": "输入无原型来源且用户明确排除 PRD 需求，本 Skill 无适用场景，直接放行不阻断下游"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "prd_required": true,
+        "skip_reason": true
+      }
+    },
+    {
+      "id": "pax-prd-req-02",
+      "category": "prd_required",
+      "rep": 2,
+      "parsed": {
+        "prd_required": false,
+        "skip_reason": "用户明确表示不涉及原型且不需要 PRD，请求的是项目说明文档，不在本 Skill 工作流范围内",
+        "ears_compliant": false,
+        "verdict": "PASS",
+        "blocked_downstream": false,
+        "scope_defined": false,
+        "change_status": null,
+        "propagated_before_approval": false,
+        "reasoning": "输入无原型且用户明确不需要 PRD，本 Skill 无适用场景，直接放行"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "prd_required": true,
+        "skip_reason": true
+      }
+    },
+    {
+      "id": "pax-prd-req-02",
+      "category": "prd_required",
+      "rep": 3,
+      "parsed": {
+        "prd_required": false,
+        "skip_reason": "用户明确表示不涉及原型且不需要 PRD，请求的是项目说明文档，超出本 Skill 的 prototype-to-PRD 转换范围",
+        "ears_compliant": true,
+        "verdict": "PASS",
+        "blocked_downstream": false,
+        "scope_defined": false,
+        "change_status": null,
+        "propagated_before_approval": false,
+        "reasoning": "输入无原型来源且用户明确排除 PRD 需求，本 Skill 无适用场景，直接放行不阻断下游"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "prd_required": true,
+        "skip_reason": true
+      }
+    },
+    {
+      "id": "pax-prd-req-03",
+      "category": "prd_required",
+      "rep": 1,
+      "parsed": {
+        "prd_required": true,
+        "skip_reason": null,
+        "ears_compliant": false,
+        "verdict": "FAIL",
+        "blocked_downstream": true,
+        "scope_defined": false,
+        "change_status": null,
+        "propagated_before_approval": false,
+        "reasoning": "未提供任何 Figma 导出内容（截图/链接/HTML/描述），无法执行 P1 原型解析，因此 P2 无法生成功能需求、数据字典与 EARS 验收标准，P3 必备章节全部缺失，按 fail-closed 原则判定 FAIL 并阻断下游。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "prd_required": true
+      }
+    },
+    {
+      "id": "pax-prd-req-03",
+      "category": "prd_required",
+      "rep": 2,
+      "parsed": {
+        "prd_required": true,
+        "skip_reason": "输入未包含任何 Figma 导出内容（无截图、无 HTML、无页面树、无控件/字段/流转数据），P1 原型解析无法执行，P2 PRD 生成与 P3 质量门禁均无源可依。",
+        "ears_compliant": false,
+        "verdict": "FAIL",
+        "blocked_downstream": true,
+        "scope_defined": false,
+        "change_status": null,
+        "propagated_before_approval": false,
+        "reasoning": "缺少 Figma 导出源材料，无法提取页面树/控件/数据字段/页面流转，PRD 必备章节与 EARS 验收标准均无法生成，按 fail-closed 原则阻断下游。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "prd_required": true
+      }
+    },
+    {
+      "id": "pax-prd-req-03",
+      "category": "prd_required",
+      "rep": 3,
+      "parsed": {
+        "prd_required": true,
+        "skip_reason": null,
+        "ears_compliant": false,
+        "verdict": "FAIL",
+        "blocked_downstream": true,
+        "scope_defined": false,
+        "change_status": null,
+        "propagated_before_approval": false,
+        "reasoning": "未提供任何 Figma 原型内容（无截图、链接、HTML 目录或页面描述），P1 原型解析无法执行，必备章节（Executive Summary / Problem / Goals / 功能需求 / 验收标准 / 验证计划）与 EARS 验收标准均缺失，质量门禁 fail-closed 阻断下游。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "prd_required": true
+      }
+    },
+    {
+      "id": "pax-prd-req-04",
+      "category": "prd_required",
+      "rep": 1,
+      "parsed": {
+        "prd_required": false,
+        "skip_reason": "用户明确表示不需要转 PRD，仅要求识别页面；但输入中未提供任何原型（HTML/截图/Figma/Axure/墨刀/MasterGo 等），无法执行 P1 原型解析，无法提取页面树。",
+        "ears_compliant": false,
+        "verdict": "FAIL",
+        "blocked_downstream": false,
+        "scope_defined": false,
+        "change_status": null,
+        "propagated_before_approval": false,
+        "reasoning": "用户跳过 PRD 生成，但输入缺少任何原型素材，P1 原型解析无法执行，无法识别页面。"
+      },
+      "error": null,
+      "structure_failures": [
+        "verdict=FAIL 却未阻断下游（违反 fail-closed）"
+      ],
+      "valid": false,
+      "checks": {
+        "prd_required": true,
+        "skip_reason": true
+      }
+    },
+    {
+      "id": "pax-prd-req-04",
+      "category": "prd_required",
+      "rep": 2,
+      "parsed": {
+        "prd_required": false,
+        "skip_reason": "用户明确表示不需要转 PRD，仅需页面概览；但对话中未提供任何原型内容（HTML/截图/Figma 等），无法解析页面树",
+        "ears_compliant": null,
+        "verdict": "PASS",
+        "blocked_downstream": false,
+        "scope_defined": false,
+        "change_status": null,
+        "propagated_before_approval": false,
+        "reasoning": "用户主动跳过 PRD 转换流程，且未附带任何原型素材，P1 原型解析阶段无输入可处理"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "prd_required": true,
+        "skip_reason": true
+      }
+    },
+    {
+      "id": "pax-prd-req-04",
+      "category": "prd_required",
+      "rep": 3,
+      "parsed": {
+        "prd_required": false,
+        "skip_reason": "用户明确表示不需要转 PRD，仅需页面概览",
+        "ears_compliant": false,
+        "verdict": "PASS",
+        "blocked_downstream": false,
+        "scope_defined": false,
+        "change_status": null,
+        "propagated_before_approval": false,
+        "reasoning": "用户明确跳过 PRD 生成，仅请求页面列表；但当前未收到任何原型输入（HTML/截图/Figma 等），无法执行 P1 原型解析，需用户提供原型数据后才能列出页面"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "prd_required": true,
+        "skip_reason": true
+      }
+    },
+    {
+      "id": "pax-prd-ears-01",
+      "category": "ears_gate",
+      "rep": 1,
+      "parsed": {
+        "prd_required": true,
+        "skip_reason": null,
+        "ears_compliant": true,
+        "verdict": "NEEDS_WORK",
+        "blocked_downstream": false,
+        "scope_defined": false,
+        "change_status": null,
+        "propagated_before_approval": false,
+        "reasoning": "两条验收标准均为合法 EARS（WHEN 事件触发 + THE SYSTEM SHALL 不变式），格式合规；但输入仅为验收标准片段，缺少完整 PRD 必备章节（Executive Summary / Problem / Goals / 功能需求 / 验证计划）及范围边界（In/Out）与非功能可衡量目标，建议补全后放行下游。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "prd_required": true,
+        "ears_compliant": true
+      }
+    },
+    {
+      "id": "pax-prd-ears-01",
+      "category": "ears_gate",
+      "rep": 2,
+      "parsed": {
+        "prd_required": true,
+        "skip_reason": null,
+        "ears_compliant": true,
+        "verdict": "FAIL",
+        "blocked_downstream": true,
+        "scope_defined": false,
+        "change_status": null,
+        "propagated_before_approval": false,
+        "reasoning": "验收标准符合 EARS 格式（WHEN 事件触发 + THE SYSTEM SHALL 不变式），但 PRD 缺少必备章节（Executive Summary / Problem / Goals / 验证计划）及范围边界（In/Out）定义，按 fail-closed 阻断下游。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "prd_required": true,
+        "ears_compliant": true
+      }
+    },
+    {
+      "id": "pax-prd-ears-01",
+      "category": "ears_gate",
+      "rep": 3,
+      "parsed": {
+        "prd_required": true,
+        "skip_reason": null,
+        "ears_compliant": true,
+        "verdict": "FAIL",
+        "blocked_downstream": true,
+        "scope_defined": false,
+        "change_status": null,
+        "propagated_before_approval": false,
+        "reasoning": "验收标准符合 EARS 格式（WHEN 事件触发 + THE SYSTEM SHALL 不变式），但 PRD 缺少必备章节（Executive Summary / Problem / Goals / 验证计划）及范围边界（In/Out）定义，按 fail-closed 阻断下游。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "prd_required": true,
+        "ears_compliant": true
+      }
+    },
+    {
+      "id": "pax-prd-ears-02",
+      "category": "ears_gate",
+      "rep": 1,
+      "parsed": {
+        "prd_required": true,
+        "skip_reason": null,
+        "ears_compliant": false,
+        "verdict": "FAIL",
+        "blocked_downstream": true,
+        "scope_defined": false,
+        "change_status": null,
+        "propagated_before_approval": false,
+        "reasoning": "验收标准含'用户应该能正常使用'等非EARS自由文本，且缺少必备章节，按fail-closed规则判定FAIL并阻断下游。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "prd_required": true,
+        "ears_compliant": true,
+        "verdict": true,
+        "blocked_downstream": true
+      }
+    },
+    {
+      "id": "pax-prd-ears-02",
+      "category": "ears_gate",
+      "rep": 2,
+      "parsed": {
+        "prd_required": true,
+        "skip_reason": null,
+        "ears_compliant": false,
+        "verdict": "FAIL",
+        "blocked_downstream": true,
+        "scope_defined": false,
+        "change_status": null,
+        "propagated_before_approval": false,
+        "reasoning": "验收标准含'用户应该能正常使用'等非EARS自由文本，且缺少必备章节（Executive Summary/Problem/Goals/功能需求/验收标准/验证计划），触发fail-closed门禁，阻断进入设计/规划阶段。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "prd_required": true,
+        "ears_compliant": true,
+        "verdict": true,
+        "blocked_downstream": true
+      }
+    },
+    {
+      "id": "pax-prd-ears-02",
+      "category": "ears_gate",
+      "rep": 3,
+      "parsed": {
+        "prd_required": true,
+        "skip_reason": null,
+        "ears_compliant": false,
+        "verdict": "FAIL",
+        "blocked_downstream": true,
+        "scope_defined": false,
+        "change_status": null,
+        "propagated_before_approval": false,
+        "reasoning": "验收标准为自由文本（如'用户应该能正常使用'）非EARS句式，且缺少必备章节，按fail-closed规则判定FAIL并阻断下游。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "prd_required": true,
+        "ears_compliant": true,
+        "verdict": true,
+        "blocked_downstream": true
+      }
+    },
+    {
+      "id": "pax-prd-close-01",
+      "category": "fail_closed",
+      "rep": 1,
+      "parsed": {
+        "prd_required": true,
+        "skip_reason": null,
+        "ears_compliant": false,
+        "verdict": "FAIL",
+        "blocked_downstream": true,
+        "scope_defined": false,
+        "change_status": null,
+        "propagated_before_approval": false,
+        "reasoning": "验收标准是 P3 质量门禁的必备章节，缺失即触发 fail-closed，必须阻断进入设计/规划阶段，不得放行。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "prd_required": true,
+        "verdict": true,
+        "blocked_downstream": true
+      }
+    },
+    {
+      "id": "pax-prd-close-01",
+      "category": "fail_closed",
+      "rep": 2,
+      "parsed": {
+        "prd_required": true,
+        "skip_reason": null,
+        "ears_compliant": false,
+        "verdict": "FAIL",
+        "blocked_downstream": true,
+        "scope_defined": false,
+        "change_status": null,
+        "propagated_before_approval": false,
+        "reasoning": "验收标准是 P3 质量门禁的必备章节，缺失即触发 fail-closed，必须阻断进入设计/规划阶段，不得放行。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "prd_required": true,
+        "verdict": true,
+        "blocked_downstream": true
+      }
+    },
+    {
+      "id": "pax-prd-close-01",
+      "category": "fail_closed",
+      "rep": 3,
+      "parsed": {
+        "prd_required": true,
+        "skip_reason": null,
+        "ears_compliant": false,
+        "verdict": "FAIL",
+        "blocked_downstream": true,
+        "scope_defined": false,
+        "change_status": null,
+        "propagated_before_approval": false,
+        "reasoning": "验收标准是 P3 质量门禁的必备章节，缺失即触发 fail-closed，必须阻断进入设计/规划阶段，不得放行。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "prd_required": true,
+        "verdict": true,
+        "blocked_downstream": true
+      }
+    },
+    {
+      "id": "pax-prd-close-02",
+      "category": "fail_closed",
+      "rep": 1,
+      "parsed": {
+        "prd_required": true,
+        "skip_reason": null,
+        "ears_compliant": false,
+        "verdict": "FAIL",
+        "blocked_downstream": true,
+        "scope_defined": false,
+        "change_status": null,
+        "propagated_before_approval": false,
+        "reasoning": "In/Out of Scope 未定义属于必备章节缺失，按 fail-closed 门禁判定为 FAIL，阻断进入设计阶段。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "prd_required": true,
+        "scope_defined": true,
+        "verdict": true,
+        "blocked_downstream": true
+      }
+    },
+    {
+      "id": "pax-prd-close-02",
+      "category": "fail_closed",
+      "rep": 2,
+      "parsed": {
+        "prd_required": true,
+        "skip_reason": null,
+        "ears_compliant": false,
+        "verdict": "FAIL",
+        "blocked_downstream": true,
+        "scope_defined": false,
+        "change_status": null,
+        "propagated_before_approval": false,
+        "reasoning": "范围边界（In/Out of Scope）是质量门禁的必备校验维度，未定义时门禁 fail-closed，阻断进入设计阶段。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "prd_required": true,
+        "scope_defined": true,
+        "verdict": true,
+        "blocked_downstream": true
+      }
+    },
+    {
+      "id": "pax-prd-close-02",
+      "category": "fail_closed",
+      "rep": 3,
+      "parsed": {
+        "prd_required": true,
+        "skip_reason": null,
+        "ears_compliant": false,
+        "verdict": "FAIL",
+        "blocked_downstream": true,
+        "scope_defined": false,
+        "change_status": null,
+        "propagated_before_approval": false,
+        "reasoning": "范围边界（In/Out of Scope）是 P3 质量门禁的必备校验维度，缺失即判定 FAIL 并 fail-closed 阻断下游，不得进入设计阶段。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "prd_required": true,
+        "scope_defined": true,
+        "verdict": true,
+        "blocked_downstream": true
+      }
+    },
+    {
+      "id": "pax-prd-change-01",
+      "category": "change_pending",
+      "rep": 1,
+      "parsed": {
+        "prd_required": true,
+        "skip_reason": null,
+        "ears_compliant": false,
+        "verdict": "NEEDS_WORK",
+        "blocked_downstream": true,
+        "scope_defined": false,
+        "change_status": "pending_approval",
+        "propagated_before_approval": false,
+        "reasoning": "智能问数模块新增导出功能属于既有PRD变更，需先完成影响分析（涉及PRD章节、设计、任务、测试）并获用户批准后方可传播下游；当前缺少完整PRD内容无法验证EARS合规性，变更状态为pending_approval，下游已阻断。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "prd_required": true,
+        "change_status": true,
+        "propagated_before_approval": true
+      }
+    },
+    {
+      "id": "pax-prd-change-01",
+      "category": "change_pending",
+      "rep": 2,
+      "parsed": {
+        "prd_required": true,
+        "skip_reason": null,
+        "ears_compliant": false,
+        "verdict": "NEEDS_WORK",
+        "blocked_downstream": true,
+        "scope_defined": true,
+        "change_status": "pending_approval",
+        "propagated_before_approval": false,
+        "reasoning": "智能问数模块新增导出功能的影响分析已完成，变更提案状态为 pending_approval，未获用户批准前不传播下游；PRD 更新后需补充 EARS 验收标准方可通过质量门禁。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "prd_required": true,
+        "change_status": true,
+        "propagated_before_approval": true
+      }
+    },
+    {
+      "id": "pax-prd-change-01",
+      "category": "change_pending",
+      "rep": 3,
+      "parsed": {
+        "prd_required": true,
+        "skip_reason": null,
+        "ears_compliant": false,
+        "verdict": "NEEDS_WORK",
+        "blocked_downstream": true,
+        "scope_defined": false,
+        "change_status": "pending_approval",
+        "propagated_before_approval": false,
+        "reasoning": "影响分析已完成：新增导出功能涉及功能需求(REQ-EXPORT-001)、验收标准(需EARS句式)、数据字典(导出格式/文件类型字段)、范围边界(导出从out移入in)、非功能需求(导出性能/文件大小限制)及设计/任务/测试影响；因未获用户批准且新需求尚未以EARS句式写入PRD，下游阻断，等待批准后再传播。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "prd_required": true,
+        "change_status": true,
+        "propagated_before_approval": true
+      }
+    },
+    {
+      "id": "pax-prd-change-02",
+      "category": "change_pending",
+      "rep": 1,
+      "parsed": {
+        "prd_required": true,
+        "skip_reason": null,
+        "ears_compliant": false,
+        "verdict": "FAIL",
+        "blocked_downstream": true,
+        "scope_defined": false,
+        "change_status": "pending_approval",
+        "propagated_before_approval": true,
+        "reasoning": "变更未获用户批准即传播至设计、开发、测试下游，违反 P4 变更管理契约中'未批准不传播'的强制要求，必须阻断并等待用户确认后方可传播。"
+      },
+      "error": null,
+      "structure_failures": [
+        "未获批准就传播下游（违反变更门禁）"
+      ],
+      "valid": false,
+      "checks": {
+        "prd_required": true,
+        "change_status": true,
+        "propagated_before_approval": false
+      }
+    },
+    {
+      "id": "pax-prd-change-02",
+      "category": "change_pending",
+      "rep": 2,
+      "parsed": {
+        "prd_required": true,
+        "skip_reason": null,
+        "ears_compliant": null,
+        "verdict": "FAIL",
+        "blocked_downstream": true,
+        "scope_defined": null,
+        "change_status": "pending_approval",
+        "propagated_before_approval": true,
+        "reasoning": "变更处于 pending_approval 状态却已传播至设计/开发/测试，违反 P4 变更管理契约中'未批准不传播'的强制约束，必须立即阻断并回滚下游传播"
+      },
+      "error": null,
+      "structure_failures": [
+        "未获批准就传播下游（违反变更门禁）"
+      ],
+      "valid": false,
+      "checks": {
+        "prd_required": true,
+        "change_status": true,
+        "propagated_before_approval": false
+      }
+    },
+    {
+      "id": "pax-prd-change-02",
+      "category": "change_pending",
+      "rep": 3,
+      "parsed": {
+        "prd_required": true,
+        "skip_reason": null,
+        "ears_compliant": false,
+        "verdict": "FAIL",
+        "blocked_downstream": true,
+        "scope_defined": false,
+        "change_status": "pending_approval",
+        "propagated_before_approval": true,
+        "reasoning": "变更处于 pending_approval 状态，用户未确认即传播至下游，违反 P4 变更管理契约，必须阻断。"
+      },
+      "error": null,
+      "structure_failures": [
+        "未获批准就传播下游（违反变更门禁）"
+      ],
+      "valid": false,
+      "checks": {
+        "prd_required": true,
+        "change_status": true,
+        "propagated_before_approval": false
+      }
+    },
+    {
+      "id": "pax-prd-change-03",
+      "category": "change_pending",
+      "rep": 1,
+      "parsed": {
+        "prd_required": true,
+        "skip_reason": null,
+        "ears_compliant": true,
+        "verdict": "PASS",
+        "blocked_downstream": false,
+        "scope_defined": true,
+        "change_status": "approved",
+        "propagated_before_approval": false,
+        "reasoning": "用户已明确批准变更，影响分析已完成，变更状态为 approved，可传播至下游设计/规划/测试阶段。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "prd_required": true,
+        "change_status": true,
+        "propagated_before_approval": true
+      }
+    },
+    {
+      "id": "pax-prd-change-03",
+      "category": "change_pending",
+      "rep": 2,
+      "parsed": {
+        "prd_required": true,
+        "skip_reason": null,
+        "ears_compliant": true,
+        "verdict": "PASS",
+        "blocked_downstream": false,
+        "scope_defined": true,
+        "change_status": "approved",
+        "propagated_before_approval": false,
+        "reasoning": "用户已明确批准变更，影响分析完成，质量门禁通过，可传播至下游设计/规划/测试阶段。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "prd_required": true,
+        "change_status": true,
+        "propagated_before_approval": true
+      }
+    },
+    {
+      "id": "pax-prd-change-03",
+      "category": "change_pending",
+      "rep": 3,
+      "parsed": {
+        "prd_required": true,
+        "skip_reason": null,
+        "ears_compliant": true,
+        "verdict": "PASS",
+        "blocked_downstream": false,
+        "scope_defined": true,
+        "change_status": "approved",
+        "propagated_before_approval": false,
+        "reasoning": "用户已明确批准变更，影响分析已完成，变更状态为 approved，可传播至下游设计/规划/测试阶段。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "prd_required": true,
+        "change_status": true,
+        "propagated_before_approval": true
+      }
+    },
+    {
+      "id": "pax-prd-scope-01",
+      "category": "scope_coverage",
+      "rep": 1,
+      "parsed": {
+        "prd_required": true,
+        "skip_reason": null,
+        "ears_compliant": true,
+        "verdict": "PASS",
+        "blocked_downstream": false,
+        "scope_defined": true,
+        "change_status": null,
+        "propagated_before_approval": false,
+        "reasoning": "PRD 已明确定义 In Scope（问数、报表）与 Out of Scope（支付对接），且验收标准采用 EARS 句式，无阻断项，可放行下游。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "prd_required": true,
+        "scope_defined": true,
+        "ears_compliant": true
+      }
+    },
+    {
+      "id": "pax-prd-scope-01",
+      "category": "scope_coverage",
+      "rep": 2,
+      "parsed": {
+        "prd_required": true,
+        "skip_reason": null,
+        "ears_compliant": true,
+        "verdict": "NEEDS_WORK",
+        "blocked_downstream": false,
+        "scope_defined": true,
+        "change_status": null,
+        "propagated_before_approval": false,
+        "reasoning": "范围边界（In: 问数/报表, Out: 支付对接）与 EARS 验收标准均已确认，但 Executive Summary、Problem、Goals、功能需求、验证计划及非功能需求（含可衡量目标值）等必备章节未获确认，建议补齐后再放行下游。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "prd_required": true,
+        "scope_defined": true,
+        "ears_compliant": true
+      }
+    },
+    {
+      "id": "pax-prd-scope-01",
+      "category": "scope_coverage",
+      "rep": 3,
+      "parsed": {
+        "prd_required": true,
+        "skip_reason": null,
+        "ears_compliant": true,
+        "verdict": "PASS",
+        "blocked_downstream": false,
+        "scope_defined": true,
+        "change_status": null,
+        "propagated_before_approval": false,
+        "reasoning": "PRD 已明确定义 In Scope（问数、报表）与 Out of Scope（支付对接），且验收标准采用 EARS 句式，满足质量门禁必备章节与格式要求，可放行进入下游设计/规划阶段。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "prd_required": true,
+        "scope_defined": true,
+        "ears_compliant": true
+      }
+    }
+  ]
+}

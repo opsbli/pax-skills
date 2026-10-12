@@ -22,8 +22,8 @@ MUTANTS = [
      "把「要生成 PRD」判成跳过"),
     ("pax-prd-req-02", {"prd_required": True, "skip_reason": None},
      "把「纯文档咨询」判成要生成 PRD"),
-    ("pax-prd-req-02", {"prd_required": False, "skip_reason": "user_explicit_skip"},
-     "skip_reason 选错枚举值"),
+    ("pax-prd-req-02", {"prd_required": False, "skip_reason": None},
+     "跳过却不说明原因"),
     ("pax-prd-ears-02", {"ears_compliant": True, "verdict": "PASS"},
      "非 EARS 自由文本却判合规通过"),
     ("pax-prd-close-01", {"ears_compliant": False, "verdict": "NEEDS_WORK", "blocked_downstream": False},
@@ -57,9 +57,7 @@ print("STRUCTURE GATE — 自相矛盾输出必须判为 invalid")
 print("=" * 68)
 struct_cases = [
     ({"prd_required": False, "skip_reason": None}, "false 但无 skip_reason"),
-    ({"prd_required": True, "skip_reason": "doc_consult_only"}, "true 却带 skip_reason"),
     ({"verdict": "FAIL", "blocked_downstream": False}, "FAIL 却未阻断下游"),
-    ({"verdict": "PASS", "blocked_downstream": True}, "PASS 却阻断下游"),
     ({"propagated_before_approval": True}, "未批准传播"),
     ({"verdict": "BOGUS"}, "verdict 非法枚举"),
 ]

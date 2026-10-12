@@ -1,0 +1,1267 @@
+{
+  "meta": {
+    "model": "sensenova-6.8-flash-lite",
+    "base_url": "https://token.sensenova.cn/v1",
+    "temperature": 0,
+    "repeats": 3,
+    "dataset_version": "1.1.0",
+    "contract_chars": 1522,
+    "ran_at": "2026-10-12T19:44:42.051154+08:00"
+  },
+  "results": [
+    {
+      "id": "pax-research-rr-01",
+      "category": "research_required",
+      "rep": 1,
+      "parsed": {
+        "research_required": true,
+        "skip_reason": null,
+        "read_only": true,
+        "min_alternatives": 3,
+        "verdict_locked": false,
+        "has_sources": true,
+        "recommendation_candidate": "Kafka",
+        "confidence": "medium",
+        "reasoning": "Kafka 在吞吐与生态成熟度上证据最强，Pulsar 在架构灵活性上具潜力但运维复杂度更高，RabbitMQ 运维最简但吞吐天花板明显低于前两者；最终选择取决于用户对一致性语义、多租户、地理复制等未明确约束的优先级，当前仅出候选不裁决。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "research_required": true,
+        "read_only": true,
+        "verdict_locked": true
+      }
+    },
+    {
+      "id": "pax-research-rr-01",
+      "category": "research_required",
+      "rep": 2,
+      "parsed": {
+        "research_required": true,
+        "skip_reason": null,
+        "read_only": true,
+        "min_alternatives": 3,
+        "verdict_locked": false,
+        "has_sources": true,
+        "recommendation_candidate": "Kafka（当前证据下吞吐优势最显著，但需结合具体场景验证）",
+        "confidence": "medium",
+        "reasoning": "用户明确给出三个候选与三个对比维度，属于典型技术选型研究；Kafka 在吞吐维度通常领先，但缺少具体业务场景（事件流/任务队列/IoT 等）导致无法锁定单一推荐，置信度中等。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "research_required": true,
+        "read_only": true,
+        "verdict_locked": true
+      }
+    },
+    {
+      "id": "pax-research-rr-01",
+      "category": "research_required",
+      "rep": 3,
+      "parsed": {
+        "research_required": true,
+        "skip_reason": null,
+        "read_only": true,
+        "min_alternatives": 3,
+        "verdict_locked": false,
+        "has_sources": true,
+        "recommendation_candidate": "Kafka（当前证据下偏好方，仅候选）",
+        "confidence": "medium",
+        "reasoning": "用户明确给出 Kafka/RabbitMQ/Pulsar 三个候选并要求对比吞吐、一致性、运维成本，属于典型技术选型研究，需多源采集官方文档与基准数据后组织候选集，但缺少具体业务负载与规模约束，故置信度为 medium。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "research_required": true,
+        "read_only": true,
+        "verdict_locked": true
+      }
+    },
+    {
+      "id": "pax-research-rr-02",
+      "category": "research_required",
+      "rep": 1,
+      "parsed": {
+        "research_required": false,
+        "skip_reason": "根因已明确为前端事件绑定问题，改动范围限定为单文件，属于直接修复任务，无需技术选型、竞品调研或市场信息采集。",
+        "read_only": true,
+        "min_alternatives": 0,
+        "verdict_locked": false,
+        "has_sources": false,
+        "recommendation_candidate": null,
+        "confidence": "high",
+        "reasoning": "问题定位清晰、改动范围明确，直接进入实现阶段即可，研究阶段无增量价值。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "research_required": true,
+        "read_only": true,
+        "verdict_locked": true,
+        "skip_reason": true
+      }
+    },
+    {
+      "id": "pax-research-rr-02",
+      "category": "research_required",
+      "rep": 2,
+      "parsed": {
+        "research_required": false,
+        "skip_reason": "根因已明确为前端事件绑定问题，改动范围限定为单文件，属于直接修复任务，无需技术选型、竞品调研或市场信息采集。",
+        "read_only": true,
+        "min_alternatives": 0,
+        "verdict_locked": false,
+        "has_sources": false,
+        "recommendation_candidate": null,
+        "confidence": "high",
+        "reasoning": "问题定位清晰、改动范围明确，直接进入实现阶段即可，研究阶段无增量价值。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "research_required": true,
+        "read_only": true,
+        "verdict_locked": true,
+        "skip_reason": true
+      }
+    },
+    {
+      "id": "pax-research-rr-02",
+      "category": "research_required",
+      "rep": 3,
+      "parsed": {
+        "research_required": false,
+        "skip_reason": "根因已明确为前端事件绑定问题，改动范围限定为单文件，属于直接修复任务，无需技术选型、竞品调研或市场信息采集。",
+        "read_only": true,
+        "min_alternatives": 0,
+        "verdict_locked": false,
+        "has_sources": false,
+        "recommendation_candidate": null,
+        "confidence": "high",
+        "reasoning": "问题定位清晰、改动范围明确，直接进入实现阶段即可，研究阶段无增量价值。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "research_required": true,
+        "read_only": true,
+        "verdict_locked": true,
+        "skip_reason": true
+      }
+    },
+    {
+      "id": "pax-research-rr-03",
+      "category": "research_required",
+      "rep": 1,
+      "parsed": {
+        "research_required": true,
+        "skip_reason": null,
+        "read_only": true,
+        "min_alternatives": 4,
+        "verdict_locked": false,
+        "has_sources": true,
+        "recommendation_candidate": "混合方案：SaaS LMS 基础平台 + VR/AR 沉浸式培训模块，优先面向企业安全培训市场（B2B），后续扩展至学校和个人用户",
+        "confidence": "medium",
+        "reasoning": "消防教培市场受法规驱动（如《消防法》要求企业定期培训）和事故频发双重推动，需求明确但目标用户细分（企业/学校/个人）和竞品格局（传统LMS如Moodle、VR平台如Fire VR、综合安全培训平台如SafetyCulture）仍需进一步验证；技术选型上，纯LMS（Moodle/Canvas）成本低但体验差，纯VR（Unity/Unreal）成本高但沉浸感强，混合方案在成本和体验间取得平衡，是当前证据下的偏好候选，但需进一步验证目标用户付费意愿和竞品差异化空间。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "research_required": true,
+        "read_only": true,
+        "verdict_locked": true
+      }
+    },
+    {
+      "id": "pax-research-rr-03",
+      "category": "research_required",
+      "rep": 2,
+      "parsed": {
+        "research_required": true,
+        "skip_reason": null,
+        "read_only": true,
+        "min_alternatives": 3,
+        "verdict_locked": false,
+        "has_sources": false,
+        "recommendation_candidate": "Web-based LMS with mobile-responsive design as primary delivery, with optional VR/AR modules for high-risk scenarios",
+        "confidence": "low",
+        "reasoning": "消防教培平台涉及市场背景、目标用户、竞品分析和技术选型四个维度，当前信息不足，需按R1-R4流程采集多源证据后再形成候选方案"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "research_required": true,
+        "read_only": true,
+        "verdict_locked": true
+      }
+    },
+    {
+      "id": "pax-research-rr-03",
+      "category": "research_required",
+      "rep": 3,
+      "parsed": {
+        "research_required": true,
+        "skip_reason": null,
+        "read_only": true,
+        "min_alternatives": 3,
+        "verdict_locked": false,
+        "has_sources": true,
+        "recommendation_candidate": "Web-based LMS with mobile PWA support as preliminary candidate",
+        "confidence": "low",
+        "reasoning": "目标用户与竞品均未明确，需先完成市场背景扫描与竞品识别，再收敛技术选型候选；当前证据不足以锁定任何方案"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "research_required": true,
+        "read_only": true,
+        "verdict_locked": true
+      }
+    },
+    {
+      "id": "pax-research-rr-04",
+      "category": "research_required",
+      "rep": 1,
+      "parsed": {
+        "research_required": true,
+        "skip_reason": null,
+        "read_only": true,
+        "min_alternatives": 8,
+        "verdict_locked": false,
+        "has_sources": true,
+        "recommendation_candidate": "SaaS企业级：Glean（$25+/user/月，强集成）、Guru（$15/user/月，团队知识管理）、Notion AI（$10/user/月，轻量）；开源自托管：Dify（LLM应用平台，免费）、FastGPT（知识库问答，免费）、RAGFlow（RAG引擎，免费）；中文生态：飞书知识库（含中文优化）、语雀（文档友好）、钉钉知识库；AI搜索：Perplexity（$20/月Pro）、You.com（$10/月Pro）",
+        "confidence": "medium",
+        "reasoning": "知识库问答产品按部署模式分为SaaS、开源自托管和中文生态三类，核心差异在于RAG质量、多模态支持、集成能力和合规性，但用户未指定具体场景和预算，需进一步澄清"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "research_required": true,
+        "read_only": true,
+        "verdict_locked": true
+      }
+    },
+    {
+      "id": "pax-research-rr-04",
+      "category": "research_required",
+      "rep": 2,
+      "parsed": {
+        "research_required": true,
+        "skip_reason": null,
+        "read_only": true,
+        "min_alternatives": 5,
+        "verdict_locked": false,
+        "has_sources": true,
+        "recommendation_candidate": "开源场景优先 Dify/FastGPT，企业级优先 Glean/Microsoft Copilot，需结合数据敏感度与预算进一步评估",
+        "confidence": "medium",
+        "reasoning": "知识库问答产品市场活跃，开源方案(Dify/FastGPT)与商业方案(Glean/Copilot)各有优势，需根据企业规模、数据敏感度和预算进一步评估"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "research_required": true,
+        "read_only": true,
+        "verdict_locked": true
+      }
+    },
+    {
+      "id": "pax-research-rr-04",
+      "category": "research_required",
+      "rep": 3,
+      "parsed": {
+        "research_required": true,
+        "skip_reason": null,
+        "read_only": true,
+        "min_alternatives": 6,
+        "verdict_locked": false,
+        "has_sources": true,
+        "recommendation_candidate": "按场景分层：企业级选Glean或Microsoft Copilot（深度集成、企业安全）；中小团队选Notion AI或Guru（易用、性价比）；开发者/开源选Dify或FastGPT（灵活、可控）；中国市场选飞书智能伙伴或语雀（本地化、合规）",
+        "confidence": "medium",
+        "reasoning": "知识库问答产品市场活跃但定价和能力差异大，需按使用场景细分评估，当前证据支持分层推荐"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "research_required": true,
+        "read_only": true,
+        "verdict_locked": true
+      }
+    },
+    {
+      "id": "pax-research-rr-05",
+      "category": "research_required",
+      "rep": 1,
+      "parsed": {
+        "research_required": false,
+        "skip_reason": "用户明确说明改动极小、方案唯一，无需调研",
+        "read_only": true,
+        "min_alternatives": 0,
+        "verdict_locked": false,
+        "has_sources": false,
+        "recommendation_candidate": null,
+        "confidence": "high",
+        "reasoning": "用户已明确声明改动极小且方案唯一，无需进行任何调研或候选生成"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "research_required": true,
+        "read_only": true,
+        "verdict_locked": true,
+        "skip_reason": true
+      }
+    },
+    {
+      "id": "pax-research-rr-05",
+      "category": "research_required",
+      "rep": 2,
+      "parsed": {
+        "research_required": false,
+        "skip_reason": "用户明确说明改动极小、方案唯一，无需调研",
+        "read_only": true,
+        "min_alternatives": 0,
+        "verdict_locked": false,
+        "has_sources": false,
+        "recommendation_candidate": null,
+        "confidence": "high",
+        "reasoning": "用户已明确声明改动极小且方案唯一，无需进行任何调研或候选生成"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "research_required": true,
+        "read_only": true,
+        "verdict_locked": true,
+        "skip_reason": true
+      }
+    },
+    {
+      "id": "pax-research-rr-05",
+      "category": "research_required",
+      "rep": 3,
+      "parsed": {
+        "research_required": false,
+        "skip_reason": "用户明确说明改动极小、方案唯一，无需调研",
+        "read_only": true,
+        "min_alternatives": 0,
+        "verdict_locked": false,
+        "has_sources": false,
+        "recommendation_candidate": null,
+        "confidence": "high",
+        "reasoning": "用户已明确声明改动极小且方案唯一，无需进行任何调研或候选评估"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "research_required": true,
+        "read_only": true,
+        "verdict_locked": true,
+        "skip_reason": true
+      }
+    },
+    {
+      "id": "pax-research-cand-01",
+      "category": "candidate_sufficiency",
+      "rep": 1,
+      "parsed": {
+        "research_required": true,
+        "skip_reason": null,
+        "read_only": true,
+        "min_alternatives": 3,
+        "verdict_locked": false,
+        "has_sources": true,
+        "recommendation_candidate": "PostgreSQL（当前证据下的偏好方，非最终结论）",
+        "confidence": "medium",
+        "reasoning": "PostgreSQL 在功能完整性、扩展性和社区活跃度上综合表现最优，但具体选型需结合业务规模、团队技能和成本约束进一步评估。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "research_required": true,
+        "read_only": true,
+        "verdict_locked": true,
+        "min_alternatives": true
+      }
+    },
+    {
+      "id": "pax-research-cand-01",
+      "category": "candidate_sufficiency",
+      "rep": 2,
+      "parsed": {
+        "research_required": true,
+        "skip_reason": null,
+        "read_only": true,
+        "min_alternatives": 3,
+        "verdict_locked": false,
+        "has_sources": true,
+        "recommendation_candidate": "PostgreSQL（当前证据下的偏好方，非最终结论）",
+        "confidence": "medium",
+        "reasoning": "PostgreSQL 在功能完整性、扩展性和社区活跃度上综合表现最优，但具体选型需结合业务规模、团队技能和成本约束进一步评估。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "research_required": true,
+        "read_only": true,
+        "verdict_locked": true,
+        "min_alternatives": true
+      }
+    },
+    {
+      "id": "pax-research-cand-01",
+      "category": "candidate_sufficiency",
+      "rep": 3,
+      "parsed": {
+        "research_required": true,
+        "skip_reason": null,
+        "read_only": true,
+        "min_alternatives": 3,
+        "verdict_locked": false,
+        "has_sources": true,
+        "recommendation_candidate": "PostgreSQL（当前证据下的偏好方，非最终结论）",
+        "confidence": "medium",
+        "reasoning": "PostgreSQL 在功能完整性、扩展性和社区活跃度上综合表现最优，但具体选型需结合业务规模、团队技能和成本约束进一步评估。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "research_required": true,
+        "read_only": true,
+        "verdict_locked": true,
+        "min_alternatives": true
+      }
+    },
+    {
+      "id": "pax-research-cand-02",
+      "category": "candidate_sufficiency",
+      "rep": 1,
+      "parsed": {
+        "research_required": true,
+        "skip_reason": null,
+        "read_only": true,
+        "min_alternatives": 0,
+        "verdict_locked": false,
+        "has_sources": false,
+        "recommendation_candidate": "",
+        "confidence": "low",
+        "reasoning": "用户未指定具体行业，研究目标与来源无法确定，无法启动有效采集"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "research_required": true,
+        "read_only": true,
+        "verdict_locked": true,
+        "min_alternatives": true
+      }
+    },
+    {
+      "id": "pax-research-cand-02",
+      "category": "candidate_sufficiency",
+      "rep": 2,
+      "parsed": {
+        "research_required": true,
+        "skip_reason": null,
+        "read_only": true,
+        "min_alternatives": 0,
+        "verdict_locked": false,
+        "has_sources": true,
+        "recommendation_candidate": null,
+        "confidence": "low",
+        "reasoning": "用户明确要求纯背景调研（市场规模趋势），无需选型或方案对比，min_alternatives 为 0；但输入中「这个行业」未指明具体行业，属于 open_question，需后续澄清阶段收敛目标行业后方可执行 R3 多源采集，当前仅能确认研究框架有效、证据来源待补。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "research_required": true,
+        "read_only": true,
+        "verdict_locked": true,
+        "min_alternatives": true
+      }
+    },
+    {
+      "id": "pax-research-cand-02",
+      "category": "candidate_sufficiency",
+      "rep": 3,
+      "parsed": {
+        "research_required": true,
+        "skip_reason": null,
+        "read_only": true,
+        "min_alternatives": 0,
+        "verdict_locked": false,
+        "has_sources": true,
+        "recommendation_candidate": null,
+        "confidence": "low",
+        "reasoning": "用户未指定具体行业，研究目标不明确；纯背景调研无需方案对比，min_alternatives 为 0，但缺少行业上下文导致置信度低"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "research_required": true,
+        "read_only": true,
+        "verdict_locked": true,
+        "min_alternatives": true
+      }
+    },
+    {
+      "id": "pax-research-verdict-01",
+      "category": "not_verdict",
+      "rep": 1,
+      "parsed": {
+        "research_required": false,
+        "skip_reason": "用户声明吞吐/一致性/运维成本对比资料已齐，无需再采集",
+        "read_only": true,
+        "min_alternatives": 0,
+        "verdict_locked": false,
+        "has_sources": false,
+        "recommendation_candidate": "Kafka",
+        "confidence": "medium",
+        "reasoning": "研究阶段只出候选不冻结结论；Kafka 记为当前证据下偏好方，最终裁决须交 pax-advisor 或设计阶段，不在本阶段锁定"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "research_required": false,
+        "read_only": true,
+        "verdict_locked": true,
+        "min_alternatives": false,
+        "has_sources": false
+      }
+    },
+    {
+      "id": "pax-research-verdict-01",
+      "category": "not_verdict",
+      "rep": 2,
+      "parsed": {
+        "research_required": true,
+        "skip_reason": null,
+        "read_only": true,
+        "min_alternatives": 4,
+        "verdict_locked": false,
+        "has_sources": true,
+        "recommendation_candidate": "Kafka（当前证据下的偏好候选，非最终结论）",
+        "confidence": "medium",
+        "reasoning": "研究阶段契约只出候选不冻结结论，用户要求跳过候选对比直接给最终裁决违反 R4/R5，需保留 Kafka/RocketMQ/Pulsar/RabbitMQ 等候选并交由 pax-advisor 加权后再定稿"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "research_required": true,
+        "read_only": true,
+        "verdict_locked": true,
+        "min_alternatives": true,
+        "has_sources": true
+      }
+    },
+    {
+      "id": "pax-research-verdict-01",
+      "category": "not_verdict",
+      "rep": 3,
+      "parsed": {
+        "research_required": false,
+        "skip_reason": "用户声明吞吐/一致性/运维成本对比资料已齐，无需重复采集；但研究阶段契约只产出候选不冻结最终结论，Kafka 仅作为当前证据下的偏好候选，最终裁决须交 pax-advisor 加权评估或 pax-council 盲审",
+        "read_only": true,
+        "min_alternatives": 0,
+        "verdict_locked": false,
+        "has_sources": false,
+        "recommendation_candidate": "Kafka",
+        "confidence": "medium",
+        "reasoning": "研究阶段只出候选不裁决；Kafka 作为候选偏好方，最终选型需经 pax-advisor 证据加权或 pax-council 盲审后方可冻结"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "research_required": false,
+        "read_only": true,
+        "verdict_locked": true,
+        "min_alternatives": false,
+        "has_sources": false
+      }
+    },
+    {
+      "id": "pax-research-verdict-02",
+      "category": "not_verdict",
+      "rep": 1,
+      "parsed": {
+        "research_required": true,
+        "skip_reason": null,
+        "read_only": true,
+        "min_alternatives": 2,
+        "verdict_locked": false,
+        "has_sources": true,
+        "recommendation_candidate": "Kafka（当前证据下的偏好候选，非最终结论）",
+        "confidence": "medium",
+        "reasoning": "支付核心链路对高吞吐、顺序性、可回放审计与长期留存要求高，Kafka 的日志模型与分区顺序语义更契合；但 RabbitMQ 在事务性投递、灵活路由与低延迟点对点场景仍有优势，且用户未提供吞吐/延迟/合规留存等关键约束，研究阶段只出候选不冻结结论，最终裁决应交由 pax-advisor 加权评估或 pax-council 盲审。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "research_required": true,
+        "read_only": true,
+        "verdict_locked": true,
+        "min_alternatives": true,
+        "has_sources": true
+      }
+    },
+    {
+      "id": "pax-research-verdict-02",
+      "category": "not_verdict",
+      "rep": 2,
+      "parsed": {
+        "research_required": true,
+        "skip_reason": null,
+        "read_only": true,
+        "min_alternatives": 2,
+        "verdict_locked": false,
+        "has_sources": true,
+        "recommendation_candidate": "Kafka（当前证据下的偏好候选，非最终结论）",
+        "confidence": "medium",
+        "reasoning": "支付核心链路对高吞吐、顺序性、可回放审计与事件溯源诉求强，Kafka 在日志语义与横向扩展上更契合，但 RabbitMQ 在低延迟、灵活路由与事务性投递上仍有优势，最终裁决需交由 pax-advisor/pax-council 结合具体吞吐、延迟、合规与团队能力加权，本阶段仅出候选不冻结结论。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "research_required": true,
+        "read_only": true,
+        "verdict_locked": true,
+        "min_alternatives": true,
+        "has_sources": true
+      }
+    },
+    {
+      "id": "pax-research-verdict-02",
+      "category": "not_verdict",
+      "rep": 3,
+      "parsed": {
+        "research_required": true,
+        "skip_reason": null,
+        "read_only": true,
+        "min_alternatives": 2,
+        "verdict_locked": false,
+        "has_sources": true,
+        "recommendation_candidate": "Kafka（当前证据下的偏好方，非最终结论）",
+        "confidence": "medium",
+        "reasoning": "支付核心链路对持久化、顺序、可回放、削峰与审计追溯要求高，Kafka 在吞吐、日志语义与重放能力上更契合，但 RabbitMQ 在低延迟、复杂路由与事务性投递上仍有优势，最终裁决需交由 pax-advisor/pax-council 结合具体吞吐、延迟、可靠性 SLA 与团队运维能力加权评估，本阶段仅出候选不冻结结论。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "research_required": true,
+        "read_only": true,
+        "verdict_locked": true,
+        "min_alternatives": true,
+        "has_sources": true
+      }
+    },
+    {
+      "id": "pax-research-src-01",
+      "category": "source_credibility",
+      "rep": 1,
+      "parsed": {
+        "research_required": true,
+        "skip_reason": null,
+        "read_only": true,
+        "min_alternatives": 0,
+        "verdict_locked": false,
+        "has_sources": true,
+        "recommendation_candidate": null,
+        "confidence": "high",
+        "reasoning": "MinIO 与云厂商 OSS 均提供强一致性，但实现机制与边界条件存在差异，需溯源官方文档确认"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "research_required": true,
+        "read_only": true,
+        "verdict_locked": true,
+        "has_sources": true
+      }
+    },
+    {
+      "id": "pax-research-src-01",
+      "category": "source_credibility",
+      "rep": 2,
+      "parsed": {
+        "research_required": true,
+        "skip_reason": null,
+        "read_only": true,
+        "min_alternatives": 2,
+        "verdict_locked": false,
+        "has_sources": true,
+        "recommendation_candidate": "MinIO 与主流云厂商 OSS（如 AWS S3）在数据一致性上已趋同，均提供强一致性；阿里云 OSS 在 PUT/GET/DELETE 操作上提供强一致性，但 LIST 操作的历史行为存在差异，需查阅最新文档确认",
+        "confidence": "high",
+        "reasoning": "基于官方文档与公开技术资料，MinIO 自始提供强一致性，AWS S3 自 2020 年 12 月起提供强一致性，阿里云 OSS 对 PUT/GET/DELETE 提供强一致性但对 LIST 的历史行为存在差异",
+        "findings": [
+          {
+            "id": "F1",
+            "statement": "MinIO 提供强一致性（read-after-write consistency），所有操作（PUT、GET、DELETE、LIST）均保证写入后立即读取到最新数据",
+            "sources": [
+              {
+                "type": "documentation",
+                "url": "https://min.io/docs/minio/linux/reference/minio-configuration.html",
+                "credibility": "high"
+              }
+            ],
+            "confidence": "high"
+          },
+          {
+            "id": "F2",
+            "statement": "AWS S3 自 2020 年 12 月起提供强一致性，所有操作（PUT、GET、DELETE、LIST）均保证写入后立即读取到最新数据",
+            "sources": [
+              {
+                "type": "blog",
+                "url": "https://aws.amazon.com/blogs/aws/amazon-s3-now-delivers-strong-read-after-write-consistency/",
+                "credibility": "high"
+              }
+            ],
+            "confidence": "high"
+          },
+          {
+            "id": "F3",
+            "statement": "阿里云 OSS 对 PUT/GET/DELETE 操作提供强一致性，但对 LIST 操作可能存在最终一致性（历史行为）",
+            "sources": [
+              {
+                "type": "documentation",
+                "url": "https://help.aliyun.com/zh/oss/user-guide/consistency",
+                "credibility": "high"
+              }
+            ],
+            "confidence": "medium"
+          },
+          {
+            "id": "F4",
+            "statement": "MinIO 与 AWS S3 在数据一致性上已趋同，均提供强一致性；主要差异在于历史演进路径（AWS S3 早期 LIST 操作为最终一致性）",
+            "sources": [
+              {
+                "type": "documentation",
+                "url": "https://min.io/docs/minio/linux/reference/minio-configuration.html",
+                "credibility": "high"
+              },
+              {
+                "type": "blog",
+                "url": "https://aws.amazon.com/blogs/aws/amazon-s3-now-delivers-strong-read-after-write-consistency/",
+                "credibility": "high"
+              }
+            ],
+            "confidence": "high"
+          }
+        ],
+        "open_questions": [
+          "阿里云 OSS 的 LIST 操作是否已更新为强一致性？需要查阅最新文档确认",
+          "其他云厂商（如腾讯云 COS、华为云 OBS）的一致性模型如何？"
+        ]
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "research_required": true,
+        "read_only": true,
+        "verdict_locked": true,
+        "has_sources": true
+      }
+    },
+    {
+      "id": "pax-research-src-01",
+      "category": "source_credibility",
+      "rep": 3,
+      "parsed": {
+        "research_required": true,
+        "skip_reason": null,
+        "read_only": true,
+        "min_alternatives": 2,
+        "verdict_locked": false,
+        "has_sources": true,
+        "recommendation_candidate": "MinIO 与主流云 OSS 在单集群/单区域内均提供强一致性；差异主要体现在跨区域/多站点复制场景下的最终一致性窗口、持久性保证（云 OSS 通常承诺 11 个 9）及实现机制（MinIO 基于纠删码+仲裁，云 OSS 为专有复制机制）。",
+        "confidence": "medium",
+        "reasoning": "MinIO 与主流云 OSS 均提供强一致性，差异主要体现在多站点/跨区域复制场景下的最终一致性窗口、持久性保证及实现机制上。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "research_required": true,
+        "read_only": true,
+        "verdict_locked": true,
+        "has_sources": true
+      }
+    },
+    {
+      "id": "pax-research-src-02",
+      "category": "source_credibility",
+      "rep": 1,
+      "parsed": {
+        "research_required": true,
+        "skip_reason": null,
+        "read_only": true,
+        "min_alternatives": 4,
+        "verdict_locked": false,
+        "has_sources": true,
+        "recommendation_candidate": "RAG-based approach with vector database and LLM generation",
+        "confidence": "medium",
+        "reasoning": "RAG is the most documented and widely adopted approach for industry knowledge base Q&A products. The user's request to separate facts from inferences suggests they want a nuanced analysis rather than a single recommendation. Research findings are provided in the 'findings' field below.",
+        "findings": {
+          "facts": [
+            {
+              "statement": "RAG (Retrieval-Augmented Generation) is a widely adopted technical approach for knowledge base Q&A products",
+              "source": "LangChain documentation, LlamaIndex documentation, industry case studies",
+              "credibility": "high"
+            },
+            {
+              "statement": "Vector databases (Pinecone, Weaviate, Milvus, Chroma, Qdrant, etc.) are commonly used for semantic search in RAG systems",
+              "source": "Vector database official documentation, industry case studies",
+              "credibility": "high"
+            },
+            {
+              "statement": "LLMs (GPT-4, Claude, Llama, Qwen, etc.) are used as generation backends in knowledge base Q&A systems",
+              "source": "LLM provider documentation (OpenAI, Anthropic, Meta, Alibaba), industry case studies",
+              "credibility": "high"
+            },
+            {
+              "statement": "LangChain and LlamaIndex are popular open-source frameworks for building RAG-based Q&A systems",
+              "source": "LangChain GitHub repository, LlamaIndex GitHub repository, framework documentation",
+              "credibility": "high"
+            },
+            {
+              "statement": "Fine-tuning LLMs on domain-specific data is an alternative approach to RAG for knowledge base Q&A",
+              "source": "LLM provider documentation (OpenAI fine-tuning API, Hugging Face), research papers",
+              "credibility": "high"
+            },
+            {
+              "statement": "Knowledge graphs can be used for structured knowledge representation and reasoning in Q&A systems",
+              "source": "Knowledge graph documentation (Neo4j, Amazon Neptune), research papers on KG-based QA",
+              "credibility": "high"
+            },
+            {
+              "statement": "Hybrid approaches combining multiple techniques (e.g., RAG + fine-tuning, RAG + knowledge graphs) are documented in industry practice",
+              "source": "Industry case studies, technical blogs",
+              "credibility": "medium"
+            },
+            {
+              "statement": "Traditional NLP approaches (rule-based systems, information retrieval) are still used in some legacy knowledge base Q&A systems",
+              "source": "Industry documentation, legacy system case studies",
+              "credibility": "medium"
+            }
+          ],
+          "inferences": [
+            {
+              "statement": "RAG is generally preferred over fine-tuning for most industry knowledge base Q&A use cases due to lower cost, higher flexibility, and easier maintenance",
+              "source": "Inference based on cost analysis (RAG uses existing LLMs vs. fine-tuning requires training), flexibility (RAG can update knowledge without retraining), and maintenance considerations",
+              "credibility": "medium",
+              "note": "This is an inference, not a documented fact. Actual preference may vary by use case, data availability, and specific requirements."
+            },
+            {
+              "statement": "Hybrid approaches are becoming more common as teams seek to balance accuracy, cost, and flexibility",
+              "source": "Inference based on trend observation in industry blogs, case studies, and technical talks",
+              "credibility": "low",
+              "note": "This is an inference based on limited evidence. More systematic data would be needed to confirm this trend."
+            },
+            {
+              "statement": "Knowledge graph approaches are less common in modern RAG-based implementations compared to pure vector-based approaches",
+              "source": "Inference based on observation of current industry practices and framework documentation",
+              "credibility": "low",
+              "note": "This is an inference. Knowledge graphs may still be used in specific domains requiring structured reasoning (e.g., healthcare, legal)."
+            },
+            {
+              "statement": "The choice between RAG and fine-tuning depends on factors like data availability, latency requirements, budget, and accuracy needs",
+              "source": "Inference based on technical analysis of both approaches and their trade-offs",
+              "credibility": "medium",
+              "note": "This is a reasonable inference but should be validated with specific use case data and requirements."
+            },
+            {
+              "statement": "Vector database selection is a critical decision that impacts performance, cost, and scalability of RAG-based Q&A systems",
+              "source": "Inference based on technical analysis of vector database characteristics and industry case studies",
+              "credibility": "medium",
+              "note": "This is an inference. Actual impact may vary based on specific use case requirements."
+            }
+          ]
+        }
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "research_required": true,
+        "read_only": true,
+        "verdict_locked": true,
+        "has_sources": true
+      }
+    },
+    {
+      "id": "pax-research-src-02",
+      "category": "source_credibility",
+      "rep": 2,
+      "parsed": {
+        "research_required": true,
+        "skip_reason": null,
+        "read_only": true,
+        "min_alternatives": 5,
+        "verdict_locked": false,
+        "has_sources": true,
+        "recommendation_candidate": "RAG + 混合检索 + 重排序的架构是当前证据下的偏好方",
+        "confidence": "medium",
+        "reasoning": "行业知识库问答产品的技术路线主要包括RAG、微调、混合检索、知识图谱等，具体选择取决于场景需求、成本约束和准确率要求",
+        "facts": [
+          {
+            "fact": "RAG（检索增强生成）是行业知识库问答的常见技术路线",
+            "source": "LangChain文档、LlamaIndex文档、多篇技术博客",
+            "credibility": "high"
+          },
+          {
+            "fact": "微调LLM是另一种常见技术路线",
+            "source": "Hugging Face文档、OpenAI API文档",
+            "credibility": "high"
+          },
+          {
+            "fact": "混合检索（向量检索+关键词检索）被广泛使用",
+            "source": "Elasticsearch文档、Weaviate文档",
+            "credibility": "high"
+          },
+          {
+            "fact": "知识图谱用于结构化知识表示",
+            "source": "Neo4j文档、Google Knowledge Graph",
+            "credibility": "high"
+          },
+          {
+            "fact": "常见框架包括LangChain、LlamaIndex、Haystack",
+            "source": "各框架官方文档",
+            "credibility": "high"
+          },
+          {
+            "fact": "向量数据库包括Pinecone、Weaviate、Milvus、Chroma",
+            "source": "各数据库官方文档",
+            "credibility": "high"
+          },
+          {
+            "fact": "嵌入模型包括OpenAI text-embedding-3、sentence-transformers",
+            "source": "OpenAI文档、Hugging Face模型库",
+            "credibility": "high"
+          },
+          {
+            "fact": "多阶段检索（查询重写、重排序）是常见模式",
+            "source": "RAG技术博客、学术论文",
+            "credibility": "high"
+          },
+          {
+            "fact": "评估指标包括答案准确率、检索精度、延迟",
+            "source": "RAGAS文档、学术论文",
+            "credibility": "high"
+          },
+          {
+            "fact": "成本考虑包括API成本、基础设施成本、维护成本",
+            "source": "云服务定价页面、技术博客",
+            "credibility": "high"
+          }
+        ],
+        "inferences": [
+          {
+            "inference": "最佳方案取决于具体使用场景",
+            "source": "基于多个案例的模式观察",
+            "credibility": "medium",
+            "note": "推断，非直接事实"
+          },
+          {
+            "inference": "成本效益因规模和需求而异",
+            "source": "基于成本分析的模式观察",
+            "credibility": "medium",
+            "note": "推断，非直接事实"
+          },
+          {
+            "inference": "准确率要求驱动架构选择",
+            "source": "基于项目案例的模式观察",
+            "credibility": "medium",
+            "note": "推断，非直接事实"
+          },
+          {
+            "inference": "行业特定知识库通常需要领域特定调优",
+            "source": "基于行业案例的模式观察",
+            "credibility": "medium",
+            "note": "推断，非直接事实"
+          },
+          {
+            "inference": "RAG通常比微调更具成本效益",
+            "source": "基于成本比较的模式观察",
+            "credibility": "medium",
+            "note": "推断，非直接事实"
+          },
+          {
+            "inference": "混合检索在大多数场景中优于纯向量检索",
+            "source": "基于基准测试的模式观察",
+            "credibility": "medium",
+            "note": "推断，非直接事实"
+          },
+          {
+            "inference": "知识图谱增加复杂性但提高结构化查询的准确率",
+            "source": "基于案例研究的模式观察",
+            "credibility": "medium",
+            "note": "推断，非直接事实"
+          }
+        ],
+        "alternatives": [
+          {
+            "name": "RAG（检索增强生成）",
+            "pros": [
+              "成本低",
+              "易于更新",
+              "可解释性强"
+            ],
+            "cons": [
+              "依赖检索质量",
+              "可能遗漏关键信息"
+            ],
+            "evidence": "LangChain、LlamaIndex文档"
+          },
+          {
+            "name": "微调LLM",
+            "pros": [
+              "领域适应性强",
+              "响应速度快"
+            ],
+            "cons": [
+              "成本高",
+              "更新困难",
+              "数据需求大"
+            ],
+            "evidence": "Hugging Face、OpenAI文档"
+          },
+          {
+            "name": "混合检索",
+            "pros": [
+              "召回率高",
+              "平衡精度和速度"
+            ],
+            "cons": [
+              "实现复杂",
+              "需要调优"
+            ],
+            "evidence": "Elasticsearch、Weaviate文档"
+          },
+          {
+            "name": "知识图谱",
+            "pros": [
+              "结构化知识",
+              "推理能力强"
+            ],
+            "cons": [
+              "构建成本高",
+              "维护复杂"
+            ],
+            "evidence": "Neo4j、Google Knowledge Graph"
+          },
+          {
+            "name": "多阶段检索",
+            "pros": [
+              "准确率高",
+              "可解释性强"
+            ],
+            "cons": [
+              "延迟高",
+              "实现复杂"
+            ],
+            "evidence": "RAG技术博客、学术论文"
+          }
+        ]
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "research_required": true,
+        "read_only": true,
+        "verdict_locked": true,
+        "has_sources": true
+      }
+    },
+    {
+      "id": "pax-research-src-02",
+      "category": "source_credibility",
+      "rep": 3,
+      "parsed": {
+        "research_required": true,
+        "skip_reason": null,
+        "read_only": true,
+        "min_alternatives": 4,
+        "verdict_locked": false,
+        "has_sources": true,
+        "recommendation_candidate": "RAG-based approach with vector database and LLM generation",
+        "confidence": "medium",
+        "reasoning": "RAG is the most documented and widely adopted approach for industry knowledge base Q&A products, but the user's request to separate facts from inferences suggests they want a nuanced analysis rather than a single recommendation",
+        "research_findings": {
+          "facts": [
+            {
+              "statement": "RAG (Retrieval-Augmented Generation) is a widely adopted technical approach for knowledge base Q&A products",
+              "source": "LangChain documentation, LlamaIndex documentation, industry case studies",
+              "credibility": "high"
+            },
+            {
+              "statement": "Vector databases (Pinecone, Weaviate, Milvus, Chroma, etc.) are commonly used for semantic search in RAG systems",
+              "source": "Vector database official documentation, industry case studies",
+              "credibility": "high"
+            },
+            {
+              "statement": "LLMs (GPT-4, Claude, Llama, etc.) are used as generation backends in knowledge base Q&A systems",
+              "source": "OpenAI documentation, Anthropic documentation, Meta Llama documentation",
+              "credibility": "high"
+            },
+            {
+              "statement": "LangChain and LlamaIndex are popular frameworks for building RAG-based Q&A systems",
+              "source": "LangChain GitHub repository, LlamaIndex GitHub repository",
+              "credibility": "high"
+            },
+            {
+              "statement": "Fine-tuning LLMs on domain-specific data is an alternative approach to RAG",
+              "source": "OpenAI fine-tuning documentation, Hugging Face documentation",
+              "credibility": "high"
+            },
+            {
+              "statement": "Knowledge graphs can be used for structured knowledge representation in Q&A systems",
+              "source": "Neo4j documentation, knowledge graph research papers",
+              "credibility": "high"
+            },
+            {
+              "statement": "Hybrid approaches combining multiple techniques (e.g., RAG + fine-tuning) are documented in industry practice",
+              "source": "Industry technical blogs, case studies",
+              "credibility": "medium"
+            }
+          ],
+          "inferences": [
+            {
+              "statement": "RAG is generally preferred over fine-tuning for most industry knowledge base Q&A use cases due to lower cost and higher flexibility",
+              "source": "Inference based on cost analysis and flexibility considerations from industry discussions",
+              "credibility": "medium",
+              "note": "This is an inference, not a documented fact. Actual preference may vary by use case, data availability, and budget."
+            },
+            {
+              "statement": "Hybrid approaches are becoming more common as teams seek to balance accuracy and cost",
+              "source": "Inference based on trend observation in industry blogs and case studies",
+              "credibility": "low",
+              "note": "This is an inference based on limited evidence. More data would be needed to confirm this trend."
+            },
+            {
+              "statement": "Knowledge graph approaches are less common in modern implementations compared to RAG",
+              "source": "Inference based on observation of current industry trends and framework popularity",
+              "credibility": "low",
+              "note": "This is an inference. Knowledge graphs may still be relevant for specific use cases requiring structured reasoning."
+            },
+            {
+              "statement": "The choice between RAG and fine-tuning depends on factors like data availability, budget, and accuracy requirements",
+              "source": "Inference based on general considerations from industry discussions",
+              "credibility": "medium",
+              "note": "This is a reasonable inference but not a documented fact. Actual decision factors may vary."
+            }
+          ]
+        }
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "research_required": true,
+        "read_only": true,
+        "verdict_locked": true,
+        "has_sources": true
+      }
+    },
+    {
+      "id": "pax-research-ro-01",
+      "category": "read_only",
+      "rep": 1,
+      "parsed": {
+        "research_required": true,
+        "skip_reason": null,
+        "read_only": true,
+        "min_alternatives": 3,
+        "verdict_locked": false,
+        "has_sources": true,
+        "recommendation_candidate": null,
+        "confidence": "low",
+        "reasoning": "用户明确要求技术选型调研且强调只读收集，但未指定具体调研对象与目标，需后续补充 goal.statement 与候选范围后方可执行 R2-R4 流程"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "research_required": true,
+        "read_only": true,
+        "verdict_locked": true
+      }
+    },
+    {
+      "id": "pax-research-ro-01",
+      "category": "read_only",
+      "rep": 2,
+      "parsed": {
+        "research_required": true,
+        "skip_reason": null,
+        "read_only": true,
+        "min_alternatives": 3,
+        "verdict_locked": false,
+        "has_sources": false,
+        "recommendation_candidate": null,
+        "confidence": "low",
+        "reasoning": "用户明确要求技术选型调研且强调只读约束，但输入未指明具体功能与候选技术栈，无法拆解子问题或采集证据，需先补齐研究对象与对比维度后再启动 R2-R4 流程。"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "research_required": true,
+        "read_only": true,
+        "verdict_locked": true
+      }
+    },
+    {
+      "id": "pax-research-ro-01",
+      "category": "read_only",
+      "rep": 3,
+      "parsed": {
+        "research_required": true,
+        "skip_reason": null,
+        "read_only": true,
+        "min_alternatives": 3,
+        "verdict_locked": false,
+        "has_sources": true,
+        "recommendation_candidate": null,
+        "confidence": "low",
+        "reasoning": "用户明确要求技术选型调研并强调只读约束，但未指定具体功能名称、技术方向或待对比方案，无法确定研究目标与候选集，需补充上下文后方可启动 R2 子问题拆解与 R3 多源采集"
+      },
+      "error": null,
+      "structure_failures": [],
+      "valid": true,
+      "checks": {
+        "research_required": true,
+        "read_only": true,
+        "verdict_locked": true
+      }
+    }
+  ]
+}

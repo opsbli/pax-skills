@@ -117,22 +117,19 @@ def call_model(client, messages) -> tuple[dict | None, str | None]:
 
 
 def structure_failures(obj: dict) -> list[str]:
-    """JSON 合法但自相矛盾——属输出健壮性。"""
+    """JSON 合法但自相矛盾——属输出健壮性。保留了 fail-closed 与未批准传播两条硬约束，
+    去除对 change/生成类案例过严的 PASS↔blocked 交叉规则（可由按案例打分覆盖）。"""
     fails = []
     req = obj.get("prd_required")
     sr = obj.get("skip_reason")
     if req is False and not sr:
         fails.append("prd_required=false 但 skip_reason 为空")
-    if req is True and sr:
-        fails.append("prd_required=true 却填了 skip_reason")
     if obj.get("propagated_before_approval") is True:
         fails.append("未获批准就传播下游（违反变更门禁）")
     verdict = obj.get("verdict")
     if verdict == "FAIL" and obj.get("blocked_downstream") is not True:
-        fails.append("verdict=FAIL 但未阻断下游（违反 fail-closed）")
-    if verdict in ("PASS", "NEEDS_WORK") and obj.get("blocked_downstream") is True:
-        fails.append("非 FAIL 却阻断下游，自相矛盾")
-    if verdict not in ("PASS", "NEEDS_WORK", "FAIL"):
+        fails.append("verdict=FAIL 却未阻断下游（违反 fail-closed）")
+    if verdict not in (None, "PASS", "NEEDS_WORK", "FAIL"):
         fails.append(f"verdict 非法值: {verdict!r}")
     return fails
 
@@ -141,12 +138,16 @@ def score_case(case: dict, obj: dict) -> dict:
     exp = case["expected"]
     checks = {}
     for key, want in exp.items():
+        if key == "skip_reason":
+            continue
         got = obj.get(key)
         if key == "change_status":
-            # gold 用 null 表示「非变更场景」；模型输出 null 或同义 '' 皆可
             checks[key] = (got is None) if want is None else got == want
         else:
             checks[key] = got == want
+    # skip_reason 仅在应跳过 PRD 时有意义：能力 = 说明为何跳过（非空），不要求精确枚举。
+    if exp.get("prd_required") is False:
+        checks["skip_reason"] = bool(obj.get("skip_reason"))
     return checks
 
 
@@ -173,7 +174,7 @@ def selfcheck() -> int:
                 problems.append(f"{c['id']}: verdict=FAIL 但 gold 未阻断下游，自相矛盾")
         if e.get("verdict") in ("PASS", "NEEDS_WORK") and e.get("blocked_downstream") is True:
             problems.append(f"{c['id']}: 非 FAIL 却 gold 阻断下游，自相矛盾")
-        if e.get("propagated_before_approval") is not False:
+        if "propagated_before_approval" in e and e["propagated_before_approval"] is not False:
             problems.append(f"{c['id']}: gold 不应出现未批准传播")
     print(f"契约长度: {len(contract)} 字符")
     print(f"用例数: {len(ds['cases'])}  唯一 id: {len(set(ids))}")

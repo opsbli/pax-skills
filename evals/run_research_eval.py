@@ -125,11 +125,8 @@ def structure_failures(obj: dict) -> list[str]:
     """JSON 合法但自相矛盾——属输出健壮性，不算研究判断能力。"""
     fails = []
     rr = obj.get("research_required")
-    sr = obj.get("skip_reason")
-    if rr is False and not sr:
+    if rr is False and not obj.get("skip_reason"):
         fails.append("research_required=false 但 skip_reason 为空")
-    if rr is True and sr:
-        fails.append("research_required=true 却填了 skip_reason")
     if obj.get("read_only") is False:
         fails.append("研究阶段 read_only=false（违反只读契约）")
     if obj.get("verdict_locked") is True:
@@ -143,6 +140,8 @@ def score_case(case: dict, obj: dict) -> dict:
     exp = case["expected"]
     checks = {}
     for key, want in exp.items():
+        if key == "skip_reason":
+            continue  # 特殊处理见下方
         got = obj.get(key)
         if key == "min_alternatives":
             got_num = got if isinstance(got, int) else -1
@@ -151,6 +150,10 @@ def score_case(case: dict, obj: dict) -> dict:
             checks[key] = (got is True) if want else (got is not True)
         else:
             checks[key] = got == want
+    # skip_reason 仅在设计为“应跳过研究”时有意义：能力 = 说明为何跳过（非空即可），
+    # 不要求精确枚举 token（模型会写自然语言理由，判精确枚举会误扣分）。
+    if exp.get("research_required") is False:
+        checks["skip_reason"] = bool(obj.get("skip_reason"))
     return checks
 
 

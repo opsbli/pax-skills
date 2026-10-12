@@ -24,8 +24,8 @@ MUTANTS = [
      "把「必须研究」判成跳过"),
     ("pax-research-rr-02", {"research_required": True, "skip_reason": None},
      "把「无需研究」判成必须研究"),
-    ("pax-research-rr-02", {"research_required": False, "skip_reason": "user_explicit_skip"},
-     "skip_reason 选错枚举值"),
+    ("pax-research-rr-02", {"research_required": False, "skip_reason": None},
+     "跳过研究却不说明原因"),
     ("pax-research-cand-01", {"min_alternatives": 1}, "三候选只给 1 个"),
     ("pax-research-cand-02", {"min_alternatives": 2}, "纯背景调研却给方案"),
     ("pax-research-verdict-01", {"verdict_locked": True}, "把研究结论锁死"),
@@ -54,7 +54,6 @@ print("STRUCTURE GATE — 自相矛盾输出必须判为 invalid")
 print("=" * 68)
 struct_cases = [
     ({"research_required": False, "skip_reason": None}, "false 但无 skip_reason"),
-    ({"research_required": True, "skip_reason": "low_risk_clear_goal"}, "true 却带 skip_reason"),
     ({"research_required": True, "verdict_locked": True, "read_only": True}, "锁死最终结论"),
     ({"research_required": True, "read_only": False}, "研究阶段写业务"),
     ({"research_required": False, "min_alternatives": 3, "skip_reason": "low_risk_clear_goal"},

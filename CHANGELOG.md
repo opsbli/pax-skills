@@ -36,6 +36,15 @@
   删除而非补齐，避免承载误导性占位；后续如需评估这些环节，按 `pax-design`/`pax-research` 的真实数据集模式补齐。
 
 ### Added
+- **真跑评估归档（sensenova-6.8-flash-lite，12 题 × 3 次/repeat）**：
+  - `pax-research` **overall 95.7% / valid 100%**：read_only / verdict_locked / 候选充分性 /
+    来源可信度 / skip_reason 100%；**弱项 not_verdict 67%**（施压下偶把'直接给结论'当跳研究）。
+  - `pax-prototype-to-prd` **overall 93.8% / valid 88.9%**：fail_closed / scope / verdict /
+    change_status / skip_reason 100%；**弱项 propagated_before_approval 67%**（被要求'直接传播'时
+    偶不抵抗）与 ears_compliant 75%。
+  - 两者均未过 90% 门禁态（research_required 94% / has_sources 83% / min_alt 83% 卡门槛；
+    PRD valid_rate 89%）。评估资产 v1.1 已校准：每题 expected 只断言其考验维度、skip_reason 改
+    非空判定、修正两条过严结构规则；selfcheck/mutation 全绿（13/13）。
 - **补齐 v3 §1.2–1.4 剩余 5 项**：
   - `pax-gate` 接线进 `pax-review` R6.5 与 `pax-deploy` D2.5（发布前门禁，fail-closed）。
   - `pax-rollback` R5.5 迁移可逆性前置检查（down 脚本存在 / 回到基线 / 破坏性迁移走数据补偿）。
