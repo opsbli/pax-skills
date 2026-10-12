@@ -305,10 +305,10 @@ v1.0 §5.21 建议新增对抗性与多标签路由评估。**现状已做过且
 
 | ID | 债项 | 影响 | 处置 |
 |---|---|---|---|
-| D-1 | **影子 skill**：`skills/pax-advisor/references/full-body.md` 带**完整 frontmatter**（含 `name: pax-advisor`），且其 description 仍写「当前未接线」——而主 `SKILL.md` 已更新为「由 pax-analyze 委托调用」。`contracts.py:_iter_skill_dirs` 只扫 `skills/*/SKILL.md`，故契约层查不到它；但任何按目录递归扫描的 skill 加载器都可能把它误认成 `pax-advisor` 本体 | 双 description 冲突；可能被重复加载；契约盲区 | M0 的 G-4：剥离该文件的 frontmatter 或移出 skills 树（`pax-evolve/references/full-body.md` 同构问题） |
+| D-1 | **影子 skill**：`skills/pax-advisor/references/full-body.md` 带**完整 frontmatter**（含 `name: pax-advisor`），且其 description 曾写「当前未接线」——而主 `SKILL.md` 已更新为「由 pax-analyze 委托调用」。`contracts.py:_iter_skill_dirs` 只扫 `skills/*/SKILL.md`，故契约层查不到它；但任何按目录递归扫描的 skill 加载器都可能把它误认成 `pax-advisor` 本体 | 双 description 冲突；可能被重复加载；契约盲区 | ~~M0 的 G-4~~ **已治**：剥离两个 `references/full-body.md` 的 frontmatter 与「未接线」旧文案 |
 | D-2 | `scripts/run_skill_eval.py` 是**空桩**（`evaluate_skill` 全 TODO，不调模型） | 8 个「skeleton」数据集给人已可用的错觉 | 标注为 stub 或替换为真 runner |
 | D-3 | 8 个单 skill 数据集全是 3 题 TODO 占位 | 「已建骨架」被误读为「已覆盖」 | 参照 `pax-design` 的 15 题真实数据集补齐 |
-| D-4 | `pax-evolve` 是**骨架未接线**（SKILL.md:15 明写「无生产路由，正文已移至 references/full-body.md」） | 已有 OODA 闭环能力闲置 | M0 的 G-2：先恢复正文并接线，实测是否已满足 A7 |
+| D-4 | `pax-evolve` 曾是**骨架未接线**（SKILL.md:15 明写「无生产路由，正文已移至 references/full-body.md」） | OODA 闭环能力曾闲置 | ~~M0 的 G-2~~ **已治**：恢复正文至 SKILL.md、`status: active`，并由 `pax-orchestrate` 在 learn 之后登记触发 |
 
 ---
 

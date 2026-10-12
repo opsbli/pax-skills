@@ -532,6 +532,7 @@ def init_snapshot(intent, risk, diagnose_required, strategy, route, annotations)
 | `pax-deploy` | L1 | 任务完成后 | 自动化部署流程 |
 | `pax-learn` | L1 | 任务评审完成后 | 经验沉淀和知识图谱构建 |
 | `pax-design` | L1 | 需求已澄清但方案未定 | 产出可冻结设计契约（ADR/接口/数据模型/服务边界/可观测性），供 plan 消费 |
+| `pax-evolve` | L4 | 任务评审/学习后积累留痕，或周期性自审 | OODA 闭环：沉淀经验条目、经 A/B 验证门与回滚机制提出 Skill/契约改进建议 |
 
 #### pax-design（设计门禁）
 - **触发条件**：引入新接口 / schema 变更 / 跨服务边界改动；或 `risk.level == "high"`
@@ -569,6 +570,13 @@ def init_snapshot(intent, risk, diagnose_required, strategy, route, annotations)
 - **调用时机**：`pax-review` 完成后
 - **输出**：`snapshot.learning`
 
+#### pax-evolve（自进化）
+- **触发条件**：任务评审/学习后已积累足够执行反馈或失败案例；或周期性自审（跨多任务复盘）
+- **调用时机**：`pax-learn` 沉淀之后按需委托（由 L1 阶段登记触发，符合 §2.4 数据流约定）
+- **不挂载**：无执行反馈/失败案例、无需契约改进建议时（自判并记 `skip_reason`）
+- **输出**：经验条目（`snapshot.learning`/`evolution` 关联）、A/B 验证结果、回滚决策记录
+- **依赖方向**：`pax-evolve` 为 L4 横切，只被 L1 在指定阶段调用，不主动下探（§2.2）
+
 ### 完整工作流示例
 
 主干（顺序固定）：
@@ -585,6 +593,7 @@ def init_snapshot(intent, risk, diagnose_required, strategy, route, annotations)
 [execute] ── 失败 / 告警 / 用户要求 ─→ [rollback]
 [review]  ── 通过后 ────────────→ [deploy]
 [review]  ── 评审后 ────────────→ [learn]
+[learn]   ── 积累足量留痕 / 周期自审 ─→ [evolve]
 任意阶段  ── annotations.escalate_to_council ─→ [council]
 ```
 

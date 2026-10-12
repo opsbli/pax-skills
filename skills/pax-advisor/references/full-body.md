@@ -1,13 +1,4 @@
----
-name: pax-advisor
-description: >
-    Use when: 只读顾问，针对特定假设、权衡、架构问题提供咨询。当前未接线：家族内无任何 skill 调用本 skill，description 不再声称由 pax-orchestrate 编排调用；如需启用，先在调用方（如 pax-review 或 L1 阶段）显式登记触发条件。
-version: 1.0.0
-family: pax
-layer: L2
-optional: true
-requires_snapshot: true
----
+<!-- 参考片段（非 skill 本体）：仅正文，不带 frontmatter。本家族以 */SKILL.md 为唯一本体，此文件仅供阅读参考。-->
 
 # pax-advisor
 

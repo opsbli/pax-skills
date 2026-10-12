@@ -109,12 +109,12 @@ def main() -> int:
         txt = fb.read_text(encoding="utf-8")
         if re.match(r"^---\s*\nname:\s*pax-", txt):
             shadow_files.append(fb.relative_to(ROOT).as_posix())
-    check("§7-D-1 债项成立：references/full-body.md 带完整 frontmatter（影子 skill）",
-          bool(shadow_files), f"{len(shadow_files)} 个: {', '.join(shadow_files)}")
+    check("§7-D-1 债项已治理：references/full-body.md 不再带 frontmatter（无影子 skill）",
+          not shadow_files, f"{len(shadow_files)} 个残留: {', '.join(shadow_files) or '无'}")
     check("§7-D-1 advisor 主 SKILL.md 已声明被 analyze 调用",
           "pax-advisor" in analyze and "未接线" not in adv)
-    check("§7-D-1 影子文件仍残留「未接线」旧文案",
-          "未接线" in adv_fb.read_text(encoding="utf-8"))
+    check("§7-D-1 影子文件不再残留「未接线」旧文案",
+          "未接线" not in adv_fb.read_text(encoding="utf-8"))
     check("§7-D-1 契约层查不到影子文件（_iter_skill_dirs 只扫 skills/*/SKILL.md）",
           all("/references/" not in p for p in shadow_files) or True,
           "设计如此：契约盲区")
@@ -134,17 +134,17 @@ def main() -> int:
     check("§7-D-3 债项成立：仍有 ≥8 个 skeleton 数据集",
           len(todo_files) >= 8, f"{len(todo_files)} 个: {', '.join(todo_files[:3])}…")
 
-    # ---- 10. §7 D-4 债项：pax-evolve 真未接线（骨架）----
+    # ---- 10. §7 D-4 债项：pax-evolve 现应已接线（M0 已治理）----
     evolve_refs = [
         sd.name for sd in (ROOT / "skills").iterdir()
         if sd.is_dir() and sd.name != "pax-evolve"
         and "pax-evolve" in (sd / "SKILL.md").read_text(encoding="utf-8")
     ]
-    check("§7-D-4 债项成立：pax-evolve 无任何 skill 引用",
-          not evolve_refs, f"引用方={evolve_refs or '无'}")
+    check("§7-D-4 债项已治理：pax-evolve 已被某一 skill 接线引用",
+          bool(evolve_refs), f"引用方={evolve_refs or '无'}")
     evo = (ROOT / "skills" / "pax-evolve" / "SKILL.md").read_text(encoding="utf-8")
-    check("§7-D-4 pax-evolve 明写「骨架（未接线）」",
-          "骨架" in evo and "未接线" in evo)
+    check("§7-D-4 pax-evolve 已恢复正文（不再写「骨架/未接线」）",
+          "骨架" not in evo and "未接线" not in evo)
 
     # ---- 11. §10 已落地部分 ----
     reg = json.loads((ROOT / "pax-ops" / "registry.json").read_text(encoding="utf-8"))
