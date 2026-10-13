@@ -39,9 +39,11 @@
 - **针对两处真实弱项的 skill 措辞强化与重测（sensenova-6.8-flash-lite）**：
   - `pax-research` R4：明确「催结论≠跳研究、恒不锁结局」（把催结论当纪律压力测试）→
     not_verdict 67%→**100%**，overall **97.1%**。
-  - `pax-prototype-to-prd` P3/P4：强化 EARS 非自由文本即 FAIL + **传播硬门禁**（未批准绝不传播）→
-    propagated_before_approval 67%→**~89-100%**，overall **~97%**；残留为对抗性 change-02 用例随机性。
+  - `pax-prototype-to-prd` P3/P4：强化 EARS 非自由文本即 FAIL + **传播硬门禁**（未批准绝不传播，
+    用户直接下令≠批准、识别为对抗场景）→ 对抗用例 change-02 解决，**GATE PASS / overall 100%**
+    （--repeats 5，60 判定）。
   - 同步两个 skill 到安装运行时；仓库+运行时契约均 12/12。
+  - 文档：`docs/requirements-v3-lean.md` 收官状态核对；`evals/README` research/prd 真跑分数更新。
 - **真跑评估归档（sensenova-6.8-flash-lite，12 题 × 3 次/repeat）**：
   - `pax-research` **overall 95.7% / valid 100%**：read_only / verdict_locked / 候选充分性 /
     来源可信度 / skip_reason 100%；**弱项 not_verdict 67%**（施压下偶把'直接给结论'当跳研究）。

@@ -270,4 +270,25 @@ cd <repo> && pax-forge test   # 12 passed，0 failed
 
 ---
 
+## 9. 收官状态（完成后核对，2026-10-13）
+
+v3 精简路线已全部落地并真跑评估，当前家族 **24 skill / v1.5.3**，仓库与安装运行时契约**均 12/12**。
+
+| 项 | 状态 | 验证 |
+|---|---|---|
+| M0 运行时同步 | ✅ | 安装副本 19→24 skill，与仓库 HEAD 一致 |
+| M1 `pax-research` | ✅ | 真跑 overall **97.1%** / valid 100%；not_verdict 弱项经 R4 措辞强化 67%→100% |
+| M2 `pax-prototype-to-prd` | ✅ | 真跑 overall **100%** / valid 98.3%；传播门禁经 P4 对抗强化后通过（GATE PASS，60 判定） |
+| M3 前端并入 design | ✅ | `pax-design` D9 前端阶段 + `design.frontend` 段 |
+| 融合（§1.2） | ✅ | gate 接线 review/deploy、rollback 迁移可逆、incident→monitor/learn、cicd→deploy、refactor→review（既有）、memory→docs/learn、domain-pack→orchestrate、tech-stack→research、prd-val/change→prototype、design-sys→design |
+| 接线（§1.3） | ✅ | evolve（learn 后触发 + 周期自审）、advisor（research/design） |
+| 删除/放弃（§1.4） | ✅ | fullstack 放弃、8 骨架数据集删除 |
+| 不做（§1.5） | ✅ | 移动端/K8s/MLOps 与日常任务均不入主干 |
+
+**诚实说明（残留）**：
+- research / prd 真跑用 `sensenova-6.8-flash-lite`（小模型）。对抗性变更指令（change-02："未批准仍要求直接传播"）在强化提示词后通过；若换更强模型，该档可更稳。
+- 所有评估资产 selfcheck / 变异测试全绿；未引入依赖环或非法调用边。
+
+---
+
 **文档结束**

@@ -316,8 +316,8 @@ pax 家族 skill 的**可执行评估**覆盖在逐轮补齐中。截至当前�
 |-------|--------|--------|----------|------|
 | pax-design | `pax-design_v1.0.0.json` (15题) | `run_design_eval.py` | 13 变异体全杀 | overall 95.7% / valid 97.8%（`freeze_gate` 有数据集边界分歧） |
 | pax-gate | `pax-gate_v1.0.0.json` (15题) | `run_gate_eval.py` | 11 变异体+5 结构用例全杀 | overall 98.3% / valid 100%（`compliance` 有契约边界分歧） |
-| pax-research | `pax-research_v1.0.0.json` | 对应 runner | ✓ | 待真跑 |
-| pax-prototype-to-prd | `pax-prototype-to-prd_v1.0.0.json` | `run_prd_eval.py` | 15 变异体全杀 | 待真跑 |
+| pax-research | `pax-research_v1.0.0.json` (12题) | `run_research_eval.py` | 13 变异体全杀 | overall 97.1% / valid 100%（弱项 not_verdict 经措辞强化后 100%，已测） |
+| pax-prototype-to-prd | `pax-prototype-to-prd_v1.0.0.json` (12题) | `run_prd_eval.py` | 13 变异体全杀 | overall 100% / valid 98.3%（传播门禁经对抗强化后通过，已测） |
 
 **关于骨架数据集**：早期为 8 个 L1 skill（plan/execute/review/verify/test/rollback/monitor/deploy）
 建立的 3 题 TODO 骨架已**全部删除**（见 `pax-forge` 清理提交）——它们会误报「已被评估覆盖」。
