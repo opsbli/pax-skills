@@ -26,6 +26,11 @@
 | L1 | `pax-test` | 是 | 自动化测试生成 |
 | L1 | `pax-deploy` | 是 | 部署流程编排 |
 | L1 | `pax-learn` | 是 | 经验沉淀与知识图谱 |
+| L1 | `pax-analyze` | 是 | 只读分析/调研（doc_consult 执行落点，证据链结论） |
+| L1 | `pax-research` | 是 | 开发前研究（需求调研/竞品/技术选型，只出候选不裁决） |
+| L1 | `pax-prototype-to-prd` | 是 | 需求工程上游（原型→结构化 PRD：生成+质量门禁+变更管理） |
+| L1 | `pax-design` | 是 | 设计门禁（ADR/接口/数据模型/服务边界/可观测性 + 前端产出 D9） |
+| L1 | `pax-gate` | 是 | 发布前质量门禁（安全/合规/a11y/许可证，fail-closed） |
 | L2 | `pax-advisor` | 是 | 单点咨询 |
 | L2 | `pax-council` | 是 | 多专家盲审 |
 | L3 | `pax-worker-research` | 是 | 研究型子任务 |
@@ -81,6 +86,22 @@ pax-forge list
 
 见 `docs/pax-family-design.md`。
 
+## 单 skill 评估（design / gate / research / prd）
+
+以下四个能力各配真实可执行数据集 + runner + 变异测试，并已**真实调用模型**测得能力分
+（`sensenova-6.8-flash-lite`，12–15 题 × 3 次；结果归档于 `evals/results/`）：
+
+| skill | overall / valid | 备注 |
+|---|---|---|
+| `pax-design` | 95.7% / 97.8% | `freeze_gate` 有数据集边界分歧 |
+| `pax-gate` | 98.3% / 100% | `compliance` 有契约边界分歧 |
+| `pax-research` | 97.1% / 100% | 弱项 not_verdict 经 R4 措辞强化后 100% |
+| `pax-prototype-to-prd` | 100% / 98.3% | 传播门禁经 P4 对抗强化后通过（GATE PASS） |
+
+评估经 `.github/workflows/pax-ci.yml` 的 `single-skill-eval` job：**selfcheck + 变异测试始终执行**
+（无需 API Key）；**真跑评估**在配置 `PAX_EVAL_API_KEY` secret 时于 main / 手动触发执行
+（端点/模型用 `PAX_EVAL_*` repo vars 覆盖，默认 `token.sensenova.cn/v1` + `sensenova-6.8-flash-lite`）。
+
 ## 路由评估
 
 **当前有效结论以 `evals/README.md` 为准**：那里有完整方法、门槛性质说明与可信度边界。
@@ -126,6 +147,6 @@ CI 里由 `routing-eval` job 以 `sparse-checkout` 从同级仓库 `sinvi/agent-
 
 | 维度 | 权威源 | 含义 |
 |---|---|---|
-| 家族版本 | `pax-ops/versions.json` 的 `version`（当前 `1.0.0`） | 19 个 skill 的整体版本，也是各 skill frontmatter `version` 的来源 |
+| 家族版本 | `pax-ops/versions.json` 的 `version`（当前 `1.5.3`） | 24 个 skill 的整体版本，也是各 skill frontmatter `version` 的来源 |
 | 工具包版本 | `pyproject.toml` / `src/pax/__init__.py`（`pax-forge --version`） | `pax-forge` CLI 自身的版本，独立发版 |
 | 快照格式版本 | `schemas/snapshot.schema.json` 的 `meta.version`（当前 `2.0`） | 快照结构版本；改必填字段即 bump |
