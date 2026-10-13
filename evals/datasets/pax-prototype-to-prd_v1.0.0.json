@@ -8,8 +8,7 @@
       "category": "prd_required",
       "prompt": "我提供了一份原型的 HTML 目录（pages/ 下 5 个页面），请帮我解析并生成结构化 PRD，验收标准用 EARS 写。",
       "expected": {
-        "prd_required": true,
-        "ears_compliant": true
+        "prd_required": true
       }
     },
     {

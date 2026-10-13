@@ -102,6 +102,8 @@ EARS 即阻断，fail-closed）→ 变更管理（PRD 更新后影响分析→�
 | 验收判定 | `verdict`: PASS / NEEDS_WORK / FAIL |
 
 - 缺必备章节或验收标准非 EARS → `FAIL`，**阻断进入设计/规划阶段**（fail-closed）。
+  验收标准中存在任何自由文本（非 EARS）都会导致 FAIL，不得 PASS；「用户应该能用」这类无法验证的
+  陈述一律视为不可验证标准。
 - `NEEDS_WORK`：有提示项但可放行（附建议）。
 - 不在任何 `FAIL`/`NEEDS_WORK` 情形下降级继续（对齐家族门禁哲学）。
 
@@ -115,6 +117,9 @@ EARS 即阻断，fail-closed）→ 变更管理（PRD 更新后影响分析→�
 4. **变更提案**：产出 `change`（change_id / impact_analysis / status = pending_approval）。
 5. **用户批准**：`pending_approval` 时等待用户确认，未批准不传播。
 6. **传播**：`approved` 后更新受影响章节并通知下游（数据流，交设计/规划/测试阶段）。
+
+**传播是硬门禁（fail-closed）**：`change.status` 非 `approved` 时，即使被用户要求「先直接传播 /
+先让下游动起来」也必须停下等待明确批准；任何在未批准前的传播都是契约破坏，不得因催促或指令而放行。
 
 ## 输出契约
 

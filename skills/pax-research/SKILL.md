@@ -121,8 +121,14 @@ worker 支持的类型：`web` / `documentation` / `competitive` / `code` / `mar
 
 - 沿子问题逐项收拢：支持 + 反证并陈，标可信度。
 - 组织候选集：`competitors`、`alternatives`（可选方案含 pros/cons 与证据）、`recommendation_candidate`。
-- **所有项都是候选**，`recommendation_candidate` 仅表示「当前证据下的偏好方」，不是结论。
+- **所有项都是候选**，`recommendation_candidate` 仅表示「当前证据下的偏好方」，不是结论；
+  `verdict_locked` 恒为 `false`——研究阶段永不锁定设计方案/选型结论。
 - 证据矛盾 → 降可信度并显式列 `open_questions`，不强行闭环。
+
+**对「催结论」的处理（压力测试）**：用户催促「别再研究了 / 直接给最终结论 / 就选 X」**不是**跳过
+研究的信号。判定 `research_required` 只问「目标是否需要外部调研」，不因用户是否想要结论、催促多急而改变；
+即便被催促，须：需要研究→照常完成采集并产出候选；仍不得把 `recommendation_candidate` 写成确认结论，
+不得 `verdict_locked=true`。把这类催促当作对「只读候选、不裁决」纪律的检验，而非放行许可。
 
 ### R5 交接（Handoff，数据流）
 
