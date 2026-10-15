@@ -5,6 +5,28 @@
 
 ## [Unreleased]
 
+### Added
+- **新增 `pax-handoff`（L4，跨会话交接）**：面向长会话上下文交接——当当前会话上下文紧张、或一次
+  长任务的**自然 checkpoint**（例：一个 milestone 完成后），通过 `/skill:pax-handoff` 显式调用，
+  把会话压缩为一份 `handoff.md` 落到 `~/.proma/agent-workspaces/<workspace>/_handoff/<name>.md`，
+  供新会话 `pax-handoff mode=resume` 加载后走 `pax-orchestrate` 续接。
+  - **入口约束**：`disable-model-invocation: true`——仅用户显式调用，不由模型自作主张触发（对齐
+    [mattpocock/skills/productivity/handoff](https://github.com/mattpocock/skills/tree/main/skills/productivity/handoff)，
+    `upstream` 字段登记）。
+  - **引用不复制**：snapshot/plan/PRD/commit 等已有 artifact 只写路径，不重复内容；
+    handoff.md 是自然语言摘要 + 指针，与 snapshot（结构化状态）互补不重叠。
+  - **旧快照保留**：旧 snapshot 原地不动；新会话通过
+    `orchestration.annotations.resume_from: <old_session_id>` 关联，
+    继承 `meta/goal/consensus`，其余字段由本次 pax-orchestrate 重跑覆盖。
+  - **手手手铁律**（从 M1→M2 实测得到）：`deferred` 只写“要改什么”，不写“改哪个文件第几行”——
+    M1 期间代码在跑，交接时快照的行号可能已经漂移；位置让新会话现场 grep。
+  - **接线 `pax-plan`**：P6 `execution_strategy` 表格中 `manual_handoff` 的“要求”列改为
+    指向 `pax-handoff mode=emit`（之前只是标注，无落地流程）。
+  - **不新增快照顶层段**：产出留痕归 `snapshot.learning.handoff_emit` / `handoff_resume`，
+    供 `pax-evolve` 消费（不新增顶层命名，对齐 `additionalProperties: false` 契约）。
+  家族版本 1.5.3 → 1.5.4（新增 skill，无新顶层快照段 → patch）。已同步安装运行时。
+  实测验证：pax-md M1→M2（commit `54168eb`，模板实例 `~/.proma/agent-workspaces/pax-md/_handoff/M1-to-M2.md`）。
+
 ### Added（M0–M3 工作流补齐，基于 `docs/requirements-full-sdlc.md`）
 - **`pax-gate`（L1，门禁段 skill，M1）**：承载 A1–A4 四类发布前静态检查——安全（SAST/密钥/依赖漏洞）、
   合规（GDPR/SOC2/数据留存/同意管理）、可访问性与国际化（WCAG/ARIA/a11y/i18n）、许可证（GPL/AGPL）。

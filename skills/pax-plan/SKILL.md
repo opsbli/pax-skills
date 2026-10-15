@@ -280,7 +280,7 @@ steps:
 |------|----------|------|
 | `subagent` | 可独立执行，无交互 | 自动执行，无需用户介入 |
 | `separate_session` | 需要独立会话，但可自动 | 新开会话执行 |
-| `manual_handoff` | 需要用户确认或手动操作 | 用户手动确认 |
+| `manual_handoff` | 需要用户确认或手动操作 | 调用 `pax-handoff mode=emit` 产出 `~/.proma/agent-workspaces/<workspace>/_handoff/<name>.md`；新会话 `pax-handoff mode=resume` 加载后交由编排入口续接 |
 
 ### P7 计划冻结（Plan Freeze）
 

@@ -11,7 +11,7 @@ layers:
   L1: [clarify, diagnose, plan, execute, review, monitor, rollback, test, deploy, learn, analyze, design, gate, research, prototype-to-prd]
   L2: [advisor, council]
   L3: ["worker-*"]
-  L4: [verify, evolve, docs, init]
+  L4: [verify, evolve, docs, init, handoff]
 
 # 不参与注册与编排的层。这些层不做「成员必须存在为 skill」的校验：
 # meta 只承载工具层身份（pax-forge 是 src/pax/forge/ 下的 CLI，不是可注册 skill）。

@@ -145,6 +145,7 @@ L4     pax-verify       ← 运行中验证（横切）
        pax-evolve       ← 自进化（横切）
        pax-docs         ← 文档沉淀（横切）
        pax-init         ← 项目接入与初始化（内部工具，用户直接调用）
+       pax-handoff      ← 跨会话交接（用户显式调用，disable-model-invocation）
 ```
 
 ### 4.2 各层职责边界
@@ -156,7 +157,7 @@ L4     pax-verify       ← 运行中验证（横切）
 | L1 | 生命周期阶段推进 | 不跨阶段、不越权 |
 | L2 | 特定问题咨询、高风险决策 | 不改变主流程 |
 | L3 | 与具体模型/运行时绑定 | 接口由上层定义 |
-| L4 | 质量保障、自进化、文档、项目接入 | 不认领路由落点 |
+| L4 | 质量保障、自进化、文档、项目接入、跨会话交接 | 不认领路由落点 |
 
 ---
 
@@ -988,6 +989,47 @@ review:
 | `templates/project-profile.json.tmpl` | profile 结构模板 |
 | `scripts/scan_project.py` | 确定性扫描器（stdlib-only，只收证据、不做推测；宿主持有 Python 时才用） |
 
+### 6.15 `pax-handoff`（L4，跨会话交接）
+
+**职责**：把当前会话的“值得传下去”的信息压缩成一份 `handoff.md`，供新会话读取后按家族契约续接任务。**引用不复制**——snapshot/plan/PRD/commit 等已有 artifact 只写路径；**双向**——emit 方向生成文档，resume 方向供新会话加载。
+
+**入口**：`disable-model-invocation: true`——**仅用户显式 `/skill:pax-handoff` 调用**。不由 pax-orchestrate 自动挂载（与 L0/L1 默认行为不同——交接是时效性动作，不应被模型自作主张触发）。
+
+**触发场景**：
+- 当前会话上下文过长，用户明确说“换会话继续”
+- 一次长任务的**自然 checkpoint**（一个 milestone 完成后）
+- `pax-plan` 中某步骤标注 `execution_strategy: manual_handoff`，用户手动确认后
+
+**落点契约**：`~/.proma/agent-workspaces/<workspace>/_handoff/<name>.md`
+- 工作区共享目录，**不绑 session ID**（换 session 也能找到）
+- 不进项目仓（不污染 git）
+- 目录不存在则自动创建
+
+**handoff.md 10 个字段**（顺序不可变）：
+`meta` / `goal` / `current_state` / `snapshot_path` / `key_decisions` / `artifacts` / `deferred` / `next_focus` / `suggested_skills` / `redacted` + 内嵌“新会话续接提示词”块。
+
+**与快照的关系**：
+- `requires_snapshot: true`（可产出留痕 `snapshot.learning.handoff_emit|handoff_resume`）
+- **不修改**旧 snapshot 的业务字段（`consensus/diagnosis/plan/execution/review`）
+- 新会话通过 `orchestration.annotations.resume_from: <old_session_id>` 关联
+- 新会话读旧 snapshot 后，将 `meta/goal/consensus` 段作为起点继承，其余字段由本次 pax-orchestrate 重跑覆盖
+
+**铁律**（对齐 mattpocock/skills 的 handoff，与家族 L4 契约共存）：
+1. **引用不复制**：重复已存在 artifact 内容视为 bug
+2. **脱敏**：emit 前扫描 API key / 密码 / PII / 支付凭证，命中则删除并在 `redacted` 段声明
+3. **行号漂移防护**（M1→M2 实测教训）：`deferred` 只写“要改什么”，不写“改哪个文件第几行”；位置让新会话现场 grep
+4. **不写用户偏好之外的假设**：不预测“下次要写文档”这种未经确认的意图
+
+**不做什么**：
+- 不认领路由落点（横切，用户显式调用）
+- 不承载任务级状态（那是 snapshot 的职责）
+- 不做代码分析或方案裁决（那是 pax-analyze/pax-advisor 的职责）
+
+**参考实现**：
+- 外部：[mattpocock/skills/productivity/handoff](https://github.com/mattpocock/skills/tree/main/skills/productivity/handoff)（`upstream` 字段登记）
+- 内部：L4 参考 `pax-docs` / `pax-init` 骨架
+- 实测验证：pax-md M1→M2（commit `54168eb`，commit 链包含本 skill 的 handoff.md 实例 `~/.proma/agent-workspaces/pax-md/_handoff/M1-to-M2.md`）
+
 ---
 
 ## 7. 版本与治理
@@ -1100,6 +1142,7 @@ A/B 测试每个 Skill 的贡献：
 | `pax-verify`      | L4 | 是 | 运行中验证       | 五态印章 |
 | `pax-evolve`      | L4 | 是 | 自进化           | 经验条目 |
 | `pax-docs`        | L4 | 是 | 文档沉淀         | `CONTEXT.md` / ADR |
+| `pax-handoff`     | L4 | 是 | 跨会话交接       | `handoff.md`（落工作区 `_handoff/`） |
 
 ---
 

@@ -1,6 +1,6 @@
 {
   "family": "pax",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "skills": {
     "pax-orchestrate": {
       "layer": "L0",
@@ -142,6 +142,12 @@
     },
     "pax-prototype-to-prd": {
       "layer": "L1",
+      "optional": true,
+      "version": "1.0.0",
+      "status": "active"
+    },
+    "pax-handoff": {
+      "layer": "L4",
       "optional": true,
       "version": "1.0.0",
       "status": "active"
