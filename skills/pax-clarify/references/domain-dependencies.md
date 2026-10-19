@@ -2,6 +2,9 @@
 
 用于 `pax-diagnose` 输出 `regression_scope` 时参考。
 
+> 本文件是**分发副本**，权威副本是 `pax-orchestrate/references/domain-dependencies.md`。
+> 两者必须保持一致；改领域条目请改权威副本后同步到此。
+
 ## 认证/授权
 - 根因：密钥轮换、token 失效、权限模型变更
 - 必测：登录、注册、token 刷新、权限校验、SSO

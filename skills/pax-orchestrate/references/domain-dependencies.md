@@ -2,6 +2,12 @@
 
 用于 `pax-diagnose` 输出 `regression_scope` 时参考。
 
+> **本文件是权威副本。** 修改领域条目只改这里。
+> 引用方（`pax-analyze` / `pax-clarify`）各持一份同名分发副本——
+> `agentskills-ci` 的路径校验以各 skill 自身根目录为基准
+> （`skill.root / relative_path`，且禁止 `..`），跨 skill 引用无法解析。
+> 同步时保持副本内容与本文件一致。
+
 ## 认证/授权
 - 根因：密钥轮换、token 失效、权限模型变更
 - 必测：登录、注册、token 刷新、权限校验、SSO
