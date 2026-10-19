@@ -2,7 +2,7 @@
 name: pax-verify
 description: >
     Use when: 运行中验证，有界循环 + 五态印章。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。
-version: 1.0.0
+version: 1.0.1
 family: pax
 layer: L4
 optional: true
@@ -151,6 +151,7 @@ def bounded_loop_verify(subject, criteria, max_attempts=3):
 **规则**：
 - 单条验证若最高只到 D1，印章上限为 `partial`；
 - 全部验证均为 D0/D1 时，禁止给出 `verified`；
+- 事件类断言若 `key` / `code` / 修饰键与运行时真实事件不一致（把 combo 字符抄进 `KeyboardEvent`），即使断言了 handler 被调用，深度最高仍是 D1，不得 `verified`；
 - 印章结构里追加 `assertion_depth` 字段，记录本次验证达到的最高断言深度。
 
 > 本检查关心“证据本身能否被采信”；测试有效性的 PIE 三问关心“测试能否发现缺陷”，两者互补而非重复。

@@ -90,8 +90,91 @@ def _skill_docs(family_root: Path) -> Iterable[tuple[str, dict | None, str]]:
         yield name, fm, body
 
 
+# 元数据字段：这里的 pax-* 提及是「这条记录适用于谁 / 来源于哪次会话」，
+# 不是「本 skill 调用了谁」。把它们算进调用图会让no-cycles 与
+# layer-call-legality 报出并不存在的环与非法方向。
+#
+# 典型误报：pax-evolve 的经验条目 E101-E104 里
+# `applies_to: ["pax-plan P2 / P7", "pax-execute E3 / E4"]`
+# 声明的是经验的适用范围，被扫成 evolve -> plan / evolve -> execute 的调用边。
+_METADATA_FIELD_RE = _re.compile(
+    r"^\s*(?:-\s*)?("
+    r"applies_to|source|statement|rationale|ab_baseline\w*|"
+    r"ab_candidate_count|ab_status|ab_notes|deprecated_by|"
+    r"created_at|updated_at|promote_recommendation|createdBy|updatedBy"
+    r")\s*:",
+    _re.M,
+)
+_LIST_ITEM_RE = _re.compile(r"^\s*-\s")
+
+
+def _indent_of(line: str) -> int:
+    return len(line) - len(line.lstrip(" \t"))
+
+
+def strip_metadata_fields(body: str) -> str:
+    """移除 YAML 元数据字段**及其值**，保留其余正文。
+
+    必须连值一起删，否则误报原样存在：
+
+        applies_to:                <- 删这行
+          - "pax-plan P2 / P7"       <- 这行也要删，否则仍被扫成调用边
+
+    三种值形态都要处理：
+    - 行内数组：``applies_to: ["pax-execute E4/E8"]``
+    - 缩进列表：``applies_to:`` 换行后跟 ``- "..."``
+    - block scalar：``rationale: |`` 换行后的缩进正文
+
+    按行剔除而非整块删除：经验条目里元数据与自由文本交错，整块删会
+    连带丢掉真实声明（如 description 的「由 pax-orchestrate 委托调用」）。
+    """
+    lines = body.split("\n")
+    kept: list[str] = []
+    i = 0
+    n = len(lines)
+
+    while i < n:
+        line = lines[i]
+        if _METADATA_FIELD_RE.match(line):
+            i += 1
+            # 行内数组：值就在本行，随字段名一起被丢弃
+            if _re.search(r":\s*[|>]\s*$", line):
+                # block scalar：吃掉后续所有比字段更深的缩进行
+                field_indent = _indent_of(line)
+                while i < n:
+                    nxt = lines[i]
+                    if nxt.strip() and _indent_of(nxt) > field_indent:
+                        i += 1
+                    else:
+                        break
+            else:
+                # 缩进列表：吃掉紧跟其后、同缩进或更深的 `- ` 项
+                field_indent = _indent_of(line)
+                while i < n:
+                    nxt = lines[i]
+                    if not nxt.strip():
+                        break
+                    ind = _indent_of(nxt)
+                    if ind <= field_indent:
+                        break
+                    if _LIST_ITEM_RE.match(nxt) and ind == field_indent + 2:
+                        i += 1
+                        continue
+                    break
+            continue
+        kept.append(line)
+        i += 1
+
+    return "\n".join(kept)
+
+
 def _mentioned_skills(body: str, self_name: str) -> set[str]:
     return set(_re.findall(r"pax-[a-z][a-z0-9-]*", body)) - {self_name}
+
+
+def _call_targets(body: str, self_name: str) -> set[str]:
+    """本 skill 实际调用的 skill（排除元数据引用）。"""
+    return _mentioned_skills(strip_metadata_fields(body), self_name)
 
 
 # ----- 契约①：frontmatter 完整性 -----
@@ -208,7 +291,13 @@ def check_layer_call_legality(family_root: Path) -> list[str]:
         if fm is None:
             continue
         self_layer = fm.get("layer")
-        for target_name in _mentioned_skills(body, name):
+        # 只查前向调用边：`## 何时升级` 里的失败回退本就该指向更上游的层，
+        # 用 compatibility_matrix 判它会误报（L1 测试失败退回 L1 plan 是设计
+        # 要求的闭环，不是非法方向）。
+        forward, _escalate = split_escalation_targets(
+            strip_metadata_fields(body), name
+        )
+        for target_name in forward:
             target_layer = skill_layers.get(target_name)
             if target_layer is None:
                 continue
@@ -362,6 +451,76 @@ def check_version_consistency(family_root: Path) -> list[str]:
     return violations
 
 
+# ----- 回退边（失败升级）与前向调用边的区分 -----
+
+ESCALATE_HEADING = "## 何时升级"
+_ESCALATE_ITEM_RE = _re.compile(r"^\s*[-*]\s")
+# 真调用声明的形态：中文动词 + 反引号包裹的 skill 名
+# （`调用 \`pax-gate\``、`委托 \`pax-advisor\``、`插入 \`pax-test\``）。
+# 数据引用则不带这种标记：`pax-plan.rollback_strategy`、`pax-family.schema.yaml`、
+# `pax-ops/versions.json`。靠这个区分「调用边」与「提及边」。
+_CALL_VERB_RE = _re.compile(
+    r"(?:调用|委托|委派|挂载|插入|路由到|路由至|交由|转交|升级至|升级到|进入)"
+    r"[^`\n]{0,12}`(pax-[a-z][a-z0-9-]*)`"
+)
+# 路由表里裸名成组出现（`[clarify, plan, execute, review]`）也算声明
+_ROUTE_GROUP_RE = _re.compile(r"`\[([a-z][^\]\n]*)\]`")
+# 形如 `[x]` 的 checklist 记号与状态词，不是 skill 名
+_NON_ROUTE_TOKENS = {"x", "v", "ok", "pass", "none", "all"}
+
+
+def _declared_call_targets(line: str) -> set[str]:
+    """一行里被显式声明为「调用」的 skill 名。"""
+    return set(_CALL_VERB_RE.findall(line))
+
+
+def split_escalation_targets(body: str, self_name: str) -> tuple[set[str], set[str]]:
+    """把 skill 正文里的提及分成（前向调用边, 失败回退边）。
+
+    失败回退边统一声明在 `## 何时升级` 段落里——这是家族里 13 个 skill
+    共同遵守的结构约定（pax-test 的「覆盖率不达标 → pax-plan」、
+    pax-execute 的「需要独立评审 → pax-review」等）。
+
+    为什么要分开：`no-cycles` 判的是「前向编排不得成环」。但测试失败
+    退回 plan、评审 needs_fix 退回 execute 属于**失败回退**，是设计上
+    必需的闭环，不参与前向环检测。两者混在一起判，任何「阶段失败就回退」
+    的设计都会被报成循环依赖。
+
+    返回 ``(forward, escalate)``。
+    """
+    lines = body.split("\n")
+    forward: set[str] = set()
+    escalate: set[str] = set()
+    in_escalate = False
+
+    for line in lines:
+        if line.lstrip().startswith(ESCALATE_HEADING):
+            in_escalate = True
+            continue
+        # 遇到下一个同级别标题即退出该段落
+        if in_escalate and line.startswith("#") and not line.startswith(ESCALATE_HEADING):
+            in_escalate = False
+
+        if in_escalate and _ESCALATE_ITEM_RE.match(line):
+            escalate |= set(_re.findall(r"pax-[a-z][a-z0-9-]*", line)) - {self_name}
+            continue
+
+        declared = _declared_call_targets(line)
+        for group in _ROUTE_GROUP_RE.findall(line):
+            names = [n for n in _re.findall(r"[a-z][a-z0-9-]*", group)
+                     if n not in _NON_ROUTE_TOKENS]
+            # 至少两个裸名才算路由组：`[clarify, plan, execute]` 是路由，
+            # `[x]` 是 checklist 记号（pax-execute / pax-test 里都有
+            # 「只写 `[x]` 不算证据」这类句子）。
+            if len(names) >= 2:
+                declared |= set(names)
+        if declared:
+            forward |= {f"pax-{d}" if not d.startswith("pax-") else d
+                        for d in declared} - {self_name}
+
+    return forward, escalate
+
+
 # ----- 契约⑧：无循环依赖 -----
 
 def _extract_call_graph(family_root: Path) -> dict[str, set[str]]:
@@ -369,7 +528,24 @@ def _extract_call_graph(family_root: Path) -> dict[str, set[str]]:
     for name, fm, body in _skill_docs(family_root):
         if fm is None:
             continue
-        graph[name] = _mentioned_skills(body, name)
+        forward, _escalate = split_escalation_targets(
+            strip_metadata_fields(body), name
+        )
+        graph[name] = forward
+    return graph
+
+
+def _extract_escalation_graph(family_root: Path) -> dict[str, set[str]]:
+    """收集失败回退边，仅用于报告——它们不参与环检测。"""
+    graph: dict[str, set[str]] = {}
+    for name, fm, body in _skill_docs(family_root):
+        if fm is None:
+            continue
+        _forward, escalate = split_escalation_targets(
+            strip_metadata_fields(body), name
+        )
+        if escalate:
+            graph[name] = escalate
     return graph
 
 
@@ -545,4 +721,126 @@ def check_declared_checks_coverage(family_root: Path) -> list[str]:
         violations.append(
             f"contracts.py 实现了检查 {name!r}，但 schema 未声明"
         )
+    return violations
+
+
+# ----- 契约⑬：L0 入口的路由声明覆盖 registry 全部运行时成员 -----
+
+_ROUTING_TABLE_HEADER = _re.compile(r"^\|\s*一级意图\s*\|", _re.M)
+_OPTIONAL_TABLE_HEADER = _re.compile(r"^\|\s*Skill\s*\|\s*层级\s*\|", _re.M)
+
+
+def _table_segment(body: str, header_re: _re.Pattern[str]) -> str | None:
+    """截取指定表头的 Markdown 表格连续行。
+
+    锚点是表头而不是任何 `[...]`——后者散布全文，无法区分
+    「路由表里的一格」与「示例里的一个数组」。
+    """
+    m = header_re.search(body)
+    if m is None:
+        return None
+    lines = body[m.start():].split("\n")
+    rows = [lines[0]]
+    for line in lines[1:]:
+        if not line.lstrip().startswith("|"):
+            break
+        rows.append(line)
+    return "\n".join(rows)
+
+
+def _routing_table_segment(body: str) -> str | None:
+    """主路由表区段：`| 一级意图 | 二级意图 | ... |`。"""
+    return _table_segment(body, _ROUTING_TABLE_HEADER)
+
+
+def _declared_routing_segment(body: str) -> str | None:
+    """入口的全部路由声明 = 主路由表 ∪ 可选 skill 表。
+
+    pax-orchestrate 有两张表：`代表路由组合`（意图 → 路由）与
+    `除主路由外，以下可选 Skill 可在特定条件下被调用`（skill → 触发条件）。
+    monitor / rollback / deploy / learn / design / research / prototype-to-prd
+    全部登记在第二张表。只校验第一张会把它们全判成缺口。
+    """
+    parts = [
+        seg for seg in (
+            _table_segment(body, _ROUTING_TABLE_HEADER),
+            _table_segment(body, _OPTIONAL_TABLE_HEADER),
+        )
+        if seg is not None
+    ]
+    return "\n".join(parts) if parts else None
+
+
+@register_contract("router-coverage")
+def check_router_coverage(family_root: Path) -> list[str]:
+    """pax-orchestrate 的路由表必须覆盖所有「入口承诺路由」的 skill。
+
+    路由表此前只是一张「代表路由组合」的示例表，漏掉的 skill 不会被任何
+    契约发现——新增 skill 后它既不在表里，也没有检查会红。
+
+    只校验「入口承诺路由的 skill 是否都被提及」，不校验顺序或触发条件：
+    后者是语义判断，不属于可机器判定的范围。
+
+    不校验 L2/L3/L4 与被上层内嵌的门禁段：
+    - L3 worker 由上层 skill 按 delegation_target 委派，不走入口路由；
+    - L4 是用户直调工具（pax-init/pax-handoff），其description 已自述
+      「由用户直接调用，不认领编排路由落点」；
+    - L2 advisor 由 pax-analyze 在升级路径中委托；
+    - pax-gate 是评审/部署阶段内嵌的门禁段，其 description 自述
+      「由评审阶段与部署阶段在发布前调用」，不是独立路由落点。
+    强行要求它们出现在入口路由表里会制造无法满足的假失败。
+    """
+    family = loader.load_family_schema(family_root=_root(family_root))
+    registry = loader.load_registry(family_root=_root(family_root))
+    non_runtime = set(family.get("non_runtime_layers", []))
+    routed_layers = {"L0", "L1"}
+    # 内嵌门禁段：被上游阶段在自己的流程里触发，不作为独立路由落点。
+    # 取自 pax-gate 自身 description 的「由评审阶段与部署阶段在发布前调用」。
+    embedded = {"pax-gate"}
+
+    entry_name = "pax-orchestrate"
+    body = None
+    for name, _fm, doc_body in _skill_docs(family_root):
+        if name == entry_name:
+            body = doc_body
+            break
+    if body is None:
+        return [f"{entry_name}: 未找到 SKILL.md，无法校验路由表"]
+
+    # 只取「路由声明」区段做覆盖判定，不能扫全文：
+    # description / 前置条件 / 示例里处处提到各 skill 名（pax-clarify 单独
+    # 就出现 7 次），扫全文会让契约在任何路由表缺失下都判绿——没有 teeth。
+    table = _declared_routing_segment(body)
+    if table is None:
+        return [
+            f"{entry_name}: 未找到路由声明区段（形如 "
+            f"`| 一级意图 | ... |` 或 `| Skill | 层级 | ... |` 的 Markdown 表格），"
+            f"无法校验覆盖"
+        ]
+
+    # 路由表同时接受裸名（clarify）与全名（pax-clarify）两种写法。
+    mentioned = set(_re.findall(r"pax-[a-z][a-z0-9-]*", table))
+    bare = {n[len("pax-"):] for n in mentioned}
+    bare |= {
+        m
+        for group in _re.findall(r"\[([a-z][^\]\n]*)\]", table)
+        for m in _re.findall(r"[a-z][a-z0-9-]*", group)
+    }
+
+    violations: list[str] = []
+    for entry in registry.get("skills", []):
+        name = entry.get("name")
+        layer = entry.get("layer")
+        if not name or layer in non_runtime or layer not in routed_layers:
+            continue
+        if name == entry_name or name in embedded:
+            # 入口自己必然不在自己的路由表里；内嵌门禁段不走独立路由
+            continue
+        short = name[len("pax-"):]
+        if name not in mentioned and short not in bare:
+            violations.append(
+                f"{name} (layer={layer}) 已注册且属于入口承诺路由的层"
+                f"（{'/'.join(sorted(routed_layers))}），但未出现在 "
+                f"{entry_name} 的路由表中，该 skill 不会被编排调用"
+            )
     return violations

@@ -2,7 +2,7 @@
 name: pax-orchestrate
 description: >
     Use when: 所有 pax-family 任务的统一入口。当用户目标涉及诊断修复、功能开发、重构优化、数据操作、文档咨询或工具构建时，必须先经过 pax-orchestrate 进行意图分类、风险分级、路由构建与快照初始化。不要直接选择 pax-diagnose、pax-plan、pax-execute 等具体 skill，而是让 pax-orchestrate 决定完整的执行路由。**触发优先：这是任务的第 1 步**。无论任务看起来多直接（哪怕是一次性加一段内联脚本题），收到任务后首先选择本 skill，在产出快照（达成编排）之前不得跳到任何写文件/编译/git 动作；这是 pax-family 对触发层纪律的最后一道防线（AGENTS.md 的 MUST 条款依赖本入口被优先触发才能生效）。
-version: 1.0.2
+version: 1.0.3
 family: pax
 layer: L0
 optional: false
@@ -365,14 +365,32 @@ def build_route(intent, diagnose_required, risk, context):
         annotations["integration_contract_required"] = True
     if "deployment" in intent.secondary:
         annotations["deployment_env_required"] = True
-    
+
+    # 开场白只作提示。用户说「继续」时匹配不到「快捷键」，不能据此决定是否手验，
+    # 也不往 route 里追加 pax-verify。判定在 pax-plan 冻结时完成。
+    interaction_hint = detect_interaction_steps(context)
+    if interaction_hint:
+        annotations["interaction_hint"] = True
+
     return route, annotations
 ```
 
+```python
+def detect_interaction_steps(context):
+    """开场白里的交互提示。不是步骤 id，也不能单独决定手验。"""
+    patterns = [
+        r"快捷键", r"键盘", r"点击", r"拖拽", r"弹窗",
+        r"\bctrl\s*\+", r"\bcmd\s*\+", r"\bmod\s*\+",
+        r"\bclick\b", r"\bmodal\b", r"\bdialog\b",
+    ]
+    return [p for p in patterns if re.search(p, context, re.IGNORECASE)]
+```
+
+手验的唯一判定点是计划冻结：步骤 `touches` 含 `ui` / `io` / `shortcut`，或 `verification_min_depth` 为 D3 时，`pax-plan` 在 `pax-review` 之前插入 `pax-test` 与 `pax-verify`。开场白没有这些字样，不免除这次插入。这是编排阶段对下游 route 的唯一授权改写。
+
 #### 代表路由组合
 
-下表列举常见组合；完整逻辑由 `build_route` 派生（6 个一级意图 × 6 个二级意图的笛卡尔积），
-不逐一列举——与上表冲突时以 `build_route` 为准。
+下表是初始路由。D3 或 `touches` 含 `ui` / `io` / `shortcut` 时，冻结计划会在 `pax-review` 之前插入 `pax-test`、`pax-verify`，上表不必逐行改写。
 
 | 一级意图 | 二级意图 | diagnose_required | 路由 | 标注 |
 |---|---|---|---|---|
@@ -388,6 +406,7 @@ def build_route(intent, diagnose_required, risk, context):
 | `doc_consult` | — | false | `[clarify, analyze]` | `analysis_optional_docs` |
 | `tool_build` | — | false | `[clarify, plan, execute, review]` | — |
 | 任意 | 跨仓库 | 继承 | 继承 | `cross_repo, execution_strategy_required` |
+| 任意 | 步骤为 D3 或 touches 含 ui/io/shortcut | 继承 | 冻结时在 `pax-review` 前插入 `pax-test`、`pax-verify` | `requires_runtime_verification` |
 
 #### 跨仓库检测
 

@@ -2,7 +2,7 @@
 name: pax-review
 description: >
     Use when: 独立评审门禁，对照成功标准决定通过/拒绝。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。
-version: 1.0.0
+version: 1.0.2
 family: pax
 layer: L1
 optional: false
@@ -65,6 +65,16 @@ def check_gate(snapshot):
     
     if snapshot.execution.status != "completed":
         return False, f"执行状态为 {snapshot.execution.status}，需要 completed"
+
+    if getattr(snapshot, "execution_status", None):
+        return False, "禁止用 execution_status 替代标准 execution"
+
+    pending = [
+        item for item in snapshot.execution.log
+        if getattr(item, "manual", None) == "pending" or "pending" in str(getattr(item, "evidence", ""))
+    ]
+    if pending:
+        return False, "存在 pending 手动验证，不能评审通过"
     
     return True, "门禁通过"
 ```
@@ -159,6 +169,15 @@ def check_pie_completeness(snapshot):
             "severity": "major",
             "description": f"{len(prop_fails)} 条用例断言不足以观察到错误",
             "test_ids": [c.test_id for c in prop_fails],
+        })
+
+    # 输入不是运行时会产生的值（含从被测字符串回抄）也是 major，不能只留在 recommendations
+    infection_fails = [c for c in pie_checks if c.infection == "fail"]
+    if infection_fails:
+        findings.append({
+            "severity": "major",
+            "description": f"{len(infection_fails)} 条用例输入不能触发错误状态或不是运行时事件",
+            "test_ids": [c.test_id for c in infection_fails],
         })
 
     # 检查 n/a 比例
@@ -269,11 +288,14 @@ def check_deviations(execution):
 
 ```python
 def check_stamp(snapshot):
-    """检查 pax-verify 印章（quality.verification_seals 的最后一条）"""
-    
+    """只有 D3/交互步骤强制 pax-verify 印章。纯文档缺印章不 blocked。"""
+
+    required = getattr(snapshot.plan, "requires_runtime_verification", False)
     seals = snapshot.quality.verification_seals if snapshot.quality else []
+    if not required:
+        return True, None
     if not seals:
-        return False, "缺少 pax-verify 印章"
+        return False, "D3/交互步骤缺少 pax-verify 印章"
     
     seal = seals[-1]
     if seal.result not in ("verified", "partial"):
@@ -289,13 +311,30 @@ def check_stamp(snapshot):
 ### R5 综合判定（Comprehensive Verdict）
 
 ```python
-def determine_verdict(verification_results, deviations, stamp):
+def runtime_verification_gap(snapshot):
+    """D3/交互步骤缺测试、验证或手动观察时，不能 verified，也不能 partial。"""
+    plan = snapshot.plan
+    if not getattr(plan, "requires_runtime_verification", False):
+        return []
+    missing = []
+    pie = snapshot.tests.pie_check if getattr(snapshot, "tests", None) else []
+    if not pie:
+        missing.append("pax-test.pie_check")
+    step_ids = set(getattr(plan, "runtime_verification_steps", []) or [])
+    logs = [item for item in snapshot.execution.log if item.step in step_ids]
+    if not logs or not all(evidence_includes_manual(item) for item in logs):
+        missing.append("manual_evidence")
+    return missing
+
+def determine_verdict(snapshot, verification_results, deviations, stamp):
     """综合判定 verdict（stamp 为 check_stamp 的返回 `(ok, reason)`）"""
-    
-    # 条件 1: 印章缺失
+
     stamp_ok, stamp_reason = stamp
     if not stamp_ok:
         return "blocked", stamp_reason
+    gap = runtime_verification_gap(snapshot)
+    if gap:
+        return "blocked", f"D3/交互步骤缺少 {', '.join(gap)}，不能 verified 或 partial"
     
     # 条件 2: high 偏差未解决
     unresolved_high = [
@@ -347,7 +386,7 @@ def determine_verdict(verification_results, deviations, stamp):
 | 严重度 | 条件 | 处理 |
 |--------|------|------|
 | `blocker` | 阻塞发布 | 必须修复，`verdict: needs_fix` |
-| `major` | 影响功能 | 建议修复，可 `partial` |
+| `major` | 影响功能 | D3/交互未接通时不得延期为 `partial`，verdict 为 `blocked` 或 `needs_fix` |
 | `minor` | 不影响功能 | 记录待办 |
 | `info` | 信息性 | 仅记录 |
 
@@ -375,7 +414,12 @@ review:
       method: unit_test
       criteria: "所有测试通过"
       result: pass
-      evidence: "10/10 tests passed"
+      evidence: "10/10 tests passed。该步骤若是 D3，只有这一条则 verdict 仍是 blocked"
+    - step: S3
+      method: manual_check
+      criteria: "快捷键生效"
+      result: pass
+      evidence: "environment: tauri dev; action: Ctrl+N; observed_result: 出现未命名文档; at: 2026-10-15T15:00:00+08:00"
     - step: S2
       method: code_review
       criteria: "无阻塞性问题"
@@ -407,7 +451,8 @@ review:
 - `snapshot.review`，格式由 `schemas/snapshot.schema.json` 约束
 
 ## 失败模式
-- `pax-verify` 印章缺失 → `verdict: blocked`
+- D3/交互步骤缺少 `pax-test` 的 `pie_check`、`pax-verify` 印章或手动观察 → `verdict: blocked`，不能是 `verified` 或 `partial`
+- 非 D3 任务不因缺少 `pax-verify` 印章而 `blocked`
 - 与契约偏差未处理 → `verdict: needs_fix`
 - 超出评审权限 → `verdict: needs_review`
 

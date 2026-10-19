@@ -2,7 +2,7 @@
 name: pax-plan
 description: >
     Use when: 将已澄清/诊断的目标转化为机器可冻结的任务计划。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。
-version: 1.0.0
+version: 1.0.1
 family: pax
 layer: L1
 optional: false
@@ -190,6 +190,55 @@ steps:
     risk: low
 ```
 
+### P2.5 计划文档镜像门禁（Doc-to-Snapshot Mirror Gate）
+
+计划文档与 `snapshot.plan.steps[]` 必须 **1:1 镜像**——这是 pax-execute E4 内环验证能独立追踪的前提，也是 E8 evidence binding 的输入锚点。
+
+**硬性门禁**（冻结前必须全部通过）：
+
+1. 计划文档中的每个里程碑条目（如 `M1.1`、`M2.3`、`S1`）在 `plan.steps[]` 中有且仅有一条对应 step；
+2. 每个 step 必须包含以下字段：
+   - `id`：字符串，唯一，与文档里程碑编号一致
+   - `action`：动作描述，**单一动词**（见下方拆分规则）
+   - `verification_min_depth`：`D1` | `D2` | `D3`，默认 `D2`
+   - `touches`：字符串数组，标记触达面（用于自动选择验证策略）
+3. 若 step 描述含并列连接词（`+` / `并` / `同时` / `以及` / `且` / `与` / `和` / `、` / `,`），且并列项 ≥2，必须满足以下任一：
+   - **拆分**：每个 part 一个独立 step（首选，避免验证遗漏）；
+   - **保留组合 step 但声明 `parallel_parts[]`**：每个 part 必须对应一条独立 `verification.criteria`，数量与 part 数一致。
+
+   ⚠️ A/B 基线提示（E101 review 阶段）：M2 的 M2.2（“搜索核心 + 面板”）与 M2.7（“验证与文档”）均为合理组合任务，不应强制拆分。本规则不直接拒绝组合 step，而是要求 part 级别的可验证性。
+
+**touches 分类映射**（决定 `verification_min_depth` 下限）：
+
+| touches | verification_min_depth 下限 | 说明 |
+|---|---|---|
+| `ui` / `io` / `shortcut` | D3 | 必须含手动或自动化冒烟留痕 |
+| `api` / `data` / `config` | D2 | 必须断言关键业务字段 |
+| 其他 | D1 | 至少返回/编译通过 |
+
+**并列连接词检测**：
+```python
+CONJUNCTION_PATTERNS = [
+    r"\+", r"、", r"[,\s]并且[,\s]",
+    r"\b(?:并|同时|以及|且|与|和)\b"
+]
+
+def has_parallel_structure(action: str) -> bool:
+    return any(re.search(p, action) for p in CONJUNCTION_PATTERNS)
+
+def count_parallel_items(action: str) -> int:
+    return len(re.split(r"\+|、|,|并|同时|以及|且|与|和", action))
+```
+
+**门禁拒绝条件**：
+
+- `plan.steps` 为空 或 `len(plan.steps) != len(文档里程碑)` → `return False, "plan.steps 未与文档 1:1 镜像"`
+- 任何 step 缺 `verification_min_depth` 或 `touches` → `return False, "step 缺必要字段"`
+- 任何 step 命中并列结构且未拆分、且未提供完整 `parallel_parts[]` → `return False, "step '<id>' 含并列结构，必须拆分或声明 parallel_parts[]"`
+- 任何 step 的 `verification_min_depth` 低于 touches 映射下限 → `return False, "step '<id>' 验证深度不足"`
+
+**经验条目引用**：E101（见 pax-evolve 经验条目库）
+
 ### P3 风险标注（Risk Annotation）
 
 每个步骤必须标注风险等级：
@@ -239,21 +288,28 @@ verification_strategy:
     criteria: "所有测试通过"
     tools: ["pytest"]
     timeout: "5min"
-    
+
   - step: S2
     method: "代码审查"
     criteria: "无阻塞性问题"
     tools: ["git diff"]
     timeout: "15min"
-    
+
+  - step: S3
+    method: "手动观察"
+    criteria: "快捷键在目标界面生效。记录环境、操作、实际结果、时间。不能只写测试通过或 [x]"
+    tools: ["手工"]
+    timeout: "15min"
+
   - step: S4
     method: "数据验证"
     criteria: "订正后数据一致性检查通过"
     tools: ["sql", "mongosh"]
     timeout: "10min"
-    # 数据订正专用：
-    rollback_verified: true  # 回滚方案已验证
+    rollback_verified: true
 ```
+
+D3 或 `touches` 含 `ui` / `io` / `shortcut` 的步骤，必须另有一条 `method` 含「手动 / 冒烟 / 观察」。只有 S1 这种「所有测试通过」不能冻结。
 
 ### P6 跨仓库标注（Cross-Repo Annotation）
 
@@ -306,26 +362,55 @@ def derive_rollback_strategy(steps):
     return strategy
 
 
-def freeze_plan(steps, verification_strategy):
-    """冻结计划"""
-    
-    # 最终校验
+_RUNTIME_TOUCHES = {"ui", "io", "shortcut"}
+
+def needs_runtime_verification(step):
+    """手验判定看冻结后的步骤，不看开场白。"""
+    if set(step.touches or []) & _RUNTIME_TOUCHES:
+        return True
+    return getattr(step, "verification_min_depth", "") == "D3"
+
+def has_manual_strategy(step, verification_strategy):
+    items = [item for item in verification_strategy if item.get("step") == step.id]
+    for item in items:
+        blob = f"{item.get('method', '')} {item.get('criteria', '')}"
+        if any(token in blob for token in ("手动", "manual", "冒烟", "观察")):
+            return True
+    return False
+
+def freeze_plan(steps, verification_strategy, snapshot):
+    """冻结计划。D3/交互步骤同时改写 route。"""
+
     for step in steps:
-        # 检查回滚方案
         if step.risk == "high" and not step.rollback:
             return False, f"步骤 {step.id} 高风险但无回滚方案"
-        
-        # 检查数据订正前置条件
         if step.prerequisite == "storage_backend_confirmed":
             if not step.script_language:
                 return False, f"步骤 {step.id} 数据订正缺少 script_language"
-        
-        # 检查跨仓库标注
-        if step.repo:
-            if not step.execution_strategy:
-                return False, f"步骤 {step.id} 跨仓库步骤缺少 execution_strategy"
-    
-    # 写入快照
+        if step.repo and not step.execution_strategy:
+            return False, f"步骤 {step.id} 跨仓库步骤缺少 execution_strategy"
+
+    runtime_steps = [step for step in steps if needs_runtime_verification(step)]
+    for step in runtime_steps:
+        if not has_manual_strategy(step, verification_strategy):
+            return False, (
+                f"步骤 {step.id} 是 D3/交互步骤，"
+                "verification_strategy 不能只有「所有测试通过」"
+            )
+
+    if runtime_steps:
+        route = snapshot.orchestration.route
+        for name in ("pax-test", "pax-verify"):
+            if name not in route:
+                if "pax-review" in route:
+                    route.insert(route.index("pax-review"), name)
+                else:
+                    route.append(name)
+        snapshot.orchestration.annotations["requires_runtime_verification"] = True
+        snapshot.orchestration.annotations["runtime_verification_steps"] = [
+            step.id for step in runtime_steps
+        ]
+
     plan = {
         "id": "<plan-id>",
         "steps": steps,
@@ -333,13 +418,16 @@ def freeze_plan(steps, verification_strategy):
         "evidence": collect_evidence(steps),
         "verification_strategy": verification_strategy,
         "rollback_strategy": derive_rollback_strategy(steps),
+        "requires_runtime_verification": bool(runtime_steps),
+        "runtime_verification_steps": [step.id for step in runtime_steps],
         "status": "frozen",
         "frozen_at": "<ISO8601>",
         "frozen_by": "pax-plan"
     }
-    
     return True, plan
 ```
+
+这是编排授权的唯一 route 改写：只允许在 `pax-review` 之前插入 `pax-test` 与 `pax-verify`。
 
 ## 输出契约
 - `snapshot.plan`（`status: frozen`）与 `plan_summary.md`，格式由 `schemas/snapshot.schema.json` 约束

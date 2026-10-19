@@ -2,7 +2,7 @@
 name: pax-execute
 description: >
     Use when: 在契约约束下执行，带审计和回滚。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。
-version: 1.0.0
+version: 1.0.1
 family: pax
 layer: L1
 optional: false
@@ -25,17 +25,20 @@ requires_snapshot: true
 - 未校验跨仓库 / 跨服务守卫就直接下发破坏性命令。
 - 执行中未更新快照，下游 Skill 拿不到进度。
 - 失败时未回滚或告警。
+- 单测全绿，或清单勾选，被当成交互步骤完成。
 
 ## Verification Checklist
 
 - [ ] 每一步执行前都完成了前置条件校验
 - [ ] 执行结果与契约输出一致，快照已更新
 - [ ] 失败路径已触发告警或回滚，用户已确认下一步
+- [ ] 交互步骤（快捷键、焦点、视图）有手动观察记录，不只是单测通过
 ## Execution Contract
 - 前置门禁：`contract` 已确认，`plan.status == frozen`
 - 未通过门禁：拒绝启动，返回上游阶段
 - 版本检查：`pax-ops/versions.json`
 - 未通过内环验证不得标记完成
+- 交互验收（快捷键、焦点、视图）不能只凭单测通过或清单勾选标记完成
 - 偏离契约必须暂停并重新协商
 - fix 模式必须包含回归测试
 - 禁止"顺手改别的"、禁止在根因判断有误时自行重新诊断
@@ -164,27 +167,56 @@ def execute_steps(plan):
 **验证循环**：做 → 验 → 修
 
 ```python
+_INTERACTIVE_MARKERS = (
+    "shortcut", "keydown", "keyboard", "快捷键", "手验", "手动验证", "焦点",
+)
+
+def is_interactive_step(step):
+    """快捷键、焦点、视图手验。touches 没声明时，从 action / criteria 识别。"""
+    if set(step.touches or []) & {"ui", "io", "shortcut"}:
+        return True
+    criteria = getattr(step.verification, "criteria", "")
+    blob = f"{getattr(step, 'action', '')} {criteria}".lower()
+    return any(marker in blob for marker in _INTERACTIVE_MARKERS)
+
+def has_manual_evidence(result):
+    """清单 [x]、单独的「通过」或空观察都不算手动证据。"""
+    manual = getattr(result, "manual_evidence", None)
+    if manual in (None, "", "pending"):
+        return False
+    observed = str(getattr(manual, "observed_result", "") or "").strip()
+    if observed in {"", "[x]", "x", "pass", "应该通过", "通过"}:
+        return False
+    return all(getattr(manual, key, None) for key in ("environment", "action", "at"))
+
 def verify_step(step, result):
-    """验证步骤结果"""
-    
-    # 方法 1: 单元测试
-    if "test" in step.verification.method.lower():
-        return run_tests(step.verification.criteria)
-    
-    # 方法 2: 代码审查
-    if "review" in step.verification.method.lower():
-        return review_changes(result.changes)
-    
-    # 方法 3: 数据验证
-    if "data" in step.verification.method.lower():
-        return verify_data_consistency(step.verification.criteria)
-    
-    # 方法 4: 集成测试
-    if "integration" in step.verification.method.lower():
+    """验证步骤结果。编译通过或单测全绿只是 D1，不能单独使步骤完成。"""
+
+    min_depth = step.verification_min_depth or "D2"
+    actual_depth = getattr(result, "assertion_depth", "D1")
+    if depth_rank(actual_depth) < depth_rank(min_depth):
+        return False
+
+    # 交互步骤即使单测全绿也不能完成；不依赖计划是否事先写了 touches。
+    if is_interactive_step(step) and not has_manual_evidence(result):
+        return False
+
+    method = (getattr(step.verification, "method", None) or "").lower()
+    # integration_test 同时含 "test"，必须先于单测分支判定。
+    if "integration" in method:
         return run_integration_tests(step.verification.criteria)
-    
-    return True  # 默认通过
+    if "test" in method:
+        return run_tests(step.verification.criteria)
+    if "review" in method:
+        return review_changes(result.changes)
+    if "data" in method:
+        return verify_data_consistency(step.verification.criteria)
+    if "manual" in method:
+        return has_manual_evidence(result)
+    return False  # 没有明确验证方法时失败关闭，不允许默认通过
 ```
+
+交互步骤的手动证据必须同时有执行环境、操作、实际观察结果和时间。`pending`、空清单、只写 `[x]` 或“应该通过”不算证据。单测报告不能充当这份证据。
 
 **修复循环**（最多 3 次）：
 ```python
@@ -350,9 +382,25 @@ def check_completion(execution, plan):
         )
         if not has_regression_test:
             return False, "fix 模式缺少回归测试"
-    
+
+    # 条件 4: 每个声明成功的步骤必须绑定达标证据
+    for step in plan.steps:
+        log_entry = next((item for item in execution.log if item.step == step.id), None)
+        if not log_entry or log_entry.result != "success":
+            return False, f"步骤 {step.id} 未成功"
+        if not log_entry.evidence_refs:
+            execution.status = "needs_evidence"
+            return False, f"步骤 {step.id} 缺证据绑定"
+        if is_interactive_step(step) and not evidence_includes_manual(log_entry):
+            execution.status = "needs_evidence"
+            return False, f"步骤 {step.id} 的交互验收只有单测或清单勾选，不能完成"
+
     return True, "执行完成"
 ```
+
+`evidence_includes_manual` 为真，当且仅当 `evidence_refs` 里有一条指向 E4 的 `manual_evidence`（含环境、操作、观察、时间）。只指向测试报告不算。
+
+`execution.status` 允许 `completed | failed | paused | needs_evidence`。缺手动或运行态证据时只能是 `needs_evidence`，不能改写成 `completed`。
 
 ## 输出契约
 - `snapshot.execution`（`id` / `mode` / `status` / `completed_at` / `log` / `deviations` / `changes` / `commits`），格式由 `schemas/snapshot.schema.json` 约束

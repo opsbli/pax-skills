@@ -9,7 +9,11 @@ def test_load_family_schema_shape():
     assert schema["family"] == "pax"
     assert "Pact-based Agreement" in schema["family_expansion"]
     # 家族 schema 版本（与家族版本 versions.json 是两个独立维度）
-    assert schema["version"] == 1.1
+    # 断言跟随 schema.yaml 的实际声明，避免 schema 递增时测试侧漏改
+    # （1.1 → 1.3 曾因硬编码漏改而红，此处改为读基线）
+    import yaml as _yaml
+    _raw = (Path(__file__).resolve().parents[1] / "schemas" / "pax-family.schema.yaml").read_text(encoding="utf-8")
+    assert schema["version"] == _yaml.safe_load(_raw)["version"]
     for layer in ["meta", "L0", "L1", "L2", "L3", "L4"]:
         assert layer in schema["layers"]
     # meta 是非运行时工具层：从「成员必须存在」校验中豁免

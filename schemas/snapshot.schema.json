@@ -109,7 +109,10 @@
             "performance_metrics_required": {"type": "boolean"},
             "integration_contract_required": {"type": "boolean"},
             "deployment_env_required": {"type": "boolean"},
-            "analysis_optional_docs": {"type": "boolean"}
+            "analysis_optional_docs": {"type": "boolean"},
+            "interaction_hint": {"type": "boolean"},
+            "requires_runtime_verification": {"type": "boolean"},
+            "runtime_verification_steps": {"type": "array", "items": {"type": "string"}}
           }
         }
       }
@@ -186,7 +189,7 @@
                "description": "本次执行的唯一标识，供 pax-rollback 等下游定位被回滚的对象。"},
         "mode": {"type": "string", "enum": ["normal", "fix"]},
         "status": {"type": "string",
-                   "enum": ["completed", "failed", "paused"]},
+                   "enum": ["completed", "failed", "paused", "needs_evidence"]},
         "completed_at": {"type": ["string", "null"], "format": "date-time"},
         "log": {"type": "array"},
         "deviations": {"type": "array"},

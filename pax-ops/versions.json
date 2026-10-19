@@ -5,7 +5,7 @@
     "pax-orchestrate": {
       "layer": "L0",
       "optional": false,
-      "version": "1.0.2",
+      "version": "1.0.3",
       "status": "active"
     },
     "pax-clarify": {
@@ -23,19 +23,19 @@
     "pax-plan": {
       "layer": "L1",
       "optional": false,
-      "version": "1.0.0",
+      "version": "1.0.1",
       "status": "active"
     },
     "pax-execute": {
       "layer": "L1",
       "optional": false,
-      "version": "1.0.0",
+      "version": "1.0.1",
       "status": "active"
     },
     "pax-review": {
       "layer": "L1",
       "optional": false,
-      "version": "1.0.0",
+      "version": "1.0.2",
       "status": "active"
     },
     "pax-advisor": {
@@ -65,7 +65,7 @@
     "pax-verify": {
       "layer": "L4",
       "optional": true,
-      "version": "1.0.0",
+      "version": "1.0.1",
       "status": "active"
     },
     "pax-evolve": {
@@ -95,7 +95,7 @@
     "pax-test": {
       "layer": "L1",
       "optional": true,
-      "version": "1.0.0",
+      "version": "1.0.2",
       "status": "active"
     },
     "pax-deploy": {

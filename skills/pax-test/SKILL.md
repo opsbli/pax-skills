@@ -2,7 +2,7 @@
 name: pax-test
 description: >
     Use when: 自动化测试生成。此 skill 由 pax-orchestrate 在编排路由中调用，用于自动生成测试用例并执行测试。
-version: 1.0.0
+version: 1.0.2
 family: pax
 layer: L1
 optional: true
@@ -24,6 +24,7 @@ requires_snapshot: true
 
 - 生成的测试用例覆盖不到边界条件。
 - 只测正向路径。
+- 用被测字符串回抄输入，单测全绿但运行时事件对不上。
 - 未与 CI 集成。
 
 ## Verification Checklist
@@ -33,6 +34,7 @@ requires_snapshot: true
 - [ ] 覆盖率与验收标准对齐
 - [ ] 每条测试用例通过 PIE 三问自检（T1.5），或显式声明 `pie_check.rationale` 说明为何允许部分为 `n/a`
 - [ ] 关键业务字段与副作用（DB / 缓存 / 日志 / 消息 / 下游接口）已纳入断言（对应 PIE 的 Propagation）
+- [ ] 事件或交互用例的输入是运行时产生的值，不是从 combo / 期望字符串回抄
 ## Execution Contract
 - 前置门禁：`snapshot.plan.status == frozen` 且 `snapshot.plan.steps` 存在
 - 未通过门禁：拒绝启动，返回规划阶段
@@ -154,7 +156,7 @@ def generate_tests_for_step(step):
 | 问 | 关键判据 | `fail` 信号 |
 |---|---|---|
 | **E**（Execution）：是否执行到可能出错的代码路径？ | 覆盖目标分支、异常分支或修改点 | 覆盖率报告显示未触达修改 diff 中的路径 |
-| **I**（Infection）：输入是否会让错误状态在内部产生？ | 使用边界值 / 等价类外值 / 敏感输入组合 | 输入全是"正常值"，未包含边界、非法、极端值 |
+| **I**（Infection）：输入是否会让错误状态在内部产生？ | 使用边界值 / 等价类外值 / 敏感输入组合。输入必须是运行时会产生的值（事件的 key / code / 修饰键、请求体、存储字段），不得从被测 combo、期望字符串或函数参数再抄一份 | 输入全是"正常值"；或把期望字符写进事件（例如 combo 为 `mod+shift+/`，用例却把 `key` 设为 `"/"`，而真实键盘产生 `?` 且 Shift 为 true；或 `mod++` 的用例不带 Shift） |
 | **P**（Propagation）：断言是否能观察到错误？ | 检查关键业务字段 + 副作用（DB / 缓存 / 日志 / 消息 / 下游接口） | 只调用函数无断言；只检查 `success: true`；不查数据库写入 |
 
 ```python
@@ -164,8 +166,12 @@ def check_pie(test_case):
     # E：目标路径被执行
     execution = "pass" if test_case.touched_target_path else "fail"
 
-    # I：输入能触发错误状态
-    infection = "pass" if has_sensitive_input(test_case.inputs) else "fail"
+    # I：输入能触发错误状态，且是运行时产生的值，不是从被测字符串回抄
+    infection = (
+        "pass"
+        if has_sensitive_input(test_case.inputs) and inputs_match_runtime(test_case)
+        else "fail"
+    )
 
     # P：断言能观察到错误
     propagation = (
@@ -232,7 +238,7 @@ def check_migration_up_down(snapshot):
 **门禁**：
 - 任何 `execution == fail` 的用例必须补测后才能进入 T2；
 - `propagation == fail` 的用例必须在 T2 前补断言；
-- `infection == fail` 的用例需在 T4 报告的 `recommendations` 中标注"用例敏感度不足"。
+- `infection == fail` 的用例必须改成运行时输入后才能进入 T2；不得只在 `recommendations` 里标注"用例敏感度不足"后继续。`tests.status` 不得为 `passed`。
 
 **T4 报告追加**：`generate_test_report` 输出的 `report` 增加 `pie_summary` 段，统计本次执行中 `E / I / P` 三项的通过率，与覆盖率并列展示。
 
@@ -387,7 +393,7 @@ def generate_recommendations(test_results, coverage):
 - 测试报告文件，格式由 `schemas/snapshot.schema.json` 约束
 
 ## 失败模式
-- 测试生成失败 → 降级为手动测试，标注 `manual: true`
+- 测试生成失败 → 不得把 `manual: true` 当成通过。改走手动时，证据必须含 `environment`、`action`、`observed_result`、`at`。`observed_result` 不能是 `[x]`、`通过` 或空。缺任一字段则 `tests.status` 不得为 `passed`
 - 测试执行失败 → 标记 `status: failed`，记录失败原因
 - 覆盖率不达标 → 标记 `coverage.status: failed`，建议增加测试
 

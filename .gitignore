@@ -17,7 +17,12 @@ htmlcov/
 
 # Local artifacts
 *.log
-tools/
+# 只忽略 tools/ 的内容，不忽略目录本身——否则下方的反忽略规则永远不生效
+# （目录被整体排除时，Git 不会 descend 进入目录去看子级规则）。
+tools/*
+# 例外：quality_gate.py 是自研质量门禁（不是上游 vendored 工具），
+# 必须入库，否则 quality-gate job 的 assert 步骤必然失败。
+!tools/quality_gate.py
 
 # Proma / session context (not versioned)
 .context/

@@ -6,7 +6,7 @@
       "name": "pax-orchestrate",
       "layer": "L0",
       "optional": false,
-      "version": "1.0.2",
+      "version": "1.0.3",
       "path": "skills/pax-orchestrate/SKILL.md",
       "registered_at": "2026-09-29T05:31:14Z"
     },
@@ -30,7 +30,7 @@
       "name": "pax-plan",
       "layer": "L1",
       "optional": false,
-      "version": "1.0.0",
+      "version": "1.0.1",
       "path": "skills/pax-plan/SKILL.md",
       "registered_at": "2026-09-29T05:31:14Z"
     },
@@ -38,7 +38,7 @@
       "name": "pax-execute",
       "layer": "L1",
       "optional": false,
-      "version": "1.0.0",
+      "version": "1.0.1",
       "path": "skills/pax-execute/SKILL.md",
       "registered_at": "2026-09-29T05:31:14Z"
     },
@@ -46,7 +46,7 @@
       "name": "pax-review",
       "layer": "L1",
       "optional": false,
-      "version": "1.0.0",
+      "version": "1.0.2",
       "path": "skills/pax-review/SKILL.md",
       "registered_at": "2026-09-29T05:31:14Z"
     },
@@ -86,7 +86,7 @@
       "name": "pax-verify",
       "layer": "L4",
       "optional": true,
-      "version": "1.0.0",
+      "version": "1.0.1",
       "path": "skills/pax-verify/SKILL.md",
       "registered_at": "2026-09-29T05:35:05Z"
     },
@@ -126,7 +126,7 @@
       "name": "pax-test",
       "layer": "L1",
       "optional": true,
-      "version": "1.0.0",
+      "version": "1.0.2",
       "path": "skills/pax-test/SKILL.md",
       "registered_at": "2026-10-01T11:45:00Z"
     },

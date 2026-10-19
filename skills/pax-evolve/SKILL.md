@@ -292,6 +292,62 @@ rollback_record:
 experience_library:
   version: "1.0"
   entries:
+    - id: "E101"
+      type: rule
+      statement: >
+        plan.plan.steps[] 必须在冻结前由 plan 文档 1:1 镜像生成；
+        每个 step 必须含 id、action、verification_min_depth、touches 四字段。
+      rationale: >
+        若 snapshot.plan.steps 为空或与文档不匹配，pax-execute E4 无锚点可追踪，
+        E8 evidence binding 也无法建立引用关系——这是 pax-md M1 会话（dc235ed1）
+        bug 的根因：plan.steps 为空导致 execute 自行合并步骤、完成声明失约。
+      source: "trial_feedback: pax-md M1 session (dc235ed1)"
+      applies_to:
+        - "pax-plan P2 / P7"
+        - "pax-execute E3 / E4 / E8"
+      status: review
+      confidence: high
+      created_at: "2026-10-15"
+      updated_at: "2026-10-15"
+      deprecated_by: null
+      ab_baseline_session: "dc235ed1-7b7a-4901-b6ab-0df8be846670"
+      ab_baselines: ["dc235ed1-7b7a-4901-b6ab-0df8be846670", "0b129f94-2fcb-47fd-b8a3-c5b092e27b19"]
+      ab_baseline_count: 2
+      ab_candidate_count: 0
+      ab_status: "two_baselines_confirmed_no_candidate"
+      ab_notes: >
+        M1（dc235ed1）与 M2（0b129f94）均为未应用 E101 的基线，两份样本的
+        plan.steps 均完全为空、无任何 verification_seals、未挂 pax-verify、断言深度均止于 D1——
+        四个结构指标完全一致。M2 表面无用户手测暴露的 bug，实为 5/8 subtasks
+        manual 状态为 pending 未验证。
+        ⚠️ 用户后续手测后发现 M2 存在 6+ 个快捷键失效（含 M1 已修复的 Ctrl+N
+        回归），根因为 src/lib/useShortcuts.ts:28 的 `!def.enabled` 把 undefined
+        当 falsy——一个 JavaScript 可选字段 trap，导致所有未显式设 enabled:true 的
+        快捷键被静默跳过。160/160 测试全绿，但测试未覆盖 dispatcher 层。
+        候选任务尚存，不能 promote 到 active，但证据已足够强。
+      promote_recommendation: >
+        证据已支持从 review → active：
+        - 2 基线完全一致（M1、M2）；
+        - M2 6+ 个系统性 bug 均能由 E101 的 plan.steps 镜像门捕获；
+        - E101 refinement 已完成（允许组合 step + parallel_parts）。
+        剩余风险仅在于候选任务尚存，但风险-收益比已足够高。
+        建议：下一个 feature_dev 任务启动时直接将 E101 升为 active，
+        任务完成后回头确认 5 项指标是否全部改善。
+    - id: "E102"
+      type: rule
+      status: review
+      statement: "编译和单测最多是 D1；交互步骤没有实际观察结果不得完成。"
+      applies_to: ["pax-execute E4/E8"]
+    - id: "E103"
+      type: rule
+      status: review
+      statement: "命中快捷键、点击、弹窗等交互信号时，路由必须追加 pax-verify。"
+      applies_to: ["pax-orchestrate W4"]
+    - id: "E104"
+      type: rule
+      status: review
+      statement: "pending、非标准 execution_status 或无证据引用时，评审必须拒绝。"
+      applies_to: ["pax-review R1"]
     - id: "E001"
       type: rule
       statement: "数据订正前必须确认存储后端"

@@ -212,9 +212,10 @@ jobs:
     name: Skill Quality Gate
     runs-on: ubuntu-latest
     needs: [contracts-and-tests, internal-routing-check]
-    # 依赖 tools/quality_gate.py，该路径被 .gitignore 忽略、CI 检出中不存在 →
-    # 默认跳过；要真正执行需把工具 vendor 进版本库并置 PAX_TOOLS_AVAILABLE=true。
-    if: vars.PAX_TOOLS_AVAILABLE == 'true'
+    # tools/quality_gate.py 已通过 .gitignore 的反忽略规则入库，本job 必跑。
+    # 原先的 `if: vars.PAX_TOOLS_AVAILABLE == 'true'` 会让门禁默认跳过——
+    # 一个从不失败的门禁等于没有门禁。保留下面的 assert 步骤作为
+    # 「若文件被误删则立即失败」的哨兵。
     timeout-minutes: 10
 
     steps:
@@ -235,7 +236,7 @@ jobs:
       - name: Assert tools/quality_gate.py is present
         run: |
           if [ ! -f tools/quality_gate.py ]; then
-            echo "::error title=tools/quality_gate.py 缺失::PAX_TOOLS_AVAILABLE 已置为 true，但 tools/quality_gate.py 不在检出内容中。"
+            echo "::error title=tools/quality_gate.py 缺失::本 job 已取消 PAX_TOOLS_AVAILABLE 开关，质量门禁必须执行；但 tools/quality_gate.py 不在检出内容中（可能被误删，或 .gitignore 的反忽略规则被移除）。"
             exit 1
           fi
 
@@ -573,10 +574,14 @@ jobs:
 
           if [ -n "$failed" ]; then
             printf '❌ **质量门禁失败**%b\n' "$failed" >> "$GITHUB_STEP_SUMMARY"
+            # 判定出失败就必须让 workflow 变红；只写 summary 等于门禁失效。
+            # skipped 不在此处退出——它有两个合法来源（分支条件不满足、
+            # 上游密钥未配置），二者都不是质量回归。
+            exit 1
           elif [ -n "$not_run" ]; then
             printf '⚠️ **以下检查本次未执行（已执行的检查全部通过）**%b\n' "$not_run" >> "$GITHUB_STEP_SUMMARY"
             echo "" >> "$GITHUB_STEP_SUMMARY"
-            echo '未执行的两类原因：① job 触发条件不满足（如 Routing Eval 仅在 main / 手动触发时运行）；② 依赖 `tools/` 工具链的 job 在仓库变量 `PAX_TOOLS_AVAILABLE` 未置 `true` 时跳过——`tools/` 被 `.gitignore` 忽略，CI 检出中不存在。' >> "$GITHUB_STEP_SUMMARY"
+            echo '未执行的两类原因：① job触发条件不满足（如 Routing Eval 仅在 main / 手动触发时运行）；② job 依赖上游仓库变量或密钥（如 Routing Eval 的 real 模式需 DASHSCOPE_API_KEY）。' >> "$GITHUB_STEP_SUMMARY"
           else
             echo "✅ **All quality gates passed**" >> "$GITHUB_STEP_SUMMARY"
           fi
