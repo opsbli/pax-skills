@@ -2,7 +2,7 @@
 name: pax-execute
 description: >
     Use when: 在契约约束下执行，带审计和回滚。此 skill 由 pax-orchestrate 在编排路由中调用，不要直接选择。
-version: 1.0.1
+version: 1.0.2
 family: pax
 layer: L1
 optional: false
@@ -42,6 +42,8 @@ requires_snapshot: true
 - 偏离契约必须暂停并重新协商
 - fix 模式必须包含回归测试
 - 禁止"顺手改别的"、禁止在根因判断有误时自行重新诊断
+- **委派隔离**：`delegate_to_worker` 每次委派必须给出独立工作区边界（`git worktree add .worktrees/<step-id>` + `git checkout -b step/<step-id>`），收口时以 `--no-ff` 合回集成分支；未建立隔离即拒绝委派——多个 worker 并行写同一工作树会互相覆盖，且回滚无法定位边界
+- **并发准入**：只对 `plan.dependencies` 中入度为 0（即所有前置 step 已 completed）的 step 发起委派；有未完成依赖的 step 留在队列里等待，不得提前下发
 
 ## 职责边界
 - 做什么：在契约约束下执行，带审计和回滚

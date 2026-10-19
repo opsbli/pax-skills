@@ -428,6 +428,8 @@ def test_all_contracts_registered():
         "gate-behavior",
         "gate-refusal",
         "router-coverage",
+        "delegation-isolation",
+        "step-dependency-acyclic",
         "declared-checks-coverage",
     }
     assert names == expected
@@ -953,3 +955,134 @@ def test_extract_escalation_graph_separate_from_call_graph():
     assert "pax-plan" not in forward.get("pax-test", set())
     # pax-plan 冻结时插入 pax-test 是前向调用
     assert "pax-test" in forward.get("pax-plan", set())
+
+
+# ----- 契约⑭：delegation-isolation -----
+
+def _mk_delegating_skill(root, name, layer, body):
+    d = root / "skills" / name
+    d.mkdir(parents=True, exist_ok=True)
+    (d / "SKILL.md").write_text(
+        f"---\nname: {name}\ndescription: >\n  x\nversion: 0.1.0\n"
+        f"family: pax\nlayer: {layer}\noptional: false\n"
+        f"requires_snapshot: true\n---\n\n# {name}\n\n"
+        f"## Execution Contract\n- 前置门禁：无\n- 门禁失败：拒绝启动\n"
+        f"## 工作流\n{body}\n"
+        f"## 输出契约\n- ...\n## 失败模式\n- ...\n## 何时升级\n- ...\n",
+        encoding="utf-8",
+    )
+
+
+def test_contract_delegation_isolation_flags_writer_delegate(tmp_path):
+    """有写委派但无隔离声明 → 违规。"""
+    from pax.forge.contracts import check_delegation_isolation
+    _mk_delegating_skill(
+        tmp_path, "pax-ex", "L1",
+        "1. 委派 `pax-worker-implement` 执行\n"
+        "        result = delegate_to_worker(step)\n",
+    )
+    violations = check_delegation_isolation(tmp_path)
+    assert any("pax-ex" in v for v in violations)
+
+
+def test_contract_delegation_isolation_passes_with_worktree(tmp_path):
+    """声明了 worktree 隔离 → 通过。"""
+    from pax.forge.contracts import check_delegation_isolation
+    _mk_delegating_skill(
+        tmp_path, "pax-ex", "L1",
+        "1. 委派 `pax-worker-implement`，先 `git worktree add` 建隔离工作区\n"
+        "        result = delegate_to_worker(step)\n",
+    )
+    assert check_delegation_isolation(tmp_path) == []
+
+
+def test_contract_delegation_isolation_exempts_readonly_targets(tmp_path):
+    """委托只读顾问不写工作树 → 不要求隔离。"""
+    from pax.forge.contracts import check_delegation_isolation
+    _mk_delegating_skill(
+        tmp_path, "pax-an", "L1",
+        "- 遇架构决策 → 委托 `pax-advisor` 提供候选方案\n",
+    )
+    _mk_delegating_skill(
+        tmp_path, "pax-an2", "L1",
+        "- 高风险选型 → 委托 `pax-council` 盲审\n",
+    )
+    assert check_delegation_isolation(tmp_path) == []
+
+
+def test_contract_delegation_isolation_ignores_enum_value(tmp_path):
+    """仅把 subagent 当枚举值不算委派实现（pax-plan 的 execution_strategy）。"""
+    from pax.forge.contracts import check_delegation_isolation
+    _mk_delegating_skill(
+        tmp_path, "pax-pl", "L1",
+        '    execution_strategy: "subagent"  # subagent | separate_session\n',
+    )
+    assert check_delegation_isolation(tmp_path) == []
+
+
+def test_contract_delegation_isolation_checks_worker_layer(tmp_path):
+    """L3 worker 自身必须声明隔离。"""
+    from pax.forge.contracts import check_delegation_isolation
+    _mk_delegating_skill(
+        tmp_path, "pax-worker-implement", "L3", "1. 执行实现任务\n",
+    )
+    assert any("pax-worker-implement" in v for v in check_delegation_isolation(tmp_path))
+
+
+# ----- 契约⑮：step-dependency-acyclic -----
+
+def test_find_cycle_detects_cycles():
+    from pax.forge.contracts import _find_cycle
+    assert _find_cycle([("A", "B"), ("B", "C"), ("C", "A")]) is not None
+    assert _find_cycle([("A", "B"), ("B", "C")]) is None
+    assert _find_cycle([]) is None
+
+
+def test_find_cycle_detects_self_and_two_node():
+    from pax.forge.contracts import _find_cycle
+    assert _find_cycle([("A", "A")]) is not None
+    assert _find_cycle([("A", "B"), ("B", "A")]) is not None
+
+
+def test_parse_dependency_edges_all_yaml_forms():
+    """三种 YAML 写法都要能解析出边。"""
+    from pax.forge.contracts import _parse_dependency_edges
+    body = (
+        "dependencies:\n"
+        "  - from: \"S1\"\n"
+        "    to: \"S2\"\n"
+        "  - {from: S3, to: S4}\n"
+        "  - from: S5, to: S6\n"
+    )
+    edges = _parse_dependency_edges(body)
+    assert ("S1", "S2") in edges
+    assert ("S3", "S4") in edges
+    assert ("S5", "S6") in edges
+
+
+def test_contract_step_dependency_acyclic_flags_cycle(tmp_path):
+    """文档里声明了成环的依赖边 → 违规。"""
+    from pax.forge.contracts import check_step_dependency_acyclic
+    _mk_delegating_skill(
+        tmp_path, "pax-a", "L1",
+        "plan:\n"
+        "  dependencies:\n"
+        '    - from: "S1"\n      to: "S2"\n'
+        '    - from: "S2"\n      to: "S3"\n'
+        '    - from: "S3"\n      to: "S1"\n',
+    )
+    violations = check_step_dependency_acyclic(tmp_path)
+    assert any("环" in v for v in violations)
+
+
+def test_contract_step_dependency_acyclic_passes_acyclic(tmp_path):
+    """无环依赖 → 通过。"""
+    from pax.forge.contracts import check_step_dependency_acyclic
+    _mk_delegating_skill(
+        tmp_path, "pax-a", "L1",
+        "plan:\n"
+        "  dependencies:\n"
+        '    - from: "S1"\n      to: "S2"\n'
+        '    - from: "S2"\n      to: "S3"\n',
+    )
+    assert check_step_dependency_acyclic(tmp_path) == []

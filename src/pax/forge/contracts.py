@@ -844,3 +844,160 @@ def check_router_coverage(family_root: Path) -> list[str]:
                 f"{entry_name} 的路由表中，该 skill 不会被编排调用"
             )
     return violations
+
+
+
+# ----- 契约⑭：委派隔离与依赖图声明 -----
+
+# 真委派声明的形态：动词 + 反引号包裹的 skill 名，或显式的委派函数。
+# 不能只靠「出现 subagent 字样」判定——pax-plan 的 execution_strategy
+# 枚举里就有 "subagent" 这个取值，它不是委派实现。
+_DELEGATION_RE = _re.compile(
+    r"(?:委派|委托|delegate|subagent|子\s*agent)"
+    r"[^`\n]{0,16}`(pax-[a-z][a-z0-9-]*)`"
+    r"|delegate_to_\w+"
+    r"|\bspawn_\w+",
+    _re.IGNORECASE,
+)
+# 只读目标不需要隔离：委托只读顾问不会写工作树。
+_READONLY_TARGETS = ("pax-advisor", "pax-council", "pax-docs")
+_ISOLATION_TOKENS = (
+    "worktree", "隔离", "独立分支", "isolated", "独立工作区",
+)
+
+
+@register_contract("delegation-isolation")
+def check_delegation_isolation(family_root: Path) -> list[str]:
+    """具备写委派能力的 skill 必须声明隔离手段。
+
+    `pax-worker-implement` 的 Execution Contract 要求「必须在 isolated FS /
+    network 下运行」，但没说隔离怎么来；`pax-execute` 的 delegate_to_worker
+    也没有说明工作区边界。没有隔离的委派等于多个 agent 并行写同一个工作树。
+
+    两条豁免，因为它们不需要隔离：
+    - 只读目标（`pax-advisor` / `pax-council` / `pax-docs`）——委托出去不写文件；
+    - 仅把 "subagent" 作为 `execution_strategy` 的枚举值（pax-plan）——
+      那是策略取值，不是委派实现。
+
+    只检查「是否声明了隔离手段」，不判定隔离方式是否充分——
+    后者属于运行时语义，机器无法判定。
+    """
+    violations: list[str] = []
+    for name, fm, body in _skill_docs(family_root):
+        if fm is None:
+            continue
+        # 只管真正提供写委派能力的 skill：显式委派到非只读目标，
+        # 或本身就是被委派的 worker。
+        if fm.get("layer") == "L3":
+            delegates = True
+        else:
+            matches = _DELEGATION_RE.findall(body)
+            # delegate_to_xxx / spawn_xxx 这类函数名不带目标，按写委派处理
+            targets = [t for t in matches if isinstance(t, str) and t]
+            has_func = any(m in body for m in ("delegate_to_", "spawn_"))
+            delegates = has_func or any(
+                t not in _READONLY_TARGETS for t in targets
+            )
+        is_worker = fm.get("layer") == "L3"
+        if not (delegates or is_worker):
+            continue
+
+        # Execution Contract 与委派段落里出现了隔离手段即通过
+        isolated = any(
+            tok in body for tok in _ISOLATION_TOKENS
+        )
+        if not isolated:
+            violations.append(
+                f"{name}: 声明了委派/worker 能力但未声明隔离手段"
+                f"（可用措辞：{' / '.join(_ISOLATION_TOKENS[:4])}）"
+            )
+    return violations
+
+
+@register_contract("step-dependency-acyclic")
+def check_step_dependency_acyclic(family_root: Path) -> list[str]:
+    """snapshot.plan.dependencies 必须是可解析的无环边集。
+
+    `pax-execute` 的执行顺序依赖 `topological_sort(steps, plan.dependencies)`，
+    但该函数在文档里从未定义、dependencies 的结构也从未在 schema 约束——
+    依赖图因此可能成环，而成环的依赖图会让执行顺序无法确定（谁先跑）。
+
+    本契约检查两件可机判定的事：
+    1. 每条边必须有 from / to，且两端都能在 steps 里找到；
+    2. 整张图必须无环。
+    它读取家族当前的 snapshot（若有）；没有 snapshot 时跳过——契约不能
+    对着不存在的运行产物判红。
+    """
+    from pax.forge.validator import _split_frontmatter  # noqa: F401
+
+    schema_path = loader.family_paths(_root(family_root))["snapshot_schema"]
+    if not schema_path.exists():
+        return []
+
+    # 从 skill 文档里抽出 plan.dependencies 的示例边做结构校验：
+    # 真实 snapshot 是运行产物、不入库，因此契约校验的是「文档声明的
+    # 依赖边是否结构合法且无环」。
+    edges: list[tuple[str, str]] = []
+    step_ids: set[str] = set()
+    for name, fm, body in _skill_docs(family_root):
+        if fm is None:
+            continue
+        step_ids |= set(_re.findall(r"^\s*-\s*id:\s*([A-Za-z0-9_.\-]+)", body, _re.M))
+        edges += _parse_dependency_edges(body)
+
+    if not edges:
+        return []
+
+    violations: list[str] = []
+    for src, dst in edges:
+        if step_ids and src not in step_ids:
+            violations.append(f"dependency edge {src} -> {dst}: 起点 {src} 未在任何 step 中声明")
+        if step_ids and dst not in step_ids:
+            violations.append(f"dependency edge {src} -> {dst}: 终点 {dst} 未在任何 step 中声明")
+
+    if steps := _find_cycle(list(edges)):
+        violations.append(
+            "plan.dependencies 存在环，无法确定执行顺序: " + " -> ".join(steps)
+        )
+    return violations
+
+
+# 同时支持三种 YAML 写法：行内 `{from: A, to: B}`、同行 `- from: A, to: B`、
+# 跨行（from 与 to 分属两行，pax-plan 的 dependencies 用的就是这种）。
+_DEP_EDGE_RE = _re.compile(
+    r"from\s*:\s*[\"']?([A-Za-z0-9_.\-]+)[\"']?\s*,?\s*\n?\s*"
+    r"to\s*:\s*[\"']?([A-Za-z0-9_.\-]+)[\"']?",
+    _re.M,
+)
+
+
+def _parse_dependency_edges(body: str) -> list[tuple[str, str]]:
+    return [(m.group(1), m.group(2)) for m in _DEP_EDGE_RE.finditer(body)]
+
+
+def _find_cycle(edges: list[tuple[str, str]]) -> list[str] | None:
+    """返回第一个环的节点序列；无环返回 None。"""
+    adj: dict[str, list[str]] = {}
+    for src, dst in edges:
+        adj.setdefault(src, []).append(dst)
+    state: dict[str, int] = {}  # 0=未访问 1=在栈上 2=已完成
+    stack: list[str] = []
+
+    def visit(node: str) -> list[str] | None:
+        state[node] = 1
+        stack.append(node)
+        for nxt in adj.get(node, []):
+            if state.get(nxt) == 1:
+                return stack[stack.index(nxt):] + [nxt]
+            if state.get(nxt, 0) == 0:
+                if (found := visit(nxt)) is not None:
+                    return found
+        stack.pop()
+        state[node] = 2
+        return None
+
+    for node in list(adj):
+        if state.get(node, 0) == 0:
+            if (found := visit(node)) is not None:
+                return found
+    return None

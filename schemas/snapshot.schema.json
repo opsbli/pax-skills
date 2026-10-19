@@ -147,8 +147,25 @@
       "properties": {
         "id": {"type": ["string", "null"],
                "description": "本计划的唯一标识，供 pax-rollback 等下游定位被回滚的对象。"},
-        "steps": {"type": "array"},
-        "dependencies": {"type": "array"},
+        "steps": {
+          "type": "array",
+          "description": "计划步骤。委派与并发的唯一依据；每个 step 必须有 id。"
+        },
+        "dependencies": {
+          "type": "array",
+          "description": "步骤间的有向无环边。pax-execute 的 topological_sort / check_dependencies 只认这里的 from→to，不依赖正文散文。",
+          "items": {
+            "type": "object",
+            "required": ["from", "to"],
+            "additionalProperties": false,
+            "properties": {
+              "from": {"type": "string", "description": "前置步骤 id"},
+              "to": {"type": "string", "description": "后继步骤 id"},
+              "reason": {"type": "string",
+                         "description": "为何存在此依赖；缺失时 DAG 契约要求跳过原因门禁"}
+            }
+          }
+        },
         "evidence": {"type": "array"},
         "verification_strategy": {"type": "array"},
         "status": {"type": "string", "enum": ["draft", "frozen"]},

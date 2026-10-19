@@ -38,7 +38,7 @@
       "name": "pax-execute",
       "layer": "L1",
       "optional": false,
-      "version": "1.0.1",
+      "version": "1.0.2",
       "path": "skills/pax-execute/SKILL.md",
       "registered_at": "2026-09-29T05:31:14Z"
     },
